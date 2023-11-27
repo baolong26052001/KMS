@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\hung\\Desktop\\Loan-Kiosk\\KMS_BE\\KMS.csproj": {}
+    "C:\\Users\\hung\\Desktop\\KMS\\KMS-BE\\KMS.csproj": {}
   },
   "projects": {
-    "C:\\Users\\hung\\Desktop\\Loan-Kiosk\\KMS_BE\\KMS.csproj": {
+    "C:\\Users\\hung\\Desktop\\KMS\\KMS-BE\\KMS.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\hung\\Desktop\\Loan-Kiosk\\KMS_BE\\KMS.csproj",
+        "projectUniqueName": "C:\\Users\\hung\\Desktop\\KMS\\KMS-BE\\KMS.csproj",
         "projectName": "KMS",
-        "projectPath": "C:\\Users\\hung\\Desktop\\Loan-Kiosk\\KMS_BE\\KMS.csproj",
+        "projectPath": "C:\\Users\\hung\\Desktop\\KMS\\KMS-BE\\KMS.csproj",
         "packagesPath": "C:\\Users\\hung\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\hung\\Desktop\\Loan-Kiosk\\KMS_BE\\obj\\",
+        "outputPath": "C:\\Users\\hung\\Desktop\\KMS\\KMS-BE\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\hung\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -40,6 +40,10 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "Microsoft.AspNetCore.Mvc.NewtonsoftJson": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
               "version": "[6.0.0, )"

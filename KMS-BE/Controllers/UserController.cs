@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using KMS.Models;
 using KMS.Tools;
+using Microsoft.EntityFrameworkCore;
 
 namespace KMS.Controllers
 {
@@ -10,8 +11,6 @@ namespace KMS.Controllers
     public class UserController : ControllerBase
     {
         private readonly KioskManagementSystemContext _dbcontext;
-
-        
 
         public UserController(KioskManagementSystemContext _context)
         {
@@ -22,22 +21,36 @@ namespace KMS.Controllers
         [Route("ShowUsers")]
         public async Task<IActionResult> GetUsers()
         {
-            
             try
             {
-                List<Tuser> listUsers = _dbcontext.Tusers.ToList();
-                if (listUsers != null) 
+                List<Tuser> listUsers = _dbcontext.Tusers
+                    
+                    .Select(u => new Tuser
+                    {
+                        Id = u.Id,
+                        Username = u.Username,
+                        Email = u.Email,
+                        Fullname = u.Fullname,
+                        UserGroupId = u.UserGroupId,
+                        IsActive = u.IsActive,
+                        LastLogin = u.LastLogin
+                    })
+                    //.Where(u => u.Username == "admin")
+                    .ToList();
+
+                if (listUsers != null && listUsers.Any())
                 {
                     return Ok(listUsers);
                 }
-                return Ok("There are no users in the database");
+
+                return Ok("There are no matching users in the database");
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
-
         }
+
 
         [HttpGet]
         [Route("ShowUsers/{id}")]
@@ -113,7 +126,7 @@ namespace KMS.Controllers
                 user.IsActive = true;
                 _dbcontext.Tusers.Add(user);
                 await _dbcontext.SaveChangesAsync();
-                return Ok("user is successfully registered");
+                return Ok("User is successfully registered");
             }
             catch(Exception e)
             {
