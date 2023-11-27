@@ -44,11 +44,15 @@ const EditButton = ({ rowId, label, onClick }) => {
   );
 };
 
+function createData(id, userName, email, userGroup, isActive, lastLogin, totalDaysDormant) {
+  return {id, userName, email, userGroup, isActive, lastLogin, totalDaysDormant };
+};
+
 const columns = [
   {
-    field: 'viewButton',
+    field: 'permissionButton',
     headerName: '',
-    minWidth: 70,
+    width: 80,
     sortable: false, // Disable sorting for this column
     filterable: false, // Disable filtering for this column
     renderCell: (params) => (
@@ -62,7 +66,7 @@ const columns = [
   {
     field: 'editButton',
     headerName: '',
-    minWidth: 70, 
+    width: 80,
     sortable: false, // Disable sorting for this column
     filterable: false, // Disable filtering for this column
     renderCell: (params) => (
@@ -73,53 +77,48 @@ const columns = [
       />
     ),
   },
-  { field: 'id', headerName: 'User ID', 
-    minWidth: 100,
-},
-  { field: 'userName', headerName: 'User Name', 
-    minWidth: 150, 
-  },
-  { field: 'email', headerName: 'Email', 
-    minWidth: 200,
-  },
+  { field: 'id', headerName: 'Group ID', minWidth: 100, },
+  { field: 'userName', headerName: 'Name', minWidth: 120, },
+  { field: 'email', headerName: 'Email', minWidth: 200,},
   {
     field: 'userGroup',
-    headerName: 'User Group',
+    headerName: 'Group Name',
     sortable: false,
-    minWidth: 150,
+    minWidth: 120,
   },
   {
-    field: 'active',
-    headerName: 'Active',
+    field: 'isActive',
+    headerName: 'Is Active',
     sortable: false,
-    minWidth: 100, 
+    minWidth: 100,
   },
   {
     field: 'lastLogin',
     headerName: 'Last Login',
     sortable: false,
-    minWidth: 200,
+    minWidth: 180,
   },
   {
-    field: 'daysDormant',
+    field: 'totalDaysDormant',
     headerName: 'Total Days Dormant',
     sortable: false,
-    minWidth: 200,
-   },
+    minWidth: 150,
+  },
 ];
 
 const rows = [
-  { id: 1, userName: 'Richard Nixon', email: 'richnix@gmail.com', userGroup: 'Administration', active: 'Yes', lastLogin: '24-12-2023 14:32:43', daysDormant: '10' },
-  { id: 2, userName: 'Riadxon', email: 'ricx@gmail.com', userGroup: 'Support', active: 'Yes', lastLogin: '24-12-2023 14:32:43', daysDormant: '10' },
-  { id: 3, userName: 'Nixn', email: 'nix@gmail.com', userGroup: 'Monitor', active: 'Yes', lastLogin: '24-12-2023 14:32:43', daysDormant: '10' },
-  { id: 4, userName: 'Tayos', email: 'tayos@gmail.com', userGroup: 'Support', active: 'Yes', lastLogin: '24-12-2023 14:32:43', daysDormant: '10' },
-  { id: 5, userName: 'Chad', email: 'Chadman@gmail.com', userGroup: 'Manager', active: 'Yes', lastLogin: '24-12-2023 14:32:43', daysDormant: '10' },
-  { id: 6, userName: 'Stein', email: 'stein@gmail.com', userGroup: 'Support', active: 'Yes', lastLogin: '24-12-2023 14:32:43', daysDormant: '10' },
-  { id: 7, userName: 'Lloyd', email: 'lloyd@gmail.com', userGroup: 'Administration', active: 'Yes', lastLogin: '24-12-2023 14:32:43', daysDormant: '10' },
-  { id: 8, userName: 'Tessta', email: 'tessta@gmail.com', userGroup: 'Administration', active: 'Yes', lastLogin: '24-12-2023 14:32:43', daysDormant: '10' },
-  { id: 9, userName: 'Carena', email: 'carena@gmail.com', userGroup: 'Administration', active: 'Yes', lastLogin: '24-12-2023 14:32:43', daysDormant: '10' },
-  { id: 10, userName: 'Wals', email: 'wals@gmail.com', userGroup: 'Administration', active: 'Yes', lastLogin: '24-12-2023 14:32:43', daysDormant: '10' },
+  createData(1, 'Richard Nixon', 'richnix@gmail.com', 'Administration', 'Yes', '24-12-2023 14:32:43', '10'),
+  createData(2, 'Riadxon', 'ricx@gmail.com', 'Support', 'Yes', '24-12-2023 14:32:43', '10'),
+  createData(3, 'Richard Nixn', 'nix@gmail.com', 'Monitor', 'Yes', '24-12-2023 14:32:43', '10'),
+  createData(4, 'Tayos', 'tayos@gmail.com', 'Manager', 'Yes', '24-12-2023 14:32:43', '10'), 
+  createData(5, 'Chad', 'Chadman@gmail.com', 'Support', 'Yes', '24-12-2023 14:32:43', '10'), 
+  createData(6, 'Stein', 'stein@gmail.com', 'Administration', 'Yes', '24-12-2023 14:32:43', '10'), 
+  createData(7, 'Lloyd', 'lloyd@gmail.com', 'Administration', 'Yes', '24-12-2023 14:32:43', '10'), 
+  createData(8, 'Tessta', 'tessta@gmail.com', 'Administration', 'Yes', '24-12-2023 14:32:43', '10'), 
+  createData(9, 'Carena', 'carena@gmail.com', 'Administration', 'Yes', '24-12-2023 14:32:43', '10'), 
+  createData(10, 'Wals', 'wals@gmail.com', 'Administration', 'Yes', '24-12-2023 14:32:43', '10'),  
 ];
+
 
 const handleButtonClick = (id) => {
   // Handle button click, e.g., navigate to another page

@@ -49,7 +49,7 @@ const EditButton = ({ rowId, label, onClick }) => {
 // render when hover on kiosk icon
 const KioskHover = () => {
   return (
-    <Tooltip title="Kiosk Status">
+    <Tooltip title="Kiosk Status" placement="top">
         <img
           src={require('../../images/totalkiosk.png')}
           style={{ height: '30px', width: '30px' }}
@@ -58,17 +58,60 @@ const KioskHover = () => {
   );
 }
 
+// render when hover on kiosk icon
+const CamHover = () => {
+  return (
+    <Tooltip title="Camera Status" placement="top">
+        <img
+          src={require('../../images/Camera.png')}
+          style={{ height: '30px', width: '30px' }}
+        />
+    </Tooltip>
+  );
+}
+
+// render when hover on kiosk icon
+const CashDekHover = () => {
+  return (
+    <Tooltip title="Cash Deposit Status" placement="top">
+        <img
+          src={require('../../images/Category.png')}
+          style={{ height: '30px', width: '30px' }}
+        />
+    </Tooltip>
+  );
+}
+
+// render when hover on kiosk icon
+const ScanHover = () => {
+  return (
+    <Tooltip title="Scanner Status" placement="top">
+        <img
+          src={require('../../images/Scanner.png')}
+          style={{ height: '30px', width: '30px' }}
+        />
+    </Tooltip>
+  );
+}
+
+const statusImages = {
+  Online: require('../../images/online.png'),
+  Offline: require('../../images/offline.png'),
+  NoPaper: require('../../images/nopaper.png'),
+  PaperLow: require('../../images/paperlow.png'),
+};
 
 
 function createData(id, kioskName, country, station, slidePackage, kioskStatus, camStatus, cashDepositStatus, scannerStatus) {
-  return {id, kioskName, country, station, slidePackage, kioskStatus };
+  return {id, kioskName, country, station, slidePackage, kioskStatus: statusImages[kioskStatus], camStatus: statusImages[camStatus], cashDepositStatus: statusImages[cashDepositStatus], scannerStatus: statusImages[scannerStatus] };
 }
 
 const columns = [
   {
-    field: 'permissionButton',
+    field: 'viewButton',
     headerName: '',
-    minWidth: 100,
+    width: 80,
+    disableColumnMenu: true,
     sortable: false, // Disable sorting for this column
     filterable: false, // Disable filtering for this column
     renderCell: (params) => (
@@ -82,7 +125,8 @@ const columns = [
   {
     field: 'editButton',
     headerName: '',
-    minWidth: 100,
+    width: 80,
+    disableColumnMenu: true,
     sortable: false, // Disable sorting for this column
     filterable: false, // Disable filtering for this column
     renderCell: (params) => (
@@ -94,12 +138,12 @@ const columns = [
     ),
   },
   { field: 'id', headerName: 'Kiosk ID', minWidth: 100, },
-  { field: 'kioskName', headerName: 'Kiosk Name', minWidth: 100, },
-  { field: 'country', headerName: 'Country', minWidth: 100,},
+  { field: 'kioskName', headerName: 'Kiosk Name', minWidth: 150, },
+  { field: 'country', headerName: 'Country', minWidth: 120,},
   {
     field: 'station',
     headerName: 'Station',
-    minWidth: 120,
+    minWidth: 150,
   },
   {
     field: 'slidePackage',
@@ -111,21 +155,87 @@ const columns = [
     field: 'kioskStatus',
     headerName: 'Kiosk Status',
     sortable: false,
-    minWidth: 100,
-    disableColumnFilter: false,
+    disableColumnMenu: true,
+    width: 60,
     renderHeader: () => (
       <KioskHover/>
+    ),
+    renderCell: (params) => (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <img
+          src={params.row.kioskStatus}
+          alt={`Image for ${params.row.kioskStatus}`}
+          style={{ height: '15px', width: '15px' }}
+        />
+      </div>
+    ),
+  },
+  {
+    field: 'camStatus',
+    headerName: 'Camera Status',
+    sortable: false,
+    disableColumnMenu: true,
+    width: 60,
+    renderHeader: () => (
+      <CamHover/>
+    ),
+    renderCell: (params) => (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <img
+          src={params.row.camStatus}
+          alt={`Image for ${params.row.camStatus}`}
+          style={{ height: '15px', width: '15px' }}
+        />
+      </div>
+    ),
+  },
+  {
+    field: 'cashDepositStatus',
+    headerName: 'Cash Deposit Status',
+    sortable: false,
+    disableColumnMenu: true,
+    width: 60,
+    renderHeader: () => (
+      <CashDekHover/>
+    ),
+    renderCell: (params) => (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <img
+          src={params.row.cashDepositStatus}
+          alt={`Image for ${params.row.cashDepositStatus}`}
+          style={{ height: '15px', width: '15px' }}
+        />
+      </div>
+    ),
+  },
+  {
+    field: 'scannerStatus',
+    headerName: 'Scanner Status',
+    sortable: false,
+    disableColumnMenu: true,
+    width: 60,
+    renderHeader: () => (
+      <ScanHover/>
+    ),
+    renderCell: (params) => (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <img
+          src={params.row.scannerStatus}
+          alt={`Image for ${params.row.scannerStatus}`}
+          style={{ height: '15px', width: '15px' }}
+        />
+      </div>
     ),
   },
 ];
 
 const rows = [
-  createData(1, 'Kiosk 1', 'VietNam', 'Sai Gon', 'Ads Promotion'),
-  createData(2, 'Kiosk 2', 'VietNam', 'Sai Gon', 'Ads Promotion'),
-  createData(3, 'Kiosk 3', 'VietNam', 'Ha Noi', 'Ads Promotion'),
-  createData(4, 'Kiosk 4', 'VietNam', 'Da Nang', 'Ads Promotion'),
-  createData(5, 'Kiosk 5', 'VietNam', 'Nha Trang', 'Ads Promotion'),
-  createData(6, 'Kiosk 6', 'VietNam', 'Nha Trang', 'Ads Promotion'),
+  createData(1, 'Kiosk 1', 'VietNam', 'Sai Gon', 'Ads Promotion', 'PaperLow', 'Online', 'Online', 'Online'),
+  createData(2, 'Kiosk 2', 'VietNam', 'Sai Gon', 'Ads Promotion', 'Online', 'Online', 'Online', 'Online'),
+  createData(3, 'Kiosk 3', 'VietNam', 'Ha Noi', 'Ads Promotion', 'Offline', 'Online', 'PaperLow', 'NoPaper'),
+  createData(4, 'Kiosk 4', 'VietNam', 'Da Nang', 'Ads Promotion', 'NoPaper', 'Offline', 'Online', 'PaperLow'),
+  createData(5, 'Kiosk 5', 'VietNam', 'Nha Trang', 'Ads Promotion', 'Online', 'Offline', 'Online', 'PaperLow'),
+  createData(6, 'Kiosk 6', 'VietNam', 'Nha Trang', 'Ads Promotion', 'Online', 'Offline', 'Online', 'PaperLow'),
 ];
 
 const handleButtonClick = (id) => {

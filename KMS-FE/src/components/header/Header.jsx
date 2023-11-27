@@ -39,7 +39,7 @@ export default function MenuAppBar() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" component="div" color={'black'} sx={{ flexGrow: 1 }}>
-            Loan Kiosk Management System
+            Kiosk Management System
           </Typography>
           {auth && (
             <div>

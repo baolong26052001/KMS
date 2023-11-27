@@ -78,7 +78,7 @@ const App = () => {
 
                 <Route path="/kiosksetup" element={<RouteKioskSetup />} />
                 <Route path="/kioskhardware" element={<RoutekioskHardware />} />
-                <Route path="/station" element={<EmptyPage />} />
+                <Route path="/station" element={<RouteStation />} />
 
                 <Route
                     path="/slideshow"
@@ -102,47 +102,6 @@ const App = () => {
             </Grid>
           </Grid>
         </Box>
-        
-{/* 
-        <Routes>
-
-          <Route 
-            path="/" 
-            element={<RouteDashboard />} 
-            />
-
-          <Route 
-            path="/users" 
-            element={<RouteUser />} 
-            />
-
-          <Route 
-            path="/usersgroup" 
-            element={<RouteUsergroup />} 
-            />
-
-
-          <Route path="/kiosksetup" element={<RouteKioskSetup />} />
-          <Route path="/kioskhardware" element={<RoutekioskHardware />} />
-          <Route path="/station" element={<EmptyPage />} />
-
-          <Route
-              path="/slideshow"
-              element={<RouteSlideshow />}
-            />
-
-          <Route path="/account" element={<EmptyPage />} />
-          <Route path="/loantransaction" element={<EmptyPage />} />
-          <Route path="/savingtransaction" element={<EmptyPage />} />
-          <Route path="/loanstatement" element={<EmptyPage />} />
-          <Route path="/savingstatement" element={<EmptyPage />} />
-          <Route path="/transactionlogs" element={<EmptyPage />} />
-          <Route path="/activitylogs" element={<EmptyPage />} />
-          <Route path="/notificationlogs" element={<EmptyPage />} />
-          <Route path="/audit" element={<EmptyPage />} />
-          <Route path="/kioskhealth" element={<EmptyPage />} />
-          
-        </Routes> */}
       </div>
     </Router>
     </div>
@@ -231,6 +190,20 @@ const RouteKioskSetup = () => {
     return null;
   }
   return <KioskSetup />
+};
+
+const RouteStation = () => {
+  const [Station, setStation] = React.useState(null);
+  React.useEffect(() => {
+    import('./pages/station/station').then((module) => {
+      setStation(() => module.default);
+    });
+  }, []);
+
+  if (!Station) {
+    return null;
+  }
+  return <Station />
 };
 
 

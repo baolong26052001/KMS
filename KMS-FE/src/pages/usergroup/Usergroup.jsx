@@ -54,29 +54,29 @@ const EditButton = ({ rowId, label, onClick }) => {
 
 const columns = [
   {
-    field: 'permissionButton',
-    headerName: '',
-    minWidth: 150,
-    sortable: false, // Disable sorting for this column
-    filterable: false, // Disable filtering for this column
-    renderCell: (params) => (
-        <ViewButton
-        rowId={params.row.id}
-        label="Permission"
-        onClick={handleButtonClick}
-      />
-    ),
-  },
-  {
     field: 'editButton',
     headerName: '',
-    minWidth: 100,
+    width: 80,
     sortable: false, // Disable sorting for this column
     filterable: false, // Disable filtering for this column
     renderCell: (params) => (
         <EditButton
         rowId={params.row.id}
         label="Edit"
+        onClick={handleButtonClick}
+      />
+    ),
+  },
+  {
+    field: 'permissionButton',
+    headerName: '',
+    width: 120,
+    sortable: false, // Disable sorting for this column
+    filterable: false, // Disable filtering for this column
+    renderCell: (params) => (
+        <ViewButton
+        rowId={params.row.id}
+        label="Permission"
         onClick={handleButtonClick}
       />
     ),
@@ -113,9 +113,9 @@ const handleButtonClick = (id) => {
 
 const Usergroup = () => {
     const [searchTerm, setSearchTerm] = useState('');
-    const [selectedRows, setSelectedRows] = useState([]);
-    const [selectAllChecked, setSelectAllChecked] = useState(false);
-    const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
+    // const [selectedRows, setSelectedRows] = useState([]);
+    // const [selectAllChecked, setSelectAllChecked] = useState(false);
+    // const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
 
     const [searchTermButton, setSearchTermButton] = useState('');
 
