@@ -43,6 +43,7 @@ namespace KMS.Controllers
         {
             try
             {
+
                 usergroup.DateCreated = DateTime.Now;
                 usergroup.IsActive = true;
 

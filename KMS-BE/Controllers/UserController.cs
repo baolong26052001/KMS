@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Http;
 using KMS.Models;
 using KMS.Tools;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
+using Microsoft.Data.SqlClient;
 
 namespace KMS.Controllers
 {
@@ -11,44 +13,36 @@ namespace KMS.Controllers
     public class UserController : ControllerBase
     {
         private readonly KioskManagementSystemContext _dbcontext;
+        private IConfiguration _configuration;
 
-        public UserController(KioskManagementSystemContext _context)
+        public UserController(IConfiguration configuration)
         {
-            _dbcontext = _context;
+            //_dbcontext = _context;
+            _configuration = configuration;
         }
 
         [HttpGet]
         [Route("ShowUsers")]
-        public async Task<IActionResult> GetUsers()
+        public JsonResult GetUsers()
         {
-            try
+            string query = "select u.id, u.username, u.fullname, u.email, ug.groupName,u.lastLogin,u.isActive" +
+                "\r\nfrom TUser u, TUserGroup ug" +
+                "\r\nwhere u.userGroupId = ug.id";
+            DataTable table = new DataTable();
+            string sqlDatasource = _configuration.GetConnectionString("DefaultConnection");
+            SqlDataReader myReader;
+            using(SqlConnection myCon = new SqlConnection(sqlDatasource))
             {
-                List<Tuser> listUsers = _dbcontext.Tusers
-                    
-                    .Select(u => new Tuser
-                    {
-                        Id = u.Id,
-                        Username = u.Username,
-                        Email = u.Email,
-                        Fullname = u.Fullname,
-                        UserGroupId = u.UserGroupId,
-                        IsActive = u.IsActive,
-                        LastLogin = u.LastLogin
-                    })
-                    //.Where(u => u.Username == "admin")
-                    .ToList();
-
-                if (listUsers != null && listUsers.Any())
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
                 {
-                    return Ok(listUsers);
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                    myCon.Close();
                 }
-
-                return Ok("There are no matching users in the database");
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return new JsonResult(table);
         }
 
 
