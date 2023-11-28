@@ -29,7 +29,7 @@ namespace KMS.Controllers
                 {
                     return Ok(listKiosk);
                 }
-                return Ok("There are no user group in the database");
+                return Ok("There are no kiosk in the database");
             }
             catch (Exception ex)
             {

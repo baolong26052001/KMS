@@ -28,7 +28,7 @@ namespace KMS.Controllers
                 {
                     return Ok(listAccessRule);
                 }
-                return Ok("There are no users in the database");
+                return Ok("There are no access rule in the database");
             }
             catch (Exception ex)
             {

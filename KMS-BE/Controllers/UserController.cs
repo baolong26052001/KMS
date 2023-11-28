@@ -5,6 +5,11 @@ using KMS.Tools;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 using Microsoft.Data.SqlClient;
+using System.Text;
+using System;
+using System.Security.Cryptography;
+
+
 
 namespace KMS.Controllers
 {
@@ -99,37 +104,53 @@ namespace KMS.Controllers
 
         [HttpPost]
         [Route("AddUser")]
-        public async Task<IActionResult> userRegistration([FromBody] Tuser user)
+        public JsonResult AddUser([FromBody] Tuser newUser)
         {
-            try
-            {
-                var dbUser = _dbcontext.Tusers.Where(u => u.Username == user.Username).Select(u => new
-                {
-                    u.Id,
-                    u.Username,
-                    u.IsActive
-                }).FirstOrDefault();
+            // Assuming UserDTO is a Data Transfer Object representing the user details
+            // You should replace UserDTO with your actual user model or class
 
-                if (dbUser != null)
+            string insertQuery = "INSERT INTO TUser (username, fullname, email, password, userGroupId, lastLogin, isActive, dateCreated, dateModified) " +
+                         "VALUES (@Username, @Fullname, @Email, @Password, @UserGroupId, @LastLogin, @IsActive, @DateCreated, @DateModified);";
+
+
+            string sqlDatasource = _configuration.GetConnectionString("DefaultConnection");
+
+            using (SqlConnection myCon = new SqlConnection(sqlDatasource))
+            {
+                myCon.Open();
+
+                using (SqlCommand myCommand = new SqlCommand(insertQuery, myCon))
                 {
-                    return BadRequest("Username already exist");
+                    // Hash the password using SHA-256 and then encode with Base64 (for educational purposes only)
+                    string hashedPassword = HashPassword(newUser.Password);
+
+                    myCommand.Parameters.AddWithValue("@Username", newUser.Username);
+                    myCommand.Parameters.AddWithValue("@Fullname", newUser.Fullname);
+                    myCommand.Parameters.AddWithValue("@Email", newUser.Email);
+                    myCommand.Parameters.AddWithValue("@Password", hashedPassword);
+                    myCommand.Parameters.AddWithValue("@UserGroupId", newUser.UserGroupId); // Assuming there's a property for UserGroupId in your DTO
+                    myCommand.Parameters.AddWithValue("@LastLogin", DateTime.Now); // Set the current date/time as the last login for a new user
+                    myCommand.Parameters.AddWithValue("@IsActive", newUser.IsActive); // Assuming there's a property for IsActive in your DTO
+                    myCommand.Parameters.AddWithValue("@DateCreated", DateTime.Now); // Set the current date/time as the creation date for a new user
+                    myCommand.Parameters.AddWithValue("@DateModified", DateTime.Now); // Set the current date/time as the modification date for a new user
+
+                    myCommand.ExecuteNonQuery();
                 }
-                user.DateCreated = DateTime.Now;
-
-                user.Password = Password.hashPassword(user.Password);
-                user.IsActive = true;
-                _dbcontext.Tusers.Add(user);
-                await _dbcontext.SaveChangesAsync();
-                return Ok("User is successfully registered");
             }
-            catch(Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-            
 
-            
+            return new JsonResult("User added successfully");
         }
+
+        // Hash the password using SHA-256 and then encode with Base64 (for educational purposes only)
+        private string HashPassword(string password)
+        {
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                return Convert.ToBase64String(hashedBytes);
+            }
+        }
+
 
         [HttpPut]
         [Route("UpdateUser/{id}")]
@@ -146,6 +167,11 @@ namespace KMS.Controllers
 
                 existingUser.DateModified = DateTime.Now;
                 // Update properties of existingUser with values from updatedUser
+                if (updatedUser.Fullname != null)
+                {
+                    existingUser.Fullname = updatedUser.Fullname;
+                }
+                
                 existingUser.Email = updatedUser.Email;
                 
 
