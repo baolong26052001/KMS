@@ -12,10 +12,9 @@ namespace KMS.Controllers
         private readonly KioskManagementSystemContext _dbcontext;
         private IConfiguration _configuration;
 
-
-        public UsergroupController(IConfiguration configuration)
+        public UsergroupController(IConfiguration configuration, KioskManagementSystemContext _context)
         {
-            
+            _dbcontext = _context;
             _configuration = configuration;
         }
 

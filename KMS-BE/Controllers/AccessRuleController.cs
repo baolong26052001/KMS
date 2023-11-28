@@ -8,12 +8,12 @@ namespace KMS.Controllers
     public class AccessRuleController : ControllerBase
     {
         private readonly KioskManagementSystemContext _dbcontext;
+        private IConfiguration _configuration;
 
-
-
-        public AccessRuleController(KioskManagementSystemContext _context)
+        public AccessRuleController(IConfiguration configuration, KioskManagementSystemContext _context)
         {
             _dbcontext = _context;
+            _configuration = configuration;
         }
 
         [HttpGet]

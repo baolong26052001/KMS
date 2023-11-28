@@ -13,9 +13,9 @@ namespace KMS.Controllers
         private readonly KioskManagementSystemContext _dbcontext;
         private IConfiguration _configuration;
 
-
-        public StationController(IConfiguration configuration)
+        public StationController(IConfiguration configuration, KioskManagementSystemContext _context)
         {
+            _dbcontext = _context;
             _configuration = configuration;
         }
 

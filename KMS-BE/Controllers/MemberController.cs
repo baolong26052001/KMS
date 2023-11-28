@@ -8,12 +8,12 @@ namespace KMS.Controllers
     public class MemberController : ControllerBase
     {
         private readonly KioskManagementSystemContext _dbcontext;
+        private IConfiguration _configuration;
 
-
-
-        public MemberController(KioskManagementSystemContext _context)
+        public MemberController(IConfiguration configuration, KioskManagementSystemContext _context)
         {
             _dbcontext = _context;
+            _configuration = configuration;
         }
 
         [HttpGet]
