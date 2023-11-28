@@ -17,7 +17,7 @@ namespace KMS.Controllers
 
         public UserController(IConfiguration configuration)
         {
-            //_dbcontext = _context;
+            
             _configuration = configuration;
         }
 
@@ -25,9 +25,9 @@ namespace KMS.Controllers
         [Route("ShowUsers")]
         public JsonResult GetUsers()
         {
-            string query = "select u.id, u.username, u.fullname, u.email, ug.groupName,u.lastLogin,u.isActive" +
+            string query = "select u.id, u.username, u.fullname, u.email, ug.groupName,u.lastLogin,u.isActive, DATEDIFF(DAY, u.lastLogin, GETDATE()) AS TotalDaysDormant" +
                 "\r\nfrom TUser u, TUserGroup ug" +
-                "\r\nwhere u.userGroupId = ug.id";
+                "\r\nwhere u.userGroupId = ug.id;";
             DataTable table = new DataTable();
             string sqlDatasource = _configuration.GetConnectionString("DefaultConnection");
             SqlDataReader myReader;

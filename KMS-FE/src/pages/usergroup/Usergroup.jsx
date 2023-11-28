@@ -95,6 +95,7 @@ const columns = [
     headerName: 'Is Active',
     sortable: false,
     flex: 1,
+    valueFormatter: (params) => (params.value ? 'Yes' : 'No'),
   },
 ];
 
@@ -122,7 +123,29 @@ const Usergroup = () => {
     const handleSearchButton = () => {
         setSearchTerm(searchTermButton);
     };
+  const [rows, setRows] = useState([]);
 
+  const getRowId = (row) => row.id;
+  const API_URL = "http://localhost:5000/";
+
+
+
+
+
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch(`${API_URL}api/Usergroup/ShowUsergroup`);
+        const data = await response.json();
+        setRows(data); // Update the component state with the fetched data
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }
+
+    fetchData();
+  }, []);
 
   return (
     
@@ -146,6 +169,7 @@ const Usergroup = () => {
             <DataGrid
                 rows={rows}
                 columns={columns}
+                getRowId={getRowId}
                 initialState={{
                   pagination: {
                       paginationModel: { page: 0, pageSize: 5 },

@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using KMS.Models;
+using Microsoft.Data.SqlClient;
+using System.Data;
 
 namespace KMS.Controllers
 {
@@ -8,33 +10,36 @@ namespace KMS.Controllers
     public class UsergroupController : ControllerBase
     {
         private readonly KioskManagementSystemContext _dbcontext;
+        private IConfiguration _configuration;
 
-        
 
-        public UsergroupController(KioskManagementSystemContext _context)
+        public UsergroupController(IConfiguration configuration)
         {
-            _dbcontext = _context;
+            
+            _configuration = configuration;
         }
 
         [HttpGet]
         [Route("ShowUsergroup")]
-        public async Task<IActionResult> GetUsergroup()
+        public JsonResult GetUsergroup()
         {
-            
-            try
+            string query = "select ug.id, ug.groupName, ug.dateModified, ug.dateCreated, ug.isActive" +
+                "\r\nfrom TUserGroup ug";
+            DataTable table = new DataTable();
+            string sqlDatasource = _configuration.GetConnectionString("DefaultConnection");
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDatasource))
             {
-                List<TuserGroup> listUsergroup = _dbcontext.TuserGroups.ToList();
-                if (listUsergroup != null) 
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
                 {
-                    return Ok(listUsergroup);
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                    myCon.Close();
                 }
-                return Ok("There are no user group in the database");
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-
+            return new JsonResult(table);
         }
 
         [HttpPost]

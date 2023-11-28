@@ -82,7 +82,7 @@ const columns = [
   },
   { field: 'id', headerName: 'Package ID', minWidth: 100, },
   { field: 'packageName', headerName: 'Package Name', minWidth: 250, },
-  { field: 'imgsrc', headerName: 'Image/Video', minWidth: 100, },
+  { field: 'imagevideo', headerName: 'Image/Video', minWidth: 100, },
   { field: 'fileType', headerName: 'File Type', minWidth: 120,},
   {
     field: 'startDate',
@@ -114,6 +114,23 @@ const Slideshow = () => {
         setSearchTerm(searchTermButton);
     };
 
+  const [rows, setRows] = useState([]);
+  const getRowId = (row) => row.id;
+  const API_URL = "http://localhost:5000/";
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch(`${API_URL}api/Slideshow/ShowSlideshow`);
+        const data = await response.json();
+        setRows(data); // Update the component state with the fetched data
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }
+
+    fetchData();
+  }, []); // Empty dependency array to run the effect once when the component mounts
 
   return (
     
@@ -137,6 +154,7 @@ const Slideshow = () => {
                     <DataGrid
                       rows={rows}
                       columns={columns}
+                      getRowId={getRowId}
                       initialState={{
                       pagination: {
                           paginationModel: { page: 0, pageSize: 5 },

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using KMS.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.SqlClient;
+using System.Data;
 
 namespace KMS.Controllers
 {
@@ -9,32 +11,36 @@ namespace KMS.Controllers
     public class StationController : ControllerBase
     {
         private readonly KioskManagementSystemContext _dbcontext;
+        private IConfiguration _configuration;
 
 
-
-        public StationController(KioskManagementSystemContext _context)
+        public StationController(IConfiguration configuration)
         {
-            _dbcontext = _context;
+            _configuration = configuration;
         }
 
         [HttpGet]
         [Route("ShowStation")]
-        public async Task<IActionResult> GetStation()
+        public JsonResult GetStation()
         {
 
-            try
+            string query = "select st.id, st.stationName, st.companyName, st.city, st.address, st.isActive" +
+                "\r\nfrom TStation st";
+            DataTable table = new DataTable();
+            string sqlDatasource = _configuration.GetConnectionString("DefaultConnection");
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDatasource))
             {
-                List<Tstation> listStation = _dbcontext.Tstations.ToList();
-                if (listStation != null)
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
                 {
-                    return Ok(listStation);
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                    myCon.Close();
                 }
-                return Ok("There are no station in the database");
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return new JsonResult(table);
 
         }
 

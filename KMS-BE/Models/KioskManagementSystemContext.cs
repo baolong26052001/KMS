@@ -19,6 +19,7 @@ namespace KMS.Models
         public virtual DbSet<Lmember> Lmembers { get; set; } = null!;
         public virtual DbSet<TaccessRule> TaccessRules { get; set; } = null!;
         public virtual DbSet<Tkiosk> Tkiosks { get; set; } = null!;
+        public virtual DbSet<Tslideshow> Tslideshows { get; set; } = null!;
         public virtual DbSet<Tstation> Tstations { get; set; } = null!;
         public virtual DbSet<Tuser> Tusers { get; set; } = null!;
         public virtual DbSet<TuserGroup> TuserGroups { get; set; } = null!;
@@ -282,6 +283,69 @@ namespace KMS.Models
                     .HasColumnName("webServices");
             });
 
+            modelBuilder.Entity<Tslideshow>(entity =>
+            {
+                entity.ToTable("TSlideshow");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.CreateByUserId).HasColumnName("createByUserID");
+
+                entity.Property(e => e.DateCreated)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateCreated");
+
+                entity.Property(e => e.DateModified)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateModified");
+
+                entity.Property(e => e.Description)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("description");
+
+                entity.Property(e => e.EndDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("endDate");
+
+                entity.Property(e => e.FileType)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("fileType");
+
+                entity.Property(e => e.Imagevideo)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("imagevideo");
+
+                entity.Property(e => e.PackageName)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("packageName");
+
+                entity.Property(e => e.Scrolltext1)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("scrolltext1");
+
+                entity.Property(e => e.Scrolltext2)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("scrolltext2");
+
+                entity.Property(e => e.Sequence).HasColumnName("sequence");
+
+                entity.Property(e => e.StartDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("startDate");
+
+                entity.Property(e => e.StationId).HasColumnName("stationID");
+
+                entity.Property(e => e.Timer).HasColumnName("timer");
+
+                entity.Property(e => e.UpdatedByUserId).HasColumnName("updatedByUserID");
+            });
+
             modelBuilder.Entity<Tstation>(entity =>
             {
                 entity.ToTable("TStation");
@@ -293,7 +357,10 @@ namespace KMS.Models
                     .IsUnicode(false)
                     .HasColumnName("address");
 
-                entity.Property(e => e.City).HasColumnName("city");
+                entity.Property(e => e.City)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("city");
 
                 entity.Property(e => e.CompanyName)
                     .HasMaxLength(255)
