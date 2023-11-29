@@ -1,0 +1,42 @@
+
+
+#components-form-demo-normal-login .login-form-forgot {
+    float: right;
+}
+
+#components-form-demo-normal-login .ant-col-rtl .login-form-forgot {
+    float: left;
+}
+
+#components-form-demo-normal-login .login-form-button {
+    width: 100%;
+}
+.css-bytlsb-MuiGrid2-root {
+    
+}
+
+:where(.css-dev-only-do-not-override-xu9wm8).ant-btn-primary {
+    background-color: #655BD3;
+}
+:where(.css-dev-only-do-not-override-xu9wm8) a {
+    color: #655BD3;
+}
+.formlogin {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+    margin: auto;
+}
+.login-form {
+    max-width: 300px;
+    width: 100%;
+    padding: 16px;
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+.css-1pi8xg4-MuiGrid2-root {
+    
+}

@@ -1,0 +1,15 @@
+h1, h2, h3, h4, h5, h6, p {
+    font-family: 'DM Sans', sans-serif;
+}
+.demo-logo {
+    display:flex;
+    margin-top: 0px;
+    align-items: center;
+}
+.logo{
+    width:256px;
+    margin-left: -10px;
+}
+.css-dev-only-do-not-override-xu9wm8 {
+    padding: 0px !important;
+}

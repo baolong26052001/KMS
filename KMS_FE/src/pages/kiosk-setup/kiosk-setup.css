@@ -1,0 +1,11 @@
+.MuiDataGrid-cell--withRenderer.MuiDataGrid-cell.MuiDataGrid-cell--textLeft.MuiDataGrid-withBorderColor {
+    place-content: center;
+}
+
+.MuiDataGrid-columnHeaderTitleContainer {
+    place-content: center;
+}
+
+.MuiDataGrid-cell.MuiDataGrid-cell--textLeft.MuiDataGrid-withBorderColor {
+    justify-content: center;
+}
