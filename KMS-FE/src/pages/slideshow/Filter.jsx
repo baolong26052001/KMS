@@ -6,6 +6,9 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Grid from '@mui/material/Grid';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -18,44 +21,12 @@ const MenuProps = {
   },
 };
 
-const stations = [
-  'Sai Gon',
-  'Ha Noi',
-  'Nha Trang',
-  'Vung Tau',
-  'Binh Duong',
-  'Da Nang',
-];
-
-const countries = [
-  'VietNam',
-  'Singapore',
-];
 
 const packages = [
   'Ads Promotion',
   'Slide show'
 ];
 
-
-
-function getStation(station, stationName, theme) {
-  return {
-    fontWeight:
-    stationName.indexOf(station) === -1
-        ? theme.typography.fontWeightRegular
-        : theme.typography.fontWeightMedium,
-  };
-}
-
-function getCountries(country, countryName, theme) {
-    return {
-      fontWeight:
-      countryName.indexOf(country) === -1
-          ? theme.typography.fontWeightRegular
-          : theme.typography.fontWeightMedium,
-    };
-  }
 
 function getPackages(kpackage, packageName, theme) {
     return {
@@ -68,31 +39,9 @@ function getPackages(kpackage, packageName, theme) {
 
 export default function Filter() {
   const theme = useTheme();
-  const [stationName, setStationName] = React.useState([]);
-
-  const [countryName, setCountry] = React.useState([]);
 
   const [packageName, setPackage] = React.useState([]);
 
-  const handleChangeStation = (event) => {
-    const {
-      target: { value },
-    } = event;
-    setStationName(
-      // On autofill we get a stringified value.
-      typeof value === 'string' ? value.split(',') : value,
-    );
-  };
-
-  const handleChangeCountry = (event) => {
-    const {
-      target: { value },
-    } = event;
-    setCountry(
-      // On autofill we get a stringified value.
-      typeof value === 'string' ? value.split(',') : value,
-    );
-  };
 
   const handleChangePackage = (event) => {
     const {
@@ -109,55 +58,21 @@ export default function Filter() {
 
         <Grid container spacing={6}>
             <Grid item xs={4}>
-                <FormControl sx={{ mb: 4, mt: 2, minWidth: 350}}>
-                    <InputLabel id="group-name-label">From Date</InputLabel>
-                    <Select
-                    labelId="country-name-label"
-                    id="country-name"
-                    multiple
-                    value={countryName}
-                    onChange={handleChangeCountry}
-                    input={<OutlinedInput label="Country" />}
-                    MenuProps={MenuProps}
-                    >
-                    {countries.map((country) => (
-                        <MenuItem
-                        key={country}
-                        value={country}
-                        style={getCountries(country, countryName, theme)}
-                        >
-                        {country}
-                        </MenuItem>
-                    ))}
-                    </Select>
+                <FormControl fullWidth sx={{ mb: 4, mt: 2, minWidth: 350}}>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker label="From Date" />
+                  </LocalizationProvider>
                 </FormControl>
             </Grid>
             <Grid item xs={4}>
-                <FormControl sx={{ mb: 4, mt: 2, minWidth: 350}}>
-                    <InputLabel id="group-name-label">To Date</InputLabel>
-                    <Select
-                    labelId="group-name-label"
-                    id="group-name"
-                    multiple
-                    value={stationName}
-                    onChange={handleChangeStation}
-                    input={<OutlinedInput label="Name" />}
-                    MenuProps={MenuProps}
-                    >
-                    {stations.map((station) => (
-                        <MenuItem
-                        key={station}
-                        value={station}
-                        style={getStation(station, stationName, theme)}
-                        >
-                        {station}
-                        </MenuItem>
-                    ))}
-                    </Select>
+            <FormControl fullWidth sx={{ mb: 4, mt: 2, minWidth: 350}}>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker label="To Date" />
+                  </LocalizationProvider>
                 </FormControl>
             </Grid>
             <Grid item xs={4}>
-                <FormControl sx={{ mb: 4, mt: 2, minWidth: 350}}>
+                <FormControl fullWidth sx={{ mb: 4, mt: 2, minWidth: 350}}>
                     <InputLabel id="group-name-label">Package</InputLabel>
                     <Select
                     labelId="group-name-label"
@@ -165,7 +80,7 @@ export default function Filter() {
                     multiple
                     value={packageName}
                     onChange={handleChangePackage}
-                    input={<OutlinedInput label="Name" />}
+                    input={<OutlinedInput label="Package" />}
                     MenuProps={MenuProps}
                     >
                     {packages.map((kpackage) => (

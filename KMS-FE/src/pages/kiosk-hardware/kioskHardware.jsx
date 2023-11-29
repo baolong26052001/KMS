@@ -50,26 +50,29 @@ const columns = [
       />
     ),
   },
-  { field: 'id', headerName: 'Kiosk ID', flex: 1, },
-  { field: 'memory', headerName: 'Availble Memory', flex: 2, },
-  { field: 'ipAddress', headerName: 'Lan IP Address', flex: 2,},
+  { field: 'id', headerName: 'Kiosk ID', minWidth: 100, flex: 1, },
+  { field: 'memory', headerName: 'Availble Memory', minWidth: 140, flex: 1, },
+  { field: 'ipAddress', headerName: 'Lan IP Address', minWidth: 140, flex: 1, },
   {
     field: 'osName',
     headerName: 'OS Name',
     sortable: false,
-    flex: 1.2,
+    minWidth: 120,
+    flex: 1,
   },
   {
     field: 'osPlatform',
     headerName: 'OS Platform',
     sortable: false,
+    minWidth: 120,
     flex: 1,
   },
   {
     field: 'osVersion',
     headerName: 'OS Version',
     sortable: false,
-    flex: 3,
+    minWidth: 300,
+    flex: 1,
   },
 ];
 
@@ -119,7 +122,7 @@ const KioskHardware = () => {
                             paginationModel: { page: 0, pageSize: 5 },
                         },
                         }}
-                        pageSizeOptions={[5, 10]}
+                        pageSizeOptions={[5, 10, 25, 50]}
                         checkboxSelection
                     />
                 </div>

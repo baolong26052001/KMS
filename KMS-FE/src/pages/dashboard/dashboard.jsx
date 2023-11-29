@@ -29,44 +29,52 @@ import { auto } from '@popperjs/core';
 
 
 const columns = [
-    { field: 'id', headerName: 'Kiosk ID', flex: 1 },
-    { field: 'kioskName', headerName: 'Kiosk Name', flex: 1 },
-    { field: 'stationCode', headerName: 'Station', flex: 1 },
+    { field: 'id', headerName: 'Kiosk ID', minWidth: 100, flex: 1 },
+    { field: 'kioskName', headerName: 'Kiosk Name', minWidth: 100, flex: 1 },
+    { field: 'stationCode', headerName: 'Station', minWidth: 100, flex: 1 },
     {
       field: 'kioskStatus',
       headerName: 'Kiosk Heart Beat Update',
       sortable: false,
-    //   type: 'number',
-        flex: 2,
+      minWidth: 200, 
+      flex: 1,
     },
     {
       field: 'camStatus',
       headerName: 'Camera Last Update',
       sortable: false,
-      flex: 2,
+      minWidth: 200, 
+      flex: 1,
     },
     {
         field: 'scannerStatus',
         headerName: 'Scanner Last Update',
         sortable: false,
-        flex: 2,
+        minWidth: 200, 
+        flex: 1,
     },
     {
         field: 'cashDeStatus',
         headerName: 'Cash Deposit Last Update',
         sortable: false,
-        flex: 2,
+        minWidth: 200, 
+        flex: 1,
      },
   ];
 
-  const rows = [
-    { id: 1, kioskName: 'K001', stationCode: 'SaiGon', kioskStatus: '24-12-2023', camStatus: '24-12-2023', scannerStatus: '24-12-2023', cashDeStatus: '24-12-2023' },
-    { id: 2, kioskName: 'K002', stationCode: 'SaiGon', kioskStatus: '24-12-2023', camStatus: '24-12-2023', scannerStatus: '24-12-2023', cashDeStatus: '24-12-2023' },
-    { id: 3, kioskName: 'K003', stationCode: 'SaiGon', kioskStatus: '24-12-2023', camStatus: '24-12-2023', scannerStatus: '24-12-2023', cashDeStatus: '24-12-2023' },
-    { id: 4, kioskName: 'K004', stationCode: 'SaiGon', kioskStatus: '24-12-2023', camStatus: '24-12-2023', scannerStatus: '24-12-2023', cashDeStatus: '24-12-2023' },
-    { id: 5, kioskName: 'K005', stationCode: 'Ha Noi', kioskStatus: '24-12-2023', camStatus: '24-12-2023', scannerStatus: '24-12-2023', cashDeStatus: '24-12-2023' },
-    { id: 6, kioskName: 'K006', stationCode: 'Binh Duong', kioskStatus: '24-12-2023', camStatus: '24-12-2023', scannerStatus: '24-12-2023', cashDeStatus: '24-12-2023' },
+  function createData(id, kioskName, stationCode, kioskStatus, camStatus, scannerStatus, cashDeStatus) {
+    return {id, kioskName, stationCode, kioskStatus, camStatus, scannerStatus, cashDeStatus};
+  }
 
+  const rows = [
+    createData(1, 'K001', 'SaiGon', '24-12-2023', '24-12-2023',  '24-12-2023', '24-12-2023' ),
+    createData(2, 'K002', 'SaiGon', '24-12-2023', '24-12-2023',  '24-12-2023', '24-12-2023' ),
+    createData(3, 'K003', 'SaiGon', '24-12-2023', '24-12-2023',  '24-12-2023', '24-12-2023' ),
+    createData(4, 'K004', 'HaNoi', '24-12-2023', '24-12-2023',  '24-12-2023', '24-12-2023' ),
+    createData(5, 'K005', 'HaNoi', '24-12-2023', '24-12-2023',  '24-12-2023', '24-12-2023' ),
+    createData(6, 'K006', 'Binh Duong', '24-12-2023', '24-12-2023',  '24-12-2023', '24-12-2023' ),
+    createData(7, 'K007', 'Nha Trang', '24-12-2023', '24-12-2023',  '24-12-2023', '24-12-2023' ),
+    createData(8, 'K008', 'Da Nang', '24-12-2023', '24-12-2023',  '24-12-2023', '24-12-2023' ),
   ];
 
 const Dashboard = () => {
@@ -88,111 +96,6 @@ const Dashboard = () => {
         return sortConfig.direction === 'ascending' ? <span class="arrow">&#9660;</span> : <span class="arrow">&#9650;</span>;;
     };
       
-
-
-
-    // const data = [
-
-    //     { 
-    //         kioskName: 'Kiosk 123', 
-    //         kioskID: 123, 
-    //         stationCode: 258, 
-    //         heartbeatUpdate: '24-01-2023', 
-    //         cameraUpdate: '24-01-2023', 
-    //         scannerUpdate: '24-01-2023', 
-    //         cashDepositUpdate: '24-01-2023'
-    //     },
-
-    //     { 
-    //         kioskName: 'Kiosk 124', 
-    //         kioskID: 124, 
-    //         stationCode: 258, 
-    //         heartbeatUpdate: '24-01-2023', 
-    //         cameraUpdate: '24-01-2023', 
-    //         scannerUpdate: '24-01-2023', 
-    //         cashDepositUpdate: '24-01-2023' 
-    //     },
-
-    //     { 
-    //         kioskName: 'Kiosk 125', 
-    //         kioskID: 125, 
-    //         stationCode: 258, 
-    //         heartbeatUpdate: '24-01-2023', 
-    //         cameraUpdate: '24-01-2023', 
-    //         scannerUpdate: '24-01-2023', 
-    //         cashDepositUpdate: '24-01-2023' 
-    //     },
-        
-    //     { 
-    //         kioskName: 'Kiosk 126', 
-    //         kioskID: 126, 
-    //         stationCode: 3213, 
-    //         heartbeatUpdate: '24-01-2023', 
-    //         cameraUpdate: '24-01-2023', 
-    //         scannerUpdate: '24-01-2023', 
-    //         cashDepositUpdate: '24-01-2023' 
-    //     },
-
-    //     { 
-    //         kioskName: 'Kiosk 127', 
-    //         kioskID: 127, 
-    //         stationCode: 3213, 
-    //         heartbeatUpdate: '24-01-2023', 
-    //         cameraUpdate: '24-01-2023', 
-    //         scannerUpdate: '24-01-2023', 
-    //         cashDepositUpdate: '24-01-2023' 
-    //     },
-
-    //     { 
-    //         kioskName: 'Kiosk 128', 
-    //         kioskID: 128, 
-    //         stationCode: 3213, 
-    //         heartbeatUpdate: '24-01-2023', 
-    //         cameraUpdate: '24-01-2023', 
-    //         scannerUpdate: '24-01-2023', 
-    //         cashDepositUpdate: '24-01-2023' 
-    //     },
-
-        
-    //   ];
-      
-    //   const handleSearch = (event) => {
-    //     setSearchTerm(event.target.value);
-    //   };
-      
-    //   const handleSort = (key) => {
-    //     let direction = 'ascending';
-    //     if (sortConfig && sortConfig.key === key && sortConfig.direction === 'ascending') {
-    //       direction = 'descending';
-    //     }
-    //     setSortConfig({ key, direction });
-    //   };
-    
-    //   const sortData = (data) => {
-    //     if (sortConfig.key) {
-    //       const sortedData = [...data];
-    //       sortedData.sort((a, b) => {
-    //         const keyA = a[sortConfig.key];
-    //         const keyB = b[sortConfig.key];
-    //         if (keyA < keyB) return sortConfig.direction === 'ascending' ? -1 : 1;
-    //         if (keyA > keyB) return sortConfig.direction === 'ascending' ? 1 : -1;
-    //         return 0;
-    //       });
-    //       return sortedData;
-    //     }
-    //     return data;
-    //   };
-
-    //   const filteredData = sortData(
-    //     data.filter((item) =>
-    //       Object.values(item).some(
-    //         (value) =>
-    //           value &&
-    //           value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-    //       )
-    //     )
-    //   );
-
   return (
     
     <div class="content"> 
@@ -380,8 +283,7 @@ const Dashboard = () => {
                             paginationModel: { page: 0, pageSize: 5 },
                         },
                         }}
-                        pageSizeOptions={[5, 10]}
-                        checkboxSelection
+                        pageSizeOptions={[5, 10, 25, 50]}
                     />
                 </div>
                 

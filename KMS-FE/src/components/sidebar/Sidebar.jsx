@@ -1,13 +1,23 @@
 // import './slidebar.css';
 import React, { useState } from 'react';
-import { AppstoreOutlined, HomeOutlined, ProfileOutlined, WifiOutlined, CreditCardOutlined, CopyOutlined, BellOutlined, AlignLeftOutlined, UnorderedListOutlined, AccountBookOutlined, MoneyCollectOutlined, FileTextOutlined, LockOutlined, MailOutlined, SettingOutlined, UserOutlined, UsergroupAddOutlined, AppstoreAddOutlined, LaptopOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
+import { AppstoreOutlined, HomeOutlined, ProfileOutlined, WifiOutlined, CreditCardOutlined, CopyOutlined, BellOutlined, UnorderedListOutlined, AccountBookOutlined, MoneyCollectOutlined, FileTextOutlined, LockOutlined,  SettingOutlined, UserOutlined, UsergroupAddOutlined, AppstoreAddOutlined, } from '@ant-design/icons';
 import { Menu } from 'antd';
 import './sidebar.css';
 import { Outlet, Link } from "react-router-dom";
 import { useLocation } from 'react-router-dom';
 import Divider from '@mui/material/Divider';
 
-
+// Import Icon from MUI
+import HealthAndSafetyIcon from '@mui/icons-material/HealthAndSafety';
+import AddModeratorIcon from '@mui/icons-material/AddModerator';
+import SavingsIcon from '@mui/icons-material/Savings';
+import CreditScoreIcon from '@mui/icons-material/CreditScore';
+import VideoSettingsIcon from '@mui/icons-material/VideoSettings';
+import FmdGoodIcon from '@mui/icons-material/FmdGood';
+import HardwareIcon from '@mui/icons-material/Hardware';
+import LogoutIcon from '@mui/icons-material/Logout';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 
 function getItem(label, key, icon, children, type) {
   return {
@@ -28,19 +38,21 @@ const items = [
     getItem('Users', '1', <UserOutlined />),
     getItem('Users Group', '2', <UsergroupAddOutlined />),
     getItem('Kiosk Setup', '3', <AppstoreAddOutlined />),
-    getItem('Kiosk Hardware', '4', <AppstoreAddOutlined />),
-    getItem('Station', '5', <LaptopOutlined />),
-    getItem('Video slideshow setup', '6', <MenuUnfoldOutlined />),
+    getItem('Kiosk Hardware', '4', <HardwareIcon />),
+    getItem('Station', '5', <FmdGoodIcon />),
+    getItem('Video slideshow setup', '6', <VideoSettingsIcon />),
   ]),
-  getItem('Transaction', 'sub2', <AppstoreOutlined />, [
+  getItem('Transaction', 'sub2', <AccountBalanceWalletIcon />, [
     getItem('Account', '7', <LockOutlined />),
-    getItem('Loan Transaction', '8', <FileTextOutlined />),
-    getItem('Saving Transaction', '9', <MoneyCollectOutlined />),
+    getItem('Loan Transaction', '8', <CreditScoreIcon />),
     getItem('Loan Statement', '10', <AccountBookOutlined />),
-    getItem('Saving Statement', '11', <AccountBookOutlined />),
+    getItem('Saving Transaction', '9', <SavingsIcon />),
+    getItem('Saving Statement', '11', <MoneyCollectOutlined />),
+    getItem('Insurance Transaction', '19', <AddModeratorIcon />),
+    getItem('Insurance Package', '20', <HealthAndSafetyIcon />),
   ]),
   getItem('Logs', 'sub3', <ProfileOutlined />, [
-    getItem('Transaction Logs', '12', <UnorderedListOutlined />),
+    getItem('Transaction Logs', '12', <ReceiptLongIcon />),
     getItem('Activity Logs', '13', <CopyOutlined />),
     getItem('Notification Logs', '14', <BellOutlined />),
     getItem('Audit', '15', <CreditCardOutlined />),
@@ -49,7 +61,7 @@ const items = [
     getItem('Kiosk Health', '16', <WifiOutlined />),
     
   ]),
-  getItem('Logout', '18', <HomeOutlined />),
+  getItem('Logout', '18', <LogoutIcon />),
 ];
 
 // submenu keys of first level

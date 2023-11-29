@@ -85,7 +85,7 @@ export default function UserFilter() {
 
         <Grid container spacing={5}>
             <Grid item xs={4}>
-                <FormControl sx={{ mb: 4, mt: 2, minWidth: 350}}>
+                <FormControl fullWidth sx={{ mb: 4, mt: 2, minWidth: 350}}>
                     <InputLabel id="group-name-label">Group Name</InputLabel>
                     <Select
                     labelId="group-name-label"
@@ -93,7 +93,7 @@ export default function UserFilter() {
                     multiple
                     value={personName}
                     onChange={handleChange}
-                    input={<OutlinedInput label="Name" />}
+                    input={<OutlinedInput label="Group Name" />}
                     MenuProps={MenuProps}
                     >
                     {names.map((name) => (
@@ -109,14 +109,14 @@ export default function UserFilter() {
                 </FormControl>
             </Grid>
             <Grid item xs={4}>
-                <FormControl sx={{ mb: 4, mt: 2, minWidth: 350, placeItems: 'right' }}>
+                <FormControl fullWidth sx={{ mb: 4, mt: 2, minWidth: 350, placeItems: 'right' }}>
                     <InputLabel id="active-label">Active</InputLabel>
                     <Select
                     labelId="active-label"
                     id="active"
                     value={isActive}
                     onChange={handleChangeStatus}
-                    input={<OutlinedInput label="Status" />}
+                    input={<OutlinedInput label="Active" />}
                     MenuProps={MenuProps}
                     >
                     {statuss.map((status) => (

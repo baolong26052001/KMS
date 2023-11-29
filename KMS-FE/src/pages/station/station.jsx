@@ -48,17 +48,16 @@ const EditButton = ({ rowId, label, onClick }) => {
 function createData(id, stationName, companyName, city, address, isActive) {
   return {id, stationName, companyName, city, address, isActive};
 }
-
 const columns = [
   {
     field: 'viewButton',
     headerName: '',
     width: 80,
     disableColumnMenu: true,
-    sortable: false, // Disable sorting for this column
-    filterable: false, // Disable filtering for this column
+    sortable: false,
+    filterable: false,
     renderCell: (params) => (
-        <ViewButton
+      <ViewButton
         rowId={params.row.id}
         label="View"
         onClick={handleButtonClick}
@@ -70,33 +69,39 @@ const columns = [
     headerName: '',
     width: 80,
     disableColumnMenu: true,
-    sortable: false, // Disable sorting for this column
-    filterable: false, // Disable filtering for this column
+    sortable: false,
+    filterable: false,
     renderCell: (params) => (
-        <EditButton
+      <EditButton
         rowId={params.row.id}
         label="Edit"
         onClick={handleButtonClick}
       />
     ),
   },
-  { field: 'id', headerName: 'Station ID', minWidth: 100, },
-  { field: 'stationName', headerName: 'Station Name', minWidth: 150, },
-  { field: 'companyName', headerName: 'Company Name', minWidth: 150, },
-  { field: 'city', headerName: 'City', minWidth: 120,},
+  { field: 'id', headerName: 'Station ID', minWidth: 100, flex: 1 },
+  { field: 'stationName', headerName: 'Station Name', minWidth: 150, flex: 1 },
+  { field: 'companyName', headerName: 'Company Name', minWidth: 150, flex: 1 },
+  { field: 'city', headerName: 'City', minWidth: 120, flex: 1 },
   {
     field: 'address',
     headerName: 'Address',
     minWidth: 350,
+    flex: 1,
+    renderCell: (params) => (
+      <div style={{ whiteSpace: 'pre-wrap' }}>{params.value}</div>
+    ),
   },
   {
     field: 'isActive',
     headerName: 'Is Active',
     sortable: false,
     minWidth: 100,
-    valueFormatter: (params) => (params.value ? 'Yes' : 'No'),
+    flex: 1,
   },
 ];
+
+
 
 const rows = [
   createData(1, 'INT - SaiGon', 'Intel', 'Sai Gon', 'Hi-Tech Park, Lô I2, Đ. D1, Phường Tân Phú, Quận 9, Thành phố Hồ Chí Minh, Vietnam', 'Yes'),
@@ -114,23 +119,7 @@ const Station = () => {
     const handleSearchButton = () => {
         setSearchTerm(searchTermButton);
     };
-  const [rows, setRows] = useState([]);
-  const getRowId = (row) => row.id;
-  const API_URL = "http://localhost:5000/";
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch(`${API_URL}api/Station/ShowStation`);
-        const data = await response.json();
-        setRows(data); // Update the component state with the fetched data
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    }
-
-    fetchData();
-  }, []); // Empty dependency array to run the effect once when the component mounts
 
   return (
     
@@ -154,7 +143,6 @@ const Station = () => {
                     <DataGrid
                       rows={rows}
                       columns={columns}
-                      getRowId={getRowId}
                       initialState={{
                       pagination: {
                           paginationModel: { page: 0, pageSize: 5 },

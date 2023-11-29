@@ -24,12 +24,10 @@ const stations = [
 ];
 
 const countries = [
-  'Sai Gon',
-  'Ha Noi',
-  'Nha Trang',
-  'Vung Tau',
-  'Binh Duong',
-  'Da Nang',
+  'INT - SaiGon',
+  'INT - Hanoi',
+  'AMD - SaiGon',
+  'AMD - Hanoi',
 ];
 
 
@@ -37,7 +35,10 @@ const countries = [
 const packages = [
   'Sai Gon',
   'Ha Noi',
-  'Nha Trang'
+  'Nha Trang',
+  'Vung Tau',
+  'Binh Duong',
+  'Da Nang',
 ];
 
 
@@ -112,7 +113,7 @@ export default function Filter() {
 
         <Grid container spacing={6}>
             <Grid item xs={4}>
-                <FormControl sx={{ mb: 4, mt: 2, minWidth: 350}}>
+                <FormControl fullWidth sx={{ mb: 4, mt: 2, minWidth: 350}}>
                     <InputLabel id="group-name-label">Station Name</InputLabel>
                     <Select
                     labelId="country-name-label"
@@ -120,7 +121,7 @@ export default function Filter() {
                     multiple
                     value={countryName}
                     onChange={handleChangeCountry}
-                    input={<OutlinedInput label="Country" />}
+                    input={<OutlinedInput label="Station Name" />}
                     MenuProps={MenuProps}
                     >
                     {countries.map((country) => (
@@ -136,15 +137,14 @@ export default function Filter() {
                 </FormControl>
             </Grid>
             <Grid item xs={4}>
-                <FormControl sx={{ mb: 4, mt: 2, minWidth: 350}}>
+                <FormControl fullWidth sx={{ mb: 4, mt: 2, minWidth: 350}}>
                     <InputLabel id="group-name-label">Company Name</InputLabel>
                     <Select
                     labelId="group-name-label"
                     id="group-name"
-                    multiple
                     value={stationName}
                     onChange={handleChangeStation}
-                    input={<OutlinedInput label="Name" />}
+                    input={<OutlinedInput label=" Company Name" />}
                     MenuProps={MenuProps}
                     >
                     {stations.map((station) => (
@@ -160,15 +160,14 @@ export default function Filter() {
                 </FormControl>
             </Grid>
             <Grid item xs={4}>
-                <FormControl sx={{ mb: 4, mt: 2, minWidth: 350}}>
+                <FormControl fullWidth sx={{ mb: 4, mt: 2, minWidth: 350}}>
                     <InputLabel id="group-name-label">City</InputLabel>
                     <Select
                     labelId="group-name-label"
                     id="group-name"
-                    multiple
                     value={packageName}
                     onChange={handleChangePackage}
-                    input={<OutlinedInput label="Name" />}
+                    input={<OutlinedInput label="City" />}
                     MenuProps={MenuProps}
                     >
                     {packages.map((kpackage) => (

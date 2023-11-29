@@ -85,11 +85,11 @@ const App = () => {
                     element={<RouteSlideshow />}
                   />
 
-                <Route path="/account" element={<EmptyPage />} />
-                <Route path="/loantransaction" element={<EmptyPage />} />
-                <Route path="/savingtransaction" element={<EmptyPage />} />
-                <Route path="/loanstatement" element={<EmptyPage />} />
-                <Route path="/savingstatement" element={<EmptyPage />} />
+                <Route path="/account" element={<RouteAccount />} />
+                <Route path="/loantransaction" element={<RouteLoanTransaction />} />
+                <Route path="/savingtransaction" element={<RouteSavingTransaction />} />
+                <Route path="/loanstatement" element={<RouteLoanStatement />} />
+                <Route path="/savingstatement" element={<RouteSavingStatement />} />
                 <Route path="/transactionlogs" element={<EmptyPage />} />
                 <Route path="/activitylogs" element={<EmptyPage />} />
                 <Route path="/notificationlogs" element={<EmptyPage />} />
@@ -206,6 +206,75 @@ const RouteStation = () => {
   return <Station />
 };
 
+const RouteAccount = () => {
+  const [Account, setAccount] = React.useState(null);
+  React.useEffect(() => {
+    import('./pages/Account/account').then((module) => {
+      setAccount(() => module.default);
+    });
+  }, []);
+
+  if (!Account) {
+    return null;
+  }
+  return <Account />
+};
+
+const RouteLoanTransaction = () => {
+  const [LoanTransaction, setLoanTransaction] = React.useState(null);
+  React.useEffect(() => {
+    import('./pages/LoanTransaction/loanTransaction').then((module) => {
+      setLoanTransaction(() => module.default);
+    });
+  }, []);
+
+  if (!LoanTransaction) {
+    return null;
+  }
+  return <LoanTransaction />
+};
+
+const RouteLoanStatement = () => {
+  const [LoanStatement, setLoanStatement] = React.useState(null);
+  React.useEffect(() => {
+    import('./pages/loanStatement/loanStatement').then((module) => {
+      setLoanStatement(() => module.default);
+    });
+  }, []);
+
+  if (!LoanStatement) {
+    return null;
+  }
+  return <LoanStatement />
+};
+
+const RouteSavingTransaction = () => {
+  const [SavingTransaction, setModule] = React.useState(null);
+  React.useEffect(() => {
+    import('./pages/savingTransaction/savingTransaction').then((module) => {
+      setModule(() => module.default);
+    });
+  }, []);
+
+  if (!SavingTransaction) {
+    return null;
+  }
+  return <SavingTransaction />
+};
+
+const RouteSavingStatement = () => {
+  const [SavingStatement, setModule] = React.useState(null);
+  React.useEffect(() => {
+    import('./pages/savingStatement/savingStatement').then((module) => {
+      setModule(() => module.default);
+    });
+  }, []);
+
+  if (!SavingStatement) {
+    return null;
+  }
+  return <SavingStatement />
+};
 
 
 export default App;

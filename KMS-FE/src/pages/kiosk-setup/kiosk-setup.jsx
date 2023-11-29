@@ -245,22 +245,12 @@ const handleButtonClick = (id) => {
 
 const KioskSetup = () => {
     const [searchTerm, setSearchTerm] = useState('');
-    const [selectedRows, setSelectedRows] = useState([]);
-    const [selectAllChecked, setSelectAllChecked] = useState(false);
-    const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
 
     const [searchTermButton, setSearchTermButton] = useState('');
 
     const handleSearchButton = () => {
         setSearchTerm(searchTermButton);
     };
-
-    // const history = useHistory();
-
-    // const handleButtonClick = (id) => {
-    //   // Navigate to another page using React Router
-    //   history.push(``);
-    // };
 
   return (
     
@@ -274,6 +264,7 @@ const KioskSetup = () => {
               <div className='Filter'>
                 <KioskFilter />
               </div>
+              
                 <div className="searchdivuser">
                     <input onChange={(event) => setSearchTermButton(event.target.value)} placeholder="  Search..." type="text" id="kioskID myInput" name="kioskID" class="searchbar"></input>
                     <input onClick={handleSearchButton} type="button" value="Search" className="button button-search"></input>

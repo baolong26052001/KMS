@@ -12,7 +12,7 @@ import { Button, Box } from '@mui/material';
 import './User.css';
 import { Flex } from 'antd';
 
-const getRowUsername = (row) => row.userName;
+
 
 const ViewButton = ({ rowId, label, onClick }) => {
   const handleClick = (event) => {
@@ -50,7 +50,7 @@ function createData(id, userName, email, userGroup, isActive, lastLogin, totalDa
 
 const columns = [
   {
-    field: 'viewButton',
+    field: 'permissionButton',
     headerName: '',
     width: 80,
     sortable: false, // Disable sorting for this column
@@ -59,7 +59,7 @@ const columns = [
         <ViewButton
         rowId={params.row.id}
         label="View"
-        onClick={() => handleButtonClick(params.row.id)}
+        onClick={handleButtonClick}
       />
     ),
   },
@@ -77,33 +77,36 @@ const columns = [
       />
     ),
   },
-  { field: 'id', headerName: 'Group ID', minWidth: 100, },
-  { field: 'fullname', headerName: 'Full Name', minWidth: 120, },
-  { field: 'email', headerName: 'Email', minWidth: 200,},
+  { field: 'id', headerName: 'Group ID', minWidth: 100, flex: 1,},
+  { field: 'userName', headerName: 'Name', minWidth: 120, flex: 1,},
+  { field: 'email', headerName: 'Email', minWidth: 200, flex: 1,},
   {
-    field: 'groupName',
+    field: 'userGroup',
     headerName: 'Group Name',
     sortable: false,
     minWidth: 120,
+    flex: 1,
   },
   {
     field: 'isActive',
     headerName: 'Is Active',
     sortable: false,
     minWidth: 100,
-    valueFormatter: (params) => (params.value ? 'Yes' : 'No'),
+    flex: 1,
   },
   {
     field: 'lastLogin',
     headerName: 'Last Login',
     sortable: false,
     minWidth: 180,
+    flex: 1,
   },
   {
-    field: 'TotalDaysDormant',
+    field: 'totalDaysDormant',
     headerName: 'Total Days Dormant',
     sortable: false,
-    minWidth: 150,
+    minWidth: 160,
+    flex: 1,
   },
 ];
 
@@ -122,7 +125,8 @@ const rows = [
 
 
 const handleButtonClick = (id) => {
-   console.log(`Button clicked for row with ID: ${id}`);
+  // Handle button click, e.g., navigate to another page
+  console.log(`Button clicked for row with ID: ${id}`);
 };
 
 const User = () => {
@@ -132,7 +136,6 @@ const User = () => {
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
 
     const [searchTermButton, setSearchTermButton] = useState('');
-    const [rows, setRows] = useState([]);
 
     const handleSearchButton = () => {
         setSearchTerm(searchTermButton);
@@ -144,25 +147,6 @@ const User = () => {
     //   // Navigate to another page using React Router
     //   history.push(``);
     // };
-
-  const getRowId = (row) => row.id;
-
-  const API_URL = "http://localhost:5000/";
-  console.log(`${getRowId}`);
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch(`${API_URL}api/User/ShowUsers`);
-        const data = await response.json();
-        setRows(data); // Update the component state with the fetched data
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    }
-
-    fetchData();
-  }, []); // Empty dependency array to run the effect once when the component mounts
-
 
   return (
     
@@ -182,7 +166,6 @@ const User = () => {
                     <DataGrid
                       rows={rows}
                       columns={columns}
-                      getRowId={getRowId}
                       initialState={{
                       pagination: {
                           paginationModel: { page: 0, pageSize: 5 },

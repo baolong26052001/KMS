@@ -109,7 +109,7 @@ export default function KioskFilter() {
 
         <Grid container spacing={6}>
             <Grid item xs={4}>
-                <FormControl sx={{ mb: 4, mt: 2, minWidth: 350}}>
+                <FormControl fullWidth sx={{ mb: 4, mt: 2, minWidth: 350}}>
                     <InputLabel id="group-name-label">Country</InputLabel>
                     <Select
                     labelId="country-name-label"
@@ -133,7 +133,7 @@ export default function KioskFilter() {
                 </FormControl>
             </Grid>
             <Grid item xs={4}>
-                <FormControl sx={{ mb: 4, mt: 2, minWidth: 350}}>
+                <FormControl fullWidth sx={{ mb: 4, mt: 2, minWidth: 350}}>
                     <InputLabel id="group-name-label">Station</InputLabel>
                     <Select
                     labelId="group-name-label"
@@ -157,7 +157,7 @@ export default function KioskFilter() {
                 </FormControl>
             </Grid>
             <Grid item xs={4}>
-                <FormControl sx={{ mb: 4, mt: 2, minWidth: 350}}>
+                <FormControl fullWidth sx={{ mb: 4, mt: 2, minWidth: 350}} >
                     <InputLabel id="group-name-label">Package</InputLabel>
                     <Select
                     labelId="group-name-label"
