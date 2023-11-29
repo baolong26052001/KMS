@@ -24,6 +24,7 @@ namespace KMS.Controllers
         {
             _dbcontext = _context;
             _configuration = configuration;
+
         }
 
         [HttpGet]

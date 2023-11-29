@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using KMS.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.SqlClient;
+using System.Data;
 
 namespace KMS.Controllers
 {
@@ -19,23 +21,24 @@ namespace KMS.Controllers
 
         [HttpGet]
         [Route("ShowKioskSetup")]
-        public async Task<IActionResult> GetKiosk()
+        public JsonResult GetKiosk()
         {
-
-            try
+            string query = "select k.id,  k.kioskName, k.location, st.stationName, ss.packageName, k.kioskStatus, k.cameraStatus, k.cashDepositStatus, k.scannerStatus, k.printerStatus\r\nfrom TKiosk k, TStation st, TSlideshow ss\r\nwhere k.stationCode = st.id and ss.id = k.slidePackage";
+            DataTable table = new DataTable();
+            string sqlDatasource = _configuration.GetConnectionString("DefaultConnection");
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDatasource))
             {
-                List<Tkiosk> listKiosk = _dbcontext.Tkiosks.ToList();
-                if (listKiosk != null)
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
                 {
-                    return Ok(listKiosk);
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                    myCon.Close();
                 }
-                return Ok("There are no kiosk in the database");
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-
+            return new JsonResult(table);
         }
 
         [HttpGet]
