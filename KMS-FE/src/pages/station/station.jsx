@@ -86,7 +86,7 @@ const columns = [
   {
     field: 'address',
     headerName: 'Address',
-    minWidth: 350,
+    minWidth: 200,
     flex: 1,
     renderCell: (params) => (
       <div style={{ whiteSpace: 'pre-wrap' }}>{params.value}</div>
@@ -104,7 +104,7 @@ const columns = [
 
 
 const rows = [
-  createData(1, 'INT - SaiGon', 'Intel', 'Sai Gon', 'Hi-Tech Park, Lô I2, Đ. D1, Phường Tân Phú, Quận 9, Thành phố Hồ Chí Minh, Vietnam', 'Yes'),
+  // createData(1, 'INT - SaiGon', 'Intel', 'Sai Gon', 'Hi-Tech Park, Lô I2, Đ. D1, Phường Tân Phú, Quận 9, Thành phố Hồ Chí Minh, Vietnam', 'Yes'),
 ];
 
 const handleButtonClick = (id) => {
@@ -120,6 +120,34 @@ const Station = () => {
         setSearchTerm(searchTermButton);
     };
 
+    const [rows, setRows] = useState([]);
+
+  // Get id from Database  
+  const getRowId = (row) => row.id;
+  // Get Back-end API URL to connect
+  const API_URL = "https://localhost:7017/";
+
+
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch(`${API_URL}api/Station/ShowStation`);
+        const data = await response.json();
+
+        // Combine fetched data with createData function
+        const updatedRows = data.map((row) =>
+          createData(row.id, row.stationName, row.companyName, row.city, row.address, row.isActive)
+        );
+
+        setRows(updatedRows); // Update the component state with the combined data
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }
+
+    fetchData();
+  }, []);
 
   return (
     
@@ -143,6 +171,7 @@ const Station = () => {
                     <DataGrid
                       rows={rows}
                       columns={columns}
+                      getRowId={getRowId}
                       initialState={{
                       pagination: {
                           paginationModel: { page: 0, pageSize: 5 },
@@ -150,6 +179,7 @@ const Station = () => {
                       }}
                       pageSizeOptions={[5, 10, 25, 50]}
                       checkboxSelection
+                      
                     />
                 </div>
             </div>

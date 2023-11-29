@@ -94,16 +94,28 @@ const ScanHover = () => {
   );
 }
 
+// render when hover on kiosk icon
+const PrinterHover = () => {
+  return (
+    <Tooltip title="Printer Status" placement="top">
+        <img
+          src={require('../../images/Printer.png')}
+          style={{ height: '30px', width: '30px' }}
+        />
+    </Tooltip>
+  );
+}
+
 const statusImages = {
-  Online: require('../../images/online.png'),
-  Offline: require('../../images/offline.png'),
-  NoPaper: require('../../images/nopaper.png'),
-  PaperLow: require('../../images/paperlow.png'),
+  1: require('../../images/online.png'), // Status: Online
+  0: require('../../images/offline.png'), // Status: Offline
+  2: require('../../images/nopaper.png'), // Status: NoPaper
+  3: require('../../images/paperlow.png'), // Status: PaperLow
 };
 
 
-function createData(id, kioskName, country, station, slidePackage, kioskStatus, camStatus, cashDepositStatus, scannerStatus) {
-  return {id, kioskName, country, station, slidePackage, kioskStatus: statusImages[kioskStatus], camStatus: statusImages[camStatus], cashDepositStatus: statusImages[cashDepositStatus], scannerStatus: statusImages[scannerStatus] };
+function createData(id, kioskName, country, station, slidePackage, kioskStatus, camStatus, cashDepositStatus, scannerStatus, printerStatus) {
+  return {id, kioskName, country, station, slidePackage, kioskStatus: statusImages[kioskStatus], camStatus: statusImages[camStatus], cashDepositStatus: statusImages[cashDepositStatus], scannerStatus: statusImages[scannerStatus], printerStatus: statusImages[printerStatus] };
 }
 
 const columns = [
@@ -143,13 +155,13 @@ const columns = [
   {
     field: 'station',
     headerName: 'Station',
-    minWidth: 150,
+    minWidth: 130,
   },
   {
     field: 'slidePackage',
     headerName: 'Slide Show Package',
     sortable: false,
-    minWidth: 200,
+    minWidth: 170,
   },
   {
     field: 'kioskStatus',
@@ -227,15 +239,34 @@ const columns = [
       </div>
     ),
   },
+  {
+    field: 'printerStatus',
+    headerName: 'Printer Status',
+    sortable: false,
+    disableColumnMenu: true,
+    width: 60,
+    renderHeader: () => (
+      <PrinterHover/>
+    ),
+    renderCell: (params) => (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <img
+          src={params.row.printerStatus}
+          alt={`Image for ${params.row.printerStatus}`}
+          style={{ height: '15px', width: '15px' }}
+        />
+      </div>
+    ),
+  },
 ];
 
 const rows = [
-  createData(1, 'Kiosk 1', 'VietNam', 'Sai Gon', 'Ads Promotion', 'PaperLow', 'Online', 'Online', 'Online'),
-  createData(2, 'Kiosk 2', 'VietNam', 'Sai Gon', 'Ads Promotion', 'Online', 'Online', 'Online', 'Online'),
-  createData(3, 'Kiosk 3', 'VietNam', 'Ha Noi', 'Ads Promotion', 'Offline', 'Online', 'PaperLow', 'NoPaper'),
-  createData(4, 'Kiosk 4', 'VietNam', 'Da Nang', 'Ads Promotion', 'NoPaper', 'Offline', 'Online', 'PaperLow'),
-  createData(5, 'Kiosk 5', 'VietNam', 'Nha Trang', 'Ads Promotion', 'Online', 'Offline', 'Online', 'PaperLow'),
-  createData(6, 'Kiosk 6', 'VietNam', 'Nha Trang', 'Ads Promotion', 'Online', 'Offline', 'Online', 'PaperLow'),
+  createData(1, 'Kiosk 1', 'VietNam', 'Sai Gon', 'Ads Promotion', '1', '1', '1', '1', '3'),
+  createData(2, 'Kiosk 2', 'VietNam', 'Sai Gon', 'Ads Promotion', '1', '0', '1', '0', '1'),
+  createData(3, 'Kiosk 3', 'VietNam', 'Ha Noi', 'Ads Promotion', '0', '1', '1', '0', '2'),
+  createData(4, 'Kiosk 4', 'VietNam', 'Da Nang', 'Ads Promotion', '1', '0', '1', '1', '2'),
+  createData(5, 'Kiosk 5', 'VietNam', 'Nha Trang', 'Ads Promotion', '1', '0', '1', '1', '0'),
+  createData(6, 'Kiosk 6', 'VietNam', 'Nha Trang', 'Ads Promotion', '0', '0', '1', '1', '3'),
 ];
 
 const handleButtonClick = (id) => {
