@@ -261,12 +261,12 @@ const columns = [
 ];
 
 const rows = [
-  createData(1, 'Kiosk 1', 'VietNam', 'Sai Gon', 'Ads Promotion', '1', '1', '1', '1', '3'),
-  createData(2, 'Kiosk 2', 'VietNam', 'Sai Gon', 'Ads Promotion', '1', '0', '1', '0', '1'),
-  createData(3, 'Kiosk 3', 'VietNam', 'Ha Noi', 'Ads Promotion', '0', '1', '1', '0', '2'),
-  createData(4, 'Kiosk 4', 'VietNam', 'Da Nang', 'Ads Promotion', '1', '0', '1', '1', '2'),
-  createData(5, 'Kiosk 5', 'VietNam', 'Nha Trang', 'Ads Promotion', '1', '0', '1', '1', '0'),
-  createData(6, 'Kiosk 6', 'VietNam', 'Nha Trang', 'Ads Promotion', '0', '0', '1', '1', '3'),
+  // createData(1, 'Kiosk 1', 'VietNam', 'Sai Gon', 'Ads Promotion', '1', '1', '1', '1', '3'),
+  // createData(2, 'Kiosk 2', 'VietNam', 'Sai Gon', 'Ads Promotion', '1', '0', '1', '0', '1'),
+  // createData(3, 'Kiosk 3', 'VietNam', 'Ha Noi', 'Ads Promotion', '0', '1', '1', '0', '2'),
+  // createData(4, 'Kiosk 4', 'VietNam', 'Da Nang', 'Ads Promotion', '1', '0', '1', '1', '2'),
+  // createData(5, 'Kiosk 5', 'VietNam', 'Nha Trang', 'Ads Promotion', '1', '0', '1', '1', '0'),
+  // createData(6, 'Kiosk 6', 'VietNam', 'Nha Trang', 'Ads Promotion', '0', '0', '1', '1', '3'),
 ];
 
 const handleButtonClick = (id) => {
@@ -283,6 +283,33 @@ const KioskSetup = () => {
         setSearchTerm(searchTermButton);
     };
 
+  const [rows, setRows] = useState([]);
+  // Get id from Database  
+  const getRowId = (row) => row.id;
+  // Get Back-end API URL to connect
+  const API_URL = "https://localhost:7017/";
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch(`${API_URL}api/Kiosk/ShowKioskSetup`);
+        const data = await response.json();
+
+        // Combine fetched data with createData function
+        const updatedRows = data.map((row) =>
+          createData(row.id, row.kioskName, row.location, row.stationName, row.packageName, row.kioskStatus, 
+                    row.cameraStatus, row.cashDepositStatus, row.scannerStatus, row.printerStatus)
+        );
+
+        setRows(updatedRows); // Update the component state with the combined data
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }
+
+    fetchData();
+  }, []);
+
   return (
     
     <div className="content"> 
@@ -297,7 +324,7 @@ const KioskSetup = () => {
               </div>
               
                 <div className="searchdivuser">
-                    <input onChange={(event) => setSearchTermButton(event.target.value)} placeholder="  Search..." type="text" id="kioskID myInput" name="kioskID" class="searchbar"></input>
+                    <input onChange={(event) => setSearchTermButton(event.target.value)} placeholder=" Search..." type="text" id="kioskID myInput" name="kioskID" class="searchbar"></input>
                     <input onClick={handleSearchButton} type="button" value="Search" className="button button-search"></input>
                 </div>
 
@@ -306,6 +333,7 @@ const KioskSetup = () => {
                     <DataGrid
                       rows={rows}
                       columns={columns}
+                      getRowId={getRowId}
                       initialState={{
                       pagination: {
                           paginationModel: { page: 0, pageSize: 5 },
