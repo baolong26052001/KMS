@@ -41,70 +41,104 @@ namespace KMS.Controllers
             return new JsonResult(table);
         }
 
+        [HttpGet]
+        [Route("ShowUsergroup/{id}")]
+        public JsonResult GetUsergroupById(int id)
+        {
+            string query = "SELECT id, groupName, dateModified, dateCreated, isActive " +
+                           "FROM TUserGroup " +
+                           "WHERE id = @Id";
+
+            DataTable table = new DataTable();
+            string sqlDatasource = _configuration.GetConnectionString("DefaultConnection");
+            SqlDataReader myReader;
+
+            using (SqlConnection myCon = new SqlConnection(sqlDatasource))
+            {
+                myCon.Open();
+
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("@Id", id);
+
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                }
+
+                myCon.Close();
+            }
+
+            return new JsonResult(table);
+        }
+
+
         [HttpPost]
         [Route("AddUsergroup")]
-        public IActionResult AddUsergroup([FromBody] TuserGroup usergroup)
+        public JsonResult AddUsergroup([FromBody] TuserGroup usergroup)
         {
-            try
-            {
+            string query = "INSERT INTO TUserGroup (groupName, accessRuleId, dateModified, dateCreated, isActive) " +
+                           "VALUES (@GroupName, @AccessRuleId, GETDATE(), GETDATE(), @IsActive)";
 
-                usergroup.DateCreated = DateTime.Now;
-                usergroup.IsActive = true;
-
-                _dbcontext.TuserGroups.Add(usergroup);
-                _dbcontext.SaveChanges();
-                return Ok("User group added successfully");
-            }
-            catch (Exception ex)
+            using (SqlConnection myCon = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
             {
-                return BadRequest(ex.Message);
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("@GroupName", usergroup.GroupName);
+                    myCommand.Parameters.AddWithValue("@AccessRuleId", usergroup.AccessRuleId);
+                    myCommand.Parameters.AddWithValue("@IsActive", usergroup.IsActive);
+
+                    myCommand.ExecuteNonQuery();
+                }
             }
+            return new JsonResult("Usergroup added successfully");
         }
+
 
         [HttpPut]
         [Route("UpdateUsergroup/{id}")]
-        public IActionResult UpdateUsergroup(int id, [FromBody] TuserGroup updatedUsergroup)
+        public JsonResult UpdateUsergroup(int id, [FromBody] TuserGroup usergroup)
         {
-            try
-            {
-                var existingUsergroup = _dbcontext.TuserGroups.Find(id);
-                if (existingUsergroup != null)
-                {
-                    existingUsergroup.DateModified = DateTime.Now;
-                    // Update properties of existingUsergroup with values from updatedUsergroup
-                    existingUsergroup.GroupName = updatedUsergroup.GroupName;
-                    
+            string query = "UPDATE TUserGroup " +
+                           "SET groupName = @GroupName, accessRuleId = @AccessRuleId,dateModified = GETDATE(), isActive = @IsActive " +
+                           "WHERE id = @Id";
 
-                    _dbcontext.SaveChanges();
-                    return Ok("User group updated successfully");
-                }
-                return NotFound("User group not found");
-            }
-            catch (Exception ex)
+            using (SqlConnection myCon = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
             {
-                return BadRequest(ex.Message);
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("@Id", id);
+                    myCommand.Parameters.AddWithValue("@GroupName", usergroup.GroupName);
+                    myCommand.Parameters.AddWithValue("@AccessRuleId", usergroup.AccessRuleId);
+                    myCommand.Parameters.AddWithValue("@IsActive", usergroup.IsActive);
+
+                    myCommand.ExecuteNonQuery();
+                }
             }
+            return new JsonResult("Usergroup updated successfully");
         }
+
 
         [HttpDelete]
         [Route("DeleteUsergroup/{id}")]
-        public IActionResult DeleteUsergroup(int id)
+        public JsonResult DeleteUsergroup(int id)
         {
-            try
+            string query = "DELETE FROM TUserGroup WHERE id = @Id";
+
+            using (SqlConnection myCon = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
             {
-                var usergroupToDelete = _dbcontext.TuserGroups.Find(id);
-                if (usergroupToDelete != null)
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
                 {
-                    _dbcontext.TuserGroups.Remove(usergroupToDelete);
-                    _dbcontext.SaveChanges();
-                    return Ok("User group deleted successfully");
+                    myCommand.Parameters.AddWithValue("@Id", id);
+
+                    myCommand.ExecuteNonQuery();
                 }
-                return NotFound("User group not found");
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return new JsonResult("Usergroup deleted successfully");
         }
+
     }
 }

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "IJM5zeJQb3r5FJwX4LWfo6T306iozAyMeUG+wIIYb7bmmzqZed6UmR9SOxNBDzXdX4a4NXmS29F7rHz+Q20Mmw==",
+  "dgSpecHash": "2fBQZD+N8c4NP7hX7tZFLIC6Et3MnjAIEj0i1X13XgNsaLIsOaro/KOPMAmxa0W5HOSY/cYVdD8AWvh3HC2BAg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\hung\\Desktop\\KMS\\KMS-BE\\KMS.csproj",
+  "projectFilePath": "C:\\Users\\hung\\Desktop\\Loan-Kiosk\\KMS_BE\\KMS.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\hung\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\hung\\.nuget\\packages\\microsoft.aspnetcore.jsonpatch\\6.0.0\\microsoft.aspnetcore.jsonpatch.6.0.0.nupkg.sha512",

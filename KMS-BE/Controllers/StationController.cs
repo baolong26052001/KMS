@@ -44,96 +44,127 @@ namespace KMS.Controllers
 
         }
 
-        [HttpPost]
-        [Route("AddStation")]
-        public async Task<IActionResult> CreateStation([FromBody] Tstation newStation)
+        [HttpGet]
+        [Route("ShowStation/{id}")]
+        public JsonResult GetStationById(int id)
         {
-            try
-            {
-                var isDuplicateName = await _dbcontext.Tstations
-                    .AnyAsync(s => s.StationName == newStation.StationName);
+            string query = "SELECT id, stationName, companyName, city, address, isActive " +
+                           "FROM TStation " +
+                           "WHERE id = @Id";
 
-                if (isDuplicateName)
+            DataTable table = new DataTable();
+
+            using (SqlConnection myCon = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                myCon.Open();
+
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
                 {
-                    return BadRequest("Station name already exists");
-                }
-                newStation.DateCreated = DateTime.Now;
-                
-                newStation.IsActive = true;
-                _dbcontext.Tstations.Add(newStation);
-                await _dbcontext.SaveChangesAsync();
+                    myCommand.Parameters.AddWithValue("@Id", id);
 
-                return Ok("Station created successfully");
+                    SqlDataReader myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                }
             }
-            catch (Exception ex)
+
+            if (table.Rows.Count > 0)
             {
-                return BadRequest(ex.Message);
+                return new JsonResult(table);
+            }
+            else
+            {
+                return new JsonResult("Station not found");
             }
         }
+
+
+        [HttpPost]
+        [Route("AddStation")]
+        public JsonResult AddStation([FromBody] Tstation station)
+        {
+            // Assuming StationModel is a class representing your station data
+            // Validate the incoming data if necessary
+
+            string query = "INSERT INTO TStation (stationName, companyName, city, address, isActive, dateCreated) " +
+                           "VALUES (@StationName, @CompanyName, @City, @Address, @IsActive, GETDATE())";
+
+            using (SqlConnection myCon = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                myCon.Open();
+
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myCommand.Parameters.AddWithValue("@StationName", station.StationName);
+                    myCommand.Parameters.AddWithValue("@CompanyName", station.CompanyName);
+                    myCommand.Parameters.AddWithValue("@City", station.City);
+                    myCommand.Parameters.AddWithValue("@Address", station.Address);
+                    myCommand.Parameters.AddWithValue("@IsActive", station.IsActive);
+
+                    myCommand.ExecuteNonQuery();
+                }
+            }
+
+            return new JsonResult("Station added successfully");
+        }
+
 
         [HttpPut]
         [Route("UpdateStation/{id}")]
-        public async Task<IActionResult> UpdateStation(int id, [FromBody] Tstation updatedStation)
+        public JsonResult UpdateStation(int id, [FromBody] Tstation station)
         {
-            try
+            // Assuming StationModel is a class representing your station data
+            // Validate the incoming data if necessary
+
+            string query = "UPDATE TStation " +
+                           "SET stationName = @StationName, companyName = @CompanyName, " +
+                           "city = @City, address = @Address,dateModified = GETDATE(), isActive = @IsActive " +
+                           "WHERE id = @Id";
+
+            using (SqlConnection myCon = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
             {
-                var existingStation = await _dbcontext.Tstations.FindAsync(id);
+                myCon.Open();
 
-                if (existingStation == null)
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
                 {
-                    return NotFound("Station not found");
+                    myCommand.Parameters.AddWithValue("@Id", id);
+                    myCommand.Parameters.AddWithValue("@StationName", station.StationName);
+                    myCommand.Parameters.AddWithValue("@CompanyName", station.CompanyName);
+                    myCommand.Parameters.AddWithValue("@City", station.City);
+                    myCommand.Parameters.AddWithValue("@Address", station.Address);
+                    myCommand.Parameters.AddWithValue("@IsActive", station.IsActive);
+
+                    myCommand.ExecuteNonQuery();
                 }
-
-                var isDuplicateName = await _dbcontext.Tstations
-                    .Where(s => s.StationName == updatedStation.StationName && s.Id != id)
-                    .AnyAsync();
-
-                if (isDuplicateName)
-                {
-                    return BadRequest("Station name already exists");
-                }
-
-                existingStation.DateModified = DateTime.Now;
-                existingStation.StationName = updatedStation.StationName;
-                existingStation.CompanyName = updatedStation.CompanyName;
-                existingStation.Address = updatedStation.Address;
-                existingStation.City = updatedStation.City;
-
-                await _dbcontext.SaveChangesAsync();
-
-                return Ok("Station updated successfully");
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+
+            return new JsonResult("Station updated successfully");
         }
 
-        
+
+
 
         [HttpDelete]
         [Route("DeleteStation/{id}")]
-        public async Task<IActionResult> DeleteStation(int id)
+        public JsonResult DeleteStation(int id)
         {
-            try
-            {
-                var existingStation = await _dbcontext.Tstations.FindAsync(id);
+            string query = "DELETE FROM TStation WHERE id = @Id";
 
-                if (existingStation == null)
+            using (SqlConnection myCon = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                myCon.Open();
+
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
                 {
-                    return NotFound("Station not found");
+                    myCommand.Parameters.AddWithValue("@Id", id);
+
+                    myCommand.ExecuteNonQuery();
                 }
-
-                _dbcontext.Tstations.Remove(existingStation);
-                await _dbcontext.SaveChangesAsync();
-
-                return Ok("Station deleted successfully");
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+
+            return new JsonResult("Station deleted successfully");
         }
+
 
 
     }
