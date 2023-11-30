@@ -10,9 +10,8 @@ import { Button, Box, Tooltip } from '@mui/material';
 // import { useHistory } from 'react-router-dom'; // Import useHistory from React Router
 import {Routes, Route, useNavigate} from 'react-router-dom';
 
-//import css
-import './account.css';
-import AccountFilter from './accountFilter';
+//import Filter
+import Filter from '../Account/accountFilter';
 
 
 
@@ -41,8 +40,8 @@ const handleButtonClick = (id) => {
 };
 
 
-function createData(id, memberId, contractId, phoneNumber, department, company, bankName, memberAddress, status, dateCreate) {
-  return {id, memberId, contractId, phoneNumber, department, company, bankName, memberAddress, status, dateCreate};
+function createData(id, kioskId, userId, action, script, field, tableName, ipAddress, macAddress, isActive, dateCreate) {
+  return {id, kioskId, userId, action, script, field, tableName, ipAddress, macAddress, isActive, dateCreate};
 }
 
 const columns = [
@@ -61,51 +60,57 @@ const columns = [
       />
     ),
   },
-  { field: 'id', headerName: 'Account ID', minWidth: 100, flex: 1,},
-  { field: 'memberId', headerName: 'Member ID', minWidth: 100, flex: 1,},
-  { field: 'contractId', headerName: 'Contract ID', minWidth: 100, flex: 1,},
-  { field: 'phoneNumber', headerName: 'Phone Number', minWidth: 150,  
+  { field: 'id', headerName: 'Audit ID', minWidth: 100, flex: 1,},
+  { field: 'kioskId', headerName: 'Kiosk ID', minWidth: 100, flex: 1,},
+  { field: 'userId', headerName: 'User ID', minWidth: 100, flex: 1,},
+  { field: 'action', headerName: 'Activity', minWidth: 150,  
     flex: 1,
     sortable: false,
     disableColumnMenu: true,
   },
   {
-    field: 'department',
-    headerName: 'Department',
+    field: 'script',
+    headerName: 'Script',
     minWidth: 130,
     flex: 1,
     sortable: false,
     disableColumnMenu: true,
   },
   {
-    field: 'company',
-    headerName: 'Company',
+    field: 'field',
+    headerName: 'Field',
+    minWidth: 150,
+    flex: 1,
+    sortable: false,
+    disableColumnMenu: true,
+  },
+  {
+    field: 'tableName',
+    headerName: 'Table Name',
     minWidth: 100,
     flex: 1,
     sortable: false,
     disableColumnMenu: true,
   },
   {
-    field: 'bankName',
-    headerName: 'Bank',
-    minWidth: 100,
+    field: 'ipAddress',
+    headerName: 'IP Address',
+    minWidth: 150,
+    flex: 1,
+    sortable: false,
+    disableColumnMenu: true,
+  },
+  
+  {
+    field: 'macAddress',
+    headerName: 'MAC Address',
+    minWidth: 170,
     flex: 1,
     sortable: false,
     disableColumnMenu: true,
   },
   {
-    field: 'memberAddress',
-    headerName: 'Member Address',
-    minWidth: 300,
-    flex: 1,
-    sortable: false,
-    disableColumnMenu: true,
-    renderCell: (params) => (
-        <div style={{ whiteSpace: 'pre-wrap' }}>{params.value}</div>
-    ),
-  },
-  {
-    field: 'status',
+    field: 'isActive',
     headerName: 'Is Active',
     minWidth: 100,
     flex: 1,
@@ -122,12 +127,12 @@ const columns = [
 ];
 
 const rows = [
-  createData(1, 15, 3462, '0987356324', 'HR', 'AHQ', 'VCB', '1 Đ. Tôn Đức Thắng, Bến Nghé, Quận 1, Thành phố Hồ Chí Minh', 'Yes' , '19-12-2023 14:00:00'),
+  createData(1, 1, 103, 'Add new user', 'script.json', 'Add user NixRon', 'Users', '192.268.1.23', 'A8-7E-EA-DA-4F-D9' , 'Yes' , '19-12-2023 14:00:00'),
 ];
 
 
 
-const Account = () => {
+const Audit = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [searchTermButton, setSearchTermButton] = useState('');
 
@@ -141,12 +146,12 @@ const Account = () => {
     <div className="content"> 
 
         <div className="admin-dashboard-text-div pt-5"> 
-            <h1 className="h1-dashboard">Account</h1>
+            <h1 className="h1-dashboard">Audit</h1>
         </div>
             <div className="bigcarddashboard">
 
               <div className='Filter'>
-                <AccountFilter />
+                <Filter />
               </div>
                 <div className="searchdivuser">
                     <input onChange={(event) => setSearchTermButton(event.target.value)} placeholder="  Search..." type="text" id="kioskID myInput" name="kioskID" class="searchbar"></input>
@@ -176,4 +181,4 @@ const Account = () => {
   )
 }
 
-export default Account;
+export default Audit;

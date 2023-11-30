@@ -10,9 +10,8 @@ import { Button, Box, Tooltip } from '@mui/material';
 // import { useHistory } from 'react-router-dom'; // Import useHistory from React Router
 import {Routes, Route, useNavigate} from 'react-router-dom';
 
-//import css
-import './account.css';
-import AccountFilter from './accountFilter';
+//import Filter
+import Filter from '../Account/accountFilter';
 
 
 
@@ -22,7 +21,6 @@ const ViewButton = ({ rowId, label, onClick }) => {
   const handleClick = (event) => {
     event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
     onClick(rowId);
-    navigate(`/accountView`);
   };
 
   return (
@@ -41,8 +39,8 @@ const handleButtonClick = (id) => {
 };
 
 
-function createData(id, memberId, contractId, phoneNumber, department, company, bankName, memberAddress, status, dateCreate) {
-  return {id, memberId, contractId, phoneNumber, department, company, bankName, memberAddress, status, dateCreate};
+function createData(id, kioskId, hardware, hardwareStatus, station, status, dateCreate) {
+  return {id, kioskId, hardware, hardwareStatus, station, status, dateCreate};
 }
 
 const columns = [
@@ -61,48 +59,21 @@ const columns = [
       />
     ),
   },
-  { field: 'id', headerName: 'Account ID', minWidth: 100, flex: 1,},
-  { field: 'memberId', headerName: 'Member ID', minWidth: 100, flex: 1,},
-  { field: 'contractId', headerName: 'Contract ID', minWidth: 100, flex: 1,},
-  { field: 'phoneNumber', headerName: 'Phone Number', minWidth: 150,  
+  { field: 'id', headerName: 'Acitvity ID', minWidth: 100, flex: 1,},
+  { field: 'kioskId', headerName: 'Kiosk ID', minWidth: 100, flex: 1,},
+  { field: 'hardware', headerName: 'Hardware Name', minWidth: 150, flex: 1,},
+  { field: 'hardwareStatus', headerName: 'Hardware Status', minWidth: 120,  
     flex: 1,
     sortable: false,
     disableColumnMenu: true,
   },
   {
-    field: 'department',
-    headerName: 'Department',
+    field: 'station',
+    headerName: 'Station',
     minWidth: 130,
     flex: 1,
     sortable: false,
     disableColumnMenu: true,
-  },
-  {
-    field: 'company',
-    headerName: 'Company',
-    minWidth: 100,
-    flex: 1,
-    sortable: false,
-    disableColumnMenu: true,
-  },
-  {
-    field: 'bankName',
-    headerName: 'Bank',
-    minWidth: 100,
-    flex: 1,
-    sortable: false,
-    disableColumnMenu: true,
-  },
-  {
-    field: 'memberAddress',
-    headerName: 'Member Address',
-    minWidth: 300,
-    flex: 1,
-    sortable: false,
-    disableColumnMenu: true,
-    renderCell: (params) => (
-        <div style={{ whiteSpace: 'pre-wrap' }}>{params.value}</div>
-    ),
   },
   {
     field: 'status',
@@ -122,12 +93,12 @@ const columns = [
 ];
 
 const rows = [
-  createData(1, 15, 3462, '0987356324', 'HR', 'AHQ', 'VCB', '1 Đ. Tôn Đức Thắng, Bến Nghé, Quận 1, Thành phố Hồ Chí Minh', 'Yes' , '19-12-2023 14:00:00'),
+  createData(1, 1, 'Printer', 'Low Paper', 'INT - SaiGon','Yes' , '19-12-2023 14:00:00'),
 ];
 
 
 
-const Account = () => {
+const ActivityLogs = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [searchTermButton, setSearchTermButton] = useState('');
 
@@ -141,12 +112,12 @@ const Account = () => {
     <div className="content"> 
 
         <div className="admin-dashboard-text-div pt-5"> 
-            <h1 className="h1-dashboard">Account</h1>
+            <h1 className="h1-dashboard">Activity Logs</h1>
         </div>
             <div className="bigcarddashboard">
 
               <div className='Filter'>
-                <AccountFilter />
+                <Filter />
               </div>
                 <div className="searchdivuser">
                     <input onChange={(event) => setSearchTermButton(event.target.value)} placeholder="  Search..." type="text" id="kioskID myInput" name="kioskID" class="searchbar"></input>
@@ -176,4 +147,4 @@ const Account = () => {
   )
 }
 
-export default Account;
+export default ActivityLogs;

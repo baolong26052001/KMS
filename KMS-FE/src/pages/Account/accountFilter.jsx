@@ -22,16 +22,16 @@ const MenuProps = {
 };
 
 
-const packages = [
+const mstatus = [
   'Yes',
   'No'
 ];
 
 
-function getPackages(kpackage, packageName, theme) {
+function getPackages(status, statusName, theme) {
     return {
       fontWeight:
-      packageName.indexOf(kpackage) === -1
+      statusName.indexOf(status) === -1
           ? theme.typography.fontWeightRegular
           : theme.typography.fontWeightMedium,
     };
@@ -40,14 +40,14 @@ function getPackages(kpackage, packageName, theme) {
 export default function AccountFilter() {
   const theme = useTheme();
 
-  const [packageName, setPackage] = React.useState([]);
+  const [statusName, setStatus] = React.useState([]);
 
 
-  const handleChangePackage = (event) => {
+  const handleChangeStatus = (event) => {
     const {
       target: { value },
     } = event;
-    setPackage(
+    setStatus(
       // On autofill we get a stringified value.
       typeof value === 'string' ? value.split(',') : value,
     );
@@ -73,22 +73,22 @@ export default function AccountFilter() {
             </Grid>
             <Grid item xs={4}>
                 <FormControl fullWidth sx={{ mb: 4, mt: 2, minWidth: 350}}>
-                    <InputLabel id="group-name-label">Status</InputLabel>
+                    <InputLabel id="group-name-label">Is Active</InputLabel>
                     <Select
                     labelId="group-name-label"
                     id="group-name"
-                    value={packageName}
-                    onChange={handleChangePackage}
-                    input={<OutlinedInput label="Status" />}
+                    value={statusName}
+                    onChange={handleChangeStatus}
+                    input={<OutlinedInput label="Is Active" />}
                     MenuProps={MenuProps}
                     >
-                    {packages.map((kpackage) => (
+                    {mstatus.map((status) => (
                         <MenuItem
-                        key={kpackage}
-                        value={kpackage}
-                        style={getPackages(kpackage, packageName, theme)}
+                        key={status}
+                        value={status}
+                        style={getPackages(status, statusName, theme)}
                         >
-                        {kpackage}
+                        {status}
                         </MenuItem>
                     ))}
                     </Select>

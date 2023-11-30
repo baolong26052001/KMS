@@ -91,9 +91,9 @@ const App = () => {
                 <Route path="/loanstatement" element={<RouteLoanStatement />} />
                 <Route path="/savingstatement" element={<RouteSavingStatement />} />
                 <Route path="/transactionlogs" element={<RouteTransactionLogs />} />
-                <Route path="/activitylogs" element={<EmptyPage />} />
-                <Route path="/notificationlogs" element={<EmptyPage />} />
-                <Route path="/audit" element={<EmptyPage />} />
+                <Route path="/activitylogs" element={<RouteActivityLogs />} />
+                <Route path="/notificationlogs" element={<RouteNotificationLogs />} />
+                <Route path="/audit" element={<RouteAudit />} />
                 <Route path="/kioskhealth" element={<EmptyPage />} />
                 <Route path="/login" element={<Login />} />
 
@@ -280,6 +280,48 @@ const RouteTransactionLogs = () => {
   const [TransactionLogs, setModule] = React.useState(null);
   React.useEffect(() => {
     import('./pages/transactionLogs/transactionLogs').then((module) => {
+      setModule(() => module.default);
+    });
+  }, []);
+
+  if (!TransactionLogs) {
+    return null;
+  }
+  return <TransactionLogs />
+};
+
+const RouteActivityLogs = () => {
+  const [TransactionLogs, setModule] = React.useState(null);
+  React.useEffect(() => {
+    import('./pages/activityLogs/activityLogs').then((module) => {
+      setModule(() => module.default);
+    });
+  }, []);
+
+  if (!TransactionLogs) {
+    return null;
+  }
+  return <TransactionLogs />
+};
+
+const RouteNotificationLogs = () => {
+  const [TransactionLogs, setModule] = React.useState(null);
+  React.useEffect(() => {
+    import('./pages/notificationLogs/notificationLogs').then((module) => {
+      setModule(() => module.default);
+    });
+  }, []);
+
+  if (!TransactionLogs) {
+    return null;
+  }
+  return <TransactionLogs />
+};
+
+const RouteAudit = () => {
+  const [TransactionLogs, setModule] = React.useState(null);
+  React.useEffect(() => {
+    import('./pages/audit/audit').then((module) => {
       setModule(() => module.default);
     });
   }, []);
