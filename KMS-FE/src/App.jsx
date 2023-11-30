@@ -94,7 +94,7 @@ const App = () => {
                 <Route path="/activitylogs" element={<RouteActivityLogs />} />
                 <Route path="/notificationlogs" element={<RouteNotificationLogs />} />
                 <Route path="/audit" element={<RouteAudit />} />
-                <Route path="/kioskhealth" element={<EmptyPage />} />
+                <Route path="/kioskhealth" element={<RouteKioskHealth />} />
                 <Route path="/login" element={<Login />} />
 
               </Routes>
@@ -332,5 +332,18 @@ const RouteAudit = () => {
   return <TransactionLogs />
 };
 
+const RouteKioskHealth = () => {
+  const [KioskHealth, setModule] = React.useState(null);
+  React.useEffect(() => {
+    import('./pages/kioskHealth/kioskHealth').then((module) => {
+      setModule(() => module.default);
+    });
+  }, []);
+
+  if (!KioskHealth) {
+    return null;
+  }
+  return <KioskHealth />
+};
 
 export default App;

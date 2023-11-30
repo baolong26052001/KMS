@@ -11,7 +11,7 @@ import { Button, Box, Tooltip } from '@mui/material';
 import {Routes, Route, useNavigate} from 'react-router-dom';
 
 //import Filter
-import Filter from '../Account/accountFilter';
+import Filter from './Filter';
 
 const ViewButton = ({ rowId, label, onClick }) => {
   const navigate = useNavigate();
@@ -38,8 +38,8 @@ const handleButtonClick = (id) => {
 };
 
 
-function createData(id, kioskId, userId, action, script, field, tableName, ipAddress, macAddress, isActive, dateCreate) {
-  return {id, kioskId, userId, action, script, field, tableName, ipAddress, macAddress, isActive, dateCreate};
+function createData(id, transactionDate, station, upTime, downTime, lastUpdate) {
+  return {id, transactionDate, station, upTime, downTime, lastUpdate};
 }
 
 const columns = [
@@ -58,65 +58,24 @@ const columns = [
       />
     ),
   },
-  { field: 'id', headerName: 'Audit ID', minWidth: 100, flex: 1,},
-  { field: 'kioskId', headerName: 'Kiosk ID', minWidth: 100, flex: 1,},
-  { field: 'userId', headerName: 'User ID', minWidth: 100, flex: 1,},
-  { field: 'action', headerName: 'Activity', minWidth: 150,  
+  { field: 'transactionDate', headerName: 'Transaction Date', minWidth: 200, flex: 1,},
+  { field: 'id', headerName: 'Kiosk ID', minWidth: 100, flex: 1,},
+  { field: 'station', headerName: 'Station ID', minWidth: 100, flex: 1,},
+  { field: 'upTime', headerName: 'Duration Uptime (Minutes)', minWidth: 200,  
     flex: 1,
     sortable: false,
     disableColumnMenu: true,
   },
   {
-    field: 'script',
-    headerName: 'Script',
-    minWidth: 130,
+    field: 'downTime',
+    headerName: 'Duration Downtime (Minutes)',
+    minWidth: 230,
     flex: 1,
     sortable: false,
     disableColumnMenu: true,
   },
   {
-    field: 'field',
-    headerName: 'Field',
-    minWidth: 150,
-    flex: 1,
-    sortable: false,
-    disableColumnMenu: true,
-  },
-  {
-    field: 'tableName',
-    headerName: 'Table Name',
-    minWidth: 150,
-    flex: 1,
-    sortable: false,
-    disableColumnMenu: true,
-  },
-  {
-    field: 'ipAddress',
-    headerName: 'IP Address',
-    minWidth: 150,
-    flex: 1,
-    sortable: false,
-    disableColumnMenu: true,
-  },
-  
-  {
-    field: 'macAddress',
-    headerName: 'MAC Address',
-    minWidth: 170,
-    flex: 1,
-    sortable: false,
-    disableColumnMenu: true,
-  },
-  {
-    field: 'isActive',
-    headerName: 'Is Active',
-    minWidth: 100,
-    flex: 1,
-    sortable: false,
-    disableColumnMenu: true,
-  },
-  {
-    field: 'dateCreate',
+    field: 'lastUpdate',
     headerName: 'Date Create',
     sortable: false,
     minWidth: 200,
@@ -125,11 +84,11 @@ const columns = [
 ];
 
 const rows = [
-  createData(1, 1, 103, 'Add new user', 'changeLogs.json', 'CREATED_AT', 'Admin/Users', '192.268.1.23', 'A8-7E-EA-DA-4F-D9' , 'Yes' , '19-12-2023 14:00:00'),
+  createData(1, '19-12-2023 14:00:00', 'INT - SaiGon', 140, 10, '30-11-2023 14:00:00'),
 ];
 
 
-const Audit = () => {
+const KioskHealth = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [searchTermButton, setSearchTermButton] = useState('');
 
@@ -143,7 +102,7 @@ const Audit = () => {
     <div className="content"> 
 
         <div className="admin-dashboard-text-div pt-5"> 
-            <h1 className="h1-dashboard">Audit</h1>
+            <h1 className="h1-dashboard">Kiosk Health</h1>
         </div>
             <div className="bigcarddashboard">
 
@@ -178,4 +137,4 @@ const Audit = () => {
   )
 }
 
-export default Audit;
+export default KioskHealth;

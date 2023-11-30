@@ -41,7 +41,6 @@ const DetailButton = ({ rowId, label, onClick }) => {
         <Button size="small" variant="contained" onClick={handleClick} 
                 sx={{
                     backgroundColor: 'gray', // Set the background color to gray
-                    borderRadius: '10px',
                     '&:hover': {
                       backgroundColor: '#999', // Change the background color on hover
                     },
@@ -77,14 +76,14 @@ const columns = [
   {
     field: 'detailButton',
     headerName: '',
-    width: 170,
+    width: 80,
     disableColumnMenu: true,
     sortable: false, // Disable sorting for this column
     filterable: false, // Disable filtering for this column
     renderCell: (params) => (
         <DetailButton
         rowId={params.row.id}
-        label="Transaction Details"
+        label="Details"
         onClick={handleButtonClick}
       />
     ),
