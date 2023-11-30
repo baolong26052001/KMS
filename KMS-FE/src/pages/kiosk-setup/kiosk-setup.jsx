@@ -149,19 +149,21 @@ const columns = [
       />
     ),
   },
-  { field: 'id', headerName: 'Kiosk ID', minWidth: 100, },
-  { field: 'kioskName', headerName: 'Kiosk Name', minWidth: 150, },
-  { field: 'country', headerName: 'Country', minWidth: 120,},
+  { field: 'id', headerName: 'Kiosk ID', minWidth: 100, flex: 1,},
+  { field: 'kioskName', headerName: 'Kiosk Name', minWidth: 150, flex: 1, },
+  { field: 'country', headerName: 'Country', minWidth: 120, flex: 1,},
   {
     field: 'station',
     headerName: 'Station',
     minWidth: 130,
+    flex: 1,
   },
   {
     field: 'slidePackage',
     headerName: 'Slide Show Package',
     sortable: false,
     minWidth: 170,
+    flex: 1,
   },
   {
     field: 'kioskStatus',
@@ -169,6 +171,7 @@ const columns = [
     sortable: false,
     disableColumnMenu: true,
     width: 60,
+    flex: 1,
     renderHeader: () => (
       <KioskHover/>
     ),
@@ -188,6 +191,7 @@ const columns = [
     sortable: false,
     disableColumnMenu: true,
     width: 60,
+    flex: 1,
     renderHeader: () => (
       <CamHover/>
     ),
@@ -207,6 +211,7 @@ const columns = [
     sortable: false,
     disableColumnMenu: true,
     width: 60,
+    flex: 1,
     renderHeader: () => (
       <CashDekHover/>
     ),
@@ -226,6 +231,7 @@ const columns = [
     sortable: false,
     disableColumnMenu: true,
     width: 60,
+    flex: 1,
     renderHeader: () => (
       <ScanHover/>
     ),
@@ -245,6 +251,7 @@ const columns = [
     sortable: false,
     disableColumnMenu: true,
     width: 60,
+    flex: 1,
     renderHeader: () => (
       <PrinterHover/>
     ),
@@ -260,14 +267,7 @@ const columns = [
   },
 ];
 
-const rows = [
-  // createData(1, 'Kiosk 1', 'VietNam', 'Sai Gon', 'Ads Promotion', '1', '1', '1', '1', '3'),
-  // createData(2, 'Kiosk 2', 'VietNam', 'Sai Gon', 'Ads Promotion', '1', '0', '1', '0', '1'),
-  // createData(3, 'Kiosk 3', 'VietNam', 'Ha Noi', 'Ads Promotion', '0', '1', '1', '0', '2'),
-  // createData(4, 'Kiosk 4', 'VietNam', 'Da Nang', 'Ads Promotion', '1', '0', '1', '1', '2'),
-  // createData(5, 'Kiosk 5', 'VietNam', 'Nha Trang', 'Ads Promotion', '1', '0', '1', '1', '0'),
-  // createData(6, 'Kiosk 6', 'VietNam', 'Nha Trang', 'Ads Promotion', '0', '0', '1', '1', '3'),
-];
+const rows = [];
 
 const handleButtonClick = (id) => {
   // Handle button click, e.g., navigate to another page

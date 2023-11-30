@@ -50,7 +50,7 @@ const columns = [
       />
     ),
   },
-  { field: 'id', headerName: 'Kiosk ID', minWidth: 100, flex: 1, },
+  { field: 'id', headerName: 'Kiosk ID', minWidth: 70, flex: 1, },
   { field: 'memory', headerName: 'Availble Memory', minWidth: 140, flex: 1, },
   { field: 'ipAddress', headerName: 'Lan IP Address', minWidth: 140, flex: 1, },
   {

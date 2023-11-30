@@ -90,7 +90,7 @@ const App = () => {
                 <Route path="/savingtransaction" element={<RouteSavingTransaction />} />
                 <Route path="/loanstatement" element={<RouteLoanStatement />} />
                 <Route path="/savingstatement" element={<RouteSavingStatement />} />
-                <Route path="/transactionlogs" element={<EmptyPage />} />
+                <Route path="/transactionlogs" element={<RouteTransactionLogs />} />
                 <Route path="/activitylogs" element={<EmptyPage />} />
                 <Route path="/notificationlogs" element={<EmptyPage />} />
                 <Route path="/audit" element={<EmptyPage />} />
@@ -274,6 +274,20 @@ const RouteSavingStatement = () => {
     return null;
   }
   return <SavingStatement />
+};
+
+const RouteTransactionLogs = () => {
+  const [TransactionLogs, setModule] = React.useState(null);
+  React.useEffect(() => {
+    import('./pages/transactionLogs/transactionLogs').then((module) => {
+      setModule(() => module.default);
+    });
+  }, []);
+
+  if (!TransactionLogs) {
+    return null;
+  }
+  return <TransactionLogs />
 };
 
 
