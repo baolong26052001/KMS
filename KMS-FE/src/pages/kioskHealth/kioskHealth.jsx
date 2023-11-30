@@ -58,9 +58,9 @@ const columns = [
       />
     ),
   },
-  { field: 'transactionDate', headerName: 'Transaction Date', minWidth: 200, flex: 1,},
-  { field: 'id', headerName: 'Kiosk ID', minWidth: 100, flex: 1,},
-  { field: 'station', headerName: 'Station ID', minWidth: 100, flex: 1,},
+  { field: 'transactionDate', headerName: 'Transaction Date', minWidth: 180, flex: 1,},
+  { field: 'id', headerName: 'Kiosk ID', minWidth: 80, flex: 1,},
+  { field: 'station', headerName: 'Station ID', minWidth: 150, flex: 1,},
   { field: 'upTime', headerName: 'Duration Uptime (Minutes)', minWidth: 200,  
     flex: 1,
     sortable: false,
@@ -76,8 +76,9 @@ const columns = [
   },
   {
     field: 'lastUpdate',
-    headerName: 'Date Create',
+    headerName: 'Last Update',
     sortable: false,
+    disableColumnMenu: true,
     minWidth: 200,
     flex: 1 
   },

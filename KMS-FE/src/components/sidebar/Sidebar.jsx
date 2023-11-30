@@ -128,8 +128,6 @@ const Sidebar = () => {
   const [openKeys, setOpenKeys] = useState([subMenuSelect]);
   const [defaultOpenKeys, setDefaultOpenKeys] = useState([]);
 
-  //const [openKeys, setOpenKeys] = useState(['sub1']);
-  //const [defaultOpenKeys, setDefaultOpenKeys] = useState(['sub1']);
 
   const onOpenChange = (keys) => {
     const latestOpenKey = keys.find((key) => openKeys.indexOf(key) === -1);
