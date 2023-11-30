@@ -33,5 +33,6 @@ namespace KMS.Models
         public DateTime? DateModified { get; set; }
         public DateTime? DateCreated { get; set; }
         public bool? IsActive { get; set; }
+        public string? Phone { get; set; }
     }
 }

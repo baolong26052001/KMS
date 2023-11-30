@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using KMS.Models;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using System.Data;
 
 namespace KMS.Controllers
@@ -19,144 +19,136 @@ namespace KMS.Controllers
             _configuration = configuration;
         }
 
+        private DataTable ExecuteRawQuery(string query, SqlParameter[] parameters = null)
+        {
+            DataTable table = new DataTable();
+
+            using (SqlConnection myCon = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                myCon.Open();
+
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    if (parameters != null)
+                    {
+                        myCommand.Parameters.AddRange(parameters);
+                    }
+
+                    SqlDataReader myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                }
+            }
+
+            return table;
+        }
+
         [HttpGet]
-        [Route("ShowKioskSetup")]
+        [Route("ShowKiosk")]
         public JsonResult GetKiosk()
         {
             string query = "select k.id,  k.kioskName, k.location, st.stationName, ss.packageName, k.kioskStatus, k.cameraStatus, k.cashDepositStatus, k.scannerStatus, k.printerStatus\r\nfrom TKiosk k, TStation st, TSlideshow ss\r\nwhere k.stationCode = st.id and ss.id = k.slidePackage";
-            DataTable table = new DataTable();
-            string sqlDatasource = _configuration.GetConnectionString("DefaultConnection");
-            SqlDataReader myReader;
-            using (SqlConnection myCon = new SqlConnection(sqlDatasource))
-            {
-                myCon.Open();
-                using (SqlCommand myCommand = new SqlCommand(query, myCon))
-                {
-                    myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
-                    myReader.Close();
-                    myCon.Close();
-                }
-            }
+            DataTable table = ExecuteRawQuery(query);
             return new JsonResult(table);
         }
 
         [HttpGet]
-        [Route("ShowKioskSetup/{slidePackage}")]
-        public async Task<IActionResult> GetKiosksBySlidePackage(int slidePackage)
+        [Route("ShowKioskSetup/{id}")]
+        public JsonResult GetKioskById(int id)
         {
-            try
+            string query = "SELECT k.id, k.kioskName, k.location, st.stationName, ss.packageName, k.kioskStatus, k.cameraStatus, k.cashDepositStatus, k.scannerStatus, k.printerStatus " +
+                           "FROM TKiosk k " +
+                           "JOIN TStation st ON k.stationCode = st.id " +
+                           "JOIN TSlideshow ss ON ss.id = k.slidePackage " +
+                           "WHERE k.id = @id";
+
+            SqlParameter parameter = new SqlParameter("@id", id);
+            DataTable table = ExecuteRawQuery(query, new[] { parameter });
+
+            if (table.Rows.Count > 0)
             {
-                List<Tkiosk> kiosks = await _dbcontext.Tkiosks
-                    .Where(k => k.SlidePackage == slidePackage)
-                    .ToListAsync();
-
-                if (kiosks != null && kiosks.Count > 0)
-                {
-                    return Ok(kiosks);
-                }
-
-                return Ok($"No kiosks found with SlidePackage = {slidePackage}");
+                return new JsonResult(table);
             }
-            catch (Exception ex)
+            else
             {
-                return BadRequest(ex.Message);
+                return new JsonResult("Kiosk not found");
             }
         }
 
+        [HttpGet]
+        [Route("ShowKioskSetup")]
+        public JsonResult GetKioskByPackage(string packageName)
+        {
+            string query = "SELECT k.id, k.kioskName, k.location, st.stationName, ss.packageName, k.kioskStatus, k.cameraStatus, k.cashDepositStatus, k.scannerStatus, k.printerStatus " +
+                           "FROM TKiosk k " +
+                           "JOIN TStation st ON k.stationCode = st.id " +
+                           "JOIN TSlideshow ss ON ss.id = k.slidePackage " +
+                           "WHERE ss.packageName = @packageName";
+
+            SqlParameter parameter = new SqlParameter("@packageName", packageName);
+            DataTable table = ExecuteRawQuery(query, new[] { parameter });
+
+            return new JsonResult(table);
+        }
 
         [HttpPost]
         [Route("AddKiosk")]
-        public async Task<IActionResult> AddKiosk([FromBody] Tkiosk kiosk)
+        public JsonResult AddKiosk([FromBody] Tkiosk kiosk)
         {
-            try
+            string query = "INSERT INTO TKiosk (kioskName, location, stationCode, slidePackage, kioskStatus, cameraStatus, cashDepositStatus, scannerStatus, printerStatus) " +
+                           "VALUES (@kioskName, @location, @stationCode, @slidePackage, @kioskStatus, @cameraStatus, @cashDepositStatus, @scannerStatus, @printerStatus)";
+            SqlParameter[] parameters =
             {
-                var dbKiosk = _dbcontext.Tkiosks.Where(k => k.KioskName == kiosk.KioskName).Select(k => new
-                {
-                    k.Id,
-                    k.KioskName,
-                    k.IsActive
-                }).FirstOrDefault();
+                new SqlParameter("@kioskName", kiosk.KioskName),
+                new SqlParameter("@location", kiosk.Location),
+                new SqlParameter("@stationCode", kiosk.StationCode),
+                new SqlParameter("@slidePackage", kiosk.SlidePackage),
+                new SqlParameter("@kioskStatus", kiosk.KioskStatus),
+                new SqlParameter("@cameraStatus", kiosk.CameraStatus),
+                new SqlParameter("@cashDepositStatus", kiosk.CashDepositStatus),
+                new SqlParameter("@scannerStatus", kiosk.ScannerStatus),
+                new SqlParameter("@printerStatus", kiosk.PrinterStatus)
+            };
+            ExecuteRawQuery(query, parameters);
 
-                if (dbKiosk != null)
-                {
-                    return BadRequest("Kiosk name already exist");
-                }
-                kiosk.DateCreated = DateTime.Now;
-
-                kiosk.IsActive = true;
-                _dbcontext.Tkiosks.Add(kiosk);
-                await _dbcontext.SaveChangesAsync();
-                return Ok("Kiosk is add successfully");
-            }
-            catch(Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return new JsonResult("Kiosk added successfully");
         }
 
         [HttpPut]
         [Route("UpdateKiosk/{id}")]
-        public async Task<IActionResult> UpdateKiosk(int id, [FromBody] Tkiosk updatedKiosk)
+        public JsonResult UpdateKiosk(int id, [FromBody] Tkiosk kiosk)
         {
-            try
+            string query = "UPDATE TKiosk SET kioskName = @kioskName, location = @location, stationCode = @stationCode, " +
+                           "slidePackage = @slidePackage, kioskStatus = @kioskStatus, cameraStatus = @cameraStatus, " +
+                           "cashDepositStatus = @cashDepositStatus, scannerStatus = @scannerStatus, printerStatus = @printerStatus " +
+                           "WHERE id = @id";
+            SqlParameter[] parameters =
             {
-                var existingKiosk = await _dbcontext.Tkiosks.FindAsync(id);
+                new SqlParameter("@id", id),
+                new SqlParameter("@kioskName", kiosk.KioskName),
+                new SqlParameter("@location", kiosk.Location),
+                new SqlParameter("@stationCode", kiosk.StationCode),
+                new SqlParameter("@slidePackage", kiosk.SlidePackage),
+                new SqlParameter("@kioskStatus", kiosk.KioskStatus),
+                new SqlParameter("@cameraStatus", kiosk.CameraStatus),
+                new SqlParameter("@cashDepositStatus", kiosk.CashDepositStatus),
+                new SqlParameter("@scannerStatus", kiosk.ScannerStatus),
+                new SqlParameter("@printerStatus", kiosk.PrinterStatus)
+            };
+            ExecuteRawQuery(query, parameters);
 
-                if (existingKiosk == null)
-                {
-                    return NotFound("Kiosk not found");
-                }
-
-                
-                var isDuplicateName = await _dbcontext.Tkiosks
-                    .Where(k => k.KioskName == updatedKiosk.KioskName && k.Id != id)
-                    .AnyAsync();
-
-                if (isDuplicateName)
-                {
-                    return BadRequest("Kiosk name already exists");
-                }
-
-                existingKiosk.DateModified = DateTime.Now;
-                existingKiosk.KioskName = updatedKiosk.KioskName;
-                existingKiosk.IsActive = updatedKiosk.IsActive;
-
-                
-                await _dbcontext.SaveChangesAsync();
-
-                return Ok("Kiosk updated successfully");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return new JsonResult("Kiosk updated successfully");
         }
 
         [HttpDelete]
         [Route("DeleteKiosk/{id}")]
-        public async Task<IActionResult> DeleteKiosk(int id)
+        public JsonResult DeleteKiosk(int id)
         {
-            try
-            {
-                var existingKiosk = await _dbcontext.Tkiosks.FindAsync(id);
+            string query = "DELETE FROM TKiosk WHERE id = @id";
+            SqlParameter parameter = new SqlParameter("@id", id);
+            ExecuteRawQuery(query, new[] { parameter });
 
-                if (existingKiosk == null)
-                {
-                    return NotFound("Kiosk not found");
-                }
-
-                _dbcontext.Tkiosks.Remove(existingKiosk);
-                await _dbcontext.SaveChangesAsync();
-
-                return Ok("Kiosk deleted successfully");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return new JsonResult("Kiosk deleted successfully");
         }
-
-
     }
 }

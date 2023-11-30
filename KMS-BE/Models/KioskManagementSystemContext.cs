@@ -28,6 +28,7 @@ namespace KMS.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
                 optionsBuilder.UseSqlServer("Server=kmsdatabase.database.windows.net;Database=KioskManagementSystem;User Id=kmsadmin;Password=pa55w0rd!@#;");
             }
         }
@@ -127,6 +128,11 @@ namespace KMS.Models
                     .HasMaxLength(30)
                     .HasColumnName("lastName");
 
+                entity.Property(e => e.Phone)
+                    .HasMaxLength(11)
+                    .IsUnicode(false)
+                    .HasColumnName("phone");
+
                 entity.Property(e => e.RefCode).HasColumnName("refCode");
 
                 entity.Property(e => e.SalaryAmount).HasColumnName("salaryAmount");
@@ -183,10 +189,14 @@ namespace KMS.Models
                     .IsUnicode(false)
                     .HasColumnName("cameraPort");
 
+                entity.Property(e => e.CameraStatus).HasColumnName("cameraStatus");
+
                 entity.Property(e => e.CashDepositPort)
                     .HasMaxLength(10)
                     .IsUnicode(false)
                     .HasColumnName("cashDepositPort");
+
+                entity.Property(e => e.CashDepositStatus).HasColumnName("cashDepositStatus");
 
                 entity.Property(e => e.DateCreated)
                     .HasColumnType("datetime")
@@ -216,6 +226,8 @@ namespace KMS.Models
                     .IsUnicode(false)
                     .HasColumnName("kioskName");
 
+                entity.Property(e => e.KioskStatus).HasColumnName("kioskStatus");
+
                 entity.Property(e => e.Location)
                     .HasMaxLength(25)
                     .IsUnicode(false)
@@ -241,6 +253,8 @@ namespace KMS.Models
                     .IsUnicode(false)
                     .HasColumnName("printerPort");
 
+                entity.Property(e => e.PrinterStatus).HasColumnName("printerStatus");
+
                 entity.Property(e => e.Processor)
                     .HasMaxLength(50)
                     .IsUnicode(false)
@@ -256,14 +270,11 @@ namespace KMS.Models
                     .IsUnicode(false)
                     .HasColumnName("scannerPort");
 
+                entity.Property(e => e.ScannerStatus).HasColumnName("scannerStatus");
+
                 entity.Property(e => e.SlidePackage).HasColumnName("slidePackage");
 
-                entity.Property(e => e.StationCode)
-                    .HasMaxLength(30)
-                    .IsUnicode(false)
-                    .HasColumnName("stationCode");
-
-                entity.Property(e => e.Status).HasColumnName("status");
+                entity.Property(e => e.StationCode).HasColumnName("stationCode");
 
                 entity.Property(e => e.TotalMemory).HasColumnName("totalMemory");
 

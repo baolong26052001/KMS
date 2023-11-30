@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using KMS.Models;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
+using System.Data;
 
 namespace KMS.Controllers
 {
@@ -16,97 +19,116 @@ namespace KMS.Controllers
             _configuration = configuration;
         }
 
+        private DataTable ExecuteRawQuery(string query, SqlParameter[] parameters = null)
+        {
+            DataTable table = new DataTable();
+
+            using (SqlConnection myCon = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                myCon.Open();
+
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    if (parameters != null)
+                    {
+                        myCommand.Parameters.AddRange(parameters);
+                    }
+
+                    SqlDataReader myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                }
+            }
+
+            return table;
+        }
+
         [HttpGet]
         [Route("ShowMember")]
-        public async Task<IActionResult> GetMember()
+        public JsonResult GetMember()
         {
+            string query = "select m.id, m.phone, m.department, m.companyName, m.bankName, m.address1, m.isActive, m.dateCreated" +
+                "\r\nfrom LMember m";
+            DataTable table = ExecuteRawQuery(query);
+            return new JsonResult(table);
+        }
 
-            try
-            {
-                List<Lmember> listMember = _dbcontext.Lmembers.ToList();
-                if (listMember != null)
-                {
-                    return Ok(listMember);
-                }
-                return Ok("There are no members in the database");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+        [HttpGet]
+        [Route("ShowMember/{id}")]
+        public JsonResult GetMemberById(int id)
+        {
+            string query = "SELECT id, phone, department, companyName, bankName, address1, isActive, dateCreated " +
+                           "FROM LMember WHERE id=@Id";
 
+            SqlParameter parameter = new SqlParameter("@Id", id);
+            DataTable table = ExecuteRawQuery(query, new[] { parameter });
+
+            if (table.Rows.Count > 0)
+            {
+                return new JsonResult(table);
+            }
+            else
+            {
+                return new JsonResult("Member not found");
+            }
         }
 
         [HttpPost]
         [Route("AddMember")]
-        public async Task<IActionResult> CreateMember([FromBody] Lmember newMember)
+        public JsonResult AddMember([FromBody] Lmember member)
         {
-            try
-            {
-                newMember.DateCreated = DateTime.Now;
-                newMember.IsActive = true;
+            string query = "INSERT INTO LMember (phone, department, companyName, bankName, address1, isActive, dateCreated) " +
+                           "VALUES (@Phone, @Department, @CompanyName, @BankName, @Address1, @IsActive, GETDATE())";
 
-                _dbcontext.Lmembers.Add(newMember);
-                await _dbcontext.SaveChangesAsync();
-
-                return Ok("Member created successfully");
-            }
-            catch (Exception ex)
+            SqlParameter[] parameters =
             {
-                return BadRequest(ex.Message);
-            }
+                new SqlParameter("@Phone", member.Phone),
+                new SqlParameter("@Department", member.Department),
+                new SqlParameter("@CompanyName", member.CompanyName),
+                new SqlParameter("@BankName", member.BankName),
+                new SqlParameter("@Address1", member.Address1),
+                new SqlParameter("@IsActive", member.IsActive)
+            };
+
+            ExecuteRawQuery(query, parameters);
+
+            return new JsonResult("Member added successfully");
         }
 
         [HttpPut]
         [Route("UpdateMember/{id}")]
-        public async Task<IActionResult> UpdateMember(int id, [FromBody] Lmember updatedMember)
+        public JsonResult UpdateMember(int id, [FromBody] Lmember member)
         {
-            try
+            string query = "UPDATE LMember SET phone=@Phone, department=@Department, companyName=@CompanyName, " +
+                           "bankName=@BankName, address1=@Address1, isActive=@IsActive " +
+                           "WHERE id=@Id";
+
+            SqlParameter[] parameters =
             {
-                var existingMember = await _dbcontext.Lmembers.FindAsync(id);
+                new SqlParameter("@Id", id),
+                new SqlParameter("@Phone", member.Phone),
+                new SqlParameter("@Department", member.Department),
+                new SqlParameter("@CompanyName", member.CompanyName),
+                new SqlParameter("@BankName", member.BankName),
+                new SqlParameter("@Address1", member.Address1),
+                new SqlParameter("@IsActive", member.IsActive)
+            };
 
-                if (existingMember == null)
-                {
-                    return NotFound($"Member with ID {id} not found");
-                }
+            ExecuteRawQuery(query, parameters);
 
-                existingMember.DateModified = DateTime.Now;
-                existingMember.FirstName = updatedMember.FirstName;
-                existingMember.LastName = updatedMember.LastName;
-                
-                await _dbcontext.SaveChangesAsync();
-
-                return Ok($"Member with ID {id} updated successfully");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return new JsonResult("Member updated successfully");
         }
 
         [HttpDelete]
         [Route("DeleteMember/{id}")]
-        public async Task<IActionResult> DeleteMember(int id)
+        public JsonResult DeleteMember(int id)
         {
-            try
-            {
-                var memberToDelete = await _dbcontext.Lmembers.FindAsync(id);
+            string query = "DELETE FROM LMember WHERE id=@Id";
 
-                if (memberToDelete == null)
-                {
-                    return NotFound($"Member with ID {id} not found");
-                }
+            SqlParameter parameter = new SqlParameter("@Id", id);
+            ExecuteRawQuery(query, new[] { parameter });
 
-                _dbcontext.Lmembers.Remove(memberToDelete);
-                await _dbcontext.SaveChangesAsync();
-
-                return Ok($"Member with ID {id} deleted successfully");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return new JsonResult("Member deleted successfully");
         }
-
     }
 }

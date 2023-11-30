@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using KMS.Models;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using System.Data;
 
 namespace KMS.Controllers
@@ -18,26 +19,39 @@ namespace KMS.Controllers
             _configuration = configuration;
         }
 
+        private DataTable ExecuteRawQuery(string query, SqlParameter[] parameters = null)
+        {
+            DataTable table = new DataTable();
+
+            using (SqlConnection myCon = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                myCon.Open();
+
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    if (parameters != null)
+                    {
+                        myCommand.Parameters.AddRange(parameters);
+                    }
+
+                    SqlDataReader myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                }
+
+                myCon.Close();
+            }
+
+            return table;
+        }
+
         [HttpGet]
         [Route("ShowUsergroup")]
         public JsonResult GetUsergroup()
         {
             string query = "select ug.id, ug.groupName, ug.dateModified, ug.dateCreated, ug.isActive" +
                 "\r\nfrom TUserGroup ug";
-            DataTable table = new DataTable();
-            string sqlDatasource = _configuration.GetConnectionString("DefaultConnection");
-            SqlDataReader myReader;
-            using (SqlConnection myCon = new SqlConnection(sqlDatasource))
-            {
-                myCon.Open();
-                using (SqlCommand myCommand = new SqlCommand(query, myCon))
-                {
-                    myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
-                    myReader.Close();
-                    myCon.Close();
-                }
-            }
+            DataTable table = ExecuteRawQuery(query);
             return new JsonResult(table);
         }
 
@@ -49,29 +63,18 @@ namespace KMS.Controllers
                            "FROM TUserGroup " +
                            "WHERE id = @Id";
 
-            DataTable table = new DataTable();
-            string sqlDatasource = _configuration.GetConnectionString("DefaultConnection");
-            SqlDataReader myReader;
+            SqlParameter parameter = new SqlParameter("@Id", id);
+            DataTable table = ExecuteRawQuery(query, new[] { parameter });
 
-            using (SqlConnection myCon = new SqlConnection(sqlDatasource))
+            if (table.Rows.Count > 0)
             {
-                myCon.Open();
-
-                using (SqlCommand myCommand = new SqlCommand(query, myCon))
-                {
-                    myCommand.Parameters.AddWithValue("@Id", id);
-
-                    myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
-                    myReader.Close();
-                }
-
-                myCon.Close();
+                return new JsonResult(table);
             }
-
-            return new JsonResult(table);
+            else
+            {
+                return new JsonResult("Usergroup not found");
+            }
         }
-
 
         [HttpPost]
         [Route("AddUsergroup")]
@@ -80,46 +83,38 @@ namespace KMS.Controllers
             string query = "INSERT INTO TUserGroup (groupName, accessRuleId, dateModified, dateCreated, isActive) " +
                            "VALUES (@GroupName, @AccessRuleId, GETDATE(), GETDATE(), @IsActive)";
 
-            using (SqlConnection myCon = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            SqlParameter[] parameters =
             {
-                myCon.Open();
-                using (SqlCommand myCommand = new SqlCommand(query, myCon))
-                {
-                    myCommand.Parameters.AddWithValue("@GroupName", usergroup.GroupName);
-                    myCommand.Parameters.AddWithValue("@AccessRuleId", usergroup.AccessRuleId);
-                    myCommand.Parameters.AddWithValue("@IsActive", usergroup.IsActive);
+                new SqlParameter("@GroupName", usergroup.GroupName),
+                new SqlParameter("@AccessRuleId", usergroup.AccessRuleId),
+                new SqlParameter("@IsActive", usergroup.IsActive)
+            };
 
-                    myCommand.ExecuteNonQuery();
-                }
-            }
+            ExecuteRawQuery(query, parameters);
+
             return new JsonResult("Usergroup added successfully");
         }
-
 
         [HttpPut]
         [Route("UpdateUsergroup/{id}")]
         public JsonResult UpdateUsergroup(int id, [FromBody] TuserGroup usergroup)
         {
             string query = "UPDATE TUserGroup " +
-                           "SET groupName = @GroupName, accessRuleId = @AccessRuleId,dateModified = GETDATE(), isActive = @IsActive " +
+                           "SET groupName = @GroupName, accessRuleId = @AccessRuleId, dateModified = GETDATE(), isActive = @IsActive " +
                            "WHERE id = @Id";
 
-            using (SqlConnection myCon = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            SqlParameter[] parameters =
             {
-                myCon.Open();
-                using (SqlCommand myCommand = new SqlCommand(query, myCon))
-                {
-                    myCommand.Parameters.AddWithValue("@Id", id);
-                    myCommand.Parameters.AddWithValue("@GroupName", usergroup.GroupName);
-                    myCommand.Parameters.AddWithValue("@AccessRuleId", usergroup.AccessRuleId);
-                    myCommand.Parameters.AddWithValue("@IsActive", usergroup.IsActive);
+                new SqlParameter("@Id", id),
+                new SqlParameter("@GroupName", usergroup.GroupName),
+                new SqlParameter("@AccessRuleId", usergroup.AccessRuleId),
+                new SqlParameter("@IsActive", usergroup.IsActive)
+            };
 
-                    myCommand.ExecuteNonQuery();
-                }
-            }
+            ExecuteRawQuery(query, parameters);
+
             return new JsonResult("Usergroup updated successfully");
         }
-
 
         [HttpDelete]
         [Route("DeleteUsergroup/{id}")]
@@ -127,18 +122,10 @@ namespace KMS.Controllers
         {
             string query = "DELETE FROM TUserGroup WHERE id = @Id";
 
-            using (SqlConnection myCon = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
-            {
-                myCon.Open();
-                using (SqlCommand myCommand = new SqlCommand(query, myCon))
-                {
-                    myCommand.Parameters.AddWithValue("@Id", id);
+            SqlParameter parameter = new SqlParameter("@Id", id);
+            ExecuteRawQuery(query, new[] { parameter });
 
-                    myCommand.ExecuteNonQuery();
-                }
-            }
             return new JsonResult("Usergroup deleted successfully");
         }
-
     }
 }

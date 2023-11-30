@@ -1,15 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using KMS.Models;
-using KMS.Tools;
-using Microsoft.EntityFrameworkCore;
+using System;
 using System.Data;
 using Microsoft.Data.SqlClient;
 using System.Text;
-using System;
 using System.Security.Cryptography;
-
-
+using System.Threading.Tasks;
+using KMS.Tools;
 
 namespace KMS.Controllers
 {
@@ -24,8 +22,44 @@ namespace KMS.Controllers
         {
             _dbcontext = _context;
             _configuration = configuration;
-
         }
+
+        private DataTable ExecuteRawQuery(string query, SqlParameter[] parameters = null)
+        {
+            DataTable table = new DataTable();
+
+            using (SqlConnection myCon = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                myCon.Open();
+
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    if (parameters != null)
+                    {
+                        myCommand.Parameters.AddRange(parameters);
+                    }
+
+                    SqlDataReader myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                }
+
+                myCon.Close();
+            }
+
+            return table;
+        }
+
+        private string HashPassword(string password)
+        {
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                return Convert.ToBase64String(hashedBytes);
+            }
+        }
+
+        
 
         [HttpGet]
         [Route("ShowUsers")]
@@ -34,23 +68,9 @@ namespace KMS.Controllers
             string query = "select u.id, u.username, u.fullname, u.email, ug.groupName,u.lastLogin,u.isActive, DATEDIFF(DAY, u.lastLogin, GETDATE()) AS TotalDaysDormant" +
                 "\r\nfrom TUser u, TUserGroup ug" +
                 "\r\nwhere u.userGroupId = ug.id;";
-            DataTable table = new DataTable();
-            string sqlDatasource = _configuration.GetConnectionString("DefaultConnection");
-            SqlDataReader myReader;
-            using(SqlConnection myCon = new SqlConnection(sqlDatasource))
-            {
-                myCon.Open();
-                using (SqlCommand myCommand = new SqlCommand(query, myCon))
-                {
-                    myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
-                    myReader.Close();
-                    myCon.Close();
-                }
-            }
+            DataTable table = ExecuteRawQuery(query);
             return new JsonResult(table);
         }
-
 
         [HttpGet]
         [Route("ShowUsers/{id}")]
@@ -60,29 +80,22 @@ namespace KMS.Controllers
                 "\r\nFROM TUser u, TUserGroup ug" +
                 "\r\nWHERE u.userGroupId = ug.id AND u.id = @UserId";
 
-            DataTable table = new DataTable();
-            string sqlDatasource = _configuration.GetConnectionString("DefaultConnection");
-            SqlDataReader myReader;
-            using (SqlConnection myCon = new SqlConnection(sqlDatasource))
+            SqlParameter parameter = new SqlParameter("@UserId", id);
+            DataTable table = ExecuteRawQuery(query, new[] { parameter });
+
+            if (table.Rows.Count > 0)
             {
-                myCon.Open();
-                using (SqlCommand myCommand = new SqlCommand(query, myCon))
-                {
-                    myCommand.Parameters.AddWithValue("@UserId", id);
-                    myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
-                    myReader.Close();
-                    myCon.Close();
-                }
+                return new JsonResult(table);
             }
-            return new JsonResult(table);
+            else
+            {
+                return new JsonResult("User not found");
+            }
         }
-
-
 
         [HttpPost]
         [Route("login")]
-        public async Task<IActionResult> userLogin([FromBody] Tuser user)
+        public async Task<IActionResult> UserLogin([FromBody] Tuser user)
         {
             try
             {
@@ -108,56 +121,30 @@ namespace KMS.Controllers
             }
         }
 
-
         [HttpPost]
         [Route("AddUser")]
         public JsonResult AddUser([FromBody] Tuser newUser)
         {
-            // Assuming UserDTO is a Data Transfer Object representing the user details
-            // You should replace UserDTO with your actual user model or class
-
             string insertQuery = "INSERT INTO TUser (username, fullname, email, password, userGroupId, lastLogin, isActive, dateCreated, dateModified) " +
-                         "VALUES (@Username, @Fullname, @Email, @Password, @UserGroupId, @LastLogin, @IsActive, @DateCreated, @DateModified);";
+                                "VALUES (@Username, @Fullname, @Email, @Password, @UserGroupId, @LastLogin, @IsActive, @DateCreated, @DateModified);";
 
-
-            string sqlDatasource = _configuration.GetConnectionString("DefaultConnection");
-
-            using (SqlConnection myCon = new SqlConnection(sqlDatasource))
+            SqlParameter[] parameters =
             {
-                myCon.Open();
+                new SqlParameter("@Username", newUser.Username),
+                new SqlParameter("@Fullname", newUser.Fullname),
+                new SqlParameter("@Email", newUser.Email),
+                new SqlParameter("@Password", Password.hashPassword(newUser.Password)),
+                new SqlParameter("@UserGroupId", newUser.UserGroupId),
+                new SqlParameter("@LastLogin", DateTime.Now),
+                new SqlParameter("@IsActive", newUser.IsActive),
+                new SqlParameter("@DateCreated", DateTime.Now),
+                new SqlParameter("@DateModified", DateTime.Now),
+            };
 
-                using (SqlCommand myCommand = new SqlCommand(insertQuery, myCon))
-                {
-                    // Hash the password using SHA-256 and then encode with Base64 (for educational purposes only)
-                    string hashedPassword = HashPassword(newUser.Password);
-
-                    myCommand.Parameters.AddWithValue("@Username", newUser.Username);
-                    myCommand.Parameters.AddWithValue("@Fullname", newUser.Fullname);
-                    myCommand.Parameters.AddWithValue("@Email", newUser.Email);
-                    myCommand.Parameters.AddWithValue("@Password", hashedPassword);
-                    myCommand.Parameters.AddWithValue("@UserGroupId", newUser.UserGroupId); // Assuming there's a property for UserGroupId in your DTO
-                    myCommand.Parameters.AddWithValue("@LastLogin", DateTime.Now); // Set the current date/time as the last login for a new user
-                    myCommand.Parameters.AddWithValue("@IsActive", newUser.IsActive); // Assuming there's a property for IsActive in your DTO
-                    myCommand.Parameters.AddWithValue("@DateCreated", DateTime.Now); // Set the current date/time as the creation date for a new user
-                    myCommand.Parameters.AddWithValue("@DateModified", DateTime.Now); // Set the current date/time as the modification date for a new user
-
-                    myCommand.ExecuteNonQuery();
-                }
-            }
+            ExecuteRawQuery(insertQuery, parameters);
 
             return new JsonResult("User added successfully");
         }
-
-        // Hash the password using SHA-256 and then encode with Base64 (for educational purposes only)
-        private string HashPassword(string password)
-        {
-            using (SHA256 sha256 = SHA256.Create())
-            {
-                byte[] hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                return Convert.ToBase64String(hashedBytes);
-            }
-        }
-
 
         [HttpPut]
         [Route("UpdateUser/{id}")]
@@ -167,34 +154,22 @@ namespace KMS.Controllers
                                  "password = @Password, userGroupId = @UserGroupId, isActive = @IsActive, " +
                                  "dateModified = @DateModified WHERE id = @Id;";
 
-            string sqlDatasource = _configuration.GetConnectionString("DefaultConnection");
-
-            using (SqlConnection myCon = new SqlConnection(sqlDatasource))
+            SqlParameter[] parameters =
             {
-                myCon.Open();
+                new SqlParameter("@Id", id),
+                new SqlParameter("@Username", updatedUser.Username),
+                new SqlParameter("@Fullname", updatedUser.Fullname),
+                new SqlParameter("@Email", updatedUser.Email),
+                new SqlParameter("@Password", Password.hashPassword(updatedUser.Password)),
+                new SqlParameter("@UserGroupId", updatedUser.UserGroupId),
+                new SqlParameter("@IsActive", updatedUser.IsActive),
+                new SqlParameter("@DateModified", DateTime.Now),
+            };
 
-                using (SqlCommand myCommand = new SqlCommand(updateQuery, myCon))
-                {
-                    // Hash the password using SHA-256 and then encode with Base64 (for educational purposes only)
-                    string hashedPassword = HashPassword(updatedUser.Password);
-
-                    myCommand.Parameters.AddWithValue("@Id", id);
-                    myCommand.Parameters.AddWithValue("@Username", updatedUser.Username);
-                    myCommand.Parameters.AddWithValue("@Fullname", updatedUser.Fullname);
-                    myCommand.Parameters.AddWithValue("@Email", updatedUser.Email);
-                    myCommand.Parameters.AddWithValue("@Password", hashedPassword);
-                    myCommand.Parameters.AddWithValue("@UserGroupId", updatedUser.UserGroupId);
-                    myCommand.Parameters.AddWithValue("@IsActive", updatedUser.IsActive);
-                    myCommand.Parameters.AddWithValue("@DateModified", DateTime.Now);
-
-                    myCommand.ExecuteNonQuery();
-                }
-            }
+            ExecuteRawQuery(updateQuery, parameters);
 
             return new JsonResult("User updated successfully");
         }
-
-
 
         [HttpDelete]
         [Route("DeleteUser/{userId}")]
@@ -202,24 +177,12 @@ namespace KMS.Controllers
         {
             string deleteQuery = "DELETE FROM TUser WHERE id = @UserId;";
 
-            string sqlDatasource = _configuration.GetConnectionString("DefaultConnection");
-
-            using (SqlConnection myCon = new SqlConnection(sqlDatasource))
-            {
-                myCon.Open();
-
-                using (SqlCommand myCommand = new SqlCommand(deleteQuery, myCon))
-                {
-                    myCommand.Parameters.AddWithValue("@UserId", userId);
-
-                    myCommand.ExecuteNonQuery();
-                }
-            }
+            SqlParameter parameter = new SqlParameter("@UserId", userId);
+            ExecuteRawQuery(deleteQuery, new[] { parameter });
 
             return new JsonResult("User deleted successfully");
         }
 
+        
     }
-
-
 }

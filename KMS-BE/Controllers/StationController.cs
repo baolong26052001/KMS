@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Mvc;
 using KMS.Models;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.SqlClient;
 using System.Data;
 
@@ -11,37 +11,46 @@ namespace KMS.Controllers
     public class StationController : ControllerBase
     {
         private readonly KioskManagementSystemContext _dbcontext;
-        private IConfiguration _configuration;
+        private readonly IConfiguration _configuration;
 
-        public StationController(IConfiguration configuration, KioskManagementSystemContext _context)
+        public StationController(IConfiguration configuration, KioskManagementSystemContext context)
         {
-            _dbcontext = _context;
+            _dbcontext = context;
             _configuration = configuration;
+        }
+
+        private DataTable ExecuteRawQuery(string query, SqlParameter[] parameters = null)
+        {
+            DataTable table = new DataTable();
+
+            using (SqlConnection myCon = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                myCon.Open();
+
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    if (parameters != null)
+                    {
+                        myCommand.Parameters.AddRange(parameters);
+                    }
+
+                    SqlDataReader myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                }
+            }
+
+            return table;
         }
 
         [HttpGet]
         [Route("ShowStation")]
         public JsonResult GetStation()
         {
-
             string query = "select st.id, st.stationName, st.companyName, st.city, st.address, st.isActive" +
-                "\r\nfrom TStation st";
-            DataTable table = new DataTable();
-            string sqlDatasource = _configuration.GetConnectionString("DefaultConnection");
-            SqlDataReader myReader;
-            using (SqlConnection myCon = new SqlConnection(sqlDatasource))
-            {
-                myCon.Open();
-                using (SqlCommand myCommand = new SqlCommand(query, myCon))
-                {
-                    myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
-                    myReader.Close();
-                    myCon.Close();
-                }
-            }
+                           "\r\nfrom TStation st";
+            DataTable table = ExecuteRawQuery(query);
             return new JsonResult(table);
-
         }
 
         [HttpGet]
@@ -51,22 +60,8 @@ namespace KMS.Controllers
             string query = "SELECT id, stationName, companyName, city, address, isActive " +
                            "FROM TStation " +
                            "WHERE id = @Id";
-
-            DataTable table = new DataTable();
-
-            using (SqlConnection myCon = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
-            {
-                myCon.Open();
-
-                using (SqlCommand myCommand = new SqlCommand(query, myCon))
-                {
-                    myCommand.Parameters.AddWithValue("@Id", id);
-
-                    SqlDataReader myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
-                    myReader.Close();
-                }
-            }
+            SqlParameter parameter = new SqlParameter("@Id", id);
+            DataTable table = ExecuteRawQuery(query, new[] { parameter });
 
             if (table.Rows.Count > 0)
             {
@@ -78,94 +73,56 @@ namespace KMS.Controllers
             }
         }
 
-
         [HttpPost]
         [Route("AddStation")]
         public JsonResult AddStation([FromBody] Tstation station)
         {
-            // Assuming StationModel is a class representing your station data
-            // Validate the incoming data if necessary
-
             string query = "INSERT INTO TStation (stationName, companyName, city, address, isActive, dateCreated) " +
                            "VALUES (@StationName, @CompanyName, @City, @Address, @IsActive, GETDATE())";
-
-            using (SqlConnection myCon = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            SqlParameter[] parameters =
             {
-                myCon.Open();
-
-                using (SqlCommand myCommand = new SqlCommand(query, myCon))
-                {
-                    myCommand.Parameters.AddWithValue("@StationName", station.StationName);
-                    myCommand.Parameters.AddWithValue("@CompanyName", station.CompanyName);
-                    myCommand.Parameters.AddWithValue("@City", station.City);
-                    myCommand.Parameters.AddWithValue("@Address", station.Address);
-                    myCommand.Parameters.AddWithValue("@IsActive", station.IsActive);
-
-                    myCommand.ExecuteNonQuery();
-                }
-            }
+                new SqlParameter("@StationName", station.StationName),
+                new SqlParameter("@CompanyName", station.CompanyName),
+                new SqlParameter("@City", station.City),
+                new SqlParameter("@Address", station.Address),
+                new SqlParameter("@IsActive", station.IsActive)
+            };
+            ExecuteRawQuery(query, parameters);
 
             return new JsonResult("Station added successfully");
         }
-
 
         [HttpPut]
         [Route("UpdateStation/{id}")]
         public JsonResult UpdateStation(int id, [FromBody] Tstation station)
         {
-            // Assuming StationModel is a class representing your station data
-            // Validate the incoming data if necessary
-
             string query = "UPDATE TStation " +
                            "SET stationName = @StationName, companyName = @CompanyName, " +
-                           "city = @City, address = @Address,dateModified = GETDATE(), isActive = @IsActive " +
+                           "city = @City, address = @Address, dateModified = GETDATE(), isActive = @IsActive " +
                            "WHERE id = @Id";
-
-            using (SqlConnection myCon = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            SqlParameter[] parameters =
             {
-                myCon.Open();
-
-                using (SqlCommand myCommand = new SqlCommand(query, myCon))
-                {
-                    myCommand.Parameters.AddWithValue("@Id", id);
-                    myCommand.Parameters.AddWithValue("@StationName", station.StationName);
-                    myCommand.Parameters.AddWithValue("@CompanyName", station.CompanyName);
-                    myCommand.Parameters.AddWithValue("@City", station.City);
-                    myCommand.Parameters.AddWithValue("@Address", station.Address);
-                    myCommand.Parameters.AddWithValue("@IsActive", station.IsActive);
-
-                    myCommand.ExecuteNonQuery();
-                }
-            }
+                new SqlParameter("@Id", id),
+                new SqlParameter("@StationName", station.StationName),
+                new SqlParameter("@CompanyName", station.CompanyName),
+                new SqlParameter("@City", station.City),
+                new SqlParameter("@Address", station.Address),
+                new SqlParameter("@IsActive", station.IsActive)
+            };
+            ExecuteRawQuery(query, parameters);
 
             return new JsonResult("Station updated successfully");
         }
-
-
-
 
         [HttpDelete]
         [Route("DeleteStation/{id}")]
         public JsonResult DeleteStation(int id)
         {
             string query = "DELETE FROM TStation WHERE id = @Id";
-
-            using (SqlConnection myCon = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
-            {
-                myCon.Open();
-
-                using (SqlCommand myCommand = new SqlCommand(query, myCon))
-                {
-                    myCommand.Parameters.AddWithValue("@Id", id);
-
-                    myCommand.ExecuteNonQuery();
-                }
-            }
+            SqlParameter parameter = new SqlParameter("@Id", id);
+            ExecuteRawQuery(query, new[] { parameter });
 
             return new JsonResult("Station deleted successfully");
         }
-
-
-
     }
 }

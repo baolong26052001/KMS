@@ -7,7 +7,7 @@ namespace KMS.Models
     {
         public int Id { get; set; }
         public string? KioskName { get; set; }
-        public string? StationCode { get; set; }
+        public int? StationCode { get; set; }
         public string? Processor { get; set; }
         public string? Osname { get; set; }
         public string? Osversion { get; set; }
@@ -26,7 +26,11 @@ namespace KMS.Models
         public int? SlidePackage { get; set; }
         public string? VersionApp { get; set; }
         public int? AutoUpdate { get; set; }
-        public bool? Status { get; set; }
+        public int? KioskStatus { get; set; }
+        public int? PrinterStatus { get; set; }
+        public int? CameraStatus { get; set; }
+        public int? ScannerStatus { get; set; }
+        public int? CashDepositStatus { get; set; }
         public string? PrinterPort { get; set; }
         public string? CameraPort { get; set; }
         public string? ScannerPort { get; set; }
