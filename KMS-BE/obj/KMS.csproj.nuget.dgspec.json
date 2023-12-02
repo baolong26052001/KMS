@@ -1,20 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\hung\\Desktop\\Loan-Kiosk\\KMS_BE\\KMS.csproj": {}
+    "D:\\RnD Project\\TEMP\\KMS\\KMS-BE\\KMS.csproj": {}
   },
   "projects": {
-    "C:\\Users\\hung\\Desktop\\Loan-Kiosk\\KMS_BE\\KMS.csproj": {
+    "D:\\RnD Project\\TEMP\\KMS\\KMS-BE\\KMS.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\hung\\Desktop\\Loan-Kiosk\\KMS_BE\\KMS.csproj",
+        "projectUniqueName": "D:\\RnD Project\\TEMP\\KMS\\KMS-BE\\KMS.csproj",
         "projectName": "KMS",
-        "projectPath": "C:\\Users\\hung\\Desktop\\Loan-Kiosk\\KMS_BE\\KMS.csproj",
-        "packagesPath": "C:\\Users\\hung\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\hung\\Desktop\\Loan-Kiosk\\KMS_BE\\obj\\",
+        "projectPath": "D:\\RnD Project\\TEMP\\KMS\\KMS-BE\\KMS.csproj",
+        "packagesPath": "C:\\Users\\Khanh Luyen\\.nuget\\packages\\",
+        "outputPath": "D:\\RnD Project\\TEMP\\KMS\\KMS-BE\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\hung\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Khanh Luyen\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -22,6 +26,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -88,7 +93,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.202\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.403\\RuntimeIdentifierGraph.json"
         }
       }
     }

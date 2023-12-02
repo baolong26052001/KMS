@@ -95,7 +95,7 @@ namespace KMS.Controllers
 
         [HttpPost]
         [Route("login")]
-        public async Task<IActionResult> UserLogin([FromBody] Tuser user)
+        public async Task<IActionResult> userLogin([FromBody] Tuser user)
         {
             try
             {
@@ -113,13 +113,14 @@ namespace KMS.Controllers
                 dbUser.LastLogin = DateTime.Now;
                 await _dbcontext.SaveChangesAsync();
 
-                return Ok("Login successful");
+                return Ok(new { message = "Login successful" });
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(new { message = e.Message });
             }
         }
+
 
         [HttpPost]
         [Route("AddUser")]
