@@ -155,8 +155,7 @@ const User = () => {
   
           // Combine fetched data with createData function
           const updatedRows = data.map((row) =>
-            createData(row.id, row.kioskName, row.location, row.stationName, row.packageName, row.kioskStatus, 
-                      row.cameraStatus, row.cashDepositStatus, row.scannerStatus, row.printerStatus)
+          createData(row.id, row.username, row.email, row.groupName, row.isActive, row.lastLogin, row.TotalDaysDormant)
           );
   
           setRows(updatedRows); // Update the component state with the combined data
