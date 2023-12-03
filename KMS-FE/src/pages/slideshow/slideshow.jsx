@@ -100,7 +100,7 @@ const columns = [
 ];
 
 const rows = [
-  createData(1, 'Ads Promotion', 'image.png', 'IMAGE', '19-10-2023 14:00:00', '19-12-2023 14:00:00'),
+  // createData(1, 'Ads Promotion', 'image.png', 'IMAGE', '19-10-2023 14:00:00', '19-12-2023 14:00:00'),
 ];
 
 const handleButtonClick = (id) => {
@@ -116,6 +116,31 @@ const Slideshow = () => {
         setSearchTerm(searchTermButton);
     };
 
+    const [rows, setRows] = useState([]);
+    // Get id from Database  
+    const getRowId = (row) => row.id;
+    // Get Back-end API URL to connect
+    const API_URL = "https://localhost:7017/";
+  
+    useEffect(() => {
+      async function fetchData() {
+        try {
+          const response = await fetch(`${API_URL}api/Slideshow/ShowSlideshow`);
+          const data = await response.json();
+  
+          // Combine fetched data with createData function
+          const updatedRows = data.map((row) =>
+            createData(row.id, row.packageName, row.imagevideo, row.fileType, row.startDate, row.endDate)
+          );
+  
+          setRows(updatedRows); // Update the component state with the combined data
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+      }
+  
+      fetchData();
+    }, []);
 
   return (
     
@@ -139,6 +164,7 @@ const Slideshow = () => {
                     <DataGrid
                       rows={rows}
                       columns={columns}
+                      getRowId={getRowId}
                       initialState={{
                       pagination: {
                           paginationModel: { page: 0, pageSize: 5 },

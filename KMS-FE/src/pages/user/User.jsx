@@ -111,16 +111,16 @@ const columns = [
 ];
 
 const rows = [
-  createData(1, 'Richard Nixon', 'richnix@gmail.com', 'Administration', 'Yes', '24-12-2023 14:32:43', '10'),
-  createData(2, 'Riadxon', 'ricx@gmail.com', 'Support', 'Yes', '24-12-2023 14:32:43', '10'),
-  createData(3, 'Richard Nixn', 'nix@gmail.com', 'Monitor', 'Yes', '24-12-2023 14:32:43', '10'),
-  createData(4, 'Tayos', 'tayos@gmail.com', 'Manager', 'Yes', '24-12-2023 14:32:43', '10'), 
-  createData(5, 'Chad', 'Chadman@gmail.com', 'Support', 'Yes', '24-12-2023 14:32:43', '10'), 
-  createData(6, 'Stein', 'stein@gmail.com', 'Administration', 'Yes', '24-12-2023 14:32:43', '10'), 
-  createData(7, 'Lloyd', 'lloyd@gmail.com', 'Administration', 'Yes', '24-12-2023 14:32:43', '10'), 
-  createData(8, 'Tessta', 'tessta@gmail.com', 'Administration', 'Yes', '24-12-2023 14:32:43', '10'), 
-  createData(9, 'Carena', 'carena@gmail.com', 'Administration', 'Yes', '24-12-2023 14:32:43', '10'), 
-  createData(10, 'Wals', 'wals@gmail.com', 'Administration', 'Yes', '24-12-2023 14:32:43', '10'),  
+  // createData(1, 'Richard Nixon', 'richnix@gmail.com', 'Administration', 'Yes', '24-12-2023 14:32:43', '10'),
+  // createData(2, 'Riadxon', 'ricx@gmail.com', 'Support', 'Yes', '24-12-2023 14:32:43', '10'),
+  // createData(3, 'Richard Nixn', 'nix@gmail.com', 'Monitor', 'Yes', '24-12-2023 14:32:43', '10'),
+  // createData(4, 'Tayos', 'tayos@gmail.com', 'Manager', 'Yes', '24-12-2023 14:32:43', '10'), 
+  // createData(5, 'Chad', 'Chadman@gmail.com', 'Support', 'Yes', '24-12-2023 14:32:43', '10'), 
+  // createData(6, 'Stein', 'stein@gmail.com', 'Administration', 'Yes', '24-12-2023 14:32:43', '10'), 
+  // createData(7, 'Lloyd', 'lloyd@gmail.com', 'Administration', 'Yes', '24-12-2023 14:32:43', '10'), 
+  // createData(8, 'Tessta', 'tessta@gmail.com', 'Administration', 'Yes', '24-12-2023 14:32:43', '10'), 
+  // createData(9, 'Carena', 'carena@gmail.com', 'Administration', 'Yes', '24-12-2023 14:32:43', '10'), 
+  // createData(10, 'Wals', 'wals@gmail.com', 'Administration', 'Yes', '24-12-2023 14:32:43', '10'),  
 ];
 
 
@@ -141,12 +141,32 @@ const User = () => {
         setSearchTerm(searchTermButton);
     };
 
-    // const history = useHistory();
-
-    // const handleButtonClick = (id) => {
-    //   // Navigate to another page using React Router
-    //   history.push(``);
-    // };
+    const [rows, setRows] = useState([]);
+    // Get id from Database  
+    const getRowId = (row) => row.id;
+    // Get Back-end API URL to connect
+    const API_URL = "https://localhost:7017/";
+  
+    useEffect(() => {
+      async function fetchData() {
+        try {
+          const response = await fetch(`${API_URL}api/User/ShowUsers`);
+          const data = await response.json();
+  
+          // Combine fetched data with createData function
+          const updatedRows = data.map((row) =>
+            createData(row.id, row.kioskName, row.location, row.stationName, row.packageName, row.kioskStatus, 
+                      row.cameraStatus, row.cashDepositStatus, row.scannerStatus, row.printerStatus)
+          );
+  
+          setRows(updatedRows); // Update the component state with the combined data
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+      }
+  
+      fetchData();
+    }, []);
 
   return (
     
@@ -166,6 +186,7 @@ const User = () => {
                     <DataGrid
                       rows={rows}
                       columns={columns}
+                      getRowId={getRowId}
                       initialState={{
                       pagination: {
                           paginationModel: { page: 0, pageSize: 5 },

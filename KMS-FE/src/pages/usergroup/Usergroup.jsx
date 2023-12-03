@@ -101,9 +101,9 @@ const columns = [
 ];
 
 const rows = [
-  createData(1, 'Administration', '24-12-2023 12:00:00', '19-11-2023 10:23:11', 'Yes'),
-  createData(2, 'Support', '24-12-2023 12:00:00', '19-11-2023 10:23:11', 'Yes'),
-  createData(3, 'Mornitor', '24-12-2023 12:00:00', '19-11-2023 10:23:11', 'Yes'),
+  // createData(1, 'Administration', '24-12-2023 12:00:00', '19-11-2023 10:23:11', 'Yes'),
+  // createData(2, 'Support', '24-12-2023 12:00:00', '19-11-2023 10:23:11', 'Yes'),
+  // createData(3, 'Mornitor', '24-12-2023 12:00:00', '19-11-2023 10:23:11', 'Yes'),
 ];
 
 
@@ -124,6 +124,32 @@ const Usergroup = () => {
     const handleSearchButton = () => {
         setSearchTerm(searchTermButton);
     };
+    const [rows, setRows] = useState([]);
+    // Get id from Database  
+    const getRowId = (row) => row.id;
+    // Get Back-end API URL to connect
+    const API_URL = "https://localhost:7017/";
+  
+    useEffect(() => {
+      async function fetchData() {
+        try {
+          const response = await fetch(`${API_URL}api/Usergroup/ShowUsergroup`);
+          const data = await response.json();
+  
+          // Combine fetched data with createData function
+          const updatedRows = data.map((row) =>
+            createData(row.id, row.groupName, row.dateModified, row.dateCreated, row.isActive)
+          );
+  
+          setRows(updatedRows); // Update the component state with the combined data
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+      }
+  
+      fetchData();
+    }, []);
+
 
 
   return (
@@ -148,6 +174,7 @@ const Usergroup = () => {
             <DataGrid
                 rows={rows}
                 columns={columns}
+                getRowId={getRowId}
                 initialState={{
                   pagination: {
                       paginationModel: { page: 0, pageSize: 5 },
