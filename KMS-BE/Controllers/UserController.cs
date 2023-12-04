@@ -183,6 +183,27 @@ namespace KMS.Controllers
             return new JsonResult("User deleted successfully");
         }
 
-        
+        [HttpGet]
+        [Route("SearchUsers")]
+        public JsonResult SearchUsers(string searchQuery)
+        {
+            string query = "SELECT u.id, u.username, u.fullname, u.email, ug.groupName, u.lastLogin, u.isActive, DATEDIFF(DAY, u.lastLogin, GETDATE()) AS TotalDaysDormant " +
+                           "FROM TUser u " +
+                           "JOIN TUserGroup ug ON u.userGroupId = ug.id " +
+                           "WHERE u.username LIKE @searchQuery OR " +
+                           "u.fullname LIKE @searchQuery OR " +
+                           "u.email LIKE @searchQuery OR " +
+                           "ug.groupName LIKE @searchQuery OR " +
+                           "CONVERT(VARCHAR(10), u.lastLogin, 120) LIKE @searchQuery OR " +
+                           "CAST(u.isActive AS VARCHAR) LIKE @searchQuery OR " +
+                           "CAST(DATEDIFF(DAY, u.lastLogin, GETDATE()) AS VARCHAR) LIKE @searchQuery";
+
+            SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
+            DataTable table = ExecuteRawQuery(query, new[] { parameter });
+
+            return new JsonResult(table);
+        }
+
+
     }
 }

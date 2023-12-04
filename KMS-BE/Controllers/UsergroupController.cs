@@ -127,5 +127,23 @@ namespace KMS.Controllers
 
             return new JsonResult("Usergroup deleted successfully");
         }
+
+        [HttpGet]
+        [Route("SearchUsergroup")]
+        public JsonResult SearchUsergroup(string searchQuery)
+        {
+            string query = "SELECT id, groupName, dateModified, dateCreated, isActive " +
+                           "FROM TUserGroup " +
+                           "WHERE groupName LIKE @searchQuery OR " +
+                           "CONVERT(VARCHAR(10), dateModified, 120) LIKE @searchQuery OR " +
+                           "CONVERT(VARCHAR(10), dateCreated, 120) LIKE @searchQuery OR " +
+                           "CAST(isActive AS VARCHAR) LIKE @searchQuery";
+
+            SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
+            DataTable table = ExecuteRawQuery(query, new[] { parameter });
+
+            return new JsonResult(table);
+        }
+
     }
 }

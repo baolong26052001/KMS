@@ -130,5 +130,26 @@ namespace KMS.Controllers
 
             return new JsonResult("Member deleted successfully");
         }
+
+        [HttpGet]
+        [Route("SearchMember")]
+        public JsonResult SearchMember(string searchQuery)
+        {
+            string query = "SELECT id, phone, department, companyName, bankName, address1, isActive, dateCreated " +
+                           "FROM LMember " +
+                           "WHERE phone LIKE @searchQuery OR " +
+                           "department LIKE @searchQuery OR " +
+                           "companyName LIKE @searchQuery OR " +
+                           "bankName LIKE @searchQuery OR " +
+                           "address1 LIKE @searchQuery OR " +
+                           "CAST(isActive AS VARCHAR) LIKE @searchQuery OR " +
+                           "CONVERT(VARCHAR(10), dateCreated, 120) LIKE @searchQuery";
+
+            SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
+            DataTable table = ExecuteRawQuery(query, new[] { parameter });
+
+            return new JsonResult(table);
+        }
+
     }
 }

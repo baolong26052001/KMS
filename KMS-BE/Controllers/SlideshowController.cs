@@ -123,5 +123,24 @@ namespace KMS.Controllers
 
             return new JsonResult("Slideshow deleted successfully");
         }
+
+        [HttpGet]
+        [Route("SearchSlideshow")]
+        public JsonResult SearchSlideshow(string searchQuery)
+        {
+            string query = "SELECT id, packageName, imagevideo, fileType, startDate, endDate " +
+                           "FROM TSlideshow " +
+                           "WHERE packageName LIKE @searchQuery OR " +
+                           "imagevideo LIKE @searchQuery OR " +
+                           "fileType LIKE @searchQuery OR " +
+                           "CONVERT(VARCHAR(10), startDate, 120) LIKE @searchQuery OR " +
+                           "CONVERT(VARCHAR(10), endDate, 120) LIKE @searchQuery";
+
+            SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
+            DataTable table = ExecuteRawQuery(query, new[] { parameter });
+
+            return new JsonResult(table);
+        }
+
     }
 }

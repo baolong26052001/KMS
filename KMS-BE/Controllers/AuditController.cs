@@ -130,6 +130,28 @@ namespace KMS.Controllers
             return new JsonResult("Audit record deleted successfully");
         }
 
+        [HttpGet]
+        [Route("SearchAudit")]
+        public JsonResult SearchAudit(string searchQuery)
+        {
+            string query = "SELECT id, kioskId, userId, action, script, field, tableName, ipAddress, macAddress, dateCreated, isActive " +
+                           "FROM TAudit " +
+                           "WHERE kioskId LIKE @searchQuery OR " +
+                           "userId LIKE @searchQuery OR " +
+                           "action LIKE @searchQuery OR " +
+                           "script LIKE @searchQuery OR " +
+                           "field LIKE @searchQuery OR " +
+                           "tableName LIKE @searchQuery OR " +
+                           "ipAddress LIKE @searchQuery OR " +
+                           "macAddress LIKE @searchQuery OR " +
+                           "CONVERT(VARCHAR(10), dateCreated, 120) LIKE @searchQuery OR " +
+                           "CAST(isActive AS VARCHAR) LIKE @searchQuery";
+
+            SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
+            DataTable table = ExecuteRawQuery(query, new[] { parameter });
+
+            return new JsonResult(table);
+        }
 
     }
 }

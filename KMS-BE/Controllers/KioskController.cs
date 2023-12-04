@@ -162,5 +162,30 @@ namespace KMS.Controllers
 
             return new JsonResult("Kiosk deleted successfully");
         }
+
+        [HttpGet]
+        [Route("SearchKiosk")]
+        public JsonResult SearchKiosk(string searchQuery)
+        {
+            string query = "SELECT k.id, k.kioskName, k.location, st.stationName, ss.packageName, k.kioskStatus, k.cameraStatus, k.cashDepositStatus, k.scannerStatus, k.printerStatus " +
+                           "FROM TKiosk k " +
+                           "JOIN TStation st ON k.stationCode = st.id " +
+                           "JOIN TSlideshow ss ON ss.id = k.slidePackage " +
+                           "WHERE k.kioskName LIKE @searchQuery OR " +
+                           "k.location LIKE @searchQuery OR " +
+                           "st.stationName LIKE @searchQuery OR " +
+                           "ss.packageName LIKE @searchQuery OR " +
+                           "k.kioskStatus LIKE @searchQuery OR " +
+                           "k.cameraStatus LIKE @searchQuery OR " +
+                           "k.cashDepositStatus LIKE @searchQuery OR " +
+                           "k.scannerStatus LIKE @searchQuery OR " +
+                           "k.printerStatus LIKE @searchQuery";
+
+            SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
+            DataTable table = ExecuteRawQuery(query, new[] { parameter });
+
+            return new JsonResult(table);
+        }
+
     }
 }

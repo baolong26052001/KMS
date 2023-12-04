@@ -123,5 +123,25 @@ namespace KMS.Controllers
             return new JsonResult("ActivityLog deleted successfully");
         }
 
+        [HttpGet]
+        [Route("SearchActivityLog")]
+        public JsonResult SearchActivityLog(string searchQuery)
+        {
+            string query = "SELECT id, kioskId, hardwareName, status, stationId, dateModified, dateCreated, isActive " +
+                           "FROM TActivityLog " +
+                           "WHERE kioskId LIKE @searchQuery OR " +
+                           "hardwareName LIKE @searchQuery OR " +
+                           "status LIKE @searchQuery OR " +
+                           "stationId LIKE @searchQuery OR " +
+                           "CONVERT(VARCHAR(10), dateModified, 120) LIKE @searchQuery OR " +
+                           "CONVERT(VARCHAR(10), dateCreated, 120) LIKE @searchQuery OR " +
+                           "CAST(isActive AS VARCHAR) LIKE @searchQuery";
+
+            SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
+            DataTable table = ExecuteRawQuery(query, new[] { parameter });
+
+            return new JsonResult(table);
+        }
+
     }
 }

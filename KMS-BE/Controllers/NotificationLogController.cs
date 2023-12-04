@@ -131,6 +131,25 @@ namespace KMS.Controllers
             return new JsonResult("NotificationLog deleted successfully");
         }
 
+        [HttpGet]
+        [Route("SearchNotificationLog")]
+        public JsonResult SearchNotificationLog(string searchQuery)
+        {
+            string query = "SELECT id, sendType, memberId, title, content, status, dateCreated, isActive " +
+                           "FROM TNotificationLog " +
+                           "WHERE sendType LIKE @searchQuery OR " +
+                           "memberId LIKE @searchQuery OR " +
+                           "title LIKE @searchQuery OR " +
+                           "content LIKE @searchQuery OR " +
+                           "status LIKE @searchQuery OR " +
+                           "CONVERT(VARCHAR(10), dateCreated, 120) LIKE @searchQuery OR " +
+                           "CAST(isActive AS VARCHAR) LIKE @searchQuery";
+
+            SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
+            DataTable table = ExecuteRawQuery(query, new[] { parameter });
+
+            return new JsonResult(table);
+        }
 
     }
 }
