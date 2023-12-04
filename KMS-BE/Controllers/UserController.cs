@@ -121,7 +121,6 @@ namespace KMS.Controllers
             }
         }
 
-
         [HttpPost]
         [Route("AddUser")]
         public JsonResult AddUser([FromBody] Tuser newUser)

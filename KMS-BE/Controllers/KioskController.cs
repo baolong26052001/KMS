@@ -52,6 +52,8 @@ namespace KMS.Controllers
             return new JsonResult(table);
         }
 
+
+
         [HttpGet]
         [Route("ShowKioskSetup/{id}")]
         public JsonResult GetKioskById(int id)
@@ -76,7 +78,7 @@ namespace KMS.Controllers
         }
 
         [HttpGet]
-        [Route("ShowKioskSetup")]
+        [Route("ShowKioskSetup")] // show by package
         public JsonResult GetKioskByPackage(string packageName)
         {
             string query = "SELECT k.id, k.kioskName, k.location, st.stationName, ss.packageName, k.kioskStatus, k.cameraStatus, k.cashDepositStatus, k.scannerStatus, k.printerStatus " +
@@ -88,6 +90,16 @@ namespace KMS.Controllers
             SqlParameter parameter = new SqlParameter("@packageName", packageName);
             DataTable table = ExecuteRawQuery(query, new[] { parameter });
 
+            return new JsonResult(table);
+        }
+
+        [HttpGet]
+        [Route("ShowKioskHardware")]
+        public JsonResult GetKioskHardware()
+        {
+            string query = "select k.id, k.availableMemory, k.ipAddress, k.OSName, k.OSPlatform, k.OSVersion" +
+                "\r\nfrom TKiosk k";
+            DataTable table = ExecuteRawQuery(query);
             return new JsonResult(table);
         }
 

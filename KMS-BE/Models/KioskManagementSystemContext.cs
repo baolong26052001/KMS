@@ -18,7 +18,10 @@ namespace KMS.Models
 
         public virtual DbSet<Lmember> Lmembers { get; set; } = null!;
         public virtual DbSet<TaccessRule> TaccessRules { get; set; } = null!;
+        public virtual DbSet<TactivityLog> TactivityLogs { get; set; } = null!;
+        public virtual DbSet<Taudit> Taudits { get; set; } = null!;
         public virtual DbSet<Tkiosk> Tkiosks { get; set; } = null!;
+        public virtual DbSet<TnotificationLog> TnotificationLogs { get; set; } = null!;
         public virtual DbSet<Tslideshow> Tslideshows { get; set; } = null!;
         public virtual DbSet<Tstation> Tstations { get; set; } = null!;
         public virtual DbSet<Tuser> Tusers { get; set; } = null!;
@@ -28,7 +31,6 @@ namespace KMS.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
                 optionsBuilder.UseSqlServer("Server=kmsdatabase.database.windows.net;Database=KioskManagementSystem;User Id=kmsadmin;Password=pa55w0rd!@#;");
             }
         }
@@ -154,6 +156,29 @@ namespace KMS.Models
             {
                 entity.ToTable("TAccessRule");
 
+                entity.Property(e => e.Id)
+                    .ValueGeneratedNever()
+                    .HasColumnName("id");
+
+                entity.Property(e => e.DateCreated)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateCreated");
+
+                entity.Property(e => e.DateModified)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateModified");
+
+                entity.Property(e => e.FeatureName).HasColumnName("featureName");
+
+                entity.Property(e => e.GroupId).HasColumnName("groupId");
+
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
+            });
+
+            modelBuilder.Entity<TactivityLog>(entity =>
+            {
+                entity.ToTable("TActivityLog");
+
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.DateCreated)
@@ -164,14 +189,69 @@ namespace KMS.Models
                     .HasColumnType("datetime")
                     .HasColumnName("dateModified");
 
-                entity.Property(e => e.FeatureName)
-                    .HasMaxLength(50)
+                entity.Property(e => e.HardwareName)
+                    .HasMaxLength(20)
                     .IsUnicode(false)
-                    .HasColumnName("featureName");
-
-                entity.Property(e => e.GroupId).HasColumnName("groupId");
+                    .HasColumnName("hardwareName");
 
                 entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.KioskId).HasColumnName("kioskId");
+
+                entity.Property(e => e.StationId).HasColumnName("stationId");
+
+                entity.Property(e => e.Status).HasColumnName("status");
+            });
+
+            modelBuilder.Entity<Taudit>(entity =>
+            {
+                entity.ToTable("TAudit");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Action)
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
+                    .HasColumnName("action");
+
+                entity.Property(e => e.DateCreated)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateCreated");
+
+                entity.Property(e => e.DateModified)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateModified");
+
+                entity.Property(e => e.Field)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("field");
+
+                entity.Property(e => e.IpAddress)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("ipAddress");
+
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.KioskId).HasColumnName("kioskId");
+
+                entity.Property(e => e.MacAddress)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("macAddress");
+
+                entity.Property(e => e.Script)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("script");
+
+                entity.Property(e => e.TableName)
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
+                    .HasColumnName("tableName");
+
+                entity.Property(e => e.UserId).HasColumnName("userId");
             });
 
             modelBuilder.Entity<Tkiosk>(entity =>
@@ -243,6 +323,11 @@ namespace KMS.Models
                     .IsUnicode(false)
                     .HasColumnName("OSName");
 
+                entity.Property(e => e.Osplatform)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("OSPlatform");
+
                 entity.Property(e => e.Osversion)
                     .HasMaxLength(30)
                     .IsUnicode(false)
@@ -292,6 +377,45 @@ namespace KMS.Models
                     .HasMaxLength(255)
                     .IsUnicode(false)
                     .HasColumnName("webServices");
+            });
+
+            modelBuilder.Entity<TnotificationLog>(entity =>
+            {
+                entity.ToTable("TNotificationLog");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Content).HasColumnName("content");
+
+                entity.Property(e => e.DateCreated)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateCreated");
+
+                entity.Property(e => e.DateModified)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateModified");
+
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.MemberId).HasColumnName("memberId");
+
+                entity.Property(e => e.SendType)
+                    .HasMaxLength(10)
+                    .IsUnicode(false)
+                    .HasColumnName("sendType");
+
+                entity.Property(e => e.SocketKey)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("socketKey");
+
+                entity.Property(e => e.Status).HasColumnName("status");
+
+                entity.Property(e => e.Title)
+                    .HasMaxLength(255)
+                    .HasColumnName("title");
+
+                entity.Property(e => e.Type).HasColumnName("type");
             });
 
             modelBuilder.Entity<Tslideshow>(entity =>
