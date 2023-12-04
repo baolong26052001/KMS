@@ -1,2 +1,4 @@
 
 KMS-FE/.env
+KMS-BE/.vs/slnx.sqlite
+*.sqlite
