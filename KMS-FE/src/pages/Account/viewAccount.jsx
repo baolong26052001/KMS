@@ -83,7 +83,7 @@ export default function ViewAccount() {
               {Object.entries(accountDetails).map(([key, value]) => (
                 <TableRow className='row-style' key={key}>
                   <TableCell variant="head">{key}</TableCell>
-                  <TableCell>{value}</TableCell>
+                  <TableCell>{typeof value === 'boolean' ? value.toString() : value}</TableCell>
                 </TableRow>
               ))}
             </Table>
