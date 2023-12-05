@@ -68,6 +68,7 @@ const App = () => {
                       />
 
                     <Route path="/account" element={<RouteAccount />} />
+                    <Route path="/viewAccount/:id" element={<RouteViewAccount />} />
                     <Route path="/loantransaction" element={<RouteLoanTransaction />} />
                     <Route path="/savingtransaction" element={<RouteSavingTransaction />} />
                     <Route path="/loanstatement" element={<RouteLoanStatement />} />
@@ -108,5 +109,9 @@ const RouteActivityLogs = React.lazy(() => import('./pages/activityLogs/activity
 const RouteNotificationLogs = React.lazy(() => import('./pages/notificationLogs/notificationLogs'));
 const RouteAudit = React.lazy(() => import('./pages/audit/audit'));
 const RouteKioskHealth = React.lazy(() => import('./pages/kioskHealth/kioskHealth'));
+
+// view Route
+const RouteViewAccount = React.lazy(() => import('./pages/Account/viewAccount'));
+
 
 export default App;

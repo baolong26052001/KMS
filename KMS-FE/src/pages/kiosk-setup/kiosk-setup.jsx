@@ -12,7 +12,6 @@ import { Button, Box, Tooltip } from '@mui/material';
 //import css
 import './kiosk-setup.css';
 import KioskFilter from './kioskFilter';
-import styled from '@emotion/styled';
 
 
 

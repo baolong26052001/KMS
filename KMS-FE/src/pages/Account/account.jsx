@@ -14,7 +14,7 @@ import {Routes, Route, useNavigate} from 'react-router-dom';
 import './account.css';
 import AccountFilter from './accountFilter';
 
-
+const ViewAccount = React.lazy(() => import('./viewAccount'));
 
 const ViewButton = ({ rowId, label, onClick }) => {
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ const ViewButton = ({ rowId, label, onClick }) => {
   const handleClick = (event) => {
     event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
     onClick(rowId);
-    navigate(`/accountView`);
+    navigate(`/viewAccount/${rowId}`);
   };
 
   return (
@@ -37,12 +37,16 @@ const ViewButton = ({ rowId, label, onClick }) => {
 const handleButtonClick = (id) => {
   // Handle button click, e.g., navigate to another page
   console.log(`Button clicked for row with ID: ${id}`);
- 
+  //navigate(`/viewAccount/${id}`);
 };
 
 
-function createData(id, memberId, contractId, phoneNumber, department, company, bankName, memberAddress, status, dateCreate) {
-  return {id, memberId, contractId, phoneNumber, department, company, bankName, memberAddress, status, dateCreate};
+// function createData(id, memberId, contractId, phoneNumber, department, company, bankName, memberAddress, status, dateCreate) {
+//   return {id, memberId, contractId, phoneNumber, department, company, bankName, memberAddress, status, dateCreate};
+// }
+
+function createData(id, phoneNumber, department, company, bankName, memberAddress, status, dateCreate) {
+  return {id, phoneNumber, department, company, bankName, memberAddress, status, dateCreate};
 }
 
 const columns = [
@@ -122,7 +126,7 @@ const columns = [
 ];
 
 const rows = [
-  createData(1, 15, 3462, '0987356324', 'HR', 'AHQ', 'VCB', '1 Đ. Tôn Đức Thắng, Bến Nghé, Quận 1, Thành phố Hồ Chí Minh', 'Yes' , '19-12-2023 14:00:00'),
+  //createData(1, 15, 3462, '0987356324', 'HR', 'AHQ', 'VCB', '1 Đ. Tôn Đức Thắng, Bến Nghé, Quận 1, Thành phố Hồ Chí Minh', 'Yes' , '19-12-2023 14:00:00'),
 ];
 
 
@@ -135,6 +139,31 @@ const Account = () => {
         setSearchTerm(searchTermButton);
     };
 
+    const [rows, setRows] = useState([]);
+    // Get id from Database  
+    const getRowId = (row) => row.id;
+    // Get Back-end API URL to connect
+    const API_URL = "https://localhost:7017/";
+  
+    useEffect(() => {
+      async function fetchData() {
+        try {
+          const response = await fetch(`${API_URL}api/Member/ShowMember`);
+          const data = await response.json();
+  
+          // Combine fetched data with createData function
+          const updatedRows = data.map((row) =>
+            createData(row.id, row.phone, row.department, row.companyName, row.bankName, row.address1, row.isActive, row.dateCreated)
+          );
+  
+          setRows(updatedRows); // Update the component state with the combined data
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+      }
+  
+      fetchData();
+    }, []);
 
   return (
     
