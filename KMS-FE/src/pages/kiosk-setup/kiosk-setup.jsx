@@ -291,23 +291,33 @@ const KioskSetup = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch(`${API_URL}api/Kiosk/ShowKioskSetup`);
+        const response = await fetch(`${API_URL}api/Kiosk/ShowKiosk`);
         const data = await response.json();
-
+  
         // Combine fetched data with createData function
         const updatedRows = data.map((row) =>
           createData(row.id, row.kioskName, row.location, row.stationName, row.packageName, row.kioskStatus, 
                     row.cameraStatus, row.cashDepositStatus, row.scannerStatus, row.printerStatus)
         );
-
-        setRows(updatedRows); // Update the component state with the combined data
+  
+        // If searchTerm is empty, display all rows, otherwise filter based on the search term
+        const filteredRows = searchTerm
+          ? updatedRows.filter((row) =>
+              Object.values(row).some((value) =>
+                value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+              )
+            )
+          : updatedRows;
+  
+        setRows(filteredRows); // Update the component state with the data
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     }
-
+  
     fetchData();
-  }, []);
+  }, [searchTerm]);
+  
 
   return (
     
