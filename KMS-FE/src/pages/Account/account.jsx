@@ -41,10 +41,6 @@ const handleButtonClick = (id) => {
 };
 
 
-// function createData(id, memberId, contractId, phoneNumber, department, company, bankName, memberAddress, status, dateCreate) {
-//   return {id, memberId, contractId, phoneNumber, department, company, bankName, memberAddress, status, dateCreate};
-// }
-
 function createData(id, memberId, contractId, phoneNumber, department, company, bankName, memberAddress, status, dateCreate) {
   return {id, memberId, contractId, phoneNumber, department, company, bankName, memberAddress, status, dateCreate};
 }
@@ -125,9 +121,7 @@ const columns = [
   },
 ];
 
-const rows = [
-  //createData(1, 15, 3462, '0987356324', 'HR', 'AHQ', 'VCB', '1 Đ. Tôn Đức Thắng, Bến Nghé, Quận 1, Thành phố Hồ Chí Minh', 'Yes' , '19-12-2023 14:00:00'),
-];
+const rows = [];
 
 
 
@@ -155,15 +149,24 @@ const Account = () => {
           const updatedRows = data.map((row) =>
             createData(row.id, row.memberId, row.contractId, row.phone, row.department, row.companyName, row.bankName, row.address1, row.isActive, row.dateCreated)
           );
+
+          // If searchTerm is empty, display all rows, otherwise filter based on the search term
+          const filteredRows = searchTerm
+          ? updatedRows.filter((row) =>
+              Object.values(row).some((value) =>
+                value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+              )
+            )
+          : updatedRows;
   
-          setRows(updatedRows); // Update the component state with the combined data
+          setRows(filteredRows); // Update the component state with the combined data
         } catch (error) {
           console.error('Error fetching data:', error);
         }
       }
   
       fetchData();
-    }, []);
+    }, [searchTerm]);
 
   return (
     
@@ -187,6 +190,7 @@ const Account = () => {
                     <DataGrid
                       rows={rows}
                       columns={columns}
+                      getRowId={getRowId}
                       initialState={{
                       pagination: {
                           paginationModel: { page: 0, pageSize: 5 },

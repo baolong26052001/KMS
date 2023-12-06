@@ -134,3 +134,10 @@ h1, p {
   font-weight: bold;
 }
 
+.MuiDataGrid-columnHeaderTitleContainer {
+  justify-content: center;
+}
+
+.MuiDataGrid-cell.MuiDataGrid-cell--textLeft.MuiDataGrid-withBorderColor {
+  justify-content: center;
+}
