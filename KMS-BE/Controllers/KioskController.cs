@@ -171,7 +171,8 @@ namespace KMS.Controllers
                            "FROM TKiosk k " +
                            "JOIN TStation st ON k.stationCode = st.id " +
                            "JOIN TSlideshow ss ON ss.id = k.slidePackage " +
-                           "WHERE k.kioskName LIKE @searchQuery OR " +
+                           "WHERE k.id LIKE @searchQuery OR " +
+                           "k.kioskName LIKE @searchQuery OR " +
                            "k.location LIKE @searchQuery OR " +
                            "st.stationName LIKE @searchQuery OR " +
                            "ss.packageName LIKE @searchQuery OR " +

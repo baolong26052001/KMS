@@ -131,7 +131,8 @@ namespace KMS.Controllers
         {
             string query = "SELECT id, stationName, companyName, city, address, isActive " +
                            "FROM TStation " +
-                           "WHERE stationName LIKE @searchQuery OR " +
+                           "WHERE id LIKE @searchQuery OR " +
+                           "stationName LIKE @searchQuery OR " +
                            "companyName LIKE @searchQuery OR " +
                            "city LIKE @searchQuery OR " +
                            "address LIKE @searchQuery OR " +

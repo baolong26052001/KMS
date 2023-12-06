@@ -155,8 +155,9 @@ namespace KMS.Controllers
                            "a.accountName, a.accountType, a.balance, a.rate, a.dateDue, a.status, a.dateModified, a.dateCreated, a.isActive " +
                            "FROM LAccount a " +
                            "INNER JOIN LMember m ON a.memberId = m.id " +
-                           "WHERE a.contractId LIKE @searchQuery OR " +
+                           "WHERE a.id LIKE @searchQuery OR " +
                            "a.memberId LIKE @searchQuery OR " +
+                           "a.contractId LIKE @searchQuery OR " +
                            "a.accountName LIKE @searchQuery OR " +
                            "a.accountType LIKE @searchQuery OR " +
                            "CONVERT(VARCHAR(20), a.balance) LIKE @searchQuery OR " +

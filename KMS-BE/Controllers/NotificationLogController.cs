@@ -137,7 +137,8 @@ namespace KMS.Controllers
         {
             string query = "SELECT id, sendType, memberId, title, content, status, dateCreated, isActive " +
                            "FROM TNotificationLog " +
-                           "WHERE sendType LIKE @searchQuery OR " +
+                           "WHERE id LIKE @searchQuery OR " +
+                           "sendType LIKE @searchQuery OR " +
                            "memberId LIKE @searchQuery OR " +
                            "title LIKE @searchQuery OR " +
                            "content LIKE @searchQuery OR " +

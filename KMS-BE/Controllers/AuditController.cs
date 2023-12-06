@@ -136,7 +136,8 @@ namespace KMS.Controllers
         {
             string query = "SELECT id, kioskId, userId, action, script, field, tableName, ipAddress, macAddress, dateCreated, isActive " +
                            "FROM TAudit " +
-                           "WHERE kioskId LIKE @searchQuery OR " +
+                           "WHERE id LIKE @searchQuery OR " +
+                           "kioskId LIKE @searchQuery OR " +
                            "userId LIKE @searchQuery OR " +
                            "action LIKE @searchQuery OR " +
                            "script LIKE @searchQuery OR " +

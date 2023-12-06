@@ -190,7 +190,8 @@ namespace KMS.Controllers
             string query = "SELECT u.id, u.username, u.fullname, u.email, ug.groupName, u.lastLogin, u.isActive, DATEDIFF(DAY, u.lastLogin, GETDATE()) AS TotalDaysDormant " +
                            "FROM TUser u " +
                            "JOIN TUserGroup ug ON u.userGroupId = ug.id " +
-                           "WHERE u.username LIKE @searchQuery OR " +
+                           "WHERE u.id LIKE @searchQuery OR " +
+                           "u.username LIKE @searchQuery OR " +
                            "u.fullname LIKE @searchQuery OR " +
                            "u.email LIKE @searchQuery OR " +
                            "ug.groupName LIKE @searchQuery OR " +

@@ -130,7 +130,8 @@ namespace KMS.Controllers
         {
             string query = "SELECT id, packageName, imagevideo, fileType, startDate, endDate " +
                            "FROM TSlideshow " +
-                           "WHERE packageName LIKE @searchQuery OR " +
+                           "WHERE id LIKE @searchQuery OR " +
+                           "packageName LIKE @searchQuery OR " +
                            "imagevideo LIKE @searchQuery OR " +
                            "fileType LIKE @searchQuery OR " +
                            "CONVERT(VARCHAR(10), startDate, 120) LIKE @searchQuery OR " +

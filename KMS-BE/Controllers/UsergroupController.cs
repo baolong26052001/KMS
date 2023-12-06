@@ -134,7 +134,8 @@ namespace KMS.Controllers
         {
             string query = "SELECT id, groupName, dateModified, dateCreated, isActive " +
                            "FROM TUserGroup " +
-                           "WHERE groupName LIKE @searchQuery OR " +
+                           "WHERE id LIKE @searchQuery OR " +
+                           "groupName LIKE @searchQuery OR " +
                            "CONVERT(VARCHAR(10), dateModified, 120) LIKE @searchQuery OR " +
                            "CONVERT(VARCHAR(10), dateCreated, 120) LIKE @searchQuery OR " +
                            "CAST(isActive AS VARCHAR) LIKE @searchQuery";

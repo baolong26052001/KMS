@@ -129,7 +129,8 @@ namespace KMS.Controllers
         {
             string query = "SELECT id, kioskId, hardwareName, status, stationId, dateModified, dateCreated, isActive " +
                            "FROM TActivityLog " +
-                           "WHERE kioskId LIKE @searchQuery OR " +
+                           "WHERE id LIKE @searchQuery OR " +
+                           "kioskId LIKE @searchQuery OR " +
                            "hardwareName LIKE @searchQuery OR " +
                            "status LIKE @searchQuery OR " +
                            "stationId LIKE @searchQuery OR " +

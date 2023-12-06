@@ -139,7 +139,8 @@ namespace KMS.Controllers
         {
             string query = "SELECT id, phone, department, companyName, bankName, address1, isActive, dateCreated " +
                            "FROM LMember " +
-                           "WHERE phone LIKE @searchQuery OR " +
+                           "WHERE id LIKE @searchQuery OR " +
+                           "phone LIKE @searchQuery OR " +
                            "department LIKE @searchQuery OR " +
                            "companyName LIKE @searchQuery OR " +
                            "bankName LIKE @searchQuery OR " +
