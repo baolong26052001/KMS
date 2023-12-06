@@ -7,17 +7,19 @@ import { render } from '@testing-library/react';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { Button, Box } from '@mui/material';
 // import { useHistory } from 'react-router-dom'; // Import useHistory from React Router
-
+import {Routes, Route, useNavigate} from 'react-router-dom';
 //import css
 import './User.css';
-import { Flex } from 'antd';
 
-
+const ViewUser = React.lazy(() => import('./viewUser'));
 
 const ViewButton = ({ rowId, label, onClick }) => {
+  const navigate = useNavigate();
+
   const handleClick = (event) => {
     event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
     onClick(rowId);
+    navigate(`/viewUser/${rowId}`);
   };
 
   return (
@@ -129,16 +131,21 @@ const handleButtonClick = (id) => {
   console.log(`Button clicked for row with ID: ${id}`);
 };
 
+
 const User = () => {
     const [searchTerm, setSearchTerm] = useState('');
-    const [selectedRows, setSelectedRows] = useState([]);
-    const [selectAllChecked, setSelectAllChecked] = useState(false);
-    const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
 
     const [searchTermButton, setSearchTermButton] = useState('');
 
     const handleSearchButton = () => {
         setSearchTerm(searchTermButton);
+    };
+    
+    const handleKeyPress = (event) => {
+      // Check if the pressed key is Enter (key code 13)
+      if (event.key === 'Enter') {
+        handleSearchButton();
+      }
     };
 
     const [rows, setRows] = useState([]);
@@ -158,14 +165,23 @@ const User = () => {
           createData(row.id, row.username, row.email, row.groupName, row.isActive, row.lastLogin, row.TotalDaysDormant)
           );
   
-          setRows(updatedRows); // Update the component state with the combined data
+          // If searchTerm is empty, display all rows, otherwise filter based on the search term
+          const filteredRows = searchTerm
+          ? updatedRows.filter((row) =>
+              Object.values(row).some((value) =>
+                value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+              )
+            )
+          : updatedRows;
+  
+          setRows(filteredRows); // Update the component state with the combined data
         } catch (error) {
           console.error('Error fetching data:', error);
         }
       }
   
       fetchData();
-    }, []);
+    }, [searchTerm]);
 
   return (
     
@@ -176,7 +192,7 @@ const User = () => {
         </div>
             <div className="bigcarddashboard">
                 <div className="searchdivuser">
-                    <input onChange={(event) => setSearchTermButton(event.target.value)} placeholder="  Search..." type="text" id="kioskID myInput" name="kioskID" class="searchbar"></input>
+                    <input onChange={(event) => setSearchTermButton(event.target.value)} onKeyDown={handleKeyPress} placeholder="  Search..." type="text" id="kioskID myInput" name="kioskID" class="searchbar"></input>
                     <input onClick={handleSearchButton} type="button" value="Search" className="button button-search"></input>
                 </div>
 

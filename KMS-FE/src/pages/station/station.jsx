@@ -103,9 +103,7 @@ const columns = [
 
 
 
-const rows = [
-  // createData(1, 'INT - SaiGon', 'Intel', 'Sai Gon', 'Hi-Tech Park, Lô I2, Đ. D1, Phường Tân Phú, Quận 9, Thành phố Hồ Chí Minh, Vietnam', 'Yes'),
-];
+const rows = [];
 
 const handleButtonClick = (id) => {
   // Handle button click, e.g., navigate to another page
@@ -113,13 +111,18 @@ const handleButtonClick = (id) => {
 };
 
 const Station = () => {
-    const [searchTerm, setSearchTerm] = useState('');
-    const [searchTermButton, setSearchTermButton] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTermButton, setSearchTermButton] = useState('');
 
-    const handleSearchButton = () => {
-        setSearchTerm(searchTermButton);
-    };
+  const handleSearchButton = () => {
+      setSearchTerm(searchTermButton);
+  };
 
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      handleSearchButton();
+    }
+  };
 
   const [rows, setRows] = useState([]);
   // Get id from Database  
@@ -132,20 +135,29 @@ const Station = () => {
       try {
         const response = await fetch(`${API_URL}api/Station/ShowStation`);
         const data = await response.json();
+          // Combine fetched data with createData function
+          const updatedRows = data.map((row) =>
+            createData(row.id, row.stationName, row.companyName, row.city, row.address, row.isActive)
+          );
+  
+          // If searchTerm is empty, display all rows, otherwise filter based on the search term
+          const filteredRows = searchTerm
+          ? updatedRows.filter((row) =>
+              Object.values(row).some((value) =>
+                value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+              )
+            )
+          : updatedRows;
+  
+          setRows(filteredRows); // Update the component state with the combined data
 
-        // Combine fetched data with createData function
-        const updatedRows = data.map((row) =>
-          createData(row.id, row.stationName, row.companyName, row.city, row.address, row.isActive)
-        );
-
-        setRows(updatedRows); // Update the component state with the combined data
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     }
 
     fetchData();
-  }, []);
+  }, [searchTerm]);
 
   return (
     
@@ -160,7 +172,7 @@ const Station = () => {
                 <Filter />
               </div>
                 <div className="searchdivuser">
-                    <input onChange={(event) => setSearchTermButton(event.target.value)} placeholder="  Search..." type="text" id="kioskID myInput" name="kioskID" class="searchbar"></input>
+                    <input onChange={(event) => setSearchTermButton(event.target.value)} onKeyDown={handleKeyPress} placeholder="  Search..." type="text" id="kioskID myInput" name="kioskID" class="searchbar"></input>
                     <input onClick={handleSearchButton} type="button" value="Search" className="button button-search"></input>
                 </div>
 

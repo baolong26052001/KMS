@@ -76,21 +76,57 @@ const columns = [
   },
 ];
 
-const rows = [
-  createData(1, '120 GB', '192.168.1.32', 'Windows 10', 'Windows', 'Microsoft Windows NT 6.2.9200.0'),
-  createData(2, '200 GB', '192.168.1.33', 'Windows 10', 'Windows', 'Microsoft Windows NT 6.2.9200.0'),
-  createData(3, '256 GB', '192.168.1.35', 'Windows 10', 'Windows', 'Microsoft Windows NT 6.2.9200.0'),
-];
+const rows = [];
 
 const KioskHardware = () => {
-    const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
 
-    const [searchTermButton, setSearchTermButton] = useState('');
+  const [searchTermButton, setSearchTermButton] = useState('');
 
-    const handleSearchButton = () => {
-        setSearchTerm(searchTermButton);
-    };
+  const handleSearchButton = () => {
+      setSearchTerm(searchTermButton);
+  };
 
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      handleSearchButton();
+    }
+  };
+
+  const [rows, setRows] = useState([]);
+  // Get id from Database  
+  const getRowId = (row) => row.id;
+  // Get Back-end API URL to connect
+  const API_URL = "https://localhost:7017/";
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch(`${API_URL}api/Kiosk/ShowKioskHardware`);
+        const data = await response.json();
+  
+        // Combine fetched data with createData function
+        const updatedRows = data.map((row) =>
+          createData(row.id, row.availableMemory + " GB", row.ipAddress, row.OSName, row.OSPlatform, row.OSVersion)
+        );
+  
+        // If searchTerm is empty, display all rows, otherwise filter based on the search term
+        const filteredRows = searchTerm
+          ? updatedRows.filter((row) =>
+              Object.values(row).some((value) =>
+                value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+              )
+            )
+          : updatedRows;
+  
+        setRows(filteredRows); // Update the component state with the data
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }
+  
+    fetchData();
+  }, [searchTerm]);
 
   return (
     
@@ -107,7 +143,7 @@ const KioskHardware = () => {
                 <div class="searchdivuser">
 
                 
-                    <input onChange={(event) => setSearchTermButton(event.target.value)} placeholder="  Search..." type="text" id="kioskID myInput" name="kioskID" class="searchbar"></input>
+                    <input onChange={(event) => setSearchTermButton(event.target.value)} onKeyDown={handleKeyPress} placeholder="  Search..." type="text" id="kioskID myInput" name="kioskID" class="searchbar"></input>
                     
                     <input onClick={handleSearchButton} type="button" value="Search" class="button button-search"></input>
                 </div>

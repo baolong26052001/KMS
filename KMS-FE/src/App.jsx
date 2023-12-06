@@ -51,7 +51,7 @@ const App = () => {
                       path="/users" 
                       element={<RouteUser />} 
                       />
-
+                    <Route path="/viewUser/:id" element={<RouteViewUser />} />
                     <Route 
                       path="/usersgroup" 
                       element={<RouteUsergroup />} 
@@ -112,6 +112,7 @@ const RouteKioskHealth = React.lazy(() => import('./pages/kioskHealth/kioskHealt
 
 // view Route
 const RouteViewAccount = React.lazy(() => import('./pages/Account/viewAccount'));
+const RouteViewUser = React.lazy(() => import('./pages/user/viewUser'));
 
 
 export default App;

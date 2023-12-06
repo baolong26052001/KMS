@@ -67,34 +67,65 @@ const columns = [
   }
 
   const rows = [
-    createData(1, 'K001', 'SaiGon', '24-12-2023', '24-12-2023',  '24-12-2023', '24-12-2023' ),
-    createData(2, 'K002', 'SaiGon', '24-12-2023', '24-12-2023',  '24-12-2023', '24-12-2023' ),
-    createData(3, 'K003', 'SaiGon', '24-12-2023', '24-12-2023',  '24-12-2023', '24-12-2023' ),
-    createData(4, 'K004', 'HaNoi', '24-12-2023', '24-12-2023',  '24-12-2023', '24-12-2023' ),
-    createData(5, 'K005', 'HaNoi', '24-12-2023', '24-12-2023',  '24-12-2023', '24-12-2023' ),
-    createData(6, 'K006', 'Binh Duong', '24-12-2023', '24-12-2023',  '24-12-2023', '24-12-2023' ),
-    createData(7, 'K007', 'Nha Trang', '24-12-2023', '24-12-2023',  '24-12-2023', '24-12-2023' ),
-    createData(8, 'K008', 'Da Nang', '24-12-2023', '24-12-2023',  '24-12-2023', '24-12-2023' ),
+    // createData(1, 'K001', 'SaiGon', '24-12-2023', '24-12-2023',  '24-12-2023', '24-12-2023' ),
+    // createData(2, 'K002', 'SaiGon', '24-12-2023', '24-12-2023',  '24-12-2023', '24-12-2023' ),
+    // createData(3, 'K003', 'SaiGon', '24-12-2023', '24-12-2023',  '24-12-2023', '24-12-2023' ),
+    // createData(4, 'K004', 'HaNoi', '24-12-2023', '24-12-2023',  '24-12-2023', '24-12-2023' ),
+    // createData(5, 'K005', 'HaNoi', '24-12-2023', '24-12-2023',  '24-12-2023', '24-12-2023' ),
+    // createData(6, 'K006', 'Binh Duong', '24-12-2023', '24-12-2023',  '24-12-2023', '24-12-2023' ),
+    // createData(7, 'K007', 'Nha Trang', '24-12-2023', '24-12-2023',  '24-12-2023', '24-12-2023' ),
+    // createData(8, 'K008', 'Da Nang', '24-12-2023', '24-12-2023',  '24-12-2023', '24-12-2023' ),
   ];
 
 const Dashboard = () => {
     const [searchTerm, setSearchTerm] = useState('');
-    const [selectedRows, setSelectedRows] = useState([]);
-    const [selectAllChecked, setSelectAllChecked] = useState(false);
-    const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
 
     const [searchTermButton, setSearchTermButton] = useState('');
 
     const handleSearchButton = () => {
         setSearchTerm(searchTermButton);
     };
-
-    const renderSortIcon = (columnKey) => {
-        if (sortConfig && sortConfig.key === columnKey) {
-          return sortConfig.direction === 'ascending' ? <span class="arrow">&#9660;</span> : <span class="arrow">&#9650;</span>;
+    const handleKeyPress = (event) => {
+        if (event.key === 'Enter') {
+          handleSearchButton();
         }
-        return sortConfig.direction === 'ascending' ? <span class="arrow">&#9660;</span> : <span class="arrow">&#9650;</span>;;
-    };
+      };
+  
+      const [rows, setRows] = useState([]);
+      // Get id from Database  
+      const getRowId = (row) => row.id;
+      // Get Back-end API URL to connect
+      const API_URL = "https://localhost:7017/";
+    
+      useEffect(() => {
+        async function fetchData() {
+          try {
+            const response = await fetch(`${API_URL}api/Kiosk/ShowKiosk`);
+            const data = await response.json();
+    
+            // Combine fetched data with createData function
+            const updatedRows = data.map((row) =>
+              createData(row.id, row.kioskName, row.stationName, '24-12-2023', '24-12-2023',  '24-12-2023', '24-12-2023' )
+            );
+    
+            // If searchTerm is empty, display all rows, otherwise filter based on the search term
+            const filteredRows = searchTerm
+            ? updatedRows.filter((row) =>
+                Object.values(row).some((value) =>
+                  value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+                )
+              )
+            : updatedRows;
+    
+            setRows(filteredRows); // Update the component state with the combined data
+          } catch (error) {
+            console.error('Error fetching data:', error);
+          }
+        }
+    
+        fetchData();
+      }, [searchTerm]);
+
       
   return (
     
@@ -270,7 +301,7 @@ const Dashboard = () => {
                 </div>
                 
                 <div class="searchdiv">
-                    <input onChange={(event) => setSearchTermButton(event.target.value)} placeholder="  Search kiosk ID..." type="text" id="kioskid myInput" name="kioskid" class="searchbar"></input> 
+                    <input onChange={(event) => setSearchTermButton(event.target.value)} onKeyDown={handleKeyPress} placeholder="  Search kiosk ID..." type="text" id="kioskid myInput" name="kioskid" class="searchbar"></input> 
                     <input onClick={handleSearchButton} type="button" value="Search" class="button button-search"></input>
                 </div>
 

@@ -124,6 +124,13 @@ const Usergroup = () => {
     const handleSearchButton = () => {
         setSearchTerm(searchTermButton);
     };
+
+    const handleKeyPress = (event) => {
+      if (event.key === 'Enter') {
+        handleSearchButton();
+      }
+    };
+
     const [rows, setRows] = useState([]);
     // Get id from Database  
     const getRowId = (row) => row.id;
@@ -141,14 +148,23 @@ const Usergroup = () => {
             createData(row.id, row.groupName, row.dateModified, row.dateCreated, row.isActive)
           );
   
-          setRows(updatedRows); // Update the component state with the combined data
+          // If searchTerm is empty, display all rows, otherwise filter based on the search term
+          const filteredRows = searchTerm
+          ? updatedRows.filter((row) =>
+              Object.values(row).some((value) =>
+                value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+              )
+            )
+          : updatedRows;
+  
+          setRows(filteredRows); // Update the component state with the combined data
         } catch (error) {
           console.error('Error fetching data:', error);
         }
       }
   
       fetchData();
-    }, []);
+    }, [searchTerm]);
 
 
 
@@ -166,7 +182,7 @@ const Usergroup = () => {
           </div>
 
           <div className="searchdivuser">
-              <input onChange={(event) => setSearchTermButton(event.target.value)} placeholder="  Search..." type="text" id="kioskID myInput" name="kioskID" class="searchbar"></input>
+              <input onChange={(event) => setSearchTermButton(event.target.value)} onKeyDown={handleKeyPress} placeholder="  Search..." type="text" id="kioskID myInput" name="kioskID" class="searchbar"></input>
               <input onClick={handleSearchButton} type="button" value="Search" className="button button-search"></input>
           </div>
 

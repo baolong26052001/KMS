@@ -133,6 +133,12 @@ const Account = () => {
         setSearchTerm(searchTermButton);
     };
 
+    const handleKeyPress = (event) => {
+      if (event.key === 'Enter') {
+        handleSearchButton();
+      }
+    };
+
     const [rows, setRows] = useState([]);
     // Get id from Database  
     const getRowId = (row) => row.id;
@@ -181,7 +187,7 @@ const Account = () => {
                 <AccountFilter />
               </div>
                 <div className="searchdivuser">
-                    <input onChange={(event) => setSearchTermButton(event.target.value)} placeholder="  Search..." type="text" id="kioskID myInput" name="kioskID" class="searchbar"></input>
+                    <input onChange={(event) => setSearchTermButton(event.target.value)} onKeyDown={handleKeyPress} placeholder="  Search..." type="text" id="kioskID myInput" name="kioskID" class="searchbar"></input>
                     <input onClick={handleSearchButton} type="button" value="Search" className="button button-search"></input>
                 </div>
 
