@@ -10,7 +10,6 @@ namespace KMS.Models
         public string? LastName { get; set; }
         public string? FullName { get; set; }
         public DateTime? Birthday { get; set; }
-        public string? Phone { get; set; }
         public string? Address1 { get; set; }
         public string? Address2 { get; set; }
         public string? District { get; set; }
@@ -34,5 +33,6 @@ namespace KMS.Models
         public DateTime? DateModified { get; set; }
         public DateTime? DateCreated { get; set; }
         public bool? IsActive { get; set; }
+        public string? Phone { get; set; }
     }
 }
