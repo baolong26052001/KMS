@@ -16,7 +16,9 @@ namespace KMS.Models
         {
         }
 
+        public virtual DbSet<Laccount> Laccounts { get; set; } = null!;
         public virtual DbSet<Lmember> Lmembers { get; set; } = null!;
+        public virtual DbSet<LtransactionLog> LtransactionLogs { get; set; } = null!;
         public virtual DbSet<TaccessRule> TaccessRules { get; set; } = null!;
         public virtual DbSet<TactivityLog> TactivityLogs { get; set; } = null!;
         public virtual DbSet<Taudit> Taudits { get; set; } = null!;
@@ -31,12 +33,56 @@ namespace KMS.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=kmsdatabase.database.windows.net;Database=KioskManagementSystem;User Id=kmsadmin;Password=pa55w0rd!@#;");
+                optionsBuilder.UseSqlServer("Server=DESKTOP-FQK88HL\\SQLEXPRESS;Database=KioskManagementSystem;Trusted_Connection=True;");
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Laccount>(entity =>
+            {
+                entity.ToTable("LAccount");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.AccountName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("accountName");
+
+                entity.Property(e => e.AccountType)
+                    .HasMaxLength(10)
+                    .IsUnicode(false)
+                    .HasColumnName("accountType");
+
+                entity.Property(e => e.Balance).HasColumnName("balance");
+
+                entity.Property(e => e.ContractId)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("contractId");
+
+                entity.Property(e => e.DateCreated)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateCreated");
+
+                entity.Property(e => e.DateDue)
+                    .HasColumnType("date")
+                    .HasColumnName("dateDue");
+
+                entity.Property(e => e.DateModified)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateModified");
+
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.MemberId).HasColumnName("memberId");
+
+                entity.Property(e => e.Rate).HasColumnName("rate");
+
+                entity.Property(e => e.Status).HasColumnName("status");
+            });
+
             modelBuilder.Entity<Lmember>(entity =>
             {
                 entity.ToTable("LMember");
@@ -131,8 +177,7 @@ namespace KMS.Models
                     .HasColumnName("lastName");
 
                 entity.Property(e => e.Phone)
-                    .HasMaxLength(11)
-                    .IsUnicode(false)
+                    .HasMaxLength(30)
                     .HasColumnName("phone");
 
                 entity.Property(e => e.RefCode).HasColumnName("refCode");
@@ -152,13 +197,26 @@ namespace KMS.Models
                     .HasColumnName("ward");
             });
 
-            modelBuilder.Entity<TaccessRule>(entity =>
+            modelBuilder.Entity<LtransactionLog>(entity =>
             {
-                entity.ToTable("TAccessRule");
+                entity.ToTable("LTransactionLog");
 
-                entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
-                    .HasColumnName("id");
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.AccountId).HasColumnName("accountId");
+
+                entity.Property(e => e.Amount).HasColumnName("amount");
+
+                entity.Property(e => e.Content)
+                    .IsUnicode(false)
+                    .HasColumnName("content");
+
+                entity.Property(e => e.Credit).HasColumnName("credit");
+
+                entity.Property(e => e.Currency)
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .HasColumnName("currency");
 
                 entity.Property(e => e.DateCreated)
                     .HasColumnType("datetime")
@@ -168,7 +226,80 @@ namespace KMS.Models
                     .HasColumnType("datetime")
                     .HasColumnName("dateModified");
 
-                entity.Property(e => e.FeatureName).HasColumnName("featureName");
+                entity.Property(e => e.Debit).HasColumnName("debit");
+
+                entity.Property(e => e.DueDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dueDate");
+
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.KioskId).HasColumnName("kioskId");
+
+                entity.Property(e => e.MemberId).HasColumnName("memberId");
+
+                entity.Property(e => e.MonthlyPaymentAmount).HasColumnName("monthlyPaymentAmount");
+
+                entity.Property(e => e.Payback).HasColumnName("payback");
+
+                entity.Property(e => e.PaymentMethod)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("paymentMethod");
+
+                entity.Property(e => e.Period)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("period");
+
+                entity.Property(e => e.Rate).HasColumnName("rate");
+
+                entity.Property(e => e.StationId).HasColumnName("stationId");
+
+                entity.Property(e => e.Status).HasColumnName("status");
+
+                entity.Property(e => e.TaxAmount).HasColumnName("taxAmount");
+
+                entity.Property(e => e.TaxCode)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("taxCode");
+
+                entity.Property(e => e.TaxName)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("taxName");
+
+                entity.Property(e => e.TaxType)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("taxType");
+
+                entity.Property(e => e.TransactionDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("transactionDate");
+
+                entity.Property(e => e.TransactionId).HasColumnName("transactionId");
+            });
+
+            modelBuilder.Entity<TaccessRule>(entity =>
+            {
+                entity.ToTable("TAccessRule");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.DateCreated)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateCreated");
+
+                entity.Property(e => e.DateModified)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateModified");
+
+                entity.Property(e => e.FeatureName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("featureName");
 
                 entity.Property(e => e.GroupId).HasColumnName("groupId");
 
@@ -200,7 +331,10 @@ namespace KMS.Models
 
                 entity.Property(e => e.StationId).HasColumnName("stationId");
 
-                entity.Property(e => e.Status).HasColumnName("status");
+                entity.Property(e => e.Status)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("status");
             });
 
             modelBuilder.Entity<Taudit>(entity =>
@@ -424,7 +558,11 @@ namespace KMS.Models
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
-                entity.Property(e => e.CreateByUserId).HasColumnName("createByUserID");
+                entity.Property(e => e.CreateAt)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createAt");
+
+                entity.Property(e => e.CreateBy).HasColumnName("createBy");
 
                 entity.Property(e => e.DateCreated)
                     .HasColumnType("datetime")
@@ -444,7 +582,7 @@ namespace KMS.Models
                     .HasColumnName("endDate");
 
                 entity.Property(e => e.FileType)
-                    .HasMaxLength(255)
+                    .HasMaxLength(10)
                     .IsUnicode(false)
                     .HasColumnName("fileType");
 
@@ -452,6 +590,8 @@ namespace KMS.Models
                     .HasMaxLength(255)
                     .IsUnicode(false)
                     .HasColumnName("imagevideo");
+
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
 
                 entity.Property(e => e.PackageName)
                     .HasMaxLength(255)
@@ -474,11 +614,15 @@ namespace KMS.Models
                     .HasColumnType("datetime")
                     .HasColumnName("startDate");
 
-                entity.Property(e => e.StationId).HasColumnName("stationID");
+                entity.Property(e => e.StationId).HasColumnName("stationId");
 
                 entity.Property(e => e.Timer).HasColumnName("timer");
 
-                entity.Property(e => e.UpdatedByUserId).HasColumnName("updatedByUserID");
+                entity.Property(e => e.UpdatedAt)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updatedAt");
+
+                entity.Property(e => e.UpdatedBy).HasColumnName("updatedBy");
             });
 
             modelBuilder.Entity<Tstation>(entity =>
