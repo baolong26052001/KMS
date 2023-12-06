@@ -141,3 +141,26 @@ h1, p {
 .MuiDataGrid-cell.MuiDataGrid-cell--textLeft.MuiDataGrid-withBorderColor {
   justify-content: center;
 }
+
+/* View css */
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #dddddd; /* Add a border to the table */
+}
+
+.row-style {
+  background-color: #CEDDFE; /* Alternate row background color */
+}
+
+.cell-head {
+  font-weight: bold !important;
+  padding: 10px;
+  text-align: left;
+}
+
+.cell-body {
+  padding: 10px;
+  text-align: left;
+}
+/* View css */

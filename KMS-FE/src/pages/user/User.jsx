@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from 'react';
 
-//import Sidebar from '../components/sidebar/Sidebar';
-import { render } from '@testing-library/react';
-
 // import components from MUI
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import { DataGrid} from '@mui/x-data-grid';
 import { Button, Box } from '@mui/material';
 // import { useHistory } from 'react-router-dom'; // Import useHistory from React Router
-import {Routes, Route, useNavigate} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 //import css
 import './User.css';
 
@@ -32,9 +29,12 @@ const ViewButton = ({ rowId, label, onClick }) => {
 };
 
 const EditButton = ({ rowId, label, onClick }) => {
+  const navigate = useNavigate();
+
   const handleClick = (event) => {
     event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
     onClick(rowId);
+    navigate(`/editUser/${rowId}`);
   };
 
   return (
@@ -112,18 +112,7 @@ const columns = [
   },
 ];
 
-const rows = [
-  // createData(1, 'Richard Nixon', 'richnix@gmail.com', 'Administration', 'Yes', '24-12-2023 14:32:43', '10'),
-  // createData(2, 'Riadxon', 'ricx@gmail.com', 'Support', 'Yes', '24-12-2023 14:32:43', '10'),
-  // createData(3, 'Richard Nixn', 'nix@gmail.com', 'Monitor', 'Yes', '24-12-2023 14:32:43', '10'),
-  // createData(4, 'Tayos', 'tayos@gmail.com', 'Manager', 'Yes', '24-12-2023 14:32:43', '10'), 
-  // createData(5, 'Chad', 'Chadman@gmail.com', 'Support', 'Yes', '24-12-2023 14:32:43', '10'), 
-  // createData(6, 'Stein', 'stein@gmail.com', 'Administration', 'Yes', '24-12-2023 14:32:43', '10'), 
-  // createData(7, 'Lloyd', 'lloyd@gmail.com', 'Administration', 'Yes', '24-12-2023 14:32:43', '10'), 
-  // createData(8, 'Tessta', 'tessta@gmail.com', 'Administration', 'Yes', '24-12-2023 14:32:43', '10'), 
-  // createData(9, 'Carena', 'carena@gmail.com', 'Administration', 'Yes', '24-12-2023 14:32:43', '10'), 
-  // createData(10, 'Wals', 'wals@gmail.com', 'Administration', 'Yes', '24-12-2023 14:32:43', '10'),  
-];
+const rows = [];
 
 
 const handleButtonClick = (id) => {
@@ -149,8 +138,7 @@ const User = () => {
     };
 
     const [rows, setRows] = useState([]);
-    // Get id from Database  
-    const getRowId = (row) => row.id;
+
     // Get Back-end API URL to connect
     const API_URL = "https://localhost:7017/";
   
@@ -201,7 +189,6 @@ const User = () => {
                     <DataGrid
                       rows={rows}
                       columns={columns}
-                      getRowId={getRowId}
                       initialState={{
                       pagination: {
                           paginationModel: { page: 0, pageSize: 5 },

@@ -94,8 +94,7 @@ const KioskHardware = () => {
   };
 
   const [rows, setRows] = useState([]);
-  // Get id from Database  
-  const getRowId = (row) => row.id;
+
   // Get Back-end API URL to connect
   const API_URL = "https://localhost:7017/";
 

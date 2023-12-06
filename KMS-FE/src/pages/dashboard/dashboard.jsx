@@ -1,31 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { AppstoreOutlined, MailOutlined, SettingOutlined } from '@ant-design/icons';
-//import { Col, Menu, Switch } from 'antd';
-import DataTable from 'react-data-table-component';
-
-import Accordion from 'react-bootstrap/Accordion';
-//import Sidebar from '../components/sidebar/Sidebar';
-import { render } from '@testing-library/react';
 
 // import css
 import './dashboard.css';
 
-// import react bootstrap
-import { Container } from 'react-bootstrap';
-
 // import components MUI
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import ButtonBase from '@mui/material/ButtonBase';
-import { styled, withStyles } from '@mui/material/styles';
 import Stack from '@mui/material/Stack';
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
-import { auto } from '@popperjs/core';
+import { DataGrid} from '@mui/x-data-grid';
 
 
 const columns = [

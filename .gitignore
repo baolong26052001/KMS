@@ -13,3 +13,6 @@ KMS-BE/.vs/KMS/v17/.suo
 *.dll
 *.dll
 KMS-BE/.vs/KMS/DesignTimeBuild/.dtbcache.v2
+*.sqlite
+KMS-BE/.vs/KMS/v17/.suo
+*.v2

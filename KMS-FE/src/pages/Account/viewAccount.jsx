@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Table from '@mui/material/Table';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
+import TableBody from '@mui/material/TableBody';
 import { useParams } from 'react-router-dom';
 import './account';
 
@@ -29,25 +30,27 @@ export default function ViewAccount() {
   }, [id]);
 
   return (
-    <div className="content">
-      <div className="admin-dashboard-text-div pt-5">
-        <h1 className="h1-dashboard">View Account</h1>
-      </div>
-      <div className="bigcarddashboard">
-          <div className="App">
-            <div className='table-container'>
-            <Table>
+  <div className="content">
+    <div className="admin-dashboard-text-div pt-5">
+      <h1 className="h1-dashboard">View Account Details</h1>
+    </div>
+    <div className="bigcarddashboard">
+      <div className="App">
+        <div className='table-container'>
+          <Table className='custom-table'>
+            <TableBody>
               {/* Render rows using accountDetails */}
               {Object.entries(accountDetails).map(([key, value]) => (
                 <TableRow className='row-style' key={key}>
-                  <TableCell variant="head">{key}</TableCell>
-                  <TableCell>{typeof value === 'boolean' ? value.toString() : value}</TableCell>
+                  <TableCell className='cell-head'>{key}</TableCell>
+                  <TableCell className='cell-body'>{typeof value === 'boolean' ? value.toString() : value}</TableCell>
                 </TableRow>
               ))}
-            </Table>
-            </div>
+            </TableBody>
+          </Table>
         </div>
       </div>
     </div>
+  </div>
   );
 }

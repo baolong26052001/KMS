@@ -140,8 +140,6 @@ const Account = () => {
     };
 
     const [rows, setRows] = useState([]);
-    // Get id from Database  
-    const getRowId = (row) => row.id;
     // Get Back-end API URL to connect
     const API_URL = "https://localhost:7017/";
   
@@ -196,7 +194,6 @@ const Account = () => {
                     <DataGrid
                       rows={rows}
                       columns={columns}
-                      getRowId={getRowId}
                       initialState={{
                       pagination: {
                           paginationModel: { page: 0, pageSize: 5 },
