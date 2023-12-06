@@ -110,10 +110,17 @@ const handleButtonClick = (id) => {
 
 const Slideshow = () => {
     const [searchTerm, setSearchTerm] = useState('');
+
     const [searchTermButton, setSearchTermButton] = useState('');
 
     const handleSearchButton = () => {
         setSearchTerm(searchTermButton);
+    };
+
+    const handleKeyPress = (event) => {
+      if (event.key === 'Enter') {
+        handleSearchButton();
+      }
     };
 
     const [rows, setRows] = useState([]);
@@ -122,25 +129,34 @@ const Slideshow = () => {
     // Get Back-end API URL to connect
     const API_URL = "https://localhost:7017/";
   
-    useEffect(() => {
-      async function fetchData() {
-        try {
-          const response = await fetch(`${API_URL}api/Slideshow/ShowSlideshow`);
-          const data = await response.json();
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch(`${API_URL}api/Slideshow/ShowSlideshow`);
+        const data = await response.json();
   
-          // Combine fetched data with createData function
-          const updatedRows = data.map((row) =>
-            createData(row.id, row.packageName, row.imagevideo, row.fileType, row.startDate, row.endDate)
-          );
+        // Combine fetched data with createData function
+        const updatedRows = data.map((row) =>
+          createData(row.id, row.packageName, row.imagevideo, row.fileType, row.startDate, row.endDate)
+        );
   
-          setRows(updatedRows); // Update the component state with the combined data
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        }
+        // If searchTerm is empty, display all rows, otherwise filter based on the search term
+        const filteredRows = searchTerm
+          ? updatedRows.filter((row) =>
+              Object.values(row).some((value) =>
+                value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+              )
+            )
+          : updatedRows;
+  
+        setRows(filteredRows); // Update the component state with the data
+      } catch (error) {
+        console.error('Error fetching data:', error);
       }
+    } 
   
-      fetchData();
-    }, []);
+    fetchData();
+  }, [searchTerm]);
 
   return (
     
@@ -155,7 +171,7 @@ const Slideshow = () => {
                 <Filter />
               </div>
                 <div className="searchdivuser">
-                    <input onChange={(event) => setSearchTermButton(event.target.value)} placeholder="  Search..." type="text" id="kioskID myInput" name="kioskID" class="searchbar"></input>
+                    <input onChange={(event) => setSearchTermButton(event.target.value)} onKeyDown={handleKeyPress} placeholder="  Search..." type="text" id="kioskID myInput" name="kioskID" class="searchbar"></input>
                     <input onClick={handleSearchButton} type="button" value="Search" className="button button-search"></input>
                 </div>
 

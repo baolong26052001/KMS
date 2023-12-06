@@ -281,7 +281,7 @@ const KioskSetup = () => {
     const handleSearchButton = () => {
         setSearchTerm(searchTermButton);
     };
-    
+
     const handleKeyPress = (event) => {
       if (event.key === 'Enter') {
         handleSearchButton();
@@ -319,7 +319,7 @@ const KioskSetup = () => {
       } catch (error) {
         console.error('Error fetching data:', error);
       }
-    }
+    } 
   
     fetchData();
   }, [searchTerm]);
