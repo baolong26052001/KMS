@@ -47,8 +47,9 @@ namespace KMS.Controllers
         [Route("ShowMember")]
         public JsonResult GetMember()
         {
-            string query = "select m.id, m.phone, m.department, m.companyName, m.bankName, m.address1, m.isActive, m.dateCreated" +
-                "\r\nfrom LMember m";
+            string query = "select a.id, a.memberId, a.contractId, m.phone, m.department, m.companyName, m.bankName, m.address1, m.isActive, m.dateCreated " +
+                "from LAccount a, LMember m " +
+                "where a.memberId = m.id";
             DataTable table = ExecuteRawQuery(query);
             return new JsonResult(table);
         }
@@ -57,8 +58,9 @@ namespace KMS.Controllers
         [Route("ShowMember/{id}")]
         public JsonResult GetMemberById(int id)
         {
-            string query = "SELECT id, phone, department, companyName, bankName, address1, isActive, dateCreated " +
-                           "FROM LMember WHERE id=@Id";
+            string query = "select a.id, a.memberId, a.contractId, m.phone, m.department, m.companyName, m.bankName, m.address1, m.isActive, m.dateCreated " +
+                "from LAccount a, LMember m " +
+                "where a.memberId = m.id and a.id=@Id";
 
             SqlParameter parameter = new SqlParameter("@Id", id);
             DataTable table = ExecuteRawQuery(query, new[] { parameter });
