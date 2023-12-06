@@ -3,3 +3,12 @@ KMS-FE/.env
 KMS-BE/.vs/slnx.sqlite
 *.sqlite
 KMS-BE/.vs/KMS-BE/v17/.wsuo
+*.sqlite
+KMS-BE/.vs/KMS/v17/.suo
+*.dll
+*.pdb
+*.cache
+*.dll
+*.pdb
+*.dll
+*.dll

@@ -76,7 +76,7 @@ const columns = [
   {
     field: 'detailButton',
     headerName: '',
-    width: 80,
+    width: 100,
     disableColumnMenu: true,
     sortable: false, // Disable sorting for this column
     filterable: false, // Disable filtering for this column

@@ -45,8 +45,8 @@ const handleButtonClick = (id) => {
 //   return {id, memberId, contractId, phoneNumber, department, company, bankName, memberAddress, status, dateCreate};
 // }
 
-function createData(id, phoneNumber, department, company, bankName, memberAddress, status, dateCreate) {
-  return {id, phoneNumber, department, company, bankName, memberAddress, status, dateCreate};
+function createData(id, memberId, contractId, phoneNumber, department, company, bankName, memberAddress, status, dateCreate) {
+  return {id, memberId, contractId, phoneNumber, department, company, bankName, memberAddress, status, dateCreate};
 }
 
 const columns = [
@@ -84,7 +84,7 @@ const columns = [
   {
     field: 'company',
     headerName: 'Company',
-    minWidth: 100,
+    minWidth: 150,
     flex: 1,
     sortable: false,
     disableColumnMenu: true,
@@ -100,7 +100,7 @@ const columns = [
   {
     field: 'memberAddress',
     headerName: 'Member Address',
-    minWidth: 300,
+    minWidth: 250,
     flex: 1,
     sortable: false,
     disableColumnMenu: true,
@@ -153,7 +153,7 @@ const Account = () => {
   
           // Combine fetched data with createData function
           const updatedRows = data.map((row) =>
-            createData(row.id, row.phone, row.department, row.companyName, row.bankName, row.address1, row.isActive, row.dateCreated)
+            createData(row.id, row.memberId, row.contractId, row.phone, row.department, row.companyName, row.bankName, row.address1, row.isActive, row.dateCreated)
           );
   
           setRows(updatedRows); // Update the component state with the combined data

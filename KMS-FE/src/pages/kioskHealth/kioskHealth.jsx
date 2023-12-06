@@ -31,6 +31,27 @@ const ViewButton = ({ rowId, label, onClick }) => {
   );
 };
 
+const DetailButton = ({ rowId, label, onClick }) => {
+  const handleClick = (event) => {
+    event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
+    onClick(rowId);
+  };
+
+  return (
+    <Box sx={{alignItems: 'center' }}>
+      <Button size="small" variant="contained" onClick={handleClick} 
+              sx={{
+                  backgroundColor: 'gray', // Set the background color to gray
+                  '&:hover': {
+                    backgroundColor: '#999', // Change the background color on hover
+                  },
+                }}>
+        {label}
+      </Button>
+    </Box>
+  );
+};
+
 const handleButtonClick = (id) => {
   // Handle button click, e.g., navigate to another page
   console.log(`Button clicked for row with ID: ${id}`);
@@ -54,6 +75,21 @@ const columns = [
         <ViewButton
         rowId={params.row.id}
         label="View"
+        onClick={handleButtonClick}
+      />
+    ),
+  },
+  {
+    field: 'detailButton',
+    headerName: '',
+    width: 100,
+    disableColumnMenu: true,
+    sortable: false, // Disable sorting for this column
+    filterable: false, // Disable filtering for this column
+    renderCell: (params) => (
+        <DetailButton
+        rowId={params.row.id}
+        label="Details"
         onClick={handleButtonClick}
       />
     ),
