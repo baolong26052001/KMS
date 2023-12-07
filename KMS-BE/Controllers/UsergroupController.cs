@@ -76,6 +76,36 @@ namespace KMS.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("FilterUsergroup")] // filter user group by group name and by active
+        public JsonResult FilterUsergroup([FromQuery] string? groupName = null, [FromQuery] bool? isActive = null)
+        {
+            string query = "SELECT id, groupName, dateModified, dateCreated, isActive " +
+                           "FROM TUserGroup ";
+
+            List<SqlParameter> parameters = new List<SqlParameter>();
+
+            if (!string.IsNullOrEmpty(groupName))
+            {
+                query += "WHERE groupName LIKE @groupName ";
+                parameters.Add(new SqlParameter("@groupName", "%" + groupName + "%"));
+            }
+
+            
+
+            if (isActive.HasValue)
+            {
+                query += (parameters.Count == 0 ? "WHERE" : "AND") + " isActive = @isActive ";
+                parameters.Add(new SqlParameter("@isActive", isActive.Value));
+            }
+
+            DataTable table = ExecuteRawQuery(query, parameters.ToArray());
+
+            return new JsonResult(table);
+        }
+
+
+
         [HttpPost]
         [Route("AddUsergroup")]
         public JsonResult AddUsergroup([FromBody] TuserGroup usergroup)

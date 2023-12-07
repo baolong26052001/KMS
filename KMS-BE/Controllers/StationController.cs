@@ -73,6 +73,41 @@ namespace KMS.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("FilterStation")]
+        public JsonResult FilterStation([FromQuery] string? stationName = null, [FromQuery] string? companyName = null, [FromQuery] string? city = null)
+        {
+            string query = "SELECT id, stationName, companyName, city, address, isActive " +
+                           "FROM TStation ";
+
+            List<SqlParameter> parameters = new List<SqlParameter>();
+
+            
+
+            if (!string.IsNullOrEmpty(stationName))
+            {
+                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "stationName LIKE @stationName";
+                parameters.Add(new SqlParameter("@stationName", "%" + stationName + "%"));
+            }
+
+            if (!string.IsNullOrEmpty(companyName))
+            {
+                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "companyName LIKE @companyName";
+                parameters.Add(new SqlParameter("@companyName", "%" + companyName + "%"));
+            }
+
+            if (!string.IsNullOrEmpty(city))
+            {
+                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "city LIKE @city";
+                parameters.Add(new SqlParameter("@city", "%" + city + "%"));
+            }
+
+            DataTable table = ExecuteRawQuery(query, parameters.ToArray());
+
+            return new JsonResult(table);
+        }
+
+
         [HttpPost]
         [Route("AddStation")]
         public JsonResult AddStation([FromBody] Tstation station)

@@ -73,6 +73,29 @@ namespace KMS.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("FilterSlideshow")]
+        public JsonResult FilterSlideshow([FromQuery] string? packageName = null)
+        {
+            string query = "SELECT id, packageName, imagevideo, fileType, startDate, endDate " +
+                           "FROM TSlideshow ";
+
+            List<SqlParameter> parameters = new List<SqlParameter>();
+
+            
+
+            if (!string.IsNullOrEmpty(packageName))
+            {
+                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "packageName LIKE @packageName";
+                parameters.Add(new SqlParameter("@packageName", "%" + packageName + "%"));
+            }
+
+            DataTable table = ExecuteRawQuery(query, parameters.ToArray());
+
+            return new JsonResult(table);
+        }
+
+
         [HttpPost]
         [Route("AddSlideshow")]
         public JsonResult AddSlideshow([FromBody] Tslideshow slideshow)

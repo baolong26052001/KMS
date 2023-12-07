@@ -47,7 +47,7 @@ namespace KMS.Controllers
         [Route("ShowKiosk")]
         public JsonResult GetKiosk()
         {
-            string query = "select k.id,  k.kioskName, k.location, st.stationName, ss.packageName, k.kioskStatus, k.cameraStatus, k.cashDepositStatus, k.scannerStatus, k.printerStatus\r\nfrom TKiosk k, TStation st, TSlideshow ss\r\nwhere k.stationCode = st.id and ss.id = k.slidePackage";
+            string query = "select k.id,  k.kioskName, k.location, st.stationName, ss.packageName, k.kioskStatus, k.cameraStatus, k.cashDepositStatus, k.scannerStatus, k.printerStatus\r\nfrom TKiosk k, TStation st, TSlideshow ss\r\nwhere k.stationCode = st.id or ss.id = k.slidePackage";
             DataTable table = ExecuteRawQuery(query);
             return new JsonResult(table);
         }
@@ -78,20 +78,41 @@ namespace KMS.Controllers
         }
 
         [HttpGet]
-        [Route("ShowKioskSetup")] // show by package
-        public JsonResult GetKioskByPackage(string packageName)
+        [Route("ShowKioskSetup")] // filter by package name, station name, country
+        public JsonResult GetKioskByPackageLocationAndStation([FromQuery] string? packageName = null, [FromQuery] string? location = null, [FromQuery] string? stationName = null)
         {
             string query = "SELECT k.id, k.kioskName, k.location, st.stationName, ss.packageName, k.kioskStatus, k.cameraStatus, k.cashDepositStatus, k.scannerStatus, k.printerStatus " +
                            "FROM TKiosk k " +
                            "JOIN TStation st ON k.stationCode = st.id " +
-                           "JOIN TSlideshow ss ON ss.id = k.slidePackage " +
-                           "WHERE ss.packageName = @packageName";
+                           "JOIN TSlideshow ss ON ss.id = k.slidePackage ";
 
-            SqlParameter parameter = new SqlParameter("@packageName", packageName);
-            DataTable table = ExecuteRawQuery(query, new[] { parameter });
+            List<SqlParameter> parameters = new List<SqlParameter>();
+
+            if (!string.IsNullOrEmpty(stationName))
+            {
+                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "st.stationName = @stationName";
+                parameters.Add(new SqlParameter("@stationName", stationName));
+            }
+
+            if (!string.IsNullOrEmpty(location))
+            {
+                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "k.location = @location";
+                parameters.Add(new SqlParameter("@location", location));
+            }
+
+            if (!string.IsNullOrEmpty(packageName))
+            {
+                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "ss.packageName = @packageName";
+                parameters.Add(new SqlParameter("@packageName", packageName));
+            }
+
+            DataTable table = ExecuteRawQuery(query, parameters.ToArray());
 
             return new JsonResult(table);
         }
+
+
+
 
         [HttpGet]
         [Route("ShowKioskHardware")]
