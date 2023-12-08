@@ -97,7 +97,7 @@ namespace KMS.Controllers
         [Route("ShowUsersInEditPage/{id}")]
         public JsonResult GetUserByIdInEditPage(int id)
         {
-            string query = "SELECT u.id, u.username, u.fullname, u.password, u.email, ug.groupName, u.isActive" +
+            string query = "SELECT u.id, u.username, u.fullname, u.password, u.email, u.userGroupId, u.isActive" +
                 "\r\nFROM TUser u, TUserGroup ug" +
                 "\r\nWHERE u.userGroupId = ug.id AND u.id = @UserId";
 
