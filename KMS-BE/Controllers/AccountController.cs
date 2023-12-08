@@ -162,11 +162,10 @@ namespace KMS.Controllers
                            "a.accountType LIKE @searchQuery OR " +
                            "CONVERT(VARCHAR(20), a.balance) LIKE @searchQuery OR " +
                            "CONVERT(VARCHAR(20), a.rate) LIKE @searchQuery OR " +
-                           "CONVERT(VARCHAR(20), a.dateDue, 120) LIKE @searchQuery OR " +
+                           
                            "a.status LIKE @searchQuery OR " +
-                           "CONVERT(VARCHAR(20), a.dateModified, 120) LIKE @searchQuery OR " +
-                           "CONVERT(VARCHAR(20), a.dateCreated, 120) LIKE @searchQuery OR " +
-                           "CAST(a.isActive AS VARCHAR) LIKE @searchQuery OR " +
+                           
+                           
                            "m.phone LIKE @searchQuery OR " +
                            "m.department LIKE @searchQuery OR " +
                            "m.companyName LIKE @searchQuery OR " +

@@ -156,9 +156,7 @@ namespace KMS.Controllers
                            "WHERE id LIKE @searchQuery OR " +
                            "packageName LIKE @searchQuery OR " +
                            "imagevideo LIKE @searchQuery OR " +
-                           "fileType LIKE @searchQuery OR " +
-                           "CONVERT(VARCHAR(10), startDate, 120) LIKE @searchQuery OR " +
-                           "CONVERT(VARCHAR(10), endDate, 120) LIKE @searchQuery";
+                           "fileType LIKE @searchQuery";
 
             SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
             DataTable table = ExecuteRawQuery(query, new[] { parameter });

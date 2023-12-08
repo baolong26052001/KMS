@@ -170,8 +170,7 @@ namespace KMS.Controllers
                            "stationName LIKE @searchQuery OR " +
                            "companyName LIKE @searchQuery OR " +
                            "city LIKE @searchQuery OR " +
-                           "address LIKE @searchQuery OR " +
-                           "CAST(isActive AS VARCHAR) LIKE @searchQuery";
+                           "address LIKE @searchQuery";
 
             SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
             DataTable table = ExecuteRawQuery(query, new[] { parameter });

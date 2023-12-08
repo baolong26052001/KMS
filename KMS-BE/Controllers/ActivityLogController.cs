@@ -64,6 +64,33 @@ namespace KMS.Controllers
             return new JsonResult(table);
         }
 
+        [HttpGet]
+        [Route("FilterActivityLog")]
+        public JsonResult FilterActivityLog([FromQuery] bool? isActive = null, [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
+        {
+            string query = "SELECT id, kioskId, hardwareName, status, stationId, dateModified, dateCreated, isActive " +
+                           "FROM TActivityLog ";
+
+            List<SqlParameter> parameters = new List<SqlParameter>();
+
+            if (isActive.HasValue)
+            {
+                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "isActive = @isActive";
+                parameters.Add(new SqlParameter("@isActive", isActive.Value));
+            }
+
+            if (startDate.HasValue && endDate.HasValue)
+            {
+                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "dateCreated BETWEEN @startDate AND @endDate";
+                parameters.Add(new SqlParameter("@startDate", startDate.Value));
+                parameters.Add(new SqlParameter("@endDate", endDate.Value));
+            }
+
+            DataTable table = ExecuteRawQuery(query, parameters.ToArray());
+
+            return new JsonResult(table);
+        }
+
         [HttpPost]
         [Route("AddActivityLog")]
         public JsonResult AddActivityLog([FromBody] TactivityLog activityLog)
@@ -133,10 +160,7 @@ namespace KMS.Controllers
                            "kioskId LIKE @searchQuery OR " +
                            "hardwareName LIKE @searchQuery OR " +
                            "status LIKE @searchQuery OR " +
-                           "stationId LIKE @searchQuery OR " +
-                           "CONVERT(VARCHAR(10), dateModified, 120) LIKE @searchQuery OR " +
-                           "CONVERT(VARCHAR(10), dateCreated, 120) LIKE @searchQuery OR " +
-                           "CAST(isActive AS VARCHAR) LIKE @searchQuery";
+                           "stationId LIKE @searchQuery";
 
             SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
             DataTable table = ExecuteRawQuery(query, new[] { parameter });

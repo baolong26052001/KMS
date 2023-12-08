@@ -142,9 +142,7 @@ namespace KMS.Controllers
                            "memberId LIKE @searchQuery OR " +
                            "title LIKE @searchQuery OR " +
                            "content LIKE @searchQuery OR " +
-                           "status LIKE @searchQuery OR " +
-                           "CONVERT(VARCHAR(10), dateCreated, 120) LIKE @searchQuery OR " +
-                           "CAST(isActive AS VARCHAR) LIKE @searchQuery";
+                           "status LIKE @searchQuery";
 
             SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
             DataTable table = ExecuteRawQuery(query, new[] { parameter });

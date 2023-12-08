@@ -196,12 +196,7 @@ namespace KMS.Controllers
                            "k.kioskName LIKE @searchQuery OR " +
                            "k.location LIKE @searchQuery OR " +
                            "st.stationName LIKE @searchQuery OR " +
-                           "ss.packageName LIKE @searchQuery OR " +
-                           "k.kioskStatus LIKE @searchQuery OR " +
-                           "k.cameraStatus LIKE @searchQuery OR " +
-                           "k.cashDepositStatus LIKE @searchQuery OR " +
-                           "k.scannerStatus LIKE @searchQuery OR " +
-                           "k.printerStatus LIKE @searchQuery";
+                           "ss.packageName LIKE @searchQuery";
 
             SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
             DataTable table = ExecuteRawQuery(query, new[] { parameter });
