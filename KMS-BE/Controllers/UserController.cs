@@ -93,6 +93,27 @@ namespace KMS.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("ShowUsersInEditPage/{id}")]
+        public JsonResult GetUserByIdInEditPage(int id)
+        {
+            string query = "SELECT u.id, u.username, u.fullname, u.password, u.email, ug.groupName, u.lastLogin, u.isActive, DATEDIFF(DAY, u.lastLogin, GETDATE()) AS TotalDaysDormant" +
+                "\r\nFROM TUser u, TUserGroup ug" +
+                "\r\nWHERE u.userGroupId = ug.id AND u.id = @UserId";
+
+            SqlParameter parameter = new SqlParameter("@UserId", id);
+            DataTable table = ExecuteRawQuery(query, new[] { parameter });
+
+            if (table.Rows.Count > 0)
+            {
+                return new JsonResult(table);
+            }
+            else
+            {
+                return new JsonResult("User not found");
+            }
+        }
+
         [HttpPost]
         [Route("login")]
         public async Task<IActionResult> userLogin([FromBody] Tuser user)
