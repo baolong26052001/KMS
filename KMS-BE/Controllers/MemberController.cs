@@ -79,8 +79,8 @@ namespace KMS.Controllers
         [Route("AddMember")]
         public JsonResult AddMember([FromBody] Lmember member)
         {
-            string query = "INSERT INTO LMember (phone, department, companyName, bankName, address1, isActive, dateCreated) " +
-                           "VALUES (@Phone, @Department, @CompanyName, @BankName, @Address1, @IsActive, GETDATE())";
+            string query = "INSERT INTO LMember (phone, department, companyName, bankName, address1, isActive, dateCreated, dateModified) " +
+                           "VALUES (@Phone, @Department, @CompanyName, @BankName, @Address1, @IsActive, GETDATE(), GETDATE())";
 
             SqlParameter[] parameters =
             {
@@ -102,7 +102,7 @@ namespace KMS.Controllers
         public JsonResult UpdateMember(int id, [FromBody] Lmember member)
         {
             string query = "UPDATE LMember SET phone=@Phone, department=@Department, companyName=@CompanyName, " +
-                           "bankName=@BankName, address1=@Address1, isActive=@IsActive " +
+                           "bankName=@BankName, address1=@Address1, dateModified = GETDATE(), isActive=@IsActive " +
                            "WHERE id=@Id";
 
             SqlParameter[] parameters =

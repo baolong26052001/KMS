@@ -126,7 +126,7 @@ namespace KMS.Controllers
         public JsonResult AddUser([FromBody] Tuser newUser)
         {
             string insertQuery = "INSERT INTO TUser (username, fullname, email, password, userGroupId, lastLogin, isActive, dateCreated, dateModified) " +
-                                "VALUES (@Username, @Fullname, @Email, @Password, @UserGroupId, @LastLogin, @IsActive, @DateCreated, @DateModified);";
+                                "VALUES (@Username, @Fullname, @Email, @Password, @UserGroupId, GETDATE(), @IsActive, GETDATE(), GETDATE());";
 
             SqlParameter[] parameters =
             {
@@ -135,10 +135,7 @@ namespace KMS.Controllers
                 new SqlParameter("@Email", newUser.Email),
                 new SqlParameter("@Password", Password.hashPassword(newUser.Password)),
                 new SqlParameter("@UserGroupId", newUser.UserGroupId),
-                new SqlParameter("@LastLogin", DateTime.Now),
                 new SqlParameter("@IsActive", newUser.IsActive),
-                new SqlParameter("@DateCreated", DateTime.Now),
-                new SqlParameter("@DateModified", DateTime.Now),
             };
 
             ExecuteRawQuery(insertQuery, parameters);
@@ -152,7 +149,7 @@ namespace KMS.Controllers
         {
             string updateQuery = "UPDATE TUser SET username = @Username, fullname = @Fullname, email = @Email, " +
                                  "password = @Password, userGroupId = @UserGroupId, isActive = @IsActive, " +
-                                 "dateModified = @DateModified WHERE id = @Id;";
+                                 "dateModified = GETDATE() WHERE id = @Id;";
 
             SqlParameter[] parameters =
             {
@@ -163,7 +160,6 @@ namespace KMS.Controllers
                 new SqlParameter("@Password", Password.hashPassword(updatedUser.Password)),
                 new SqlParameter("@UserGroupId", updatedUser.UserGroupId),
                 new SqlParameter("@IsActive", updatedUser.IsActive),
-                new SqlParameter("@DateModified", DateTime.Now),
             };
 
             ExecuteRawQuery(updateQuery, parameters);

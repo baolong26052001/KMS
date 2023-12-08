@@ -95,9 +95,9 @@ namespace KMS.Controllers
         [Route("AddActivityLog")]
         public JsonResult AddActivityLog([FromBody] TactivityLog activityLog)
         {
-            // Assuming ActivityLog is the model for your TActivityLog table
+            
             string query = "INSERT INTO TActivityLog (kioskId, hardwareName, status, stationId, dateModified, dateCreated, isActive) " +
-                           "VALUES (@KioskId, @HardwareName, @Status, @StationId, @DateModified, @DateCreated, @IsActive)";
+                           "VALUES (@KioskId, @HardwareName, @Status, @StationId, GETDATE(), GETDATE(), @IsActive)";
 
             SqlParameter[] parameters =
             {
@@ -105,8 +105,6 @@ namespace KMS.Controllers
                 new SqlParameter("@HardwareName", activityLog.HardwareName),
                 new SqlParameter("@Status", activityLog.Status),
                 new SqlParameter("@StationId", activityLog.StationId),
-                new SqlParameter("@DateModified", activityLog.DateModified),
-                new SqlParameter("@DateCreated", activityLog.DateCreated),
                 new SqlParameter("@IsActive", activityLog.IsActive),
             };
 

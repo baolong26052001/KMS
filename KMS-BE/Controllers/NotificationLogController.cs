@@ -64,12 +64,39 @@ namespace KMS.Controllers
             return new JsonResult(table);
         }
 
+        [HttpGet]
+        [Route("FilterNotificationLog")]
+        public JsonResult FilterNotificationLog([FromQuery] bool? isActive = null, [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
+        {
+            string query = "SELECT n.id, n.sendType, n.memberId, n.title, n.content, n.status, n.dateCreated, n.isActive " +
+                           "FROM TNotificationLog n ";
+
+            List<SqlParameter> parameters = new List<SqlParameter>();
+
+            if (isActive.HasValue)
+            {
+                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "isActive = @isActive";
+                parameters.Add(new SqlParameter("@isActive", isActive.Value));
+            }
+
+            if (startDate.HasValue && endDate.HasValue)
+            {
+                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "dateCreated BETWEEN @startDate AND @endDate";
+                parameters.Add(new SqlParameter("@startDate", startDate.Value));
+                parameters.Add(new SqlParameter("@endDate", endDate.Value));
+            }
+
+            DataTable table = ExecuteRawQuery(query, parameters.ToArray());
+
+            return new JsonResult(table);
+        }
+
         [HttpPost]
         [Route("AddNotificationLog")]
         public JsonResult AddNotificationLog(TnotificationLog newNotificationLog)
         {
             string query = "INSERT INTO TNotificationLog (type, sendType, memberId, title, content, status, dateCreated, isActive) " +
-                           "VALUES (@type, @sendType, @memberId, @title, @content, @status, @dateCreated, @isActive)";
+                           "VALUES (@type, @sendType, @memberId, @title, @content, @status, GETDATE(), @isActive)";
 
             SqlParameter[] parameters =
             {
@@ -79,7 +106,6 @@ namespace KMS.Controllers
                 new SqlParameter("@title", newNotificationLog.Title),
                 new SqlParameter("@content", newNotificationLog.Content),
                 new SqlParameter("@status", newNotificationLog.Status),
-                new SqlParameter("@dateCreated", newNotificationLog.DateCreated),
                 new SqlParameter("@isActive", newNotificationLog.IsActive),
             };
 
@@ -94,7 +120,7 @@ namespace KMS.Controllers
         {
             string query = "UPDATE TNotificationLog SET " +
                            "type=@type, sendType = @sendType, memberId = @memberId, title = @title, content = @content, " +
-                           "status = @status, dateCreated = @dateCreated, isActive = @isActive " +
+                           "status = @status, dateCreated = GETDATE(), isActive = @isActive " +
                            "WHERE id = @id";
 
             SqlParameter[] parameters =
@@ -106,7 +132,6 @@ namespace KMS.Controllers
                 new SqlParameter("@title", updatedNotificationLog.Title),
                 new SqlParameter("@content", updatedNotificationLog.Content),
                 new SqlParameter("@status", updatedNotificationLog.Status),
-                new SqlParameter("@dateCreated", updatedNotificationLog.DateCreated),
                 new SqlParameter("@isActive", updatedNotificationLog.IsActive),
             };
 

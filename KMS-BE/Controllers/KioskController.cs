@@ -124,6 +124,27 @@ namespace KMS.Controllers
             return new JsonResult(table);
         }
 
+        [HttpGet]
+        [Route("ShowKioskHardware/{id}")]
+        public JsonResult GetKioskHardwareById(int id)
+        {
+            string query = "select k.id, k.availableMemory, k.ipAddress, k.OSName, k.OSPlatform, k.OSVersion " +
+                           "FROM TKiosk k " +
+                           "WHERE k.id = @id";
+
+            SqlParameter parameter = new SqlParameter("@id", id);
+            DataTable table = ExecuteRawQuery(query, new[] { parameter });
+
+            if (table.Rows.Count > 0)
+            {
+                return new JsonResult(table);
+            }
+            else
+            {
+                return new JsonResult("Kiosk hardware not found");
+            }
+        }
+
         [HttpPost]
         [Route("AddKiosk")]
         public JsonResult AddKiosk([FromBody] Tkiosk kiosk)
