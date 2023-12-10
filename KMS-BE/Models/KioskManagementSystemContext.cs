@@ -33,7 +33,7 @@ namespace KMS.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=DESKTOP-FQK88HL\\SQLEXPRESS;Database=KioskManagementSystem;Trusted_Connection=True;");
+                optionsBuilder.UseSqlServer("Server=THINKBOOK\\SQLEXPRESS; Database=KioskManagementSystem;Trusted_Connection=True;");
             }
         }
 

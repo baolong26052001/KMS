@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from 'react';
 
-//import Sidebar from '../components/sidebar/Sidebar';
-import { render } from '@testing-library/react';
-
 // import components from MUI
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { Button, Box, Tooltip } from '@mui/material';
 
 // import { useHistory } from 'react-router-dom'; // Import useHistory from React Router
-
+import {useNavigate} from 'react-router-dom';
 //import css
 import './kiosk-setup.css';
 import KioskFilter from './kioskFilter';
@@ -16,9 +13,12 @@ import KioskFilter from './kioskFilter';
 
 
 const ViewButton = ({ rowId, label, onClick }) => {
+  const navigate = useNavigate();
+
   const handleClick = (event) => {
     event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
     onClick(rowId);
+    navigate(`/viewKioskDetails/${rowId}`);
   };
 
   return (

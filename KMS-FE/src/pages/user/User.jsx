@@ -10,6 +10,19 @@ import './User.css';
 
 const ViewUser = React.lazy(() => import('./viewUser'));
 
+const CustomToolbar = ({ onButtonClick }) => {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+      <Button variant="outlined" onClick={() => onButtonClick('button1')}>
+        Add
+      </Button>
+      <Button variant="outlined" onClick={() => onButtonClick('button2')}>
+        Delete
+      </Button>
+    </div>
+  );
+};
+
 const ViewButton = ({ rowId, label, onClick }) => {
   const navigate = useNavigate();
 
@@ -50,7 +63,7 @@ function createData(id, userName, email, userGroup, isActive, lastLogin, totalDa
   return {id, userName, email, userGroup, isActive, lastLogin, totalDaysDormant };
 };
 
-const columns = [
+const columns = [ 
   {
     field: 'permissionButton',
     headerName: '',
@@ -79,8 +92,8 @@ const columns = [
       />
     ),
   },
-  { field: 'id', headerName: 'Group ID', minWidth: 100, flex: 1,},
-  { field: 'userName', headerName: 'Name', minWidth: 120, flex: 1,},
+  { field: 'id', headerName: 'User ID', minWidth: 100, flex: 1,},
+  { field: 'userName', headerName: 'User Name', minWidth: 120, flex: 1,},
   { field: 'email', headerName: 'Email', minWidth: 200, flex: 1,},
   {
     field: 'userGroup',
@@ -142,34 +155,79 @@ const User = () => {
     // Get Back-end API URL to connect
     const API_URL = "https://localhost:7017/";
   
+    // useEffect(() => {
+    //   async function fetchData() {
+    //     try {
+    //       const response = await fetch(`${API_URL}api/User/ShowUsers`);
+    //       const data = await response.json();
+  
+    //       // Combine fetched data with createData function
+    //       const updatedRows = data.map((row) =>
+    //       createData(row.id, row.username, row.email, row.groupName, row.isActive, row.lastLogin, row.TotalDaysDormant)
+    //       );
+  
+    //       // If searchTerm is empty, display all rows, otherwise filter based on the search term
+    //       const filteredRows = searchTerm
+    //       ? updatedRows.filter((row) =>
+    //           Object.values(row).some((value) =>
+    //             value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+    //           )
+    //         )
+    //       : updatedRows;
+  
+    //       setRows(filteredRows); // Update the component state with the combined data
+    //     } catch (error) {
+    //       console.error('Error fetching data:', error);
+    //     }
+    //   }
+  
+    //   fetchData();
+    // }, [searchTerm]);
     useEffect(() => {
       async function fetchData() {
         try {
-          const response = await fetch(`${API_URL}api/User/ShowUsers`);
-          const data = await response.json();
-  
-          // Combine fetched data with createData function
-          const updatedRows = data.map((row) =>
-          createData(row.id, row.username, row.email, row.groupName, row.isActive, row.lastLogin, row.TotalDaysDormant)
-          );
-  
-          // If searchTerm is empty, display all rows, otherwise filter based on the search term
-          const filteredRows = searchTerm
-          ? updatedRows.filter((row) =>
-              Object.values(row).some((value) =>
-                value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+          let apiUrl = `${API_URL}api/User/ShowUsers`;
+    
+          // If searchTerm is not empty, use the search API endpoint
+          if (searchTerm) {
+            apiUrl = `${API_URL}api/User/SearchUsers?searchQuery=${encodeURIComponent(searchTerm)}`;
+          }
+    
+          const response = await fetch(apiUrl);
+    
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+    
+          const responseData = await response.json();
+    
+          // Check if responseData is an array before calling map
+          if (Array.isArray(responseData)) {
+            const updatedRows = responseData.map((row) =>
+              createData(
+                row.id,
+                row.username,
+                row.email,
+                row.groupName,
+                row.isActive,
+                row.lastLogin,
+                row.TotalDaysDormant
               )
-            )
-          : updatedRows;
-  
-          setRows(filteredRows); // Update the component state with the combined data
+            );
+    
+            setRows(updatedRows); // Update the component state with the combined data
+          } else {
+            console.error('Invalid data structure:', responseData);
+          }
         } catch (error) {
           console.error('Error fetching data:', error);
         }
       }
-  
+    
       fetchData();
     }, [searchTerm]);
+    
+    
 
   return (
     
@@ -194,9 +252,18 @@ const User = () => {
                           paginationModel: { page: 0, pageSize: 5 },
                       },
                       }}
+                      components={{
+                        Toolbar: () => (
+                          <div style={{  position: 'absolute', bottom: 8, alignItems: 'center', marginLeft: '16px' }}>
+                            <CustomToolbar onButtonClick={(buttonId) => console.log(buttonId)} />
+                            <div style={{ marginLeft: 'auto' }} /> 
+                          </div>
+                        ),
+                      }}
                       pageSizeOptions={[5, 10, 25, 50]}
                       checkboxSelection
                     />
+
                 </div>
             </div>
 

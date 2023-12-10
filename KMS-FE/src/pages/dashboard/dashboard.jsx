@@ -11,8 +11,18 @@ import ButtonBase from '@mui/material/ButtonBase';
 import Stack from '@mui/material/Stack';
 import { DataGrid} from '@mui/x-data-grid';
 
+const statusImages = {
+    1: require('../../images/online.png'), // Status: Online
+    0: require('../../images/offline.png'), // Status: Offline
+    2: require('../../images/nopaper.png'), // Status: NoPaper
+    3: require('../../images/paperlow.png'), // Status: PaperLow
+  };
 
-const columns = [
+  function createData(id, kioskName, stationCode, kioskStatus, camStatus, scannerStatus, cashDeStatus) {
+    return {id, kioskName, stationCode, kioskStatus, camStatus: statusImages[camStatus], scannerStatus: statusImages[scannerStatus], cashDeStatus: statusImages[cashDeStatus],};
+  }
+  
+  const columns = [
     { field: 'id', headerName: 'Kiosk ID', minWidth: 100, flex: 1 },
     { field: 'kioskName', headerName: 'Kiosk Name', minWidth: 100, flex: 1 },
     { field: 'stationCode', headerName: 'Station', minWidth: 100, flex: 1 },
@@ -22,6 +32,15 @@ const columns = [
       sortable: false,
       minWidth: 200, 
       flex: 1,
+      renderCell: (params) => (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <img
+            src={params.row.kioskStatus}
+            alt={`Image for ${params.row.kioskStatus}`}
+            style={{ height: '15px', width: '15px' }}
+          />
+        </div>
+      ),
     },
     {
       field: 'camStatus',
@@ -29,6 +48,15 @@ const columns = [
       sortable: false,
       minWidth: 200, 
       flex: 1,
+      renderCell: (params) => (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <img
+            src={params.row.camStatus}
+            alt={`Image for ${params.row.camStatus}`}
+            style={{ height: '15px', width: '15px' }}
+          />
+        </div>
+      ),
     },
     {
         field: 'scannerStatus',
@@ -36,6 +64,15 @@ const columns = [
         sortable: false,
         minWidth: 200, 
         flex: 1,
+        renderCell: (params) => (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <img
+                src={params.row.scannerStatus}
+                alt={`Image for ${params.row.scannerStatus}`}
+                style={{ height: '15px', width: '15px' }}
+              />
+            </div>
+          ),
     },
     {
         field: 'cashDeStatus',
@@ -43,23 +80,19 @@ const columns = [
         sortable: false,
         minWidth: 200, 
         flex: 1,
+        renderCell: (params) => (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <img
+                src={params.row.cashDeStatus}
+                alt={`Image for ${params.row.cashDeStatus}`}
+                style={{ height: '15px', width: '15px' }}
+              />
+            </div>
+          ),
      },
   ];
 
-  function createData(id, kioskName, stationCode, kioskStatus, camStatus, scannerStatus, cashDeStatus) {
-    return {id, kioskName, stationCode, kioskStatus, camStatus, scannerStatus, cashDeStatus};
-  }
-
-  const rows = [
-    // createData(1, 'K001', 'SaiGon', '24-12-2023', '24-12-2023',  '24-12-2023', '24-12-2023' ),
-    // createData(2, 'K002', 'SaiGon', '24-12-2023', '24-12-2023',  '24-12-2023', '24-12-2023' ),
-    // createData(3, 'K003', 'SaiGon', '24-12-2023', '24-12-2023',  '24-12-2023', '24-12-2023' ),
-    // createData(4, 'K004', 'HaNoi', '24-12-2023', '24-12-2023',  '24-12-2023', '24-12-2023' ),
-    // createData(5, 'K005', 'HaNoi', '24-12-2023', '24-12-2023',  '24-12-2023', '24-12-2023' ),
-    // createData(6, 'K006', 'Binh Duong', '24-12-2023', '24-12-2023',  '24-12-2023', '24-12-2023' ),
-    // createData(7, 'K007', 'Nha Trang', '24-12-2023', '24-12-2023',  '24-12-2023', '24-12-2023' ),
-    // createData(8, 'K008', 'Da Nang', '24-12-2023', '24-12-2023',  '24-12-2023', '24-12-2023' ),
-  ];
+  const rows = [];
 
 const Dashboard = () => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -89,7 +122,7 @@ const Dashboard = () => {
     
             // Combine fetched data with createData function
             const updatedRows = data.map((row) =>
-              createData(row.id, row.kioskName, row.stationName, '24-12-2023', '24-12-2023',  '24-12-2023', '24-12-2023' )
+              createData(row.id, row.kioskName, row.stationName, row.kioskStatus + ' 24-12-2023', row.cameraStatus + ' 24-12-2023', row.scannerStatus + ' 24-12-2023', row.cashDepositStatus + ' 24-12-2023' )
             );
     
             // If searchTerm is empty, display all rows, otherwise filter based on the search term

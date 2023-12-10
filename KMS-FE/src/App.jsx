@@ -52,6 +52,7 @@ const App = () => {
                       element={<RouteUser />} 
                       />
                     <Route path="/viewUser/:id" element={<RouteViewUser />} />
+                    <Route path="/editUser/:id" element={<RouteEditUser />} />
                     <Route 
                       path="/usersgroup" 
                       element={<RouteUsergroup />} 
@@ -59,8 +60,10 @@ const App = () => {
 
 
                     <Route path="/kiosksetup" element={<RouteKioskSetup />} />
+                    <Route path="/viewKioskDetails/:id" element={<RouteKioskDetails />} />
                     <Route path="/kioskhardware" element={<RoutekioskHardware />} />
                     <Route path="/station" element={<RouteStation />} />
+                    <Route path="/viewStation/:id" element={<RouteStationDetails />} />
 
                     <Route
                         path="/slideshow"
@@ -113,6 +116,10 @@ const RouteKioskHealth = React.lazy(() => import('./pages/kioskHealth/kioskHealt
 // view Route
 const RouteViewAccount = React.lazy(() => import('./pages/Account/viewAccount'));
 const RouteViewUser = React.lazy(() => import('./pages/user/viewUser'));
+const RouteKioskDetails = React.lazy(() => import('./pages/kiosk-setup/viewKioskDetails'));
+const RouteStationDetails = React.lazy(() => import('./pages/station/viewStation'));
 
+// Edit Route
+const RouteEditUser = React.lazy(() => import('./pages/user/editUser'));
 
 export default App;
