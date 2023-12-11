@@ -83,7 +83,6 @@ namespace KMS.Controllers
                 new SqlParameter("@tableName", audit.TableName),
                 new SqlParameter("@ipAddress", audit.IpAddress),
                 new SqlParameter("@macAddress", audit.MacAddress),
-                
                 new SqlParameter("@isActive", audit.IsActive)
             };
 
@@ -96,7 +95,7 @@ namespace KMS.Controllers
         public JsonResult UpdateAudit(int id, Taudit audit)
         {
             string query = "UPDATE TAudit SET kioskId = @kioskId, userId = @userId, action = @action, script = @script, field = @field, " +
-                           "tableName = @tableName, ipAddress = @ipAddress, macAddress = @macAddress, dateModified = @dateModified, " +
+                           "tableName = @tableName, ipAddress = @ipAddress, macAddress = @macAddress, dateModified = GETDATE(), " +
                            "isActive = @isActive WHERE id = @id";
 
             SqlParameter[] parameters =
@@ -110,7 +109,6 @@ namespace KMS.Controllers
                 new SqlParameter("@tableName", audit.TableName),
                 new SqlParameter("@ipAddress", audit.IpAddress),
                 new SqlParameter("@macAddress", audit.MacAddress),
-                new SqlParameter("@dateModified", audit.DateModified),
                 new SqlParameter("@isActive", audit.IsActive)
             };
 

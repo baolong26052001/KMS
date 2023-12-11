@@ -81,7 +81,7 @@ namespace KMS.Controllers
         public JsonResult AddAccount([FromBody] Laccount account)
         {
             string query = "INSERT INTO LAccount (contractId, memberId, accountName, accountType, balance, rate, dateDue, status, dateModified, dateCreated, isActive) " +
-                           "VALUES (@ContractId, @MemberId, @AccountName, @AccountType, @Balance, @Rate, @DateDue, @Status, @DateModified, @DateCreated, @IsActive)";
+                           "VALUES (@ContractId, @MemberId, @AccountName, @AccountType, @Balance, @Rate, @DateDue, @Status, GETDATE(), GETDATE(), @IsActive)";
 
             SqlParameter[] parameters =
             {
@@ -93,8 +93,6 @@ namespace KMS.Controllers
                 new SqlParameter("@Rate", account.Rate),
                 new SqlParameter("@DateDue", account.DateDue),
                 new SqlParameter("@Status", account.Status),
-                new SqlParameter("@DateModified", account.DateModified),
-                new SqlParameter("@DateCreated", account.DateCreated),
                 new SqlParameter("@IsActive", account.IsActive)
             };
 
@@ -109,8 +107,8 @@ namespace KMS.Controllers
         {
             string query = "UPDATE LAccount " +
                            "SET contractId = @ContractId, memberId = @MemberId, accountName = @AccountName, accountType = @AccountType, " +
-                           "balance = @Balance, rate = @Rate, dateDue = @DateDue, status = @Status, dateModified = @DateModified, " +
-                           "dateCreated = @DateCreated, isActive = @IsActive " +
+                           "balance = @Balance, rate = @Rate, dateDue = @DateDue, status = @Status, dateModified = GETDATE(), " +
+                           "dateCreated = GETDATE(), isActive = @IsActive " +
                            "WHERE id = @Id";
 
             SqlParameter[] parameters =
@@ -124,8 +122,6 @@ namespace KMS.Controllers
                 new SqlParameter("@Rate", updatedAccount.Rate),
                 new SqlParameter("@DateDue", updatedAccount.DateDue),
                 new SqlParameter("@Status", updatedAccount.Status),
-                new SqlParameter("@DateModified", updatedAccount.DateModified),
-                new SqlParameter("@DateCreated", updatedAccount.DateCreated),
                 new SqlParameter("@IsActive", updatedAccount.IsActive)
             };
 

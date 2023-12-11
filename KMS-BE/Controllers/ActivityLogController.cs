@@ -117,7 +117,7 @@ namespace KMS.Controllers
         public JsonResult UpdateActivityLog([FromBody] TactivityLog activityLog)
         {
             string query = "UPDATE TActivityLog SET kioskId = @KioskId, hardwareName = @HardwareName, status = @Status, " +
-                           "stationId = @StationId, dateModified = @DateModified, dateCreated = @DateCreated, isActive = @IsActive " +
+                           "stationId = @StationId, dateModified = GETDATE(), dateCreated = GETDATE(), isActive = @IsActive " +
                            "WHERE id = @Id";
 
             SqlParameter[] parameters =
@@ -127,8 +127,6 @@ namespace KMS.Controllers
                 new SqlParameter("@HardwareName", activityLog.HardwareName),
                 new SqlParameter("@Status", activityLog.Status),
                 new SqlParameter("@StationId", activityLog.StationId),
-                new SqlParameter("@DateModified", activityLog.DateModified),
-                new SqlParameter("@DateCreated", activityLog.DateCreated),
                 new SqlParameter("@IsActive", activityLog.IsActive),
             };
 

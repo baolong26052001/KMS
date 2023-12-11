@@ -189,15 +189,36 @@ namespace KMS.Controllers
         }
 
         [HttpDelete]
-        [Route("DeleteUser/{userId}")]
-        public JsonResult DeleteUser(int userId)
+        [Route("DeleteUsers")]
+        public JsonResult DeleteUsers([FromBody] List<int> userIds)
         {
-            string deleteQuery = "DELETE FROM TUser WHERE id = @UserId;";
+            if (userIds == null || userIds.Count == 0)
+            {
+                return new JsonResult("No user IDs provided for deletion");
+            }
 
-            SqlParameter parameter = new SqlParameter("@UserId", userId);
-            ExecuteRawQuery(deleteQuery, new[] { parameter });
+            StringBuilder deleteQuery = new StringBuilder("DELETE FROM TUser WHERE id IN (");
 
-            return new JsonResult("User deleted successfully");
+            // Add parameters for each user ID
+            List<SqlParameter> parameters = new List<SqlParameter>();
+            for (int i = 0; i < userIds.Count; i++)
+            {
+                string parameterName = "@UserId" + i;
+                deleteQuery.Append(parameterName);
+
+                if (i < userIds.Count - 1)
+                {
+                    deleteQuery.Append(", ");
+                }
+
+                parameters.Add(new SqlParameter(parameterName, userIds[i]));
+            }
+
+            deleteQuery.Append(");");
+
+            ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
+
+            return new JsonResult("Users deleted successfully");
         }
 
         [HttpGet]
