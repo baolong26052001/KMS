@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect  } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -18,6 +18,26 @@ const AddUser = () => {
     userGroupId: '',
     isActive: true, // Assuming isActive is a boolean
   });
+
+  const [userGroups, setUserGroups] = useState([]);
+
+  useEffect(() => {
+    const fetchUserGroups = async () => {
+      try {
+        const response = await fetch(`${API_URL}api/Usergroup/ShowUsergroup`);
+        if (response.ok) {
+          const data = await response.json();
+          setUserGroups(data);
+        } else {
+          console.log('Failed to fetch user groups');
+        }
+      } catch (error) {
+        console.error('Error fetching user groups:', error);
+      }
+    };
+
+    fetchUserGroups();
+  }, [API_URL]);
 
   const handleInputChange = (key, value) => {
     setNewUser((prev) => ({
@@ -103,14 +123,17 @@ const AddUser = () => {
               />
               <TextField
                 id="userGroupId"
-                label="User Group ID"
+                label="User Group"
                 variant="outlined"
                 select
                 value={newUser.userGroupId}
                 onChange={(e) => handleInputChange('userGroupId', e.target.value)}
               >
-                <MenuItem value="1">Administration</MenuItem>
-                <MenuItem value="2">Support</MenuItem>
+                {userGroups.map((group) => (
+                  <MenuItem key={group.id} value={group.id}>
+                    {group.groupName}
+                  </MenuItem>
+                ))}
               </TextField>
               <Button variant="contained" onClick={handleSave}>
                 Save
