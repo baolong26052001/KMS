@@ -142,6 +142,10 @@ h1, p {
   justify-content: center;
 }
 
+.MuiDataGrid-selectedRowCount.css-de9k3v-MuiDataGrid-selectedRowCount {
+  visibility: hidden;
+}
+
 /* View css */
 .custom-table {
   width: 100%;

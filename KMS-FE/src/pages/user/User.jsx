@@ -5,18 +5,32 @@ import { DataGrid} from '@mui/x-data-grid';
 import { Button, Box } from '@mui/material';
 // import { useHistory } from 'react-router-dom'; // Import useHistory from React Router
 import {useNavigate} from 'react-router-dom';
+
+//import Icon
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
 //import css
 import './User.css';
 
 const ViewUser = React.lazy(() => import('./viewUser'));
 
 const CustomToolbar = ({ onButtonClick }) => {
+  const navigate = useNavigate();
+
+  const handleButtonClick = (buttonId) => {
+    onButtonClick(buttonId);
+    
+    if (buttonId === 'Add') {
+      navigate('/addUser');
+    }
+  };
+
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-      <Button variant="outlined" onClick={() => onButtonClick('button1')}>
+      <Button variant="contained" startIcon={<AddIcon />} onClick={() => handleButtonClick('Add')}  style={{ backgroundColor: '#655BD3', color: '#fff' }}>
         Add
       </Button>
-      <Button variant="outlined" onClick={() => onButtonClick('button2')}>
+      <Button variant="contained" startIcon={<DeleteIcon />} onClick={() => onButtonClick('Delete')} style={{ backgroundColor: '#FF3E1D', color: '#fff' }}>
         Delete
       </Button>
     </div>

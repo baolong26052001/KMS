@@ -4,6 +4,8 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import {useNavigate} from 'react-router-dom';
+import { MenuItem } from '@mui/material';
+
 
 export default function EditUser() {
   const { id } = useParams();
@@ -35,9 +37,17 @@ export default function EditUser() {
   const handleInputChange = (key, value) => {
     setEditedDetails((prev) => ({
       ...prev,
+      [key]: key === 'userGroupId' || key === 'isActive' ? value : value,
+    }));
+  };
+
+  const handleSelectChange = (key, value) => {
+    setEditedDetails((prev) => ({
+      ...prev,
       [key]: value,
     }));
   };
+  
 
   const handleSave = async () => {
     try {
@@ -68,9 +78,6 @@ export default function EditUser() {
     }
   };
   
-  
-  
-
   return (
     <div className="content">
       <div className="admin-dashboard-text-div pt-5">
@@ -94,17 +101,60 @@ export default function EditUser() {
               {Details &&
                 Object.entries(Details).map(([key, value]) => (
                   <div className='input-field' key={key}>
-                    <TextField
-                      fullWidth
-                      id={key}
-                      label={key}
-                      variant="outlined"
-                      value={editedDetails[key] || ''}
-                      onChange={(e) => handleInputChange(key, e.target.value)}
-                    />
+                    {key === 'id' ? (
+                      <TextField
+                        fullWidth
+                        id={key}
+                        label={key}
+                        variant="outlined"
+                        value={value}
+                        disabled
+                      />
+                    ) : key === 'password' ? (
+                      <TextField
+                        fullWidth
+                        id={key}
+                        label={key}
+                        variant="outlined"
+                        type="password"
+                        value={editedDetails[key] || ''}
+                        onChange={(e) => handleInputChange(key, e.target.value)}
+                      />
+                    ) : key === 'userGroupId' || key === 'isActive' ? (
+                      <TextField
+                        fullWidth
+                        id={key}
+                        label={key}
+                        variant="outlined"
+                        select
+                        value={editedDetails[key] || ''}
+                        onChange={(e) => handleSelectChange(key, e.target.value)}
+                      >
+                        {key === 'userGroupId' ? (
+                          <>
+                            <MenuItem value={1}>Administraion</MenuItem>
+                            <MenuItem value={2}>Support</MenuItem>
+                          </>
+                        ) : (
+                          <>
+                            <MenuItem value="yes">Yes</MenuItem>
+                            <MenuItem value="no">No</MenuItem>
+                          </>
+                        )}
+                      </TextField>
+                    ) : (
+                      <TextField
+                        fullWidth
+                        id={key}
+                        label={key}
+                        variant="outlined"
+                        value={editedDetails[key] || ''}
+                        onChange={(e) => handleInputChange(key, e.target.value)}
+                      />
+                    )}
                   </div>
                 ))}
-              <Button variant="contained" onClick={handleSave}>
+              <Button variant="contained" onClick={handleSave} style={{float: 'left'}}>
                 Save
               </Button>
             </Box>
@@ -113,4 +163,5 @@ export default function EditUser() {
       </div>
     </div>
   );
+
 }
