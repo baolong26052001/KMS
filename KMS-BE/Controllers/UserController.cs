@@ -130,7 +130,7 @@ namespace KMS.Controllers
                     return BadRequest("Username or password is incorrect");
                 }
 
-                // Update LastLogin when the user logs in
+                
                 dbUser.LastLogin = DateTime.Now;
                 await _dbcontext.SaveChangesAsync();
 
@@ -199,7 +199,7 @@ namespace KMS.Controllers
 
             StringBuilder deleteQuery = new StringBuilder("DELETE FROM TUser WHERE id IN (");
 
-            // Add parameters for each user ID
+            
             List<SqlParameter> parameters = new List<SqlParameter>();
             for (int i = 0; i < userIds.Count; i++)
             {

@@ -3,6 +3,7 @@ using KMS.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System.Data;
+using System.Text;
 
 namespace KMS.Controllers
 {
@@ -141,19 +142,36 @@ namespace KMS.Controllers
         }
 
         [HttpDelete]
-        [Route("DeleteNotificationLog/{id}")]
-        public JsonResult DeleteNotificationLog(int id)
+        [Route("DeleteNotificationLog")]
+        public JsonResult DeleteNotificationLog([FromBody] List<int> notificationLogIds)
         {
-            string query = "DELETE FROM TNotificationLog WHERE id = @id";
-
-            SqlParameter[] parameters =
+            if (notificationLogIds == null || notificationLogIds.Count == 0)
             {
-                new SqlParameter("@id", id),
-            };
+                return new JsonResult("No notification log IDs provided for deletion");
+            }
 
-            ExecuteRawQuery(query, parameters);
+            StringBuilder deleteQuery = new StringBuilder("DELETE FROM TNotificationLog WHERE id IN (");
 
-            return new JsonResult("NotificationLog deleted successfully");
+
+            List<SqlParameter> parameters = new List<SqlParameter>();
+            for (int i = 0; i < notificationLogIds.Count; i++)
+            {
+                string parameterName = "@NotificationLogId" + i;
+                deleteQuery.Append(parameterName);
+
+                if (i < notificationLogIds.Count - 1)
+                {
+                    deleteQuery.Append(", ");
+                }
+
+                parameters.Add(new SqlParameter(parameterName, notificationLogIds[i]));
+            }
+
+            deleteQuery.Append(");");
+
+            ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
+
+            return new JsonResult("Notification log deleted successfully");
         }
 
         [HttpGet]

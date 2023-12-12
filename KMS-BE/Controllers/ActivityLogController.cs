@@ -3,6 +3,7 @@ using KMS.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System.Data;
+using System.Text;
 
 namespace KMS.Controllers
 {
@@ -136,14 +137,35 @@ namespace KMS.Controllers
 
         [HttpDelete]
         [Route("DeleteActivityLog")]
-        public JsonResult DeleteActivityLog(int id)
+        public JsonResult DeleteActivityLog([FromBody] List<int> activityLogIds)
         {
-            string query = "DELETE FROM TActivityLog WHERE id = @Id";
+            if (activityLogIds == null || activityLogIds.Count == 0)
+            {
+                return new JsonResult("No activity log IDs provided for deletion");
+            }
 
-            SqlParameter parameter = new SqlParameter("@Id", id);
+            StringBuilder deleteQuery = new StringBuilder("DELETE FROM TActivityLog WHERE id IN (");
 
-            ExecuteRawQuery(query, new[] { parameter });
-            return new JsonResult("ActivityLog deleted successfully");
+
+            List<SqlParameter> parameters = new List<SqlParameter>();
+            for (int i = 0; i < activityLogIds.Count; i++)
+            {
+                string parameterName = "@ActivityLogId" + i;
+                deleteQuery.Append(parameterName);
+
+                if (i < activityLogIds.Count - 1)
+                {
+                    deleteQuery.Append(", ");
+                }
+
+                parameters.Add(new SqlParameter(parameterName, activityLogIds[i]));
+            }
+
+            deleteQuery.Append(");");
+
+            ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
+
+            return new JsonResult("Activity Log deleted successfully");
         }
 
         [HttpGet]

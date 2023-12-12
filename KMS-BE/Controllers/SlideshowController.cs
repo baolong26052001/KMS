@@ -3,6 +3,7 @@ using KMS.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System.Data;
+using System.Text;
 
 namespace KMS.Controllers
 {
@@ -137,12 +138,34 @@ namespace KMS.Controllers
         }
 
         [HttpDelete]
-        [Route("DeleteSlideshow/{id}")]
-        public JsonResult DeleteSlideshow(int id)
+        [Route("DeleteSlideshow")]
+        public JsonResult DeleteSlideshow([FromBody] List<int> slideshowIds)
         {
-            string query = "DELETE FROM TSlideshow WHERE id = @Id";
-            SqlParameter parameter = new SqlParameter("@Id", id);
-            ExecuteRawQuery(query, new[] { parameter });
+            if (slideshowIds == null || slideshowIds.Count == 0)
+            {
+                return new JsonResult("No slideshow IDs provided for deletion");
+            }
+
+            StringBuilder deleteQuery = new StringBuilder("DELETE FROM TSlideshow WHERE id IN (");
+
+
+            List<SqlParameter> parameters = new List<SqlParameter>();
+            for (int i = 0; i < slideshowIds.Count; i++)
+            {
+                string parameterName = "@SlideshowId" + i;
+                deleteQuery.Append(parameterName);
+
+                if (i < slideshowIds.Count - 1)
+                {
+                    deleteQuery.Append(", ");
+                }
+
+                parameters.Add(new SqlParameter(parameterName, slideshowIds[i]));
+            }
+
+            deleteQuery.Append(");");
+
+            ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
 
             return new JsonResult("Slideshow deleted successfully");
         }

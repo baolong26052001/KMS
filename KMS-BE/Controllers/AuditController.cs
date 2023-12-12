@@ -3,6 +3,7 @@ using KMS.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System.Data;
+using System.Text;
 
 namespace KMS.Controllers
 {
@@ -65,6 +66,32 @@ namespace KMS.Controllers
             return new JsonResult(table);
         }
 
+        [HttpGet]
+        [Route("FilterAudit")]
+        public JsonResult FilterAudit([FromQuery] bool? isActive = null, [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
+        {
+            string query = "SELECT id, kioskId, userId, action, script, field, tableName, ipAddress, macAddress, dateCreated, isActive " +
+                           "FROM TAudit";
+
+            List<SqlParameter> parameters = new List<SqlParameter>();
+
+            if (isActive.HasValue)
+            {
+                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "isActive = @isActive";
+                parameters.Add(new SqlParameter("@isActive", isActive.Value));
+            }
+
+            if (startDate.HasValue && endDate.HasValue)
+            {
+                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "dateCreated BETWEEN @startDate AND @endDate";
+                parameters.Add(new SqlParameter("@startDate", startDate.Value));
+                parameters.Add(new SqlParameter("@endDate", endDate.Value));
+            }
+
+            DataTable table = ExecuteRawQuery(query, parameters.ToArray());
+
+            return new JsonResult(table);
+        }
 
         [HttpPost]
         [Route("AddAudit")]
@@ -117,15 +144,36 @@ namespace KMS.Controllers
         }
 
         [HttpDelete]
-        [Route("DeleteAudit/{id}")]
-        public JsonResult DeleteAudit(int id)
+        [Route("DeleteAudit")]
+        public JsonResult DeleteAudit([FromBody] List<int> auditIds)
         {
-            string query = "DELETE FROM TAudit WHERE id = @id";
+            if (auditIds == null || auditIds.Count == 0)
+            {
+                return new JsonResult("No audit IDs provided for deletion");
+            }
 
-            SqlParameter parameter = new SqlParameter("@id", id);
+            StringBuilder deleteQuery = new StringBuilder("DELETE FROM TAudit WHERE id IN (");
 
-            ExecuteRawQuery(query, new SqlParameter[] { parameter });
-            return new JsonResult("Audit record deleted successfully");
+
+            List<SqlParameter> parameters = new List<SqlParameter>();
+            for (int i = 0; i < auditIds.Count; i++)
+            {
+                string parameterName = "@AuditId" + i;
+                deleteQuery.Append(parameterName);
+
+                if (i < auditIds.Count - 1)
+                {
+                    deleteQuery.Append(", ");
+                }
+
+                parameters.Add(new SqlParameter(parameterName, auditIds[i]));
+            }
+
+            deleteQuery.Append(");");
+
+            ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
+
+            return new JsonResult("Audit deleted successfully");
         }
 
         [HttpGet]

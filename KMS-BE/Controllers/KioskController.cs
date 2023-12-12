@@ -3,6 +3,7 @@ using KMS.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System.Data;
+using System.Text;
 
 namespace KMS.Controllers
 {
@@ -47,7 +48,7 @@ namespace KMS.Controllers
         [Route("ShowKiosk")]
         public JsonResult GetKiosk()
         {
-            string query = "select k.id,  k.kioskName, k.location, st.stationName, ss.packageName, k.kioskStatus, k.cameraStatus, k.cashDepositStatus, k.scannerStatus, k.printerStatus\r\nfrom TKiosk k, TStation st, TSlideshow ss\r\nwhere k.stationCode = st.id or ss.id = k.slidePackage";
+            string query = "select k.id,  k.kioskName, k.location, st.stationName, ss.packageName, k.kioskStatus, k.cameraStatus, k.cashDepositStatus, k.scannerStatus, k.printerStatus\r\nfrom TKiosk k, TStation st, TSlideshow ss\r\nwhere k.stationCode = st.id and ss.id = k.slidePackage";
             DataTable table = ExecuteRawQuery(query);
             return new JsonResult(table);
         }
@@ -195,12 +196,34 @@ namespace KMS.Controllers
         }
 
         [HttpDelete]
-        [Route("DeleteKiosk/{id}")]
-        public JsonResult DeleteKiosk(int id)
+        [Route("DeleteKiosk")]
+        public JsonResult DeleteKiosk([FromBody] List<int> kioskIds)
         {
-            string query = "DELETE FROM TKiosk WHERE id = @id";
-            SqlParameter parameter = new SqlParameter("@id", id);
-            ExecuteRawQuery(query, new[] { parameter });
+            if (kioskIds == null || kioskIds.Count == 0)
+            {
+                return new JsonResult("No kiosk IDs provided for deletion");
+            }
+
+            StringBuilder deleteQuery = new StringBuilder("DELETE FROM TKiosk WHERE id IN (");
+
+
+            List<SqlParameter> parameters = new List<SqlParameter>();
+            for (int i = 0; i < kioskIds.Count; i++)
+            {
+                string parameterName = "@KioskId" + i;
+                deleteQuery.Append(parameterName);
+
+                if (i < kioskIds.Count - 1)
+                {
+                    deleteQuery.Append(", ");
+                }
+
+                parameters.Add(new SqlParameter(parameterName, kioskIds[i]));
+            }
+
+            deleteQuery.Append(");");
+
+            ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
 
             return new JsonResult("Kiosk deleted successfully");
         }

@@ -4,6 +4,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Security.Principal;
+using System.Text;
 
 namespace KMS.Controllers
 {
@@ -76,6 +77,35 @@ namespace KMS.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("FilterAccount")]
+        public JsonResult FilterAccount([FromQuery] int? status = null, [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
+        {
+            string query = "SELECT a.id, a.memberId, a.contractId, m.phone, m.department, m.companyName, m.address1, a.status, a.dateCreated " +
+                "FROM LAccount a INNER JOIN LMember m ON a.memberId = m.id ";
+
+            List<SqlParameter> parameters = new List<SqlParameter>();
+
+            if (status != null)
+            {
+                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "a.status = @status";
+                parameters.Add(new SqlParameter("@status", status));
+            }
+
+            if (startDate.HasValue && endDate.HasValue)
+            {
+                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "a.dateCreated BETWEEN @startDate AND @endDate";
+                parameters.Add(new SqlParameter("@startDate", startDate.Value));
+                parameters.Add(new SqlParameter("@endDate", endDate.Value));
+            }
+
+            DataTable table = ExecuteRawQuery(query, parameters.ToArray());
+
+            return new JsonResult(table);
+        }
+
+
+
         [HttpPost]
         [Route("AddAccount")]
         public JsonResult AddAccount([FromBody] Laccount account)
@@ -131,13 +161,34 @@ namespace KMS.Controllers
         }
 
         [HttpDelete]
-        [Route("DeleteAccount/{id}")]
-        public JsonResult DeleteAccount(int id)
+        [Route("DeleteAccount")]
+        public JsonResult DeleteAccount([FromBody] List<int> accountIds)
         {
-            string query = "DELETE FROM LAccount WHERE id = @Id";
+            if (accountIds == null || accountIds.Count == 0)
+            {
+                return new JsonResult("No account IDs provided for deletion");
+            }
 
-            SqlParameter parameter = new SqlParameter("@Id", id);
-            ExecuteRawQuery(query, new[] { parameter });
+            StringBuilder deleteQuery = new StringBuilder("DELETE FROM LAccount WHERE id IN (");
+
+
+            List<SqlParameter> parameters = new List<SqlParameter>();
+            for (int i = 0; i < accountIds.Count; i++)
+            {
+                string parameterName = "@AccountId" + i;
+                deleteQuery.Append(parameterName);
+
+                if (i < accountIds.Count - 1)
+                {
+                    deleteQuery.Append(", ");
+                }
+
+                parameters.Add(new SqlParameter(parameterName, accountIds[i]));
+            }
+
+            deleteQuery.Append(");");
+
+            ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
 
             return new JsonResult("Account deleted successfully");
         }
@@ -158,10 +209,7 @@ namespace KMS.Controllers
                            "a.accountType LIKE @searchQuery OR " +
                            "CONVERT(VARCHAR(20), a.balance) LIKE @searchQuery OR " +
                            "CONVERT(VARCHAR(20), a.rate) LIKE @searchQuery OR " +
-                           
                            "a.status LIKE @searchQuery OR " +
-                           
-                           
                            "m.phone LIKE @searchQuery OR " +
                            "m.department LIKE @searchQuery OR " +
                            "m.companyName LIKE @searchQuery OR " +

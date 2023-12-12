@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using KMS.Models;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using System.Text;
 
 namespace KMS.Controllers
 {
@@ -150,12 +151,34 @@ namespace KMS.Controllers
         }
 
         [HttpDelete]
-        [Route("DeleteStation/{id}")]
-        public JsonResult DeleteStation(int id)
+        [Route("DeleteStation")]
+        public JsonResult DeleteStation([FromBody] List<int> stationIds)
         {
-            string query = "DELETE FROM TStation WHERE id = @Id";
-            SqlParameter parameter = new SqlParameter("@Id", id);
-            ExecuteRawQuery(query, new[] { parameter });
+            if (stationIds == null || stationIds.Count == 0)
+            {
+                return new JsonResult("No station IDs provided for deletion");
+            }
+
+            StringBuilder deleteQuery = new StringBuilder("DELETE FROM TStation WHERE id IN (");
+
+
+            List<SqlParameter> parameters = new List<SqlParameter>();
+            for (int i = 0; i < stationIds.Count; i++)
+            {
+                string parameterName = "@StationId" + i;
+                deleteQuery.Append(parameterName);
+
+                if (i < stationIds.Count - 1)
+                {
+                    deleteQuery.Append(", ");
+                }
+
+                parameters.Add(new SqlParameter(parameterName, stationIds[i]));
+            }
+
+            deleteQuery.Append(");");
+
+            ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
 
             return new JsonResult("Station deleted successfully");
         }

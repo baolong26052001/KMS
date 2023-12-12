@@ -3,6 +3,7 @@ using KMS.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System.Data;
+using System.Text;
 
 namespace KMS.Controllers
 {
@@ -147,15 +148,36 @@ namespace KMS.Controllers
         }
 
         [HttpDelete]
-        [Route("DeleteUsergroup/{id}")]
-        public JsonResult DeleteUsergroup(int id)
+        [Route("DeleteUsergroup")]
+        public JsonResult DeleteUsergroup([FromBody] List<int> usergroupIds)
         {
-            string query = "DELETE FROM TUserGroup WHERE id = @Id";
+            if (usergroupIds == null || usergroupIds.Count == 0)
+            {
+                return new JsonResult("No user group IDs provided for deletion");
+            }
 
-            SqlParameter parameter = new SqlParameter("@Id", id);
-            ExecuteRawQuery(query, new[] { parameter });
+            StringBuilder deleteQuery = new StringBuilder("DELETE FROM TUsergroup WHERE id IN (");
 
-            return new JsonResult("Usergroup deleted successfully");
+            
+            List<SqlParameter> parameters = new List<SqlParameter>();
+            for (int i = 0; i < usergroupIds.Count; i++)
+            {
+                string parameterName = "@UsergroupId" + i;
+                deleteQuery.Append(parameterName);
+
+                if (i < usergroupIds.Count - 1)
+                {
+                    deleteQuery.Append(", ");
+                }
+
+                parameters.Add(new SqlParameter(parameterName, usergroupIds[i]));
+            }
+
+            deleteQuery.Append(");");
+
+            ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
+
+            return new JsonResult("User group deleted successfully");
         }
 
         [HttpGet]
