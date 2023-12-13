@@ -141,38 +141,7 @@ namespace KMS.Controllers
             return new JsonResult("NotificationLog updated successfully");
         }
 
-        [HttpDelete]
-        [Route("DeleteNotificationLog")]
-        public JsonResult DeleteNotificationLog([FromBody] List<int> notificationLogIds)
-        {
-            if (notificationLogIds == null || notificationLogIds.Count == 0)
-            {
-                return new JsonResult("No notification log IDs provided for deletion");
-            }
-
-            StringBuilder deleteQuery = new StringBuilder("DELETE FROM TNotificationLog WHERE id IN (");
-
-
-            List<SqlParameter> parameters = new List<SqlParameter>();
-            for (int i = 0; i < notificationLogIds.Count; i++)
-            {
-                string parameterName = "@NotificationLogId" + i;
-                deleteQuery.Append(parameterName);
-
-                if (i < notificationLogIds.Count - 1)
-                {
-                    deleteQuery.Append(", ");
-                }
-
-                parameters.Add(new SqlParameter(parameterName, notificationLogIds[i]));
-            }
-
-            deleteQuery.Append(");");
-
-            ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
-
-            return new JsonResult("Notification log deleted successfully");
-        }
+        
 
         [HttpGet]
         [Route("SearchNotificationLog")]

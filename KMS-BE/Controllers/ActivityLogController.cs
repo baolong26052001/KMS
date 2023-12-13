@@ -135,38 +135,7 @@ namespace KMS.Controllers
             return new JsonResult("ActivityLog updated successfully");
         }
 
-        [HttpDelete]
-        [Route("DeleteActivityLog")]
-        public JsonResult DeleteActivityLog([FromBody] List<int> activityLogIds)
-        {
-            if (activityLogIds == null || activityLogIds.Count == 0)
-            {
-                return new JsonResult("No activity log IDs provided for deletion");
-            }
-
-            StringBuilder deleteQuery = new StringBuilder("DELETE FROM TActivityLog WHERE id IN (");
-
-
-            List<SqlParameter> parameters = new List<SqlParameter>();
-            for (int i = 0; i < activityLogIds.Count; i++)
-            {
-                string parameterName = "@ActivityLogId" + i;
-                deleteQuery.Append(parameterName);
-
-                if (i < activityLogIds.Count - 1)
-                {
-                    deleteQuery.Append(", ");
-                }
-
-                parameters.Add(new SqlParameter(parameterName, activityLogIds[i]));
-            }
-
-            deleteQuery.Append(");");
-
-            ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
-
-            return new JsonResult("Activity Log deleted successfully");
-        }
+        
 
         [HttpGet]
         [Route("SearchActivityLog")]

@@ -79,8 +79,8 @@ namespace KMS.Controllers
         }
 
         [HttpGet]
-        [Route("ShowKioskSetup")] // filter by package name, station name, country
-        public JsonResult GetKioskByPackageLocationAndStation([FromQuery] string? packageName = null, [FromQuery] string? location = null, [FromQuery] string? stationName = null)
+        [Route("FilterKioskSetup")] // filter by package name, station name, country
+        public JsonResult FilterKioskSetup([FromQuery] string? packageName = null, [FromQuery] string? location = null, [FromQuery] string? stationName = null)
         {
             string query = "SELECT k.id, k.kioskName, k.location, st.stationName, ss.packageName, k.kioskStatus, k.cameraStatus, k.cashDepositStatus, k.scannerStatus, k.printerStatus " +
                            "FROM TKiosk k " +
@@ -129,7 +129,7 @@ namespace KMS.Controllers
         [Route("ShowKioskHardware/{id}")]
         public JsonResult GetKioskHardwareById(int id)
         {
-            string query = "select k.id, k.availableMemory, k.ipAddress, k.OSName, k.OSPlatform, k.OSVersion " +
+            string query = "select k.id, k.availableMemory, k.ipAddress, k.OSName, k.OSPlatform, k.OSVersion, k.processor, k.totalMemory, k.diskSizeC, k.freeSpaceC, k.diskSizeD, k.freeSpaceD " +
                            "FROM TKiosk k " +
                            "WHERE k.id = @id";
 

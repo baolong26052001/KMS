@@ -160,38 +160,7 @@ namespace KMS.Controllers
             return new JsonResult("Account updated successfully");
         }
 
-        [HttpDelete]
-        [Route("DeleteAccount")]
-        public JsonResult DeleteAccount([FromBody] List<int> accountIds)
-        {
-            if (accountIds == null || accountIds.Count == 0)
-            {
-                return new JsonResult("No account IDs provided for deletion");
-            }
-
-            StringBuilder deleteQuery = new StringBuilder("DELETE FROM LAccount WHERE id IN (");
-
-
-            List<SqlParameter> parameters = new List<SqlParameter>();
-            for (int i = 0; i < accountIds.Count; i++)
-            {
-                string parameterName = "@AccountId" + i;
-                deleteQuery.Append(parameterName);
-
-                if (i < accountIds.Count - 1)
-                {
-                    deleteQuery.Append(", ");
-                }
-
-                parameters.Add(new SqlParameter(parameterName, accountIds[i]));
-            }
-
-            deleteQuery.Append(");");
-
-            ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
-
-            return new JsonResult("Account deleted successfully");
-        }
+        
 
         [HttpGet]
         [Route("SearchAccount")]

@@ -58,7 +58,7 @@ namespace KMS.Controllers
         [Route("ShowStation/{id}")]
         public JsonResult GetStationById(int id)
         {
-            string query = "SELECT id, stationName, companyName, city, address, isActive " +
+            string query = "SELECT * " +
                            "FROM TStation " +
                            "WHERE id = @Id";
             SqlParameter parameter = new SqlParameter("@Id", id);

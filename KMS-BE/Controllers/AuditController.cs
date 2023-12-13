@@ -143,38 +143,7 @@ namespace KMS.Controllers
             return new JsonResult("Audit record updated successfully");
         }
 
-        [HttpDelete]
-        [Route("DeleteAudit")]
-        public JsonResult DeleteAudit([FromBody] List<int> auditIds)
-        {
-            if (auditIds == null || auditIds.Count == 0)
-            {
-                return new JsonResult("No audit IDs provided for deletion");
-            }
-
-            StringBuilder deleteQuery = new StringBuilder("DELETE FROM TAudit WHERE id IN (");
-
-
-            List<SqlParameter> parameters = new List<SqlParameter>();
-            for (int i = 0; i < auditIds.Count; i++)
-            {
-                string parameterName = "@AuditId" + i;
-                deleteQuery.Append(parameterName);
-
-                if (i < auditIds.Count - 1)
-                {
-                    deleteQuery.Append(", ");
-                }
-
-                parameters.Add(new SqlParameter(parameterName, auditIds[i]));
-            }
-
-            deleteQuery.Append(");");
-
-            ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
-
-            return new JsonResult("Audit deleted successfully");
-        }
+        
 
         [HttpGet]
         [Route("SearchAudit")]

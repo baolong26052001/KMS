@@ -58,7 +58,7 @@ namespace KMS.Controllers
         [Route("ShowSlideshow/{id}")]
         public JsonResult GetSlideshowById(int id)
         {
-            string query = "SELECT id, packageName, imagevideo, fileType, startDate, endDate " +
+            string query = "SELECT * " +
                            "FROM TSlideshow " +
                            "WHERE id = @Id";
             SqlParameter parameter = new SqlParameter("@Id", id);
@@ -76,7 +76,7 @@ namespace KMS.Controllers
 
         [HttpGet]
         [Route("FilterSlideshow")]
-        public JsonResult FilterSlideshow([FromQuery] string? packageName = null)
+        public JsonResult FilterSlideshow([FromQuery] string? packageName = null, [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
         {
             string query = "SELECT id, packageName, imagevideo, fileType, startDate, endDate " +
                            "FROM TSlideshow ";
@@ -89,6 +89,13 @@ namespace KMS.Controllers
             {
                 query += (parameters.Count == 0 ? " WHERE " : " AND ") + "packageName LIKE @packageName";
                 parameters.Add(new SqlParameter("@packageName", "%" + packageName + "%"));
+            }
+
+            if (startDate.HasValue && endDate.HasValue)
+            {
+                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "startDate >= @startDate AND endDate <= @endDate";
+                parameters.Add(new SqlParameter("@startDate", startDate.Value));
+                parameters.Add(new SqlParameter("@endDate", endDate.Value));
             }
 
             DataTable table = ExecuteRawQuery(query, parameters.ToArray());
@@ -186,6 +193,8 @@ namespace KMS.Controllers
 
             return new JsonResult(table);
         }
+
+
 
     }
 }

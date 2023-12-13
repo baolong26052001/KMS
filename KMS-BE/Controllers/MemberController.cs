@@ -121,17 +121,7 @@ namespace KMS.Controllers
             return new JsonResult("Member updated successfully");
         }
 
-        [HttpDelete]
-        [Route("DeleteMember/{id}")]
-        public JsonResult DeleteMember(int id)
-        {
-            string query = "DELETE FROM LMember WHERE id=@Id";
-
-            SqlParameter parameter = new SqlParameter("@Id", id);
-            ExecuteRawQuery(query, new[] { parameter });
-
-            return new JsonResult("Member deleted successfully");
-        }
+        
 
         [HttpGet]
         [Route("SearchMember")]
