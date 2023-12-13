@@ -54,7 +54,81 @@ namespace KMS.Controllers
             return new JsonResult(table);
         }
 
-        
+        [HttpGet]
+        [Route("ShowTransactionLog/{id}")]
+        public JsonResult GetTransactionLogById(int id)
+        {
+            string query = "SELECT tl.transactionDate, tl.kioskId, tl.memberId, tl.transactionId, st.stationName, tl.transactionType, tl.status " +
+                "FROM LTransactionLog tl, TKiosk k, LMember m, LAccount a, TStation st " +
+                "WHERE tl.kioskId = k.id AND tl.memberId = m.id AND tl.accountId = a.id AND tl.stationId = st.id AND tl.transactionId = @transactionId";
+
+            SqlParameter parameter = new SqlParameter("@transactionId", id);
+            DataTable table = ExecuteRawQuery(query, new[] { parameter });
+
+            return new JsonResult(table);
+        }
+
+
+        [HttpGet]
+        [Route("FilterTransactionLog")]
+        public JsonResult FilterTransactionLog([FromQuery] string? transactionType = null, [FromQuery] string? stationName = null, [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
+        {
+            string query = "SELECT tl.transactionDate, tl.kioskId, tl.memberId, tl.transactionId, st.stationName, tl.transactionType, tl.status " +
+                "FROM LTransactionLog tl, TKiosk k, LMember m, LAccount a, TStation st " +
+                "WHERE tl.kioskId = k.id AND tl.memberId = m.id AND tl.accountId = a.id AND tl.stationId = st.id ";
+
+            List<SqlParameter> parameters = new List<SqlParameter>();
+
+            if (!string.IsNullOrEmpty(transactionType))
+            {
+                query += " AND " + "tl.transactionType LIKE @transactionType ";
+                parameters.Add(new SqlParameter("@transactionType", "%" + transactionType + "%"));
+            }
+
+            if (!string.IsNullOrEmpty(stationName))
+            {
+                query += (parameters.Count == 0 ? " " : "AND ") + "st.stationName LIKE @stationName ";
+                parameters.Add(new SqlParameter("@stationName", "%" + stationName + "%"));
+            }
+
+            if (startDate.HasValue)
+            {
+                query += (parameters.Count == 0 ? " " : "AND ") + "tl.transactionDate >= @startDate ";
+                parameters.Add(new SqlParameter("@startDate", startDate.Value));
+            }
+
+            if (endDate.HasValue)
+            {
+                query += (parameters.Count == 0 ? " " : "AND ") + "tl.transactionDate <= @endDate ";
+                parameters.Add(new SqlParameter("@endDate", endDate.Value));
+            }
+
+            DataTable table = ExecuteRawQuery(query, parameters.ToArray());
+
+            return new JsonResult(table);
+        }
+
+        [HttpGet]
+        [Route("SearchTransactionLog")]
+        public JsonResult SearchTransactionLog(string searchQuery)
+        {
+            string query = "SELECT tl.transactionDate, tl.kioskId, tl.memberId, tl.transactionId, st.stationName, tl.transactionType, tl.status " +
+                "FROM LTransactionLog tl, TKiosk k, LMember m, LAccount a, TStation st " +
+                "WHERE tl.kioskId = k.id AND tl.memberId = m.id AND tl.accountId = a.id AND tl.stationId = st.id AND " +
+                "(tl.kioskId LIKE @searchQuery OR " +
+                "tl.memberId LIKE @searchQuery OR " +
+                "tl.transactionId LIKE @searchQuery OR " +
+                "st.stationName LIKE @searchQuery OR " +
+                "tl.transactionType LIKE @searchQuery OR " +
+                "tl.status LIKE @searchQuery)";
+
+            SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
+            DataTable table = ExecuteRawQuery(query, new[] { parameter });
+
+            return new JsonResult(table);
+        }
+
+
 
     }
 }

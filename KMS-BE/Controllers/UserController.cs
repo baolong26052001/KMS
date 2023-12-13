@@ -65,9 +65,9 @@ namespace KMS.Controllers
         [Route("ShowUsers")]
         public JsonResult GetUsers()
         {
-            string query = "select u.id, u.username, u.fullname, u.email, ug.groupName,u.lastLogin,u.isActive, DATEDIFF(DAY, u.lastLogin, GETDATE()) AS TotalDaysDormant" +
-                "\r\nfrom TUser u, TUserGroup ug" +
-                "\r\nwhere u.userGroupId = ug.id;";
+            string query = "SELECT u.id, u.username, u.fullname, u.email, ug.groupName, u.lastLogin, u.isActive, DATEDIFF(DAY, u.lastLogin, GETDATE()) AS TotalDaysDormant " +
+                " FROM TUser u \r\nLEFT JOIN TUserGroup ug ON u.userGroupId = ug.id " +
+                " WHERE ug.id IS NOT NULL or ug.id IS NULL";
             DataTable table = ExecuteRawQuery(query);
             return new JsonResult(table);
         }
