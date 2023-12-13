@@ -9,27 +9,40 @@ import {useNavigate} from 'react-router-dom';
 //import Icon
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
+
 // import css
 import './User.css';
 
 
 const CustomToolbar = ({ onButtonClick, selectedRows }) => {
   const navigate = useNavigate();
-
+  const [open, setOpen] = React.useState(false);
   const handleButtonClick = (buttonId) => {
     onButtonClick(buttonId);
     
     if (buttonId === 'Add') {
       navigate('/addUser');
+
     } else if (buttonId === 'Delete') {
+
       const userIdsToDelete = selectedRows;
-      console.log('userIdsToDelete:', userIdsToDelete);
+
       if (userIdsToDelete.length > 0) {
         deleteUsers(userIdsToDelete);
       } else {
         console.warn('No rows selected for deletion.');
+        setOpen(true);
       }
     }
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false);
   };
 
   const deleteUsers = async (userIds) => {
@@ -53,13 +66,11 @@ const CustomToolbar = ({ onButtonClick, selectedRows }) => {
       const responseData = await response.json();
       console.log('Response from the backend:', responseData);
       window.location.reload();
-      
+
     } catch (error) {
       console.error('Error deleting users:', error);
     }
   };
-  
-  
   
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -79,6 +90,11 @@ const CustomToolbar = ({ onButtonClick, selectedRows }) => {
       >
         Delete
       </Button>
+      <Snackbar open={open} autoHideDuration={1000} onClose={handleClose}>
+        <Alert onClose={handleClose}variant="filled" severity="error">
+          No rows selected for deletion!!!
+        </Alert>
+      </Snackbar>
     </div>
   );
 };
@@ -98,6 +114,7 @@ const ViewButton = ({ rowId, label, onClick }) => {
         {label}
       </Button>
     </Box>
+
   );
 };
 

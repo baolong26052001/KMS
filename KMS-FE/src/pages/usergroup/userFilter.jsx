@@ -90,7 +90,6 @@ export default function UserFilter() {
                     <Select
                     labelId="group-name-label"
                     id="group-name"
-                    multiple
                     value={personName}
                     onChange={handleChange}
                     input={<OutlinedInput label="Group Name" />}

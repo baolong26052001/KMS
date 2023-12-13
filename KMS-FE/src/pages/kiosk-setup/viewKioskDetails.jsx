@@ -48,7 +48,7 @@ export default function ViewKioskDetails() {
                 <TableRow className='row-style' key={key}>
                   <TableCell className='cell-head'>{key}</TableCell>
                   <TableCell className='cell-body'>
-                      {statusDes.hasOwnProperty(value) ? statusDes[value] : (typeof value === 'boolean' ? value.toString() : value)}
+                  {key !== 'id' && statusDes.hasOwnProperty(value) ? statusDes[value] : (typeof value === 'boolean' ? value.toString() : value)}
                   </TableCell>
                 </TableRow>
               ))}
