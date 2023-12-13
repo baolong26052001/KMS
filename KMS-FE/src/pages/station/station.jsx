@@ -113,6 +113,7 @@ const Station = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchTermButton, setSearchTermButton] = useState('');
 
+
   const handleSearchButton = () => {
       setSearchTerm(searchTermButton);
   };
@@ -188,7 +189,6 @@ const Station = () => {
                       }}
                       pageSizeOptions={[5, 10, 25, 50]}
                       checkboxSelection
-                      
                     />
                 </div>
             </div>

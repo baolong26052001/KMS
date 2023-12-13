@@ -9,12 +9,11 @@ import {useNavigate} from 'react-router-dom';
 //import Icon
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
-//import css
+// import css
 import './User.css';
 
-const ViewUser = React.lazy(() => import('./viewUser'));
 
-const CustomToolbar = ({ onButtonClick }) => {
+const CustomToolbar = ({ onButtonClick, selectedRows }) => {
   const navigate = useNavigate();
 
   const handleButtonClick = (buttonId) => {
@@ -22,15 +21,62 @@ const CustomToolbar = ({ onButtonClick }) => {
     
     if (buttonId === 'Add') {
       navigate('/addUser');
+    } else if (buttonId === 'Delete') {
+      const userIdsToDelete = selectedRows;
+      console.log('userIdsToDelete:', userIdsToDelete);
+      if (userIdsToDelete.length > 0) {
+        deleteUsers(userIdsToDelete);
+      } else {
+        console.warn('No rows selected for deletion.');
+      }
     }
   };
 
+  const deleteUsers = async (userIds) => {
+    
+    try {
+      const API_URL = "https://localhost:7017/";
+  
+      const response = await fetch(`${API_URL}api/User/DeleteUsers`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userIds), // Send the array directly
+      });
+  
+      if (!response.ok) {
+        const errorMessage = await response.text();
+        throw new Error(`HTTP error! Status: ${response.status}. ${errorMessage}`);
+      }
+  
+      const responseData = await response.json();
+      console.log('Response from the backend:', responseData);
+      window.location.reload();
+      
+    } catch (error) {
+      console.error('Error deleting users:', error);
+    }
+  };
+  
+  
+  
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-      <Button variant="contained" startIcon={<AddIcon />} onClick={() => handleButtonClick('Add')}  style={{ backgroundColor: '#655BD3', color: '#fff' }}>
+      <Button
+        variant="contained"
+        startIcon={<AddIcon />}
+        onClick={() => handleButtonClick('Add')}
+        style={{ backgroundColor: '#655BD3', color: '#fff' }}
+      >
         Add
       </Button>
-      <Button variant="contained" startIcon={<DeleteIcon />} onClick={() => onButtonClick('Delete')} style={{ backgroundColor: '#FF3E1D', color: '#fff' }}>
+      <Button
+        variant="contained"
+        startIcon={<DeleteIcon />}
+        onClick={() => handleButtonClick('Delete')}
+        style={{ backgroundColor: '#FF3E1D', color: '#fff' }}
+      >
         Delete
       </Button>
     </div>
@@ -145,6 +191,7 @@ const rows = [];
 const handleButtonClick = (id) => {
   // Handle button click, e.g., navigate to another page
   console.log(`Button clicked for row with ID: ${id}`);
+  
 };
 
 
@@ -153,10 +200,12 @@ const User = () => {
 
     const [searchTermButton, setSearchTermButton] = useState('');
 
+    const [selectedRowIds, setSelectedRowIds] = useState([]);
+    
     const handleSearchButton = () => {
         setSearchTerm(searchTermButton);
     };
-    
+
     const handleKeyPress = (event) => {
       // Check if the pressed key is Enter (key code 13)
       if (event.key === 'Enter') {
@@ -169,34 +218,6 @@ const User = () => {
     // Get Back-end API URL to connect
     const API_URL = "https://localhost:7017/";
   
-    // useEffect(() => {
-    //   async function fetchData() {
-    //     try {
-    //       const response = await fetch(`${API_URL}api/User/ShowUsers`);
-    //       const data = await response.json();
-  
-    //       // Combine fetched data with createData function
-    //       const updatedRows = data.map((row) =>
-    //       createData(row.id, row.username, row.email, row.groupName, row.isActive, row.lastLogin, row.TotalDaysDormant)
-    //       );
-  
-    //       // If searchTerm is empty, display all rows, otherwise filter based on the search term
-    //       const filteredRows = searchTerm
-    //       ? updatedRows.filter((row) =>
-    //           Object.values(row).some((value) =>
-    //             value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-    //           )
-    //         )
-    //       : updatedRows;
-  
-    //       setRows(filteredRows); // Update the component state with the combined data
-    //     } catch (error) {
-    //       console.error('Error fetching data:', error);
-    //     }
-    //   }
-  
-    //   fetchData();
-    // }, [searchTerm]);
     useEffect(() => {
       async function fetchData() {
         try {
@@ -240,9 +261,9 @@ const User = () => {
     
       fetchData();
     }, [searchTerm]);
-    
-    
 
+
+  
   return (
     
     <div className="content"> 
@@ -269,15 +290,19 @@ const User = () => {
                       components={{
                         Toolbar: () => (
                           <div style={{  position: 'absolute', bottom: 8, alignItems: 'center', marginLeft: '16px' }}>
-                            <CustomToolbar onButtonClick={(buttonId) => console.log(buttonId)} />
+                            <CustomToolbar onButtonClick={(buttonId) => console.log(buttonId)} 
+                                          selectedRows={selectedRowIds}/>
                             <div style={{ marginLeft: 'auto' }} /> 
                           </div>
                         ),
                       }}
                       pageSizeOptions={[5, 10, 25, 50]}
                       checkboxSelection
+                      onRowSelectionModelChange={(rowSelectionModel) => {
+                        setSelectedRowIds(rowSelectionModel.map((id) => parseInt(id, 10)));
+                        console.log('Selected IDs:', rowSelectionModel);
+                      }}                  
                     />
-
                 </div>
             </div>
 
