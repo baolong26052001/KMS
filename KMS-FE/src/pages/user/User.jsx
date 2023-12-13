@@ -6,11 +6,14 @@ import { Button, Box } from '@mui/material';
 // import { useHistory } from 'react-router-dom'; // Import useHistory from React Router
 import {useNavigate} from 'react-router-dom';
 
-//import Icon
+//import MUI Library
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
+
+// import Delete Hook
+import useDeleteHook from '../../components/deleteHook/deleteHook';
 
 // import css
 import './User.css';
@@ -18,7 +21,9 @@ import './User.css';
 
 const CustomToolbar = ({ onButtonClick, selectedRows }) => {
   const navigate = useNavigate();
-  const [open, setOpen] = React.useState(false);
+  const { handleDelete, handleClose, open } = useDeleteHook('User/DeleteUsers'); 
+
+  // const [open, setOpen] = React.useState(false);
   const handleButtonClick = (buttonId) => {
     onButtonClick(buttonId);
     
@@ -29,49 +34,10 @@ const CustomToolbar = ({ onButtonClick, selectedRows }) => {
 
       const userIdsToDelete = selectedRows;
 
-      if (userIdsToDelete.length > 0) {
-        deleteUsers(userIdsToDelete);
-      } else {
-        console.warn('No rows selected for deletion.');
-        setOpen(true);
-      }
+      handleDelete(userIdsToDelete);
     }
   };
 
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setOpen(false);
-  };
-
-  const deleteUsers = async (userIds) => {
-    
-    try {
-      const API_URL = "https://localhost:7017/";
-  
-      const response = await fetch(`${API_URL}api/User/DeleteUsers`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userIds), // Send the array directly
-      });
-  
-      if (!response.ok) {
-        const errorMessage = await response.text();
-        throw new Error(`HTTP error! Status: ${response.status}. ${errorMessage}`);
-      }
-  
-      const responseData = await response.json();
-      console.log('Response from the backend:', responseData);
-      window.location.reload();
-
-    } catch (error) {
-      console.error('Error deleting users:', error);
-    }
-  };
-  
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
       <Button
@@ -91,7 +57,7 @@ const CustomToolbar = ({ onButtonClick, selectedRows }) => {
         Delete
       </Button>
       <Snackbar open={open} autoHideDuration={1000} onClose={handleClose}>
-        <Alert onClose={handleClose}variant="filled" severity="error">
+        <Alert onClose={handleClose} variant="filled" severity="error">
           No rows selected for deletion!!!
         </Alert>
       </Snackbar>
@@ -306,10 +272,9 @@ const User = () => {
                       }}
                       components={{
                         Toolbar: () => (
-                          <div style={{  position: 'absolute', bottom: 8, alignItems: 'center', marginLeft: '16px' }}>
-                            <CustomToolbar onButtonClick={(buttonId) => console.log(buttonId)} 
-                                          selectedRows={selectedRowIds}/>
-                            <div style={{ marginLeft: 'auto' }} /> 
+                          <div style={{ position: 'absolute', bottom: 8, alignItems: 'center', marginLeft: '16px' }}>
+                            <CustomToolbar onButtonClick={(buttonId) => console.log(buttonId)} selectedRows={selectedRowIds} />
+                            <div style={{ marginLeft: 'auto' }} />
                           </div>
                         ),
                       }}
@@ -318,7 +283,7 @@ const User = () => {
                       onRowSelectionModelChange={(rowSelectionModel) => {
                         setSelectedRowIds(rowSelectionModel.map((id) => parseInt(id, 10)));
                         console.log('Selected IDs:', rowSelectionModel);
-                      }}                  
+                      }}               
                     />
                 </div>
             </div>

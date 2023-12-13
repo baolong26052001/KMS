@@ -1,26 +1,76 @@
 import React, { useState, useEffect } from 'react';
 
-//import Sidebar from '../components/sidebar/Sidebar';
-import { render } from '@testing-library/react';
-
-
 //import css
 import './Usergroup.css';
 import UserFilter from './userFilter';
 
+// Import from React Router
+import {useNavigate} from 'react-router-dom';
+
 // import components from MUI
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import { DataGrid } from '@mui/x-data-grid';
 import { Button, Box } from '@mui/material';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
+
+//import MUI Library
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
+
+// import Delete Hook
+import useDeleteHook from '../../components/deleteHook/deleteHook';
+
+const CustomToolbar = ({ onButtonClick, selectedRows }) => {
+  const navigate = useNavigate();
+  const { handleDelete, handleClose, open } = useDeleteHook('Usergroup/DeleteUsergroup'); 
+
+  // const [open, setOpen] = React.useState(false);
+  const handleButtonClick = (buttonId) => {
+    onButtonClick(buttonId);
+    
+    if (buttonId === 'Add') {
+      navigate('/addGroup');
+
+    } else if (buttonId === 'Delete') {
+
+      const userIdsToDelete = selectedRows;
+
+      handleDelete(userIdsToDelete);
+    }
+  };
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+      <Button
+        variant="contained"
+        startIcon={<AddIcon />}
+        onClick={() => handleButtonClick('Add')}
+        style={{ backgroundColor: '#655BD3', color: '#fff' }}
+      >
+        Add
+      </Button>
+      <Button
+        variant="contained"
+        startIcon={<DeleteIcon />}
+        onClick={() => handleButtonClick('Delete')}
+        style={{ backgroundColor: '#FF3E1D', color: '#fff' }}
+      >
+        Delete
+      </Button>
+      <Snackbar open={open} autoHideDuration={1000} onClose={handleClose}>
+        <Alert onClose={handleClose} variant="filled" severity="error">
+          No rows selected for deletion!!!
+        </Alert>
+      </Snackbar>
+    </div>
+  );
+};
 
 function createData(id, groupName, dateModified, dateCreated, isActive) {
   return {id, groupName, dateModified, dateCreated, isActive };
 }
 
-const ViewButton = ({ rowId, label, onClick }) => {
+const PermissionButton = ({ rowId, label, onClick }) => {
   const handleClick = (event) => {
     event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
     onClick(rowId);
@@ -74,7 +124,7 @@ const columns = [
     sortable: false, // Disable sorting for this column
     filterable: false, // Disable filtering for this column
     renderCell: (params) => (
-        <ViewButton
+        <PermissionButton
         rowId={params.row.id}
         label="Permission"
         onClick={handleButtonClick}
@@ -114,57 +164,65 @@ const handleButtonClick = (id) => {
 
 
 const Usergroup = () => {
-    const [searchTerm, setSearchTerm] = useState('');
-    // const [selectedRows, setSelectedRows] = useState([]);
-    // const [selectAllChecked, setSelectAllChecked] = useState(false);
-    // const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
+  const [searchTerm, setSearchTerm] = useState('');
 
-    const [searchTermButton, setSearchTermButton] = useState('');
+  const [searchTermButton, setSearchTermButton] = useState('');
 
-    const handleSearchButton = () => {
-        setSearchTerm(searchTermButton);
-    };
-
-    const handleKeyPress = (event) => {
-      if (event.key === 'Enter') {
-        handleSearchButton();
-      }
-    };
-
-    const [rows, setRows] = useState([]);
-    // Get id from Database  
-    const getRowId = (row) => row.id;
-    // Get Back-end API URL to connect
-    const API_URL = "https://localhost:7017/";
+  const [selectedRowIds, setSelectedRowIds] = useState([]);
   
-    useEffect(() => {
-      async function fetchData() {
-        try {
-          const response = await fetch(`${API_URL}api/Usergroup/ShowUsergroup`);
-          const data = await response.json();
+  const handleSearchButton = () => {
+      setSearchTerm(searchTermButton);
+  };
+
+  const handleKeyPress = (event) => {
+    // Check if the pressed key is Enter (key code 13)
+    if (event.key === 'Enter') {
+      handleSearchButton();
+    }
+  };
+
+  const [rows, setRows] = useState([]);
+
+  // Get Back-end API URL to connect
+  const API_URL = "https://localhost:7017/";
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        let apiUrl = `${API_URL}api/Usergroup/ShowUsergroup`;
   
-          // Combine fetched data with createData function
-          const updatedRows = data.map((row) =>
-            createData(row.id, row.groupName, row.dateModified, row.dateCreated, row.isActive)
+        // If searchTerm is not empty, use the search API endpoint
+        if (searchTerm) {
+          apiUrl = `${API_URL}api/Usergroup/SearchUsergroup?searchQuery=${encodeURIComponent(searchTerm)}`;
+        }
+  
+        const response = await fetch(apiUrl);
+  
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+  
+        const responseData = await response.json();
+  
+        // Check if responseData is an array before calling map
+        if (Array.isArray(responseData)) {
+          const updatedRows = responseData.map((row) =>
+            createData(
+              row.id, row.groupName, row.dateModified, row.dateCreated, row.isActive
+            )
           );
   
-          // If searchTerm is empty, display all rows, otherwise filter based on the search term
-          const filteredRows = searchTerm
-          ? updatedRows.filter((row) =>
-              Object.values(row).some((value) =>
-                value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-              )
-            )
-          : updatedRows;
-  
-          setRows(filteredRows); // Update the component state with the combined data
-        } catch (error) {
-          console.error('Error fetching data:', error);
+          setRows(updatedRows); // Update the component state with the combined data
+        } else {
+          console.error('Invalid data structure:', responseData);
         }
+      } catch (error) {
+        console.error('Error fetching data:', error);
       }
+    }
   
-      fetchData();
-    }, [searchTerm]);
+    fetchData();
+  }, [searchTerm]);
 
 
 
@@ -188,18 +246,28 @@ const Usergroup = () => {
 
           <div className='Table' style={{ height: 400, width: 'auto'}}>
             <DataGrid
-                rows={rows}
-                columns={columns}
-                getRowId={getRowId}
-                initialState={{
-                  pagination: {
-                      paginationModel: { page: 0, pageSize: 5 },
-                  },
-                  }}
-                  pageSizeOptions={[5, 10, 25, 50]}
-                  checkboxSelection
-                >
-              </DataGrid>
+              rows={rows}
+              columns={columns}
+              initialState={{
+              pagination: {
+                paginationModel: { page: 0, pageSize: 5 },
+                },
+                }}
+              components={{
+                Toolbar: () => (
+                  <div style={{ position: 'absolute', bottom: 8, alignItems: 'center', marginLeft: '16px' }}>
+                    <CustomToolbar onButtonClick={(buttonId) => console.log(buttonId)} selectedRows={selectedRowIds} />
+                      <div style={{ marginLeft: 'auto' }} />
+                  </div>
+                ),
+                }}
+              pageSizeOptions={[5, 10, 25, 50]}
+              checkboxSelection
+              onRowSelectionModelChange={(rowSelectionModel) => {
+                setSelectedRowIds(rowSelectionModel.map((id) => parseInt(id, 10)));
+                console.log('Selected IDs:', rowSelectionModel);
+              }}               
+              />
           </div>
         </div>
     </div>
