@@ -76,9 +76,9 @@ namespace KMS.Controllers
         [Route("ShowUsers/{id}")]
         public JsonResult GetUserById(int id)
         {
-            string query = "SELECT u.id, u.username, u.fullname, u.email, ug.groupName, u.lastLogin, u.isActive, DATEDIFF(DAY, u.lastLogin, GETDATE()) AS TotalDaysDormant" +
-                "\r\nFROM TUser u, TUserGroup ug" +
-                "\r\nWHERE u.userGroupId = ug.id AND u.id = @UserId";
+            string query = "SELECT u.id, u.username, u.fullname, u.email, ug.groupName, u.lastLogin, u.isActive, DATEDIFF(DAY, u.lastLogin, GETDATE()) AS TotalDaysDormant " +
+                " FROM TUser u \r\nLEFT JOIN TUserGroup ug ON u.userGroupId = ug.id " +
+                " WHERE u.id = @UserId and (ug.id IS NOT NULL or ug.id IS NULL)";
 
             SqlParameter parameter = new SqlParameter("@UserId", id);
             DataTable table = ExecuteRawQuery(query, new[] { parameter });
