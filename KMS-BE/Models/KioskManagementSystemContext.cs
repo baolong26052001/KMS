@@ -236,6 +236,8 @@ namespace KMS.Models
 
                 entity.Property(e => e.KioskId).HasColumnName("kioskId");
 
+                entity.Property(e => e.KioskRemainingMoney).HasColumnName("kioskRemainingMoney");
+
                 entity.Property(e => e.MemberId).HasColumnName("memberId");
 
                 entity.Property(e => e.MonthlyPaymentAmount).HasColumnName("monthlyPaymentAmount");
@@ -280,6 +282,11 @@ namespace KMS.Models
                     .HasColumnName("transactionDate");
 
                 entity.Property(e => e.TransactionId).HasColumnName("transactionId");
+
+                entity.Property(e => e.TransactionType)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("transactionType");
             });
 
             modelBuilder.Entity<TaccessRule>(entity =>
@@ -412,6 +419,11 @@ namespace KMS.Models
 
                 entity.Property(e => e.CashDepositStatus).HasColumnName("cashDepositStatus");
 
+                entity.Property(e => e.Component)
+                    .HasMaxLength(30)
+                    .IsUnicode(false)
+                    .HasColumnName("component");
+
                 entity.Property(e => e.DateCreated)
                     .HasColumnType("datetime")
                     .HasColumnName("dateCreated");
@@ -440,6 +452,8 @@ namespace KMS.Models
                     .IsUnicode(false)
                     .HasColumnName("kioskName");
 
+                entity.Property(e => e.KioskRemainingMoney).HasColumnName("kioskRemainingMoney");
+
                 entity.Property(e => e.KioskStatus).HasColumnName("kioskStatus");
 
                 entity.Property(e => e.Location)
@@ -451,6 +465,14 @@ namespace KMS.Models
                     .HasMaxLength(30)
                     .IsUnicode(false)
                     .HasColumnName("macAddress");
+
+                entity.Property(e => e.OfflineTime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("offlineTime");
+
+                entity.Property(e => e.OnlineTime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("onlineTime");
 
                 entity.Property(e => e.Osname)
                     .HasMaxLength(30)

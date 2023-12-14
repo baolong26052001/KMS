@@ -39,5 +39,9 @@ namespace KMS.Models
         public DateTime? DateCreated { get; set; }
         public bool? IsActive { get; set; }
         public string? Osplatform { get; set; }
+        public double? KioskRemainingMoney { get; set; }
+        public DateTime? OnlineTime { get; set; }
+        public DateTime? OfflineTime { get; set; }
+        public string? Component { get; set; }
     }
 }

@@ -45,13 +45,18 @@ namespace KMS.Controllers
         }
 
         [HttpGet]
-        [Route("ShowKiosk")]
+        [Route("ShowKiosk")] // show all kiosk setup
         public JsonResult GetKiosk()
         {
-            string query = "select k.id,  k.kioskName, k.location, st.stationName, ss.packageName, k.kioskStatus, k.cameraStatus, k.cashDepositStatus, k.scannerStatus, k.printerStatus\r\nfrom TKiosk k, TStation st, TSlideshow ss\r\nwhere k.stationCode = st.id and ss.id = k.slidePackage";
+            string query = "SELECT k.id, k.kioskName, k.location, st.stationName, ss.packageName, k.kioskStatus, k.cameraStatus, k.cashDepositStatus, k.scannerStatus, k.printerStatus " +
+                           "FROM TKiosk k " +
+                           "LEFT JOIN TStation st ON k.stationCode = st.id " +
+                           "LEFT JOIN TSlideshow ss ON ss.id = k.slidePackage";
+
             DataTable table = ExecuteRawQuery(query);
             return new JsonResult(table);
         }
+
 
 
 
@@ -61,8 +66,8 @@ namespace KMS.Controllers
         {
             string query = "SELECT k.id, k.kioskName, k.location, st.stationName, ss.packageName, k.kioskStatus, k.cameraStatus, k.cashDepositStatus, k.scannerStatus, k.printerStatus " +
                            "FROM TKiosk k " +
-                           "JOIN TStation st ON k.stationCode = st.id " +
-                           "JOIN TSlideshow ss ON ss.id = k.slidePackage " +
+                           "LEFT JOIN TStation st ON k.stationCode = st.id " +
+                           "LEFT JOIN TSlideshow ss ON ss.id = k.slidePackage " +
                            "WHERE k.id = @id";
 
             SqlParameter parameter = new SqlParameter("@id", id);
@@ -84,8 +89,8 @@ namespace KMS.Controllers
         {
             string query = "SELECT k.id, k.kioskName, k.location, st.stationName, ss.packageName, k.kioskStatus, k.cameraStatus, k.cashDepositStatus, k.scannerStatus, k.printerStatus " +
                            "FROM TKiosk k " +
-                           "JOIN TStation st ON k.stationCode = st.id " +
-                           "JOIN TSlideshow ss ON ss.id = k.slidePackage ";
+                           "LEFT JOIN TStation st ON k.stationCode = st.id " +
+                           "LEFT JOIN TSlideshow ss ON ss.id = k.slidePackage ";
 
             List<SqlParameter> parameters = new List<SqlParameter>();
 
@@ -229,13 +234,13 @@ namespace KMS.Controllers
         }
 
         [HttpGet]
-        [Route("SearchKiosk")]
-        public JsonResult SearchKiosk(string searchQuery)
+        [Route("SearchKioskSetup")]
+        public JsonResult SearchKioskSetup(string searchQuery)
         {
             string query = "SELECT k.id, k.kioskName, k.location, st.stationName, ss.packageName, k.kioskStatus, k.cameraStatus, k.cashDepositStatus, k.scannerStatus, k.printerStatus " +
                            "FROM TKiosk k " +
-                           "JOIN TStation st ON k.stationCode = st.id " +
-                           "JOIN TSlideshow ss ON ss.id = k.slidePackage " +
+                           "LEFT JOIN TStation st ON k.stationCode = st.id " +
+                           "LEFT JOIN TSlideshow ss ON ss.id = k.slidePackage " +
                            "WHERE k.id LIKE @searchQuery OR " +
                            "k.kioskName LIKE @searchQuery OR " +
                            "k.location LIKE @searchQuery OR " +
@@ -246,6 +251,56 @@ namespace KMS.Controllers
             DataTable table = ExecuteRawQuery(query, new[] { parameter });
 
             return new JsonResult(table);
+        }
+
+        [HttpGet]
+        [Route("SearchKioskHardware")]
+        public JsonResult SearchKioskHardware(string searchQuery)
+        {
+            string query = "select k.id, k.availableMemory, k.ipAddress, k.OSName, k.OSPlatform, k.OSVersion " +
+                           "FROM TKiosk k " +
+                           "WHERE k.id LIKE @searchQuery OR " +
+                           "k.availableMemory LIKE @searchQuery OR " +
+                           "k.ipAddress LIKE @searchQuery OR " +
+                           "k.OSName LIKE @searchQuery OR " +
+                           "k.OSPlatform LIKE @searchQuery OR " +
+                           "k.OSVersion LIKE @searchQuery";
+
+            SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
+            DataTable table = ExecuteRawQuery(query, new[] { parameter });
+
+            return new JsonResult(table);
+        }
+
+        [HttpGet]
+        [Route("ShowKioskHealth")]
+        public JsonResult GetKioskHealth()
+        {
+            string query = "select k.dateCreated,  k.stationCode,  k.id,  DATEDIFF(MINUTE, k.onlineTime, GETDATE()) AS durationUptime,  DATEDIFF(MINUTE, k.offlineTime, GETDATE()) AS durationDowntime, k.dateModified as lastUpdated " +
+                "from TKiosk k";
+            DataTable table = ExecuteRawQuery(query);
+            return new JsonResult(table);
+        }
+
+        [HttpGet]
+        [Route("ShowKioskHealth/{id}")]
+        public JsonResult GetKioskHealthById(int id)
+        {
+            string query = "select k.dateCreated,  k.stationCode,  k.id,  DATEDIFF(MINUTE, k.onlineTime, GETDATE()) AS durationUptime,  DATEDIFF(MINUTE, k.offlineTime, GETDATE()) AS durationDowntime, k.dateModified as lastUpdated " +
+                           "FROM TKiosk k " +
+                           "WHERE k.id = @id";
+
+            SqlParameter parameter = new SqlParameter("@id", id);
+            DataTable table = ExecuteRawQuery(query, new[] { parameter });
+
+            if (table.Rows.Count > 0)
+            {
+                return new JsonResult(table);
+            }
+            else
+            {
+                return new JsonResult("Kiosk hardware not found");
+            }
         }
 
     }
