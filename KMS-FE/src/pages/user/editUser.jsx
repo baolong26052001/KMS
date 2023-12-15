@@ -1,83 +1,109 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import {useNavigate} from 'react-router-dom';
-import { MenuItem } from '@mui/material';
+import { useParams, useNavigate } from 'react-router-dom';
+import MenuItem from '@mui/material/MenuItem';
 
-
-export default function EditUser() {
+const EditUser = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
-  const [Details, setDetails] = useState({});
-  const [editedDetails, setEditedDetails] = useState({}); // State to track edited values
   const API_URL = "https://localhost:7017/";
 
-  const [isLoading, setIsLoading] = useState(true);
-  const navigate = useNavigate();
+  // State to store user information
+  const [editedUser, setEditedUser] = useState({
+    username: '',
+    fullname: '',
+    email: '',
+    password: '',
+    userGroupId: '',
+    isActive: true, // Assuming isActive is a boolean
+  });
+
+  const [userGroups, setUserGroups] = useState([]);
 
   useEffect(() => {
-    async function fetchData() {
+    const fetchUserDetails = async () => {
       try {
+        // Fetch user details based on the provided id
         const response = await fetch(`${API_URL}api/User/ShowUsersInEditPage/${id}`);
-        const data = await response.json();
-        setDetails(data[0]);
-        setEditedDetails(data[0]);
+        
+        if (response.ok) {
+          const userData = await response.json();
+          
+          // Populate the state with fetched user details
+          setEditedUser({
+            username: userData[0].username,
+            fullname: userData[0].fullname,
+            email: userData[0].email,
+            password: '', // You may choose not to load the password for security reasons
+            userGroupId: userData[0].userGroupId,
+            isActive: userData[0].isActive,
+          });
+        } else {
+          console.log('Failed to fetch user details');
+        }
       } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setIsLoading(false);
+        console.error('Error fetching user details:', error);
       }
-    }
-  
-    fetchData();
-  }, [id]);
-  
+    };
+
+    const fetchUserGroups = async () => {
+      try {
+        const response = await fetch(`${API_URL}api/Usergroup/ShowUsergroup`);
+        
+        if (response.ok) {
+          const data = await response.json();
+          setUserGroups(data);
+        } else {
+          console.log('Failed to fetch user groups');
+        }
+      } catch (error) {
+        console.error('Error fetching user groups:', error);
+      }
+    };
+
+    fetchUserDetails();
+    fetchUserGroups();
+  }, [API_URL, id]);
 
   const handleInputChange = (key, value) => {
-    setEditedDetails((prev) => ({
-      ...prev,
-      [key]: key === 'userGroupId' || key === 'isActive' ? value : value,
-    }));
-  };
-
-  const handleSelectChange = (key, value) => {
-    setEditedDetails((prev) => ({
+    setEditedUser((prev) => ({
       ...prev,
       [key]: value,
     }));
   };
-  
 
   const handleSave = async () => {
     try {
-      console.log('Sending PUT request to update user:', editedDetails);
+      // Assuming your API URL is correct
       const response = await fetch(`${API_URL}api/User/UpdateUser/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(editedDetails),
+        body: JSON.stringify(editedUser),
       });
-  
+
       console.log('Response Status:', response.status);
       console.log('Response Content:', await response.text());
-  
+
       if (response.ok) {
         navigate(`/users`);
         // Provide user feedback on successful save
         console.log('User updated successfully');
-        
       } else {
         console.log('User update failed');
       }
     } catch (error) {
-      // Revert to the original state if the update fails
-      console.error('Error updating data:', error);
-      setDetails((prevDetails) => ({ ...prevDetails }));
+      console.error('Error updating user:', error);
     }
   };
-  
+
+  const handleCancel = () => {
+    navigate(`/users`);
+  };
+
   return (
     <div className="content">
       <div className="admin-dashboard-text-div pt-5">
@@ -85,83 +111,76 @@ export default function EditUser() {
       </div>
       <div className="bigcarddashboard">
         <div className="App">
-          <div className='table-container'>
+          <div className="table-container">
             <Box
               component="form"
               sx={{
-                '& > :not(style)': {
-                  m: 1,
-                  width: 500,
-                  maxWidth: '100%',
-                },
+                display: 'flex',
+                flexDirection: 'column', // Set the form to vertical layout
+                gap: '16px', // Add some spacing between form elements
+                width: 300, // Adjust the width as needed
+                margin: 'auto', // Center the form
               }}
               noValidate
               autoComplete="off"
             >
-              {Details &&
-                Object.entries(Details).map(([key, value]) => (
-                  <div className='input-field' key={key}>
-                    {key === 'id' ? (
-                      <TextField
-                        fullWidth
-                        id={key}
-                        label={key}
-                        variant="outlined"
-                        value={value}
-                        disabled
-                      />
-                    ) : key === 'password' ? (
-                      <TextField
-                        fullWidth
-                        id={key}
-                        label={key}
-                        variant="outlined"
-                        type="password"
-                        value={editedDetails[key] || ''}
-                        onChange={(e) => handleInputChange(key, e.target.value)}
-                      />
-                    ) : key === 'userGroupId' || key === 'isActive' ? (
-                      <TextField
-                        fullWidth
-                        id={key}
-                        label={key}
-                        variant="outlined"
-                        select
-                        value={editedDetails[key] || ''}
-                        onChange={(e) => handleSelectChange(key, e.target.value)}
-                      >
-                        {key === 'userGroupId' ? (
-                          <>
-                            <MenuItem value={1}>Administraion</MenuItem>
-                            <MenuItem value={2}>Support</MenuItem>
-                          </>
-                        ) : (
-                          <>
-                            <MenuItem value="yes">Yes</MenuItem>
-                            <MenuItem value="no">No</MenuItem>
-                          </>
-                        )}
-                      </TextField>
-                    ) : (
-                      <TextField
-                        fullWidth
-                        id={key}
-                        label={key}
-                        variant="outlined"
-                        value={editedDetails[key] || ''}
-                        onChange={(e) => handleInputChange(key, e.target.value)}
-                      />
-                    )}
-                  </div>
+              <TextField
+                id="username"
+                label="Username"
+                variant="outlined"
+                value={editedUser.username}
+                onChange={(e) => handleInputChange('username', e.target.value)}
+              />
+              <TextField
+                id="fullname"
+                label="Fullname"
+                variant="outlined"
+                value={editedUser.fullname}
+                onChange={(e) => handleInputChange('fullname', e.target.value)}
+              />
+              <TextField
+                id="email"
+                label="Email"
+                variant="outlined"
+                value={editedUser.email}
+                onChange={(e) => handleInputChange('email', e.target.value)}
+              />
+              <TextField
+                id="password"
+                label="Password"
+                variant="outlined"
+                type="password"
+                value={editedUser.password}
+                onChange={(e) => handleInputChange('password', e.target.value)}
+              />
+              <TextField
+                id="userGroupId"
+                label="User Group"
+                variant="outlined"
+                select
+                value={editedUser.userGroupId}
+                onChange={(e) => handleInputChange('userGroupId', e.target.value)}
+              >
+                {userGroups.map((group) => (
+                  <MenuItem key={group.id} value={group.id}>
+                    {group.groupName}
+                  </MenuItem>
                 ))}
-              <Button variant="contained" onClick={handleSave} style={{float: 'left'}}>
-                Save
-              </Button>
+              </TextField>
+              <Box sx={{ display: 'flex', gap: '8px' }}>
+                <Button variant="contained" fullWidth onClick={handleSave}>
+                  Save
+                </Button>
+                <Button variant="contained" fullWidth onClick={handleCancel} style={{ backgroundColor: '#848485', color: '#fff' }}>
+                  Cancel
+                </Button>
+              </Box>
             </Box>
           </div>
         </div>
       </div>
     </div>
   );
+};
 
-}
+export default EditUser;

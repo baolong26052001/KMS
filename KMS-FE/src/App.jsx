@@ -61,7 +61,7 @@ const App = () => {
                       element={<RouteUsergroup />} 
                       />
                     <Route path="/addGroup" element={<RouteAddGroup />} />
-
+                    <Route path="/editGroup/:id" element={<RouteEditGroup />} />
 
                     <Route path="/kiosksetup" element={<RouteKioskSetup />} />
                     <Route path="/viewKioskDetails/:id" element={<RouteKioskDetails />} />
@@ -125,6 +125,7 @@ const RouteStationDetails = React.lazy(() => import('./pages/station/viewStation
 
 // Edit Route
 const RouteEditUser = React.lazy(() => import('./pages/user/editUser'));
+const RouteEditGroup = React.lazy(() => import('./pages/usergroup/editGroup'));
 
 // Add Route
 const RouteAddUser = React.lazy(() => import('./pages/user/addUser'));

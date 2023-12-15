@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from 'react';
 
 // import components from MUI
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import { DataGrid } from '@mui/x-data-grid';
 import { Button, Box, Tooltip } from '@mui/material';
 
-// import { useHistory } from 'react-router-dom'; // Import useHistory from React Router
+// Import from React Router
 import {useNavigate} from 'react-router-dom';
 //import css
 import './kiosk-setup.css';
-import KioskFilter from './kioskFilter';
-
-
 
 const ViewButton = ({ rowId, label, onClick }) => {
   const navigate = useNavigate();
@@ -297,29 +294,38 @@ const KioskSetup = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch(`${API_URL}api/Kiosk/ShowKiosk`);
-        const data = await response.json();
+        let apiUrl = `${API_URL}api/Kiosk/ShowKiosk`;
   
-        // Combine fetched data with createData function
-        const updatedRows = data.map((row) =>
-          createData(row.id, row.kioskName, row.location, row.stationName, row.packageName, row.kioskStatus, 
-                    row.cameraStatus, row.cashDepositStatus, row.scannerStatus, row.printerStatus)
-        );
+        // If searchTerm is not empty, use the search API endpoint
+        if (searchTerm) {
+          apiUrl = `${API_URL}api/Kiosk/SearchKioskSetup?searchQuery=${encodeURIComponent(searchTerm)}`;
+        }
   
-        // If searchTerm is empty, display all rows, otherwise filter based on the search term
-        const filteredRows = searchTerm
-          ? updatedRows.filter((row) =>
-              Object.values(row).some((value) =>
-                value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-              )
+        const response = await fetch(apiUrl);
+  
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+  
+        const responseData = await response.json();
+  
+        // Check if responseData is an array before calling map
+        if (Array.isArray(responseData)) {
+          const updatedRows = responseData.map((row) =>
+            createData(
+              row.id, row.kioskName, row.location, row.stationName, row.packageName, row.kioskStatus, 
+              row.cameraStatus, row.cashDepositStatus, row.scannerStatus, row.printerStatus
             )
-          : updatedRows;
+          );
   
-        setRows(filteredRows); // Update the component state with the data
+          setRows(updatedRows); // Update the component state with the combined data
+        } else {
+          console.error('Invalid data structure:', responseData);
+        }
       } catch (error) {
         console.error('Error fetching data:', error);
       }
-    } 
+    }
   
     fetchData();
   }, [searchTerm]);
@@ -333,13 +339,9 @@ const KioskSetup = () => {
             <h1 className="h1-dashboard">Kiosk Setup</h1>
         </div>
             <div className="bigcarddashboard">
-
-              <div className='Filter'>
-                <KioskFilter />
-              </div>
               
                 <div className="searchdivuser">
-                    <input onChange={(event) => setSearchTermButton(event.target.value)} onKeyDown={handleKeyPress} placeholder=" Search..." type="text" id="kioskID myInput" name="kioskID" class="searchbar"></input>
+                    <input onChange={(event) => setSearchTermButton(event.target.value)} onKeyDown={handleKeyPress} placeholder=" Search..." type="text"  name="Search" class="searchbar"></input>
                     <input onClick={handleSearchButton} type="button" value="Search" className="button button-search"></input>
                 </div>
 

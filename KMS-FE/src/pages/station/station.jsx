@@ -8,7 +8,6 @@ import { Button, Box, Tooltip } from '@mui/material';
 import {useNavigate} from 'react-router-dom';
 //import css
 import './station.css';
-import Filter from './Filter.jsx';
 
 
 
@@ -168,9 +167,6 @@ const Station = () => {
         </div>
             <div className="bigcarddashboard">
 
-              <div className='Filter'>
-                <Filter />
-              </div>
                 <div className="searchdivuser">
                     <input onChange={(event) => setSearchTermButton(event.target.value)} onKeyDown={handleKeyPress} placeholder="  Search..." type="text" id="kioskID myInput" name="kioskID" class="searchbar"></input>
                     <input onClick={handleSearchButton} type="button" value="Search" className="button button-search"></input>

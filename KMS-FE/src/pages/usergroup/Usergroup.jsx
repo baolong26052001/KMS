@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 
 //import css
 import './Usergroup.css';
-import UserFilter from './userFilter';
 
 // Import from React Router
 import {useNavigate} from 'react-router-dom';
@@ -86,9 +85,12 @@ const PermissionButton = ({ rowId, label, onClick }) => {
 };
 
 const EditButton = ({ rowId, label, onClick }) => {
+  const navigate = useNavigate();
+
   const handleClick = (event) => {
     event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
     onClick(rowId);
+    navigate(`/editGroup/${rowId}`);
   };
 
   return (
@@ -99,8 +101,6 @@ const EditButton = ({ rowId, label, onClick }) => {
     </Box>
   );
 };
-
-
 
 const columns = [
   {
@@ -150,12 +150,6 @@ const columns = [
   },
 ];
 
-const rows = [
-  // createData(1, 'Administration', '24-12-2023 12:00:00', '19-11-2023 10:23:11', 'Yes'),
-  // createData(2, 'Support', '24-12-2023 12:00:00', '19-11-2023 10:23:11', 'Yes'),
-  // createData(3, 'Mornitor', '24-12-2023 12:00:00', '19-11-2023 10:23:11', 'Yes'),
-];
-
 
 const handleButtonClick = (id) => {
   // Handle button click, e.g., navigate to another page
@@ -175,7 +169,6 @@ const Usergroup = () => {
   };
 
   const handleKeyPress = (event) => {
-    // Check if the pressed key is Enter (key code 13)
     if (event.key === 'Enter') {
       handleSearchButton();
     }
@@ -183,7 +176,6 @@ const Usergroup = () => {
 
   const [rows, setRows] = useState([]);
 
-  // Get Back-end API URL to connect
   const API_URL = "https://localhost:7017/";
 
   useEffect(() => {
@@ -224,8 +216,6 @@ const Usergroup = () => {
     fetchData();
   }, [searchTerm]);
 
-
-
   return (
     
     <div className="content"> 
@@ -234,10 +224,6 @@ const Usergroup = () => {
             <h1 className="h1-dashboard">User Group</h1>
         </div>
         <div className="bigcarddashboard">
-
-          <div className='Filter'>
-            <UserFilter />
-          </div>
 
           <div className="searchdivuser">
               <input onChange={(event) => setSearchTermButton(event.target.value)} onKeyDown={handleKeyPress} placeholder="  Search..." type="text" id="kioskID myInput" name="kioskID" class="searchbar"></input>

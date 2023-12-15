@@ -92,7 +92,7 @@ namespace KMS.Controllers
                 parameters.Add(new SqlParameter("@groupName", "%" + groupName + "%"));
             }
 
-            
+
 
             if (isActive.HasValue)
             {

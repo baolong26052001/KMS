@@ -19,7 +19,7 @@ const statusImages = {
   };
 
   function createData(id, kioskName, stationCode, kioskStatus, camStatus, scannerStatus, cashDeStatus) {
-    return {id, kioskName, stationCode, kioskStatus, camStatus: statusImages[camStatus], scannerStatus: statusImages[scannerStatus], cashDeStatus: statusImages[cashDeStatus],};
+    return {id, kioskName, stationCode, kioskStatus: statusImages[kioskStatus], camStatus: statusImages[camStatus], scannerStatus: statusImages[scannerStatus], cashDeStatus: statusImages[cashDeStatus],};
   }
   
   const columns = [
@@ -109,37 +109,45 @@ const Dashboard = () => {
       };
   
       const [rows, setRows] = useState([]);
-      // Get id from Database  
-      const getRowId = (row) => row.id;
       // Get Back-end API URL to connect
       const API_URL = "https://localhost:7017/";
     
       useEffect(() => {
         async function fetchData() {
           try {
-            const response = await fetch(`${API_URL}api/Kiosk/ShowKiosk`);
-            const data = await response.json();
-    
-            // Combine fetched data with createData function
-            const updatedRows = data.map((row) =>
-              createData(row.id, row.kioskName, row.stationName, row.kioskStatus + ' 24-12-2023', row.cameraStatus + ' 24-12-2023', row.scannerStatus + ' 24-12-2023', row.cashDepositStatus + ' 24-12-2023' )
-            );
-    
-            // If searchTerm is empty, display all rows, otherwise filter based on the search term
-            const filteredRows = searchTerm
-            ? updatedRows.filter((row) =>
-                Object.values(row).some((value) =>
-                  value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+            let apiUrl = `${API_URL}api/Kiosk/ShowKiosk`;
+      
+            // If searchTerm is not empty, use the search API endpoint
+            if (searchTerm) {
+              apiUrl = `${API_URL}api/Kiosk/SearchKioskSetup?searchQuery=${encodeURIComponent(searchTerm)}`;
+            }
+      
+            const response = await fetch(apiUrl);
+      
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+      
+            const responseData = await response.json();
+      
+            // Check if responseData is an array before calling map
+            if (Array.isArray(responseData)) {
+              const updatedRows = responseData.map((row) =>
+                createData(
+                    row.id, row.kioskName, row.stationName, row.kioskStatus, row.cameraStatus, 
+                    row.scannerStatus, row.cashDepositStatus
                 )
-              )
-            : updatedRows;
-    
-            setRows(filteredRows); // Update the component state with the combined data
+              );
+      
+              setRows(updatedRows); // Update the component state with the combined data
+            } else {
+              console.error('Invalid data structure:', responseData);
+            }
           } catch (error) {
             console.error('Error fetching data:', error);
           }
         }
-    
+      
         fetchData();
       }, [searchTerm]);
 
