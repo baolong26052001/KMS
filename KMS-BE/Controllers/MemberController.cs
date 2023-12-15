@@ -4,6 +4,13 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System.Data;
 
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using System;
+using System.IO;
+using System.Linq;
+using Microsoft.AspNetCore.Components.Authorization;
+
 namespace KMS.Controllers
 {
     [ApiController]
@@ -77,25 +84,75 @@ namespace KMS.Controllers
 
         [HttpPost]
         [Route("AddMember")]
-        public JsonResult AddMember([FromBody] Lmember member)
+        public JsonResult AddMember()
         {
-            string query = "INSERT INTO LMember (phone, department, companyName, bankName, address1, isActive, dateCreated, dateModified) " +
-                           "VALUES (@Phone, @Department, @CompanyName, @BankName, @Address1, @IsActive, GETDATE(), GETDATE())";
+            string filePath = "ocr_result.json";
 
-            SqlParameter[] parameters =
+            try
             {
-                new SqlParameter("@Phone", member.Phone),
-                new SqlParameter("@Department", member.Department),
-                new SqlParameter("@CompanyName", member.CompanyName),
-                new SqlParameter("@BankName", member.BankName),
-                new SqlParameter("@Address1", member.Address1),
-                new SqlParameter("@IsActive", member.IsActive)
-            };
+                string jsonData = System.IO.File.ReadAllText(filePath);
+                var jsonModel = JsonConvert.DeserializeObject<OcrModel>(jsonData);
 
-            ExecuteRawQuery(query, parameters);
+                var cardInfo = jsonModel.cards.FirstOrDefault()?.info;
+                string fullName = cardInfo.name;
+                int spaceCount = fullName.Count(c => c == ' ');
 
-            return new JsonResult("Member added successfully");
+                if (cardInfo != null)
+                {
+                    Lmember member = new Lmember
+                    {
+                        FirstName = cardInfo.name?.Split(' ')[0],
+                        LastName = cardInfo.name?.Split(' ')[spaceCount],
+                        FullName = cardInfo.name,
+                        Birthday = DateTime.Parse(cardInfo.birthday),
+                        IdenNumber = cardInfo.id,
+                        Ward = cardInfo.address_split.ward,
+                        District = cardInfo.address_split.district,
+                        City = cardInfo.address_split.province,
+                        
+                        Address1 = $"{cardInfo.address_split?.village}, {cardInfo.address_split?.ward}, {cardInfo.address_split?.district}, {cardInfo.address_split?.province}".TrimEnd(',', ' '),
+                        Address2 = $"{cardInfo.domicile_split?.village}, {cardInfo.domicile_split?.ward}, {cardInfo.domicile_split?.district}, {cardInfo.domicile_split?.province}".TrimEnd(',', ' '),
+                        // ... Map other properties as needed
+                        IsActive = true, // Assuming default value for IsActive
+                    };
+
+                    // Now, insert the member into the database using your existing code
+                    string query = "INSERT INTO LMember (firstName, lastName, fullName, birthday, idenNumber, ward, district, city, address1, address2, " +
+                                   "isActive, dateCreated, dateModified) " +
+                                   "VALUES (@FirstName, @LastName, @FullName, @Birthday, @IdenNumber, @Ward, @District, @City, @Address1, @Address2, " +
+                                   "@IsActive, GETDATE(), GETDATE())";
+
+                    SqlParameter[] parameters =
+                    {
+                        new SqlParameter("@FirstName", member.FirstName),
+                        new SqlParameter("@LastName", member.LastName),
+                        new SqlParameter("@FullName", member.FullName),
+                        new SqlParameter("@Birthday", member.Birthday),
+
+                        new SqlParameter("@IdenNumber", member.IdenNumber),
+                        new SqlParameter("@Address1", member.Address1),
+                        new SqlParameter("@Address2", member.Address2),
+                        new SqlParameter("@District", member.District),
+                        new SqlParameter("@City", member.City),
+                        new SqlParameter("@Ward", member.Ward),
+
+                        new SqlParameter("@IsActive", member.IsActive)
+                    };
+
+                    ExecuteRawQuery(query, parameters);
+
+                    return new JsonResult("Member added successfully");
+                }
+
+                return new JsonResult("Invalid JSON data");
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions (e.g., file not found, invalid JSON format, etc.)
+                return new JsonResult($"Error: {ex.Message}");
+            }
         }
+
 
         [HttpPut]
         [Route("UpdateMember/{id}")]

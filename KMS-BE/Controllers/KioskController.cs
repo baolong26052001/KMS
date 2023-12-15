@@ -303,5 +303,14 @@ namespace KMS.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("ShowKioskHealthDetail")]
+        public JsonResult GetKioskHealthDetail()
+        {
+            string query = "select k.dateCreated,  k.stationCode,  k.id,  k.component, k.onlineTime, k.offlineTime,   \r\nDATEDIFF(MINUTE, k.onlineTime, GETDATE()) AS durationUptime, \r\nDATEDIFF(MINUTE, k.offlineTime, GETDATE()) AS durationDowntime, k.dateModified as lastUpdated  \r\nfrom TKiosk k";
+            DataTable table = ExecuteRawQuery(query);
+            return new JsonResult(table);
+        }
+
     }
 }

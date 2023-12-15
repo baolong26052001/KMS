@@ -43,40 +43,20 @@ namespace KMS.Controllers
         }
 
         [HttpGet]
-        [Route("ShowTotalNumberKiosk")]
-        public JsonResult ShowTotalNumberKiosk()
+        [Route("ShowTotalNumbers")]
+        public JsonResult ShowTotalNumbers()
         {
-            string query = "select count(*) as TotalKiosk from TKiosk";
+            string query = @"
+        SELECT
+            (SELECT COUNT(*) FROM TKiosk) AS TotalKiosk,
+            (SELECT COUNT(*) FROM TKiosk WHERE kioskStatus = 1) AS TotalKioskOnline,
+            (SELECT COUNT(*) FROM TKiosk WHERE kioskStatus = 0) AS TotalKioskOffline,
+            (SELECT COUNT(*) FROM LTransactionLog) AS TotalTransaction";
+
             DataTable table = ExecuteRawQuery(query);
             return new JsonResult(table);
         }
 
-        [HttpGet]
-        [Route("ShowTotalNumberKioskOnline")]
-        public JsonResult ShowTotalNumberKioskOnline()
-        {
-            string query = "select count(*) as TotalKioskOnline from TKiosk k where k.kioskStatus = 1";
-            DataTable table = ExecuteRawQuery(query);
-            return new JsonResult(table);
-        }
-
-        [HttpGet]
-        [Route("ShowTotalNumberKioskOffline")]
-        public JsonResult ShowTotalNumberKioskOffline()
-        {
-            string query = "select count(*) as TotalKioskOffline from TKiosk k where k.kioskStatus = 0";
-            DataTable table = ExecuteRawQuery(query);
-            return new JsonResult(table);
-        }
-
-        [HttpGet]
-        [Route("ShowTotalNumberTransaction")]
-        public JsonResult ShowTotalNumberTransaction()
-        {
-            string query = "select count(*) as TotalTransaction from LTransactionLog";
-            DataTable table = ExecuteRawQuery(query);
-            return new JsonResult(table);
-        }
 
     }
 }

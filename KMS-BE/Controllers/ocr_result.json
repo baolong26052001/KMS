@@ -1,0 +1,55 @@
+{
+   "status": "success",
+   "status_code": 200,
+   "has_card": true,
+   "cards": [
+      {
+         "side": "FRONT",
+         "type": "CĂN CƯỚC CÔNG DÂN",
+         "gray_image": false,
+         "corner_cut": false,
+         "missing_corner": false,
+         "glare_image": false,
+         "blur_image": false,
+         "card_check_fake": false,
+         "info": {
+            "id": "024301010758",
+            "id_conf": 0.999788761138916,
+            "name": "VŨ THỊ NGỌC MINH",
+            "name_conf": 0.9107208028435707,
+            "domicile": "Thanh Hải, Lục Ngạn, Bắc Giang",
+            "domicile_conf": 0.9762645350562201,
+            "country": "Việt Nam",
+            "country_conf": 0.9999623944362004,
+            "address": "Thôn Tân Trường, Thanh Hải, Lục Ngạn, Bắc Giang",
+            "address_conf": 0.9982349829541312,
+            "birthday": "11/12/2001",
+            "birthday_conf": 0.9999914646148682,
+            "expiry": "11/12/2026",
+            "expiry_conf": 0.9999951839447021,
+            "gender": "Nữ",
+            "gender_conf": 0.7792523801326752,
+            "ethnicity": null,
+            "ethnicity_conf": null,
+            "issue_by": null,
+            "issue_by_conf": null,
+            "issue_date": null,
+            "issue_date_conf": null,
+            "religion": null,
+            "religion_conf": null,
+            "address_split": {
+               "province": "Bắc Giang",
+               "district": "Lục Ngạn",
+               "ward": "Thanh Hải",
+               "village": "Thôn Tân Trường"
+            },
+            "domicile_split": {
+               "province": "Bắc Giang",
+               "district": "Lục Ngạn",
+               "ward": "Thanh Hải",
+               "village": null
+            }
+         }
+      }
+   ]
+}
