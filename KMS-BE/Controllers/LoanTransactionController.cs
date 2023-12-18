@@ -28,10 +28,12 @@ namespace KMS.Controllers
         [Route("ShowLoanTransaction")]
         public JsonResult GetLoanTransaction()
         {
-            string query = "";
+            string query = "select * from LoanTransaction";
             DataTable table = _exQuery.ExecuteRawQuery(query);
             return new JsonResult(table);
         }
+
+        
 
     }
 }
