@@ -4,6 +4,7 @@ using KMS.Models;
 using Microsoft.Data.SqlClient;
 using System.Data;
 using System.Text;
+using KMS.Tools;
 
 namespace KMS.Controllers
 {
@@ -12,37 +13,17 @@ namespace KMS.Controllers
     public class StationController : ControllerBase
     {
         private readonly KioskManagementSystemContext _dbcontext;
-        private readonly IConfiguration _configuration;
+        private IConfiguration _configuration;
+        private readonly ExecuteQuery _exQuery;
 
-        public StationController(IConfiguration configuration, KioskManagementSystemContext context)
+        public StationController(IConfiguration configuration, KioskManagementSystemContext _context, ExecuteQuery exQuery)
         {
-            _dbcontext = context;
+            _dbcontext = _context;
             _configuration = configuration;
+            _exQuery = exQuery;
         }
 
-        private DataTable ExecuteRawQuery(string query, SqlParameter[] parameters = null)
-        {
-            DataTable table = new DataTable();
-
-            using (SqlConnection myCon = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
-            {
-                myCon.Open();
-
-                using (SqlCommand myCommand = new SqlCommand(query, myCon))
-                {
-                    if (parameters != null)
-                    {
-                        myCommand.Parameters.AddRange(parameters);
-                    }
-
-                    SqlDataReader myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
-                    myReader.Close();
-                }
-            }
-
-            return table;
-        }
+        
 
         [HttpGet]
         [Route("ShowStation")]
@@ -50,7 +31,7 @@ namespace KMS.Controllers
         {
             string query = "select st.id, st.stationName, st.companyName, st.city, st.address, st.isActive" +
                            "\r\nfrom TStation st";
-            DataTable table = ExecuteRawQuery(query);
+            DataTable table = _exQuery.ExecuteRawQuery(query);
             return new JsonResult(table);
         }
 
@@ -62,7 +43,7 @@ namespace KMS.Controllers
                            "FROM TStation " +
                            "WHERE id = @Id";
             SqlParameter parameter = new SqlParameter("@Id", id);
-            DataTable table = ExecuteRawQuery(query, new[] { parameter });
+            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
             if (table.Rows.Count > 0)
             {
@@ -103,7 +84,7 @@ namespace KMS.Controllers
                 parameters.Add(new SqlParameter("@city", "%" + city + "%"));
             }
 
-            DataTable table = ExecuteRawQuery(query, parameters.ToArray());
+            DataTable table = _exQuery.ExecuteRawQuery(query, parameters.ToArray());
 
             return new JsonResult(table);
         }
@@ -123,7 +104,7 @@ namespace KMS.Controllers
                 new SqlParameter("@Address", station.Address),
                 new SqlParameter("@IsActive", station.IsActive)
             };
-            ExecuteRawQuery(query, parameters);
+            _exQuery.ExecuteRawQuery(query, parameters);
 
             return new JsonResult("Station added successfully");
         }
@@ -145,7 +126,7 @@ namespace KMS.Controllers
                 new SqlParameter("@Address", station.Address),
                 new SqlParameter("@IsActive", station.IsActive)
             };
-            ExecuteRawQuery(query, parameters);
+            _exQuery.ExecuteRawQuery(query, parameters);
 
             return new JsonResult("Station updated successfully");
         }
@@ -178,7 +159,7 @@ namespace KMS.Controllers
 
             deleteQuery.Append(");");
 
-            ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
+            _exQuery.ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
 
             return new JsonResult("Station deleted successfully");
         }
@@ -196,7 +177,7 @@ namespace KMS.Controllers
                            "address LIKE @searchQuery";
 
             SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
-            DataTable table = ExecuteRawQuery(query, new[] { parameter });
+            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
             return new JsonResult(table);
         }

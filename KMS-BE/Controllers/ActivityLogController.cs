@@ -4,6 +4,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Text;
+using KMS.Tools;
 
 namespace KMS.Controllers
 {
@@ -13,35 +14,13 @@ namespace KMS.Controllers
     {
         private readonly KioskManagementSystemContext _dbcontext;
         private IConfiguration _configuration;
+        private readonly ExecuteQuery _exQuery;
 
-        public ActivityLogController(IConfiguration configuration, KioskManagementSystemContext _context)
+        public ActivityLogController(IConfiguration configuration, KioskManagementSystemContext _context, ExecuteQuery exQuery)
         {
             _dbcontext = _context;
             _configuration = configuration;
-        }
-
-        private DataTable ExecuteRawQuery(string query, SqlParameter[] parameters = null)
-        {
-            DataTable table = new DataTable();
-
-            using (SqlConnection myCon = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
-            {
-                myCon.Open();
-
-                using (SqlCommand myCommand = new SqlCommand(query, myCon))
-                {
-                    if (parameters != null)
-                    {
-                        myCommand.Parameters.AddRange(parameters);
-                    }
-
-                    SqlDataReader myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
-                    myReader.Close();
-                }
-            }
-
-            return table;
+            _exQuery = exQuery;
         }
 
         [HttpGet]
@@ -50,7 +29,7 @@ namespace KMS.Controllers
         {
             string query = "select ac.id, ac.kioskId, ac.hardwareName, ac.status, ac.stationId, ac.dateModified, ac.dateCreated, ac.isActive" +
                 "\r\nfrom TActivityLog ac";
-            DataTable table = ExecuteRawQuery(query);
+            DataTable table = _exQuery.ExecuteRawQuery(query);
             return new JsonResult(table);
         }
 
@@ -61,7 +40,7 @@ namespace KMS.Controllers
             string query = $"select ac.id, ac.kioskId, ac.hardwareName, ac.status, ac.stationId, ac.dateModified, ac.dateCreated, ac.isActive" +
                            $"\r\nFROM TActivityLog ac" +
                            $"\r\nWHERE ac.id = {id}";
-            DataTable table = ExecuteRawQuery(query);
+            DataTable table = _exQuery.ExecuteRawQuery(query);
             return new JsonResult(table);
         }
 
@@ -87,7 +66,7 @@ namespace KMS.Controllers
                 parameters.Add(new SqlParameter("@endDate", endDate.Value));
             }
 
-            DataTable table = ExecuteRawQuery(query, parameters.ToArray());
+            DataTable table = _exQuery.ExecuteRawQuery(query, parameters.ToArray());
 
             return new JsonResult(table);
         }
@@ -109,7 +88,7 @@ namespace KMS.Controllers
                 new SqlParameter("@IsActive", activityLog.IsActive),
             };
 
-            ExecuteRawQuery(query, parameters);
+            _exQuery.ExecuteRawQuery(query, parameters);
             return new JsonResult("ActivityLog added successfully");
         }
 
@@ -131,7 +110,7 @@ namespace KMS.Controllers
                 new SqlParameter("@IsActive", activityLog.IsActive),
             };
 
-            ExecuteRawQuery(query, parameters);
+            _exQuery.ExecuteRawQuery(query, parameters);
             return new JsonResult("ActivityLog updated successfully");
         }
 
@@ -150,7 +129,7 @@ namespace KMS.Controllers
                            "stationId LIKE @searchQuery";
 
             SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
-            DataTable table = ExecuteRawQuery(query, new[] { parameter });
+            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
             return new JsonResult(table);
         }

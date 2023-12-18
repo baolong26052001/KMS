@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Security.Principal;
 using System.Text;
+using KMS.Tools;
 
 namespace KMS.Controllers
 {
@@ -14,36 +15,16 @@ namespace KMS.Controllers
     {
         private readonly KioskManagementSystemContext _dbcontext;
         private IConfiguration _configuration;
+        private readonly ExecuteQuery _exQuery;
 
-        public AccountController(IConfiguration configuration, KioskManagementSystemContext _context)
+        public AccountController(IConfiguration configuration, KioskManagementSystemContext _context, ExecuteQuery exQuery)
         {
             _dbcontext = _context;
             _configuration = configuration;
+            _exQuery = exQuery;
         }
 
-        private DataTable ExecuteRawQuery(string query, SqlParameter[] parameters = null)
-        {
-            DataTable table = new DataTable();
-
-            using (SqlConnection myCon = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
-            {
-                myCon.Open();
-
-                using (SqlCommand myCommand = new SqlCommand(query, myCon))
-                {
-                    if (parameters != null)
-                    {
-                        myCommand.Parameters.AddRange(parameters);
-                    }
-
-                    SqlDataReader myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
-                    myReader.Close();
-                }
-            }
-
-            return table;
-        }
+        
 
         [HttpGet]
         [Route("ShowAccount")]
@@ -52,7 +33,7 @@ namespace KMS.Controllers
             string query = "select a.id, a.memberId, a.contractId, m.phone, m.department, m.companyName, m.address1, m.isActive, m.dateCreated " +
                 "from LAccount a, LMember m " +
                 "where a.memberId = m.id";
-            DataTable table = ExecuteRawQuery(query);
+            DataTable table = _exQuery.ExecuteRawQuery(query);
             return new JsonResult(table);
         }
 
@@ -65,7 +46,7 @@ namespace KMS.Controllers
                 "where a.memberId = m.id and a.id=@Id";
 
             SqlParameter parameter = new SqlParameter("@Id", id);
-            DataTable table = ExecuteRawQuery(query, new[] { parameter });
+            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
             if (table.Rows.Count > 0)
             {
@@ -99,7 +80,7 @@ namespace KMS.Controllers
                 parameters.Add(new SqlParameter("@endDate", endDate.Value));
             }
 
-            DataTable table = ExecuteRawQuery(query, parameters.ToArray());
+            DataTable table = _exQuery.ExecuteRawQuery(query, parameters.ToArray());
 
             return new JsonResult(table);
         }
@@ -126,7 +107,7 @@ namespace KMS.Controllers
                 new SqlParameter("@IsActive", account.IsActive)
             };
 
-            ExecuteRawQuery(query, parameters);
+            _exQuery.ExecuteRawQuery(query, parameters);
 
             return new JsonResult("Account added successfully");
         }
@@ -155,7 +136,7 @@ namespace KMS.Controllers
                 new SqlParameter("@IsActive", updatedAccount.IsActive)
             };
 
-            ExecuteRawQuery(query, parameters);
+            _exQuery.ExecuteRawQuery(query, parameters);
 
             return new JsonResult("Account updated successfully");
         }
@@ -185,7 +166,7 @@ namespace KMS.Controllers
                            "m.address1 LIKE @searchQuery";
 
             SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
-            DataTable table = ExecuteRawQuery(query, new[] { parameter });
+            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
             return new JsonResult(table);
         }

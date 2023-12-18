@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using KMS.Models;
+using KMS.Tools;
 
 namespace KMS.Controllers
 {
@@ -9,14 +10,16 @@ namespace KMS.Controllers
     {
         private readonly KioskManagementSystemContext _dbcontext;
         private IConfiguration _configuration;
+        private readonly ExecuteQuery _exQuery;
 
-        public AccessRuleController(IConfiguration configuration, KioskManagementSystemContext _context)
+        public AccessRuleController(IConfiguration configuration, KioskManagementSystemContext _context, ExecuteQuery exQuery)
         {
             _dbcontext = _context;
             _configuration = configuration;
+            _exQuery = exQuery;
         }
 
-        
-        
+
+
     }
 }

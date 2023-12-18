@@ -4,6 +4,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Text;
+using KMS.Tools;
 
 namespace KMS.Controllers
 {
@@ -13,35 +14,13 @@ namespace KMS.Controllers
     {
         private readonly KioskManagementSystemContext _dbcontext;
         private IConfiguration _configuration;
+        private readonly ExecuteQuery _exQuery;
 
-        public NotificationLogController(IConfiguration configuration, KioskManagementSystemContext _context)
+        public NotificationLogController(IConfiguration configuration, KioskManagementSystemContext _context, ExecuteQuery exQuery)
         {
             _dbcontext = _context;
             _configuration = configuration;
-        }
-
-        private DataTable ExecuteRawQuery(string query, SqlParameter[] parameters = null)
-        {
-            DataTable table = new DataTable();
-
-            using (SqlConnection myCon = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
-            {
-                myCon.Open();
-
-                using (SqlCommand myCommand = new SqlCommand(query, myCon))
-                {
-                    if (parameters != null)
-                    {
-                        myCommand.Parameters.AddRange(parameters);
-                    }
-
-                    SqlDataReader myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
-                    myReader.Close();
-                }
-            }
-
-            return table;
+            _exQuery = exQuery;
         }
 
         [HttpGet]
@@ -50,7 +29,7 @@ namespace KMS.Controllers
         {
             string query = "select n.id, n.sendType, n.memberId, n.title, n.content, n.status, n.dateCreated, n.isActive" +
                 "\r\nfrom TNotificationLog n";
-            DataTable table = ExecuteRawQuery(query);
+            DataTable table = _exQuery.ExecuteRawQuery(query);
             return new JsonResult(table);
         }
 
@@ -61,7 +40,7 @@ namespace KMS.Controllers
             string query = $"SELECT n.id, n.sendType, n.memberId, n.title, n.content, n.status, n.dateCreated, n.isActive" +
                            $"\r\nFROM TNotificationLog n" +
                            $"\r\nWHERE n.id = {id}";
-            DataTable table = ExecuteRawQuery(query);
+            DataTable table = _exQuery.ExecuteRawQuery(query);
             return new JsonResult(table);
         }
 
@@ -87,7 +66,7 @@ namespace KMS.Controllers
                 parameters.Add(new SqlParameter("@endDate", endDate.Value));
             }
 
-            DataTable table = ExecuteRawQuery(query, parameters.ToArray());
+            DataTable table = _exQuery.ExecuteRawQuery(query, parameters.ToArray());
 
             return new JsonResult(table);
         }
@@ -110,7 +89,7 @@ namespace KMS.Controllers
                 new SqlParameter("@isActive", newNotificationLog.IsActive),
             };
 
-            ExecuteRawQuery(query, parameters);
+            _exQuery.ExecuteRawQuery(query, parameters);
 
             return new JsonResult("NotificationLog added successfully");
         }
@@ -136,7 +115,7 @@ namespace KMS.Controllers
                 new SqlParameter("@isActive", updatedNotificationLog.IsActive),
             };
 
-            ExecuteRawQuery(query, parameters);
+            _exQuery.ExecuteRawQuery(query, parameters);
 
             return new JsonResult("NotificationLog updated successfully");
         }
@@ -157,7 +136,7 @@ namespace KMS.Controllers
                            "status LIKE @searchQuery";
 
             SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
-            DataTable table = ExecuteRawQuery(query, new[] { parameter });
+            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
             return new JsonResult(table);
         }

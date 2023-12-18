@@ -4,6 +4,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Text;
+using KMS.Tools;
 
 namespace KMS.Controllers
 {
@@ -13,35 +14,13 @@ namespace KMS.Controllers
     {
         private readonly KioskManagementSystemContext _dbcontext;
         private IConfiguration _configuration;
+        private readonly ExecuteQuery _exQuery;
 
-        public KioskController(IConfiguration configuration, KioskManagementSystemContext _context)
+        public KioskController(IConfiguration configuration, KioskManagementSystemContext _context, ExecuteQuery exQuery)
         {
             _dbcontext = _context;
             _configuration = configuration;
-        }
-
-        private DataTable ExecuteRawQuery(string query, SqlParameter[] parameters = null)
-        {
-            DataTable table = new DataTable();
-
-            using (SqlConnection myCon = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
-            {
-                myCon.Open();
-
-                using (SqlCommand myCommand = new SqlCommand(query, myCon))
-                {
-                    if (parameters != null)
-                    {
-                        myCommand.Parameters.AddRange(parameters);
-                    }
-
-                    SqlDataReader myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
-                    myReader.Close();
-                }
-            }
-
-            return table;
+            _exQuery = exQuery;
         }
 
         [HttpGet]
@@ -53,7 +32,7 @@ namespace KMS.Controllers
                            "LEFT JOIN TStation st ON k.stationCode = st.id " +
                            "LEFT JOIN TSlideshow ss ON ss.id = k.slidePackage";
 
-            DataTable table = ExecuteRawQuery(query);
+            DataTable table = _exQuery.ExecuteRawQuery(query);
             return new JsonResult(table);
         }
 
@@ -71,7 +50,7 @@ namespace KMS.Controllers
                            "WHERE k.id = @id";
 
             SqlParameter parameter = new SqlParameter("@id", id);
-            DataTable table = ExecuteRawQuery(query, new[] { parameter });
+            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
             if (table.Rows.Count > 0)
             {
@@ -112,7 +91,7 @@ namespace KMS.Controllers
                 parameters.Add(new SqlParameter("@packageName", packageName));
             }
 
-            DataTable table = ExecuteRawQuery(query, parameters.ToArray());
+            DataTable table = _exQuery.ExecuteRawQuery(query, parameters.ToArray());
 
             return new JsonResult(table);
         }
@@ -126,7 +105,7 @@ namespace KMS.Controllers
         {
             string query = "select k.id, k.availableMemory, k.ipAddress, k.OSName, k.OSPlatform, k.OSVersion" +
                 "\r\nfrom TKiosk k";
-            DataTable table = ExecuteRawQuery(query);
+            DataTable table = _exQuery.ExecuteRawQuery(query);
             return new JsonResult(table);
         }
 
@@ -139,7 +118,7 @@ namespace KMS.Controllers
                            "WHERE k.id = @id";
 
             SqlParameter parameter = new SqlParameter("@id", id);
-            DataTable table = ExecuteRawQuery(query, new[] { parameter });
+            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
             if (table.Rows.Count > 0)
             {
@@ -169,7 +148,7 @@ namespace KMS.Controllers
                 new SqlParameter("@scannerStatus", kiosk.ScannerStatus),
                 new SqlParameter("@printerStatus", kiosk.PrinterStatus)
             };
-            ExecuteRawQuery(query, parameters);
+            _exQuery.ExecuteRawQuery(query, parameters);
 
             return new JsonResult("Kiosk added successfully");
         }
@@ -195,7 +174,7 @@ namespace KMS.Controllers
                 new SqlParameter("@scannerStatus", kiosk.ScannerStatus),
                 new SqlParameter("@printerStatus", kiosk.PrinterStatus)
             };
-            ExecuteRawQuery(query, parameters);
+            _exQuery.ExecuteRawQuery(query, parameters);
 
             return new JsonResult("Kiosk updated successfully");
         }
@@ -228,7 +207,7 @@ namespace KMS.Controllers
 
             deleteQuery.Append(");");
 
-            ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
+            _exQuery.ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
 
             return new JsonResult("Kiosk deleted successfully");
         }
@@ -248,7 +227,7 @@ namespace KMS.Controllers
                            "ss.packageName LIKE @searchQuery";
 
             SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
-            DataTable table = ExecuteRawQuery(query, new[] { parameter });
+            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
             return new JsonResult(table);
         }
@@ -267,7 +246,7 @@ namespace KMS.Controllers
                            "k.OSVersion LIKE @searchQuery";
 
             SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
-            DataTable table = ExecuteRawQuery(query, new[] { parameter });
+            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
             return new JsonResult(table);
         }
@@ -278,7 +257,7 @@ namespace KMS.Controllers
         {
             string query = "select k.dateCreated,  k.stationCode,  k.id,  DATEDIFF(MINUTE, k.onlineTime, GETDATE()) AS durationUptime,  DATEDIFF(MINUTE, k.offlineTime, GETDATE()) AS durationDowntime, k.dateModified as lastUpdated " +
                 "from TKiosk k";
-            DataTable table = ExecuteRawQuery(query);
+            DataTable table = _exQuery.ExecuteRawQuery(query);
             return new JsonResult(table);
         }
 
@@ -291,7 +270,7 @@ namespace KMS.Controllers
                            "WHERE k.id = @id";
 
             SqlParameter parameter = new SqlParameter("@id", id);
-            DataTable table = ExecuteRawQuery(query, new[] { parameter });
+            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
             if (table.Rows.Count > 0)
             {
@@ -308,7 +287,7 @@ namespace KMS.Controllers
         public JsonResult GetKioskHealthDetail()
         {
             string query = "select k.dateCreated,  k.stationCode,  k.id,  k.component, k.onlineTime, k.offlineTime,   \r\nDATEDIFF(MINUTE, k.onlineTime, GETDATE()) AS durationUptime, \r\nDATEDIFF(MINUTE, k.offlineTime, GETDATE()) AS durationDowntime, k.dateModified as lastUpdated  \r\nfrom TKiosk k";
-            DataTable table = ExecuteRawQuery(query);
+            DataTable table = _exQuery.ExecuteRawQuery(query);
             return new JsonResult(table);
         }
 

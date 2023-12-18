@@ -10,6 +10,7 @@ using System;
 using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Components.Authorization;
+using KMS.Tools;
 
 namespace KMS.Controllers
 {
@@ -19,35 +20,13 @@ namespace KMS.Controllers
     {
         private readonly KioskManagementSystemContext _dbcontext;
         private IConfiguration _configuration;
+        private readonly ExecuteQuery _exQuery;
 
-        public MemberController(IConfiguration configuration, KioskManagementSystemContext _context)
+        public MemberController(IConfiguration configuration, KioskManagementSystemContext _context, ExecuteQuery exQuery)
         {
             _dbcontext = _context;
             _configuration = configuration;
-        }
-
-        private DataTable ExecuteRawQuery(string query, SqlParameter[] parameters = null)
-        {
-            DataTable table = new DataTable();
-
-            using (SqlConnection myCon = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
-            {
-                myCon.Open();
-
-                using (SqlCommand myCommand = new SqlCommand(query, myCon))
-                {
-                    if (parameters != null)
-                    {
-                        myCommand.Parameters.AddRange(parameters);
-                    }
-
-                    SqlDataReader myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
-                    myReader.Close();
-                }
-            }
-
-            return table;
+            _exQuery = exQuery;
         }
 
         [HttpGet]
@@ -57,7 +36,7 @@ namespace KMS.Controllers
             string query = "select a.id, a.memberId, a.contractId, m.phone, m.department, m.companyName, m.bankName, m.address1, m.isActive, m.dateCreated " +
                 "from LAccount a, LMember m " +
                 "where a.memberId = m.id";
-            DataTable table = ExecuteRawQuery(query);
+            DataTable table = _exQuery.ExecuteRawQuery(query);
             return new JsonResult(table);
         }
 
@@ -70,7 +49,7 @@ namespace KMS.Controllers
                 "where a.memberId = m.id and a.id=@Id";
 
             SqlParameter parameter = new SqlParameter("@Id", id);
-            DataTable table = ExecuteRawQuery(query, new[] { parameter });
+            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
             if (table.Rows.Count > 0)
             {
@@ -86,7 +65,7 @@ namespace KMS.Controllers
         [Route("AddMember")]
         public JsonResult AddMember()
         {
-            string filePath = "ocr_result.json";
+            string filePath = "ocr_result2.json";
 
             try
             {
@@ -139,7 +118,7 @@ namespace KMS.Controllers
                         new SqlParameter("@IsActive", member.IsActive)
                     };
 
-                    ExecuteRawQuery(query, parameters);
+                    _exQuery.ExecuteRawQuery(query, parameters);
 
                     return new JsonResult("Member added successfully");
                 }
@@ -173,7 +152,7 @@ namespace KMS.Controllers
                 new SqlParameter("@IsActive", member.IsActive)
             };
 
-            ExecuteRawQuery(query, parameters);
+            _exQuery.ExecuteRawQuery(query, parameters);
 
             return new JsonResult("Member updated successfully");
         }
@@ -194,7 +173,7 @@ namespace KMS.Controllers
                            "address1 LIKE @searchQuery";
 
             SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
-            DataTable table = ExecuteRawQuery(query, new[] { parameter });
+            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
             return new JsonResult(table);
         }

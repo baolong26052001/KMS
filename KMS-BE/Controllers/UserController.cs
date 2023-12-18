@@ -17,47 +17,16 @@ namespace KMS.Controllers
     {
         private readonly KioskManagementSystemContext _dbcontext;
         private IConfiguration _configuration;
+        private readonly ExecuteQuery _exQuery;
 
-        public UserController(IConfiguration configuration, KioskManagementSystemContext _context)
+        public UserController(IConfiguration configuration, KioskManagementSystemContext _context, ExecuteQuery exQuery)
         {
             _dbcontext = _context;
             _configuration = configuration;
+            _exQuery = exQuery;
         }
 
-        private DataTable ExecuteRawQuery(string query, SqlParameter[] parameters = null)
-        {
-            DataTable table = new DataTable();
-
-            using (SqlConnection myCon = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
-            {
-                myCon.Open();
-
-                using (SqlCommand myCommand = new SqlCommand(query, myCon))
-                {
-                    if (parameters != null)
-                    {
-                        myCommand.Parameters.AddRange(parameters);
-                    }
-
-                    SqlDataReader myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
-                    myReader.Close();
-                }
-
-                myCon.Close();
-            }
-
-            return table;
-        }
-
-        private string HashPassword(string password)
-        {
-            using (SHA256 sha256 = SHA256.Create())
-            {
-                byte[] hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                return Convert.ToBase64String(hashedBytes);
-            }
-        }
+        
 
         
 
@@ -68,7 +37,7 @@ namespace KMS.Controllers
             string query = "SELECT u.id, u.username, u.fullname, u.email, ug.groupName, u.lastLogin, u.isActive, DATEDIFF(DAY, u.lastLogin, GETDATE()) AS TotalDaysDormant " +
                 " FROM TUser u \r\nLEFT JOIN TUserGroup ug ON u.userGroupId = ug.id " +
                 " WHERE ug.id IS NOT NULL or ug.id IS NULL";
-            DataTable table = ExecuteRawQuery(query);
+            DataTable table = _exQuery.ExecuteRawQuery(query);
             return new JsonResult(table);
         }
 
@@ -81,7 +50,7 @@ namespace KMS.Controllers
                 " WHERE u.id = @UserId and (ug.id IS NOT NULL or ug.id IS NULL)";
 
             SqlParameter parameter = new SqlParameter("@UserId", id);
-            DataTable table = ExecuteRawQuery(query, new[] { parameter });
+            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
             if (table.Rows.Count > 0)
             {
@@ -102,7 +71,7 @@ namespace KMS.Controllers
                 "\r\nWHERE u.userGroupId = ug.id AND u.id = @UserId";
 
             SqlParameter parameter = new SqlParameter("@UserId", id);
-            DataTable table = ExecuteRawQuery(query, new[] { parameter });
+            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
             if (table.Rows.Count > 0)
             {
@@ -159,7 +128,7 @@ namespace KMS.Controllers
                 new SqlParameter("@IsActive", newUser.IsActive),
             };
 
-            ExecuteRawQuery(insertQuery, parameters);
+            _exQuery.ExecuteRawQuery(insertQuery, parameters);
 
             return new JsonResult("User added successfully");
         }
@@ -183,7 +152,7 @@ namespace KMS.Controllers
                 new SqlParameter("@IsActive", updatedUser.IsActive),
             };
 
-            ExecuteRawQuery(updateQuery, parameters);
+            _exQuery.ExecuteRawQuery(updateQuery, parameters);
 
             return new JsonResult("User updated successfully");
         }
@@ -216,7 +185,7 @@ namespace KMS.Controllers
 
             deleteQuery.Append(");");
 
-            ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
+            _exQuery.ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
 
             return new JsonResult("Users deleted successfully");
         }
@@ -236,7 +205,7 @@ namespace KMS.Controllers
                            "(ug.id IS NOT NULL or ug.id IS NULL)";
 
             SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
-            DataTable table = ExecuteRawQuery(query, new[] { parameter });
+            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
             return new JsonResult(table);
         }
