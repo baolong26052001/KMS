@@ -16,9 +16,19 @@ namespace KMS.Models
         {
         }
 
+        public virtual DbSet<Benefit> Benefits { get; set; } = null!;
+        public virtual DbSet<BenefitDetail> BenefitDetails { get; set; } = null!;
+        public virtual DbSet<InsurancePackage> InsurancePackages { get; set; } = null!;
+        public virtual DbSet<InsurancePackageGroup> InsurancePackageGroups { get; set; } = null!;
+        public virtual DbSet<InsuranceTransaction> InsuranceTransactions { get; set; } = null!;
+        public virtual DbSet<InsuranceType> InsuranceTypes { get; set; } = null!;
         public virtual DbSet<Laccount> Laccounts { get; set; } = null!;
         public virtual DbSet<Lmember> Lmembers { get; set; } = null!;
+        public virtual DbSet<LoanTransaction> LoanTransactions { get; set; } = null!;
+        public virtual DbSet<LoanTransactionDetail> LoanTransactionDetails { get; set; } = null!;
         public virtual DbSet<LtransactionLog> LtransactionLogs { get; set; } = null!;
+        public virtual DbSet<SavingTransaction> SavingTransactions { get; set; } = null!;
+        public virtual DbSet<SavingTransactionDetail> SavingTransactionDetails { get; set; } = null!;
         public virtual DbSet<TaccessRule> TaccessRules { get; set; } = null!;
         public virtual DbSet<TactivityLog> TactivityLogs { get; set; } = null!;
         public virtual DbSet<Taudit> Taudits { get; set; } = null!;
@@ -39,6 +49,165 @@ namespace KMS.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Benefit>(entity =>
+            {
+                entity.ToTable("Benefit");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Content)
+                    .HasMaxLength(50)
+                    .HasColumnName("content");
+
+                entity.Property(e => e.DateCreated)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateCreated");
+
+                entity.Property(e => e.DateModified)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateModified");
+
+                entity.Property(e => e.Description)
+                    .HasMaxLength(50)
+                    .HasColumnName("description");
+
+                entity.Property(e => e.Fee).HasColumnName("fee");
+
+                entity.Property(e => e.PackageId).HasColumnName("packageId");
+            });
+
+            modelBuilder.Entity<BenefitDetail>(entity =>
+            {
+                entity.ToTable("BenefitDetail");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.BenefitId).HasColumnName("benefitId");
+
+                entity.Property(e => e.Content)
+                    .HasMaxLength(50)
+                    .HasColumnName("content");
+
+                entity.Property(e => e.DateCreated)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateCreated");
+
+                entity.Property(e => e.DateModified)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateModified");
+
+                entity.Property(e => e.Fee).HasColumnName("fee");
+            });
+
+            modelBuilder.Entity<InsurancePackage>(entity =>
+            {
+                entity.ToTable("InsurancePackage");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Amount).HasColumnName("amount");
+
+                entity.Property(e => e.DateCreated)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateCreated");
+
+                entity.Property(e => e.DateModified)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateModified");
+
+                entity.Property(e => e.Duration).HasColumnName("duration");
+
+                entity.Property(e => e.InsuranceType).HasColumnName("insuranceType");
+
+                entity.Property(e => e.PackageGroup).HasColumnName("packageGroup");
+
+                entity.Property(e => e.PackageName)
+                    .HasMaxLength(50)
+                    .HasColumnName("packageName");
+
+                entity.Property(e => e.PayType)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("payType");
+            });
+
+            modelBuilder.Entity<InsurancePackageGroup>(entity =>
+            {
+                entity.ToTable("InsurancePackageGroup");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.DateCreated)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateCreated");
+
+                entity.Property(e => e.DateModified)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateModified");
+
+                entity.Property(e => e.Name)
+                    .HasMaxLength(50)
+                    .HasColumnName("name");
+            });
+
+            modelBuilder.Entity<InsuranceTransaction>(entity =>
+            {
+                entity.ToTable("InsuranceTransaction");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.AnnualPay).HasColumnName("annualPay");
+
+                entity.Property(e => e.BeneficiaryId).HasColumnName("beneficiaryId");
+
+                entity.Property(e => e.ContractId).HasColumnName("contractId");
+
+                entity.Property(e => e.ExpireDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("expireDate");
+
+                entity.Property(e => e.MemberId).HasColumnName("memberId");
+
+                entity.Property(e => e.PackageId).HasColumnName("packageId");
+
+                entity.Property(e => e.Provider)
+                    .HasMaxLength(50)
+                    .HasColumnName("provider");
+
+                entity.Property(e => e.RegistrationDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("registrationDate");
+
+                entity.Property(e => e.Relationship)
+                    .HasMaxLength(50)
+                    .HasColumnName("relationship");
+
+                entity.Property(e => e.Status).HasColumnName("status");
+
+                entity.Property(e => e.TransactionDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("transactionDate");
+            });
+
+            modelBuilder.Entity<InsuranceType>(entity =>
+            {
+                entity.ToTable("InsuranceType");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.DateCreated)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateCreated");
+
+                entity.Property(e => e.DateModified)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateModified");
+
+                entity.Property(e => e.TypeName)
+                    .HasMaxLength(50)
+                    .HasColumnName("typeName");
+            });
+
             modelBuilder.Entity<Laccount>(entity =>
             {
                 entity.ToTable("LAccount");
@@ -197,6 +366,76 @@ namespace KMS.Models
                     .HasColumnName("ward");
             });
 
+            modelBuilder.Entity<LoanTransaction>(entity =>
+            {
+                entity.ToTable("LoanTransaction");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.AccountId).HasColumnName("accountId");
+
+                entity.Property(e => e.Balance).HasColumnName("balance");
+
+                entity.Property(e => e.Debt).HasColumnName("debt");
+
+                entity.Property(e => e.DueDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dueDate");
+
+                entity.Property(e => e.InterestRate).HasColumnName("interestRate");
+
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.LoanDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("loanDate");
+
+                entity.Property(e => e.LoanTerm).HasColumnName("loanTerm");
+
+                entity.Property(e => e.MemberId).HasColumnName("memberId");
+
+                entity.Property(e => e.TransactionType)
+                    .HasMaxLength(50)
+                    .HasColumnName("transactionType");
+            });
+
+            modelBuilder.Entity<LoanTransactionDetail>(entity =>
+            {
+                entity.ToTable("LoanTransactionDetail");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.AccountId).HasColumnName("accountId");
+
+                entity.Property(e => e.ActualPayback).HasColumnName("actualPayback");
+
+                entity.Property(e => e.BeginningBalance).HasColumnName("beginningBalance");
+
+                entity.Property(e => e.ContractId).HasColumnName("contractId");
+
+                entity.Property(e => e.DateCreated)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateCreated");
+
+                entity.Property(e => e.EndingBalance).HasColumnName("endingBalance");
+
+                entity.Property(e => e.InterestRate).HasColumnName("interestRate");
+
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.LoanTransactionId).HasColumnName("loanTransactionId");
+
+                entity.Property(e => e.MemberId).HasColumnName("memberId");
+
+                entity.Property(e => e.PaymentDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("paymentDate");
+
+                entity.Property(e => e.ScheduledPayment).HasColumnName("scheduledPayment");
+
+                entity.Property(e => e.Status).HasColumnName("status");
+            });
+
             modelBuilder.Entity<LtransactionLog>(entity =>
             {
                 entity.ToTable("LTransactionLog");
@@ -287,6 +526,78 @@ namespace KMS.Models
                     .HasMaxLength(255)
                     .IsUnicode(false)
                     .HasColumnName("transactionType");
+            });
+
+            modelBuilder.Entity<SavingTransaction>(entity =>
+            {
+                entity.ToTable("SavingTransaction");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.AccountId).HasColumnName("accountId");
+
+                entity.Property(e => e.AnnualRate).HasColumnName("annualRate");
+
+                entity.Property(e => e.Balance).HasColumnName("balance");
+
+                entity.Property(e => e.DateCreated)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateCreated");
+
+                entity.Property(e => e.DateModified)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateModified");
+
+                entity.Property(e => e.DueDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dueDate");
+
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.MemberId).HasColumnName("memberId");
+
+                entity.Property(e => e.SavingTerm).HasColumnName("savingTerm");
+
+                entity.Property(e => e.Status).HasColumnName("status");
+            });
+
+            modelBuilder.Entity<SavingTransactionDetail>(entity =>
+            {
+                entity.ToTable("SavingTransactionDetail");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.AccountId).HasColumnName("accountId");
+
+                entity.Property(e => e.AnnualRate).HasColumnName("annualRate");
+
+                entity.Property(e => e.Balance).HasColumnName("balance");
+
+                entity.Property(e => e.ContractId).HasColumnName("contractId");
+
+                entity.Property(e => e.DueDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dueDate");
+
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.MemberId).HasColumnName("memberId");
+
+                entity.Property(e => e.SavingId).HasColumnName("savingId");
+
+                entity.Property(e => e.StartDateOfSaving)
+                    .HasColumnType("datetime")
+                    .HasColumnName("startDateOfSaving");
+
+                entity.Property(e => e.Status).HasColumnName("status");
+
+                entity.Property(e => e.TopUp).HasColumnName("topUp");
+
+                entity.Property(e => e.TransactionDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("transactionDate");
+
+                entity.Property(e => e.Withdraw).HasColumnName("withdraw");
             });
 
             modelBuilder.Entity<TaccessRule>(entity =>

@@ -1,43 +1,41 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using KMS.Models;
-using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
-using System.Data;
-using System.Text;
 using KMS.Tools;
+using System.Data;
+using Microsoft.Data.SqlClient;
 
 namespace KMS.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class LoanTransactionController : ControllerBase
+    public class SavingTransactionController : ControllerBase
     {
         private readonly KioskManagementSystemContext _dbcontext;
         private IConfiguration _configuration;
         private readonly ExecuteQuery _exQuery;
 
-        public LoanTransactionController(IConfiguration configuration, KioskManagementSystemContext _context, ExecuteQuery exQuery)
+        public SavingTransactionController(IConfiguration configuration, KioskManagementSystemContext _context, ExecuteQuery exQuery)
         {
             _dbcontext = _context;
             _configuration = configuration;
             _exQuery = exQuery;
         }
 
-
         [HttpGet]
-        [Route("ShowLoanTransaction")]
-        public JsonResult GetLoanTransaction()
+        [Route("ShowSavingTransaction")]
+        public JsonResult GetSavingTransaction()
         {
-            string query = "select * from LoanTransaction";
+            string query = "select * from SavingTransaction";
+
             DataTable table = _exQuery.ExecuteRawQuery(query);
             return new JsonResult(table);
         }
 
         [HttpGet]
-        [Route("ShowLoanTransaction/{id}")]
-        public JsonResult GetLoanTransactionById(int id)
+        [Route("ShowSavingTransaction/{id}")]
+        public JsonResult GetSavingTransactionById(int id)
         {
-            string query = "select * from LoanTransaction where id=@id";
+            string query = "select * from SavingTransaction where id=@id";
 
             SqlParameter parameter = new SqlParameter("@id", id);
             DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
@@ -48,17 +46,17 @@ namespace KMS.Controllers
             }
             else
             {
-                return new JsonResult("Loan transaction not found");
+                return new JsonResult("Saving transaction not found");
             }
         }
 
         [HttpGet]
-        [Route("ShowLoanTransactionDetail/{id}")]
-        public JsonResult GetLoanTransactionDetail(int id)
+        [Route("ShowSavingTransactionDetail/{id}")]
+        public JsonResult GetSavingTransactionDetail(int id)
         {
-            string query = "select ltd.*, lt.loanDate, lt.dueDate, lt.debt " +
-                "from LoanTransactionDetail ltd, LoanTransaction lt " +
-                "where ltd.loanTransactionId = lt.id and lt.id=@id";
+            string query = "select * " +
+                "from SavingTransactionDetail std, SavingTransaction st " +
+                "where std.savingId = st.id and st.id=@id";
 
             SqlParameter parameter = new SqlParameter("@id", id);
             DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
@@ -69,7 +67,7 @@ namespace KMS.Controllers
             }
             else
             {
-                return new JsonResult("Loan transaction detail not found");
+                return new JsonResult("Saving transaction detail not found");
             }
         }
 

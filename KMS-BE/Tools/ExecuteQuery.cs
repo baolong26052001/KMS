@@ -8,7 +8,7 @@ namespace KMS.Tools
 {
     public class ExecuteQuery
     {
-        private readonly IConfiguration _configuration; // Add this field
+        private readonly IConfiguration _configuration; 
 
         public ExecuteQuery(IConfiguration configuration)
         {
