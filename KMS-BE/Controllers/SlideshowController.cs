@@ -4,7 +4,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Text;
-using KMS.Tools;
+using System.Globalization;
 
 namespace KMS.Controllers
 {
@@ -14,13 +14,35 @@ namespace KMS.Controllers
     {
         private readonly KioskManagementSystemContext _dbcontext;
         private IConfiguration _configuration;
-        private readonly ExecuteQuery _exQuery;
 
-        public SlideshowController(IConfiguration configuration, KioskManagementSystemContext _context, ExecuteQuery exQuery)
+        public SlideshowController(IConfiguration configuration, KioskManagementSystemContext _context)
         {
             _dbcontext = _context;
             _configuration = configuration;
-            _exQuery = exQuery;
+        }
+
+        private DataTable ExecuteRawQuery(string query, SqlParameter[] parameters = null)
+        {
+            DataTable table = new DataTable();
+
+            using (SqlConnection myCon = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                myCon.Open();
+
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    if (parameters != null)
+                    {
+                        myCommand.Parameters.AddRange(parameters);
+                    }
+
+                    SqlDataReader myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                }
+            }
+
+            return table;
         }
 
         [HttpGet]
@@ -29,7 +51,7 @@ namespace KMS.Controllers
         {
             string query = "select ss.id, ss.packageName, ss.imagevideo, ss.fileType, ss.startDate, ss.endDate" +
                 "\r\nfrom TSlideshow ss";
-            DataTable table = _exQuery.ExecuteRawQuery(query);
+            DataTable table = ExecuteRawQuery(query);
             return new JsonResult(table);
         }
 
@@ -41,7 +63,7 @@ namespace KMS.Controllers
                            "FROM TSlideshow " +
                            "WHERE id = @Id";
             SqlParameter parameter = new SqlParameter("@Id", id);
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+            DataTable table = ExecuteRawQuery(query, new[] { parameter });
 
             if (table.Rows.Count > 0)
             {
@@ -62,7 +84,7 @@ namespace KMS.Controllers
 
             List<SqlParameter> parameters = new List<SqlParameter>();
 
-            
+
 
             if (!string.IsNullOrEmpty(packageName))
             {
@@ -72,16 +94,12 @@ namespace KMS.Controllers
 
             if (startDate.HasValue && endDate.HasValue)
             {
-                
-                startDate = startDate.Value.Date.AddHours(0).AddMinutes(0).AddSeconds(0);
-                endDate = endDate.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
-
                 query += (parameters.Count == 0 ? " WHERE " : " AND ") + "startDate >= @startDate AND endDate <= @endDate";
                 parameters.Add(new SqlParameter("@startDate", startDate.Value));
                 parameters.Add(new SqlParameter("@endDate", endDate.Value));
             }
 
-            DataTable table = _exQuery.ExecuteRawQuery(query, parameters.ToArray());
+            DataTable table = ExecuteRawQuery(query, parameters.ToArray());
 
             return new JsonResult(table);
         }
@@ -101,7 +119,7 @@ namespace KMS.Controllers
                 new SqlParameter("@StartDate", slideshow.StartDate),
                 new SqlParameter("@EndDate", slideshow.EndDate)
             };
-            _exQuery.ExecuteRawQuery(query, parameters);
+            ExecuteRawQuery(query, parameters);
 
             return new JsonResult("Slideshow added successfully");
         }
@@ -122,7 +140,7 @@ namespace KMS.Controllers
                 new SqlParameter("@StartDate", slideshow.StartDate),
                 new SqlParameter("@EndDate", slideshow.EndDate)
             };
-            _exQuery.ExecuteRawQuery(query, parameters);
+            ExecuteRawQuery(query, parameters);
 
             return new JsonResult("Slideshow updated successfully");
         }
@@ -155,7 +173,7 @@ namespace KMS.Controllers
 
             deleteQuery.Append(");");
 
-            _exQuery.ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
+            ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
 
             return new JsonResult("Slideshow deleted successfully");
         }
@@ -172,7 +190,7 @@ namespace KMS.Controllers
                            "fileType LIKE @searchQuery";
 
             SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+            DataTable table = ExecuteRawQuery(query, new[] { parameter });
 
             return new JsonResult(table);
         }
