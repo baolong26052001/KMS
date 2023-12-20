@@ -1,6 +1,9 @@
 using KMS.Models;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
+using Microsoft.Extensions.DependencyInjection;
+using KMS.Tools;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +13,8 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<ExecuteQuery>();
+
 
 // Json serializer
 builder.Services.AddControllers().AddNewtonsoftJson(options=>
