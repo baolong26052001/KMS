@@ -25,7 +25,7 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackage")]
         public JsonResult GetInsurancePackage()
         {
-            string query = "select ipack.id, ipack.packageName, itype.typeName as insuranceType, ipack.packageGroup, ipack.duration, ipack.payType, ipack.amount, ipack.dateModified, ipack.dateCreated " +
+            string query = "select ipack.id, ipack.packageName, itype.typeName as insuranceType, ipack.packageGroup, ipack.duration, ipack.payType, ipack.annualFee, ipack.dateModified, ipack.dateCreated " +
                 "from InsurancePackage ipack, InsuranceType itype " +
                 "where ipack.insuranceType = itype.id;";
 
@@ -37,7 +37,7 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackageDetail/{id}")]
         public JsonResult GetInsurancePackageDetail(int id)
         {
-            string query = "select b.id, b.content, b.fee as coverPlan, b.description, ipack.packageName, itype.typeName, ipack.amount, b.dateModified, b.dateCreated " +
+            string query = "select b.id, b.content, b.coverage, b.description, ipack.packageName, itype.typeName, ipack.annualFee, b.dateModified, b.dateCreated " +
                 "from Benefit b, InsurancePackage ipack, InsuranceType itype " +
                 "where b.packageId = ipack.id and itype.id = ipack.insuranceType and ipack.id=@id";
 
@@ -52,6 +52,27 @@ namespace KMS.Controllers
             {
                 return new JsonResult("Insurance Package Detail not found");
             }
+        }
+
+        [HttpPost]
+        [Route("AddInsurancePackage")]
+        public JsonResult AddInsurancePackage([FromBody] InsurancePackage insurancePackage)
+        {
+            string query = "INSERT INTO InsurancePackage (packageName, insuranceType, duration, payType, annualFee, dateModified, dateCreated) " +
+                           "VALUES (@PackageName, @InsuranceType, @Duration, @PayType, @AnnualFee, GETDATE(), GETDATE())";
+
+            SqlParameter[] parameters =
+            {
+                new SqlParameter("@PackageName", insurancePackage.PackageName),
+                new SqlParameter("@InsuranceType", insurancePackage.InsuranceType),
+                new SqlParameter("@Duration", insurancePackage.Duration),
+                new SqlParameter("@PayType", insurancePackage.PayType),
+                new SqlParameter("@AnnualFee", insurancePackage.AnnualFee),
+            };
+
+            _exQuery.ExecuteRawQuery(query, parameters);
+
+            return new JsonResult("Insurance Package added successfully");
         }
 
     }

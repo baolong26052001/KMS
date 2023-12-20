@@ -62,7 +62,7 @@ namespace KMS.Controllers
 
             List<SqlParameter> parameters = new List<SqlParameter>();
 
-            
+
 
             if (!string.IsNullOrEmpty(packageName))
             {
@@ -72,7 +72,7 @@ namespace KMS.Controllers
 
             if (startDate.HasValue && endDate.HasValue)
             {
-                
+
                 startDate = startDate.Value.Date.AddHours(0).AddMinutes(0).AddSeconds(0);
                 endDate = endDate.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
 

@@ -73,5 +73,36 @@ namespace KMS.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("FilterLoanTransaction")]
+        public JsonResult FilterLoanTransaction([FromQuery] bool? isActive = null, [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
+        {
+            string query = "SELECT * " +
+                           "FROM LoanTransaction ";
+
+            List<SqlParameter> parameters = new List<SqlParameter>();
+
+            if (isActive.HasValue)
+            {
+                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "isActive = @isActive";
+                parameters.Add(new SqlParameter("@isActive", isActive.Value));
+            }
+
+            if (startDate.HasValue && endDate.HasValue)
+            {
+
+                startDate = startDate.Value.Date.AddHours(0).AddMinutes(0).AddSeconds(0);
+                endDate = endDate.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
+
+                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "loanDate >= @startDate AND loanDate <= @endDate";
+                parameters.Add(new SqlParameter("@startDate", startDate.Value));
+                parameters.Add(new SqlParameter("@endDate", endDate.Value));
+            }
+
+            DataTable table = _exQuery.ExecuteRawQuery(query, parameters.ToArray());
+
+            return new JsonResult(table);
+        }
+
     }
 }

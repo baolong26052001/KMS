@@ -11,7 +11,7 @@ namespace KMS.Models
         public int? PackageGroup { get; set; }
         public int? Duration { get; set; }
         public string? PayType { get; set; }
-        public double? Amount { get; set; }
+        public double? AnnualFee { get; set; }
         public DateTime? DateModified { get; set; }
         public DateTime? DateCreated { get; set; }
     }

@@ -8,13 +8,13 @@ namespace KMS.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class SavingTransactionController : ControllerBase
+    public class SavingStatementController : ControllerBase
     {
         private readonly KioskManagementSystemContext _dbcontext;
         private IConfiguration _configuration;
         private readonly ExecuteQuery _exQuery;
 
-        public SavingTransactionController(IConfiguration configuration, KioskManagementSystemContext _context, ExecuteQuery exQuery)
+        public SavingStatementController(IConfiguration configuration, KioskManagementSystemContext _context, ExecuteQuery exQuery)
         {
             _dbcontext = _context;
             _configuration = configuration;
@@ -22,61 +22,40 @@ namespace KMS.Controllers
         }
 
         [HttpGet]
-        [Route("ShowSavingTransaction")]
-        public JsonResult GetSavingTransaction()
+        [Route("ShowSavingStatement")]
+        public JsonResult GetSavingStatement()
         {
-            string query = "select * from SavingTransaction";
-
+            string query = "select * from SavingStatement";
             DataTable table = _exQuery.ExecuteRawQuery(query);
             return new JsonResult(table);
         }
 
         [HttpGet]
-        [Route("ShowSavingTransaction/{id}")]
-        public JsonResult GetSavingTransactionById(int id)
-        {
-            string query = "select * from SavingTransaction where id=@id";
-
-            SqlParameter parameter = new SqlParameter("@id", id);
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
-
-            if (table.Rows.Count > 0)
-            {
-                return new JsonResult(table);
-            }
-            else
-            {
-                return new JsonResult("Saving transaction not found");
-            }
-        }
-
-        [HttpGet]
-        [Route("ShowSavingTransactionDetail/{id}")]
-        public JsonResult GetSavingTransactionDetail(int id)
-        {
-            string query = "select * " +
-                "from SavingTransactionDetail std, SavingTransaction st " +
-                "where std.savingId = st.id and st.id=@id";
-
-            SqlParameter parameter = new SqlParameter("@id", id);
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
-
-            if (table.Rows.Count > 0)
-            {
-                return new JsonResult(table);
-            }
-            else
-            {
-                return new JsonResult("Saving transaction detail not found");
-            }
-        }
-
-        [HttpGet]
-        [Route("FilterSavingTransaction")]
-        public JsonResult FilterSavingTransaction([FromQuery] bool? isActive = null, [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
+        [Route("ShowSavingStatement/{id}")]
+        public JsonResult GetSavingStatementById(int id)
         {
             string query = "SELECT * " +
-                           "FROM SavingTransaction ";
+                           "FROM SavingStatement " +
+                           "WHERE id = @Id";
+            SqlParameter parameter = new SqlParameter("@Id", id);
+            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+
+            if (table.Rows.Count > 0)
+            {
+                return new JsonResult(table);
+            }
+            else
+            {
+                return new JsonResult("Saving Statement not found");
+            }
+        }
+
+        [HttpGet]
+        [Route("FilterSavingStatement")]
+        public JsonResult FilterSavingStatement([FromQuery] bool? isActive = null, [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
+        {
+            string query = "SELECT * " +
+                           "FROM SavingStatement ";
 
             List<SqlParameter> parameters = new List<SqlParameter>();
 
@@ -92,7 +71,7 @@ namespace KMS.Controllers
                 startDate = startDate.Value.Date.AddHours(0).AddMinutes(0).AddSeconds(0);
                 endDate = endDate.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
 
-                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "dateCreated >= @startDate AND dateCreated <= @endDate";
+                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "dateSaving >= @startDate AND dateSaving <= @endDate";
                 parameters.Add(new SqlParameter("@startDate", startDate.Value));
                 parameters.Add(new SqlParameter("@endDate", endDate.Value));
             }
