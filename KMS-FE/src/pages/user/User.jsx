@@ -15,8 +15,6 @@ import Alert from '@mui/material/Alert';
 // import Delete Hook
 import useDeleteHook from '../../components/deleteHook/deleteHook';
 
-// import css
-import './User.css';
 
 
 const CustomToolbar = ({ onButtonClick, selectedRows }) => {

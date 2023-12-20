@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react';
 
-//import css
-import './Usergroup.css';
-
 // Import from React Router
 import {useNavigate} from 'react-router-dom';
 
