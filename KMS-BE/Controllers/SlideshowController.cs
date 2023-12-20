@@ -72,6 +72,10 @@ namespace KMS.Controllers
 
             if (startDate.HasValue && endDate.HasValue)
             {
+                
+                startDate = startDate.Value.Date.AddHours(0).AddMinutes(0).AddSeconds(0);
+                endDate = endDate.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
+
                 query += (parameters.Count == 0 ? " WHERE " : " AND ") + "startDate >= @startDate AND endDate <= @endDate";
                 parameters.Add(new SqlParameter("@startDate", startDate.Value));
                 parameters.Add(new SqlParameter("@endDate", endDate.Value));
