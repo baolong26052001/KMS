@@ -112,7 +112,7 @@ namespace KMS.Controllers
                 new SqlParameter("@PackageName", insurancePackage.PackageName),
                 new SqlParameter("@InsuranceType", insurancePackage.InsuranceType),
                 new SqlParameter("@Duration", insurancePackage.Duration),
-                new SqlParameter("@PayType", insurancePackage.PayType), // trả theo năm hoặc tháng
+                new SqlParameter("@PayType", insurancePackage.PayType), // đóng tiền theo năm hoặc tháng
                 new SqlParameter("@AnnualFee", insurancePackage.AnnualFee),
                 
             };
