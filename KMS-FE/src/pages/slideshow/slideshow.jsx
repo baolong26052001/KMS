@@ -1,19 +1,69 @@
 import React, { useState, useEffect } from 'react';
+import dayjs from 'dayjs'; // Import dayjs
+import customParseFormat from 'dayjs/plugin/customParseFormat'; // Import the customParseFormat plugin
+import 'dayjs/locale/en'; // Import the English locale
+import { DataGrid } from '@mui/x-data-grid';
+import { Button, Box } from '@mui/material';
+import DateFilter from '../../components/dateFilter/DateFilter';
+import {useNavigate} from 'react-router-dom';
+//import MUI Library
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 
-//import Sidebar from '../components/sidebar/Sidebar';
-import { render } from '@testing-library/react';
+// import Delete Hook
+import useDeleteHook from '../../components/deleteHook/deleteHook';
 
-// import components from MUI
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
-import { Button, Box, Tooltip } from '@mui/material';
+// Enable the customParseFormat plugin
+dayjs.extend(customParseFormat);
+dayjs.locale('en'); // Set the locale to English
 
-// import { useHistory } from 'react-router-dom'; // Import useHistory from React Router
+const CustomToolbar = ({ onButtonClick, selectedRows }) => {
+  const navigate = useNavigate();
+  const { handleDelete, handleClose, open } = useDeleteHook('Station/DeleteStation'); 
 
-//import css
-import './slideshow.css';
-import Filter from './Filter';
+  // const [open, setOpen] = React.useState(false);
+  const handleButtonClick = (buttonId) => {
+    onButtonClick(buttonId);
+    
+    if (buttonId === 'Add') {
+      navigate('/addSlideShow');
 
+    } else if (buttonId === 'Delete') {
 
+      const userIdsToDelete = selectedRows;
+
+      handleDelete(userIdsToDelete);
+    }
+  };
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+      <Button
+        variant="contained"
+        startIcon={<AddIcon />}
+        onClick={() => handleButtonClick('Add')}
+        style={{ backgroundColor: '#655BD3', color: '#fff' }}
+      >
+        Add
+      </Button>
+      <Button
+        variant="contained"
+        startIcon={<DeleteIcon />}
+        onClick={() => handleButtonClick('Delete')}
+        style={{ backgroundColor: '#FF3E1D', color: '#fff' }}
+      >
+        Delete
+      </Button>
+      <Snackbar open={open} autoHideDuration={1000} onClose={handleClose}>
+        <Alert onClose={handleClose} variant="filled" severity="error">
+          No rows selected for deletion!!!
+        </Alert>
+      </Snackbar>
+    </div>
+  );
+};
 
 const ViewButton = ({ rowId, label, onClick }) => {
   const handleClick = (event) => {
@@ -49,7 +99,7 @@ function createData(id, packageName, imgsrc, fileType, startDate, endDate) {
   return {id, packageName, imgsrc, fileType, startDate, endDate};
 }
 
-const columns = [
+const columns = [ 
   {
     field: 'viewButton',
     headerName: '',
@@ -81,8 +131,8 @@ const columns = [
     ),
   },
   { field: 'id', headerName: 'Package ID', minWidth: 100, flex: 1,},
-  { field: 'packageName', headerName: 'Package Name', minWidth: 250, flex: 1,},
-  { field: 'imgsrc', headerName: 'Image/Video', minWidth: 100, flex: 1,},
+  { field: 'packageName', headerName: 'Package Name', minWidth: 200, flex: 1,},
+  { field: 'imgsrc', headerName: 'Image/Video', minWidth: 120, flex: 1,},
   { field: 'fileType', headerName: 'File Type', minWidth: 120, flex: 1,},
   {
     field: 'startDate',
@@ -99,9 +149,7 @@ const columns = [
   },
 ];
 
-const rows = [
-  // createData(1, 'Ads Promotion', 'image.png', 'IMAGE', '19-10-2023 14:00:00', '19-12-2023 14:00:00'),
-];
+const rows = [];
 
 const handleButtonClick = (id) => {
   // Handle button click, e.g., navigate to another page
@@ -110,54 +158,90 @@ const handleButtonClick = (id) => {
 
 const Slideshow = () => {
     const [searchTerm, setSearchTerm] = useState('');
-
     const [searchTermButton, setSearchTermButton] = useState('');
 
-    const handleSearchButton = () => {
-        setSearchTerm(searchTermButton);
-    };
+    const [selectedRowIds, setSelectedRowIds] = useState([]);
 
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
+    const [rows, setRows] = useState([]);
+
+    const handleStartDateChange = (date) => {
+      setStartDate(date);
+    };
+  
+    const handleEndDateChange = (date) => {
+      setEndDate(date);
+    };
+  
+    const getRowId = (row) => row.id;
+    const API_URL = "https://localhost:7017/";
+  
+    const handleSearchButton = () => {
+      setSearchTerm(searchTermButton);
+    };
+  
     const handleKeyPress = (event) => {
       if (event.key === 'Enter') {
         handleSearchButton();
       }
     };
-
-    const [rows, setRows] = useState([]);
-    // Get id from Database  
-    const getRowId = (row) => row.id;
-    // Get Back-end API URL to connect
-    const API_URL = "https://localhost:7017/";
-  
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch(`${API_URL}api/Slideshow/ShowSlideshow`);
-        const data = await response.json();
-  
-        // Combine fetched data with createData function
-        const updatedRows = data.map((row) =>
-          createData(row.id, row.packageName, row.imagevideo, row.fileType, row.startDate, row.endDate)
-        );
-  
-        // If searchTerm is empty, display all rows, otherwise filter based on the search term
-        const filteredRows = searchTerm
-          ? updatedRows.filter((row) =>
-              Object.values(row).some((value) =>
-                value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-              )
-            )
-          : updatedRows;
-  
-        setRows(filteredRows); // Update the component state with the data
-      } catch (error) {
-        console.error('Error fetching data:', error);
+    
+    useEffect(() => {
+      async function fetchData() {
+        try {
+          let apiUrl = `${API_URL}api/Slideshow/ShowSlideshow`;
+          let searchApi = ``;
+    
+          if (startDate || endDate) {
+            apiUrl = `${API_URL}api/Slideshow/FilterSlideshow?startDate=${encodeURIComponent(dayjs(startDate).format('YYYY/MM/DD'))}&endDate=${encodeURIComponent(dayjs(endDate).format('YYYY/MM/DD'))}`;
+            if (searchTerm) {
+              searchApi = `${API_URL}api/Slideshow/SearchSlideshow?searchQuery=${encodeURIComponent(searchTerm)}`;
+            }
+          } else if (searchTerm) {
+            apiUrl = `${API_URL}api/Slideshow/SearchSlideshow?searchQuery=${encodeURIComponent(searchTerm)}`;
+          }
+    
+          const [apiResponse, searchApiResponse] = await Promise.all([
+            fetch(apiUrl),
+            searchApi ? fetch(searchApi) : Promise.resolve(null),
+          ]);
+    
+          if (!apiResponse.ok) {
+            throw new Error(`HTTP error! Status: ${apiResponse.status}`);
+          }
+    
+          const apiResponseData = await apiResponse.json();
+          const searchApiResponseData = searchApiResponse ? await searchApiResponse.json() : null;
+          
+          console.log(searchApiResponseData);
+    
+          if (Array.isArray(apiResponseData)) {
+            let filteredRows = apiResponseData;
+          
+            if (searchApiResponseData && Array.isArray(searchApiResponseData)) {
+              filteredRows = apiResponseData.filter(row =>
+                searchApiResponseData.some(searchRow => row.id === searchRow.id)
+              );
+            }
+          
+            const updatedRows = filteredRows.map(row =>
+              createData(row.id, row.packageName, row.imagevideo, row.fileType, row.startDate, row.endDate)
+            );
+          
+            setRows(updatedRows); // Update the component state with the combined data
+          } else {
+            console.error('Invalid data structure:', apiResponseData);
+          }
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
       }
-    } 
-  
-    fetchData();
-  }, [searchTerm]);
-
+    
+      fetchData();
+    }, [searchTerm, startDate, endDate]);
+    
+    
   return (
     
     <div className="content"> 
@@ -167,12 +251,17 @@ const Slideshow = () => {
         </div>
             <div className="bigcarddashboard">
 
-              <div className='Filter'>
-                <Filter />
-              </div>
+            <div className="Filter">
+            <DateFilter
+              startDate={startDate}
+              endDate={endDate}
+              handleStartDateChange={handleStartDateChange}
+              handleEndDateChange={handleEndDateChange}
+            />
+            </div>
                 <div className="searchdivuser">
                     <input onChange={(event) => setSearchTermButton(event.target.value)} onKeyDown={handleKeyPress} placeholder="  Search..." type="text" id="kioskID myInput" name="kioskID" class="searchbar"></input>
-                    <input onClick={handleSearchButton} type="button" value="Search" className="button button-search"></input>
+                    <input onClick={() => {handleSearchButton()}} type="button" value="Search" className="button button-search"></input>
                 </div>
 
                 
@@ -186,13 +275,23 @@ const Slideshow = () => {
                           paginationModel: { page: 0, pageSize: 5 },
                       },
                       }}
+                      components={{
+                        Toolbar: () => (
+                          <div style={{ position: 'absolute', bottom: 8, alignItems: 'center', marginLeft: '16px' }}>
+                            <CustomToolbar onButtonClick={(buttonId) => console.log(buttonId)} selectedRows={selectedRowIds} />
+                            <div style={{ marginLeft: 'auto' }} />
+                          </div>
+                        ),
+                      }}
                       pageSizeOptions={[5, 10, 25, 50]}
                       checkboxSelection
+                      onRowSelectionModelChange={(rowSelectionModel) => {
+                        setSelectedRowIds(rowSelectionModel.map((id) => parseInt(id, 10)));
+                        console.log('Selected IDs:', rowSelectionModel);
+                      }}  
                     />
                 </div>
             </div>
-
-        
     </div>
     
     

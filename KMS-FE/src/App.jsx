@@ -55,7 +55,7 @@ const App = () => {
                     <Route path="/addGroup" element={<RouteAddGroup />} />
                     <Route path="/editGroup/:id" element={<RouteEditGroup />} />
 
-                    <Route path="/kiosksetup" element={<RouteKioskSetup />} />
+                    <Route path="/kiosksetup" element={<RouteKioskSetup />} />w
                     <Route path="/viewKioskDetails/:id" element={<RouteKioskDetails />} />
                     <Route path="/kioskhardware" element={<RoutekioskHardware />} />
                     <Route path="/station" element={<RouteStation />} />

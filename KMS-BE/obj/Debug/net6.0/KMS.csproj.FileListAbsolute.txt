@@ -270,3 +270,5 @@ D:\RnD Project\TEMP\KMS\KMS-BE\obj\Debug\net6.0\refint\KMS.dll
 D:\RnD Project\TEMP\KMS\KMS-BE\obj\Debug\net6.0\KMS.pdb
 D:\RnD Project\TEMP\KMS\KMS-BE\obj\Debug\net6.0\KMS.genruntimeconfig.cache
 D:\RnD Project\TEMP\KMS\KMS-BE\obj\Debug\net6.0\ref\KMS.dll
+D:\RnD Project\TEMP\KMS\KMS-BE\bin\Debug\net6.0\ocr_result.json
+D:\RnD Project\TEMP\KMS\KMS-BE\bin\Debug\net6.0\ocr_result2.json
