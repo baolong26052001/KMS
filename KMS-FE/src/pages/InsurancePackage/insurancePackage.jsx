@@ -22,7 +22,7 @@ dayjs.locale('en'); // Set the locale to English
 
 const CustomToolbar = ({ onButtonClick, selectedRows }) => {
     const navigate = useNavigate();
-    const { handleDelete, handleClose, open } = useDeleteHook('Station/DeleteStation'); 
+    const { handleDelete, handleClose, open } = useDeleteHook('InsurancePackage/DeleteInsurancePackage'); 
   
     // const [open, setOpen] = React.useState(false);
     const handleButtonClick = (buttonId) => {
@@ -67,9 +67,11 @@ const CustomToolbar = ({ onButtonClick, selectedRows }) => {
 };
 
 const ViewButton = ({ rowId, label, onClick }) => {
+  const navigate = useNavigate();
   const handleClick = (event) => {
     event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
     onClick(rowId);
+    navigate(`/viewPackageDetail/${rowId}`);
   };
 
   return (
@@ -195,12 +197,12 @@ const InsurancePackage = () => {
           let searchApi = ``;
     
           if (startDate || endDate) {
-            apiUrl = `${API_URL}api/Slideshow/FilterSlideshow?startDate=${encodeURIComponent(dayjs(startDate).format('YYYY/MM/DD'))}&endDate=${encodeURIComponent(dayjs(endDate).format('YYYY/MM/DD'))}`;
+            apiUrl = `${API_URL}api/InsurancePackage/FilterInsurancePackage?startDate=${encodeURIComponent(dayjs(startDate).format('YYYY/MM/DD'))}&endDate=${encodeURIComponent(dayjs(endDate).format('YYYY/MM/DD'))}`;
             if (searchTerm) {
-              searchApi = `${API_URL}api/Slideshow/SearchSlideshow?searchQuery=${encodeURIComponent(searchTerm)}`;
+              searchApi = `${API_URL}api/InsurancePackage/SearchInsurancePackage?searchQuery=${encodeURIComponent(searchTerm)}`;
             }
           } else if (searchTerm) {
-            apiUrl = `${API_URL}api/Slideshow/SearchSlideshow?searchQuery=${encodeURIComponent(searchTerm)}`;
+            apiUrl = `${API_URL}api/InsurancePackage/SearchInsurancePackage?searchQuery=${encodeURIComponent(searchTerm)}`;
           }
     
           const [apiResponse, searchApiResponse] = await Promise.all([
