@@ -105,6 +105,12 @@ const Sidebar = () => {
   } else if (currentPath === '/savingstatement') {
     defaultSelectedKey = '11';
     subMenuSelect = 'sub2';
+  } else if (currentPath === '/insuranceTransaction') {
+    defaultSelectedKey = '19';
+    subMenuSelect = 'sub2';
+  } else if (currentPath === '/insurancePackage') {
+    defaultSelectedKey = '20';
+    subMenuSelect = 'sub2';
   } else if (currentPath === '/transactionlogs') {
     defaultSelectedKey = '12';
     subMenuSelect = 'sub3';
@@ -193,6 +199,12 @@ const Sidebar = () => {
         break;
       case '18':
         window.location.href = '/login';
+        break;
+      case '19':
+        window.location.href = '/insuranceTransaction';
+        break;
+      case '20':
+        window.location.href = '/insurancePackage';
         break;
       default:
         console.log('Key not handled:', clickedKey);

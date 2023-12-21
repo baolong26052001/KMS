@@ -73,6 +73,8 @@ const App = () => {
                     <Route path="/savingtransaction" element={<RouteSavingTransaction />} />
                     <Route path="/loanstatement" element={<RouteLoanStatement />} />
                     <Route path="/savingstatement" element={<RouteSavingStatement />} />
+                    <Route path="/insuranceTransaction" element={<RouteInsuranceTransaction />} />
+                    <Route path="/insurancePackage" element={<RouteInsurancePackage />} />
                     <Route path="/transactionlogs" element={<RouteTransactionLogs />} />
                     <Route path="/activitylogs" element={<RouteActivityLogs />} />
                     <Route path="/notificationlogs" element={<RouteNotificationLogs />} />
@@ -109,6 +111,8 @@ const RouteActivityLogs = React.lazy(() => import('./pages/activityLogs/activity
 const RouteNotificationLogs = React.lazy(() => import('./pages/notificationLogs/notificationLogs'));
 const RouteAudit = React.lazy(() => import('./pages/audit/audit'));
 const RouteKioskHealth = React.lazy(() => import('./pages/kioskHealth/kioskHealth'));
+const RouteInsuranceTransaction = React.lazy(() => import('./pages/Insurance/insuranceTransaction'));
+const RouteInsurancePackage = React.lazy(() => import('./pages/Insurance/insurancePackage'));
 
 // view Route
 const RouteViewAccount = React.lazy(() => import('./pages/Account/viewAccount'));
