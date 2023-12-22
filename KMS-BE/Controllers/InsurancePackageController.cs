@@ -97,6 +97,84 @@ namespace KMS.Controllers
             return new JsonResult("Insurance Package added successfully");
         }
 
+        [HttpPost]
+        [Route("AddBenefit")]
+        public JsonResult AddBenefit([FromBody] Benefit benefit)
+        {
+            string query = "INSERT INTO Benefit (content, coverage, description, packageId, dateModified, dateCreated) " +
+                           "VALUES (@Content, @Coverage, @Description, @PackageId, GETDATE(), GETDATE())";
+
+            SqlParameter[] parameters =
+            {
+                new SqlParameter("@Content", benefit.Content),
+                new SqlParameter("@Coverage", benefit.Coverage),
+                new SqlParameter("@Description", benefit.Description),
+                new SqlParameter("@PackageId", benefit.PackageId),
+                
+            };
+
+            _exQuery.ExecuteRawQuery(query, parameters);
+
+            return new JsonResult("Benefit added successfully");
+        }
+
+        [HttpPut]
+        [Route("EditBenefit/{id}")]
+        public JsonResult EditBenefit(int id, [FromBody] Benefit benefit)
+        {
+            string query = "UPDATE Benefit " +
+                           "SET content = @Content, coverage = @Coverage, description = @Description, " +
+                           "packageId = @PackageId, dateModified = GETDATE() " +
+                           "WHERE id = @id";
+
+            SqlParameter[] parameters =
+            {
+                new SqlParameter("@id", id),
+                new SqlParameter("@Content", benefit.Content),
+                new SqlParameter("@Coverage", benefit.Coverage),
+                new SqlParameter("@Description", benefit.Description),
+                new SqlParameter("@PackageId", benefit.PackageId),
+
+            };
+
+            _exQuery.ExecuteRawQuery(query, parameters);
+
+            return new JsonResult("Benefit updated successfully");
+        }
+
+        [HttpDelete]
+        [Route("DeleteBenefit")]
+        public JsonResult DeleteBenefit([FromBody] List<int> benefitIds)
+        {
+            if (benefitIds == null || benefitIds.Count == 0)
+            {
+                return new JsonResult("No benefit IDs provided for deletion");
+            }
+
+            StringBuilder deleteQuery = new StringBuilder("DELETE FROM Benefit WHERE id IN (");
+
+
+            List<SqlParameter> parameters = new List<SqlParameter>();
+            for (int i = 0; i < benefitIds.Count; i++)
+            {
+                string parameterName = "@BenefitId" + i;
+                deleteQuery.Append(parameterName);
+
+                if (i < benefitIds.Count - 1)
+                {
+                    deleteQuery.Append(", ");
+                }
+
+                parameters.Add(new SqlParameter(parameterName, benefitIds[i]));
+            }
+
+            deleteQuery.Append(");");
+
+            _exQuery.ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
+
+            return new JsonResult("Benefit deleted successfully");
+        }
+
         [HttpPut]
         [Route("EditInsurancePackage/{id}")]
         public JsonResult EditInsurancePackage(int id, [FromBody] InsurancePackage insurancePackage)
