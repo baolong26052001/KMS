@@ -160,7 +160,13 @@ namespace KMS.Models
 
                 entity.Property(e => e.AnnualPay).HasColumnName("annualPay");
 
-                entity.Property(e => e.BeneficiaryId).HasColumnName("beneficiaryId");
+                entity.Property(e => e.BeneficiaryId)
+                    .HasMaxLength(50)
+                    .HasColumnName("beneficiaryId");
+
+                entity.Property(e => e.BeneficiaryName)
+                    .HasMaxLength(50)
+                    .HasColumnName("beneficiaryName");
 
                 entity.Property(e => e.ContractId).HasColumnName("contractId");
 
