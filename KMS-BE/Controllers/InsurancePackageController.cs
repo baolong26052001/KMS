@@ -101,11 +101,12 @@ namespace KMS.Controllers
         [Route("AddBenefit")]
         public JsonResult AddBenefit([FromBody] Benefit benefit)
         {
-            string query = "INSERT INTO Benefit (content, coverage, description, dateModified, dateCreated) " +
-                           "VALUES (@Content, @Coverage, @Description, GETDATE(), GETDATE())";
+            string query = "INSERT INTO Benefit (packageId, content, coverage, description, dateModified, dateCreated) " +
+                           "VALUES (@PackageId, @Content, @Coverage, @Description, GETDATE(), GETDATE())";
 
             SqlParameter[] parameters =
             {
+                new SqlParameter("@PackageId", benefit.PackageId),
                 new SqlParameter("@Content", benefit.Content),
                 new SqlParameter("@Coverage", benefit.Coverage),
                 new SqlParameter("@Description", benefit.Description),
