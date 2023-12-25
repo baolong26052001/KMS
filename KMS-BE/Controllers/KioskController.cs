@@ -43,7 +43,7 @@ namespace KMS.Controllers
         [Route("ShowKioskSetup/{id}")]
         public JsonResult GetKioskById(int id)
         {
-            string query = "SELECT k.id, k.kioskName, k.location, st.stationName, ss.packageName, k.kioskStatus, k.cameraStatus, k.cashDepositStatus, k.scannerStatus, k.printerStatus " +
+            string query = "SELECT k.id, k.kioskName, k.location, st.id as stationCode, st.stationName, ss.id as slidePackage, ss.packageName, k.webServices, k.kioskStatus, k.cameraStatus, k.cashDepositStatus, k.scannerStatus, k.printerStatus " +
                            "FROM TKiosk k " +
                            "LEFT JOIN TStation st ON k.stationCode = st.id " +
                            "LEFT JOIN TSlideshow ss ON ss.id = k.slidePackage " +
@@ -144,10 +144,15 @@ namespace KMS.Controllers
                 new SqlParameter("@slidePackage", kiosk.SlidePackage),
                 new SqlParameter("@webServices", kiosk.WebServices),
             };
+
+            
+
             _exQuery.ExecuteRawQuery(query, parameters);
 
             return new JsonResult("Kiosk added successfully");
         }
+
+        
 
         [HttpPut]
         [Route("UpdateKiosk/{id}")]
@@ -253,6 +258,54 @@ namespace KMS.Controllers
         }
 
         [HttpGet]
+        [Route("FilterKioskHealth")]
+        public JsonResult FilterKioskHealth([FromQuery] int? stationCode = null, [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
+        {
+            string query = "select k.dateCreated,  k.stationCode,  k.id,  DATEDIFF(MINUTE, k.onlineTime, GETDATE()) AS durationUptime,  DATEDIFF(MINUTE, k.offlineTime, GETDATE()) AS durationDowntime, k.dateModified as lastUpdated " +
+                "from TKiosk k";
+
+            List<SqlParameter> parameters = new List<SqlParameter>();
+
+
+
+            if (stationCode != null)
+            {
+                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "k.stationCode LIKE @stationCode";
+                parameters.Add(new SqlParameter("@stationCode", "%" + stationCode + "%"));
+            }
+
+            if (startDate.HasValue && endDate.HasValue)
+            {
+
+                startDate = startDate.Value.Date.AddHours(0).AddMinutes(0).AddSeconds(0);
+                endDate = endDate.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
+
+                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "k.dateCreated >= @startDate AND k.dateCreated <= @endDate";
+                parameters.Add(new SqlParameter("@startDate", startDate.Value));
+                parameters.Add(new SqlParameter("@endDate", endDate.Value));
+            }
+
+            DataTable table = _exQuery.ExecuteRawQuery(query, parameters.ToArray());
+
+            return new JsonResult(table);
+        }
+
+        [HttpGet]
+        [Route("SearchKioskHealth")]
+        public JsonResult SearchKioskHealth(string searchQuery)
+        {
+            string query = "select k.dateCreated,  k.stationCode,  k.id,  DATEDIFF(MINUTE, k.onlineTime, GETDATE()) AS durationUptime,  DATEDIFF(MINUTE, k.offlineTime, GETDATE()) AS durationDowntime, k.dateModified as lastUpdated " +
+                           "from TKiosk k " +
+                           "WHERE k.id LIKE @searchQuery OR " +
+                           "k.stationCode LIKE @searchQuery";
+
+            SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
+            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+
+            return new JsonResult(table);
+        }
+
+        [HttpGet]
         [Route("ShowKioskHealth/{id}")]
         public JsonResult GetKioskHealthById(int id)
         {
@@ -272,6 +325,8 @@ namespace KMS.Controllers
                 return new JsonResult("Kiosk hardware not found");
             }
         }
+
+
 
         [HttpGet]
         [Route("ShowKioskHealthDetail")]
