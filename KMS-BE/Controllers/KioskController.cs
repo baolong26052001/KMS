@@ -134,19 +134,15 @@ namespace KMS.Controllers
         [Route("AddKiosk")]
         public JsonResult AddKiosk([FromBody] Tkiosk kiosk)
         {
-            string query = "INSERT INTO TKiosk (kioskName, location, stationCode, slidePackage, kioskStatus, cameraStatus, cashDepositStatus, scannerStatus, printerStatus) " +
-                           "VALUES (@kioskName, @location, @stationCode, @slidePackage, @kioskStatus, @cameraStatus, @cashDepositStatus, @scannerStatus, @printerStatus)";
+            string query = "INSERT INTO TKiosk (kioskName, location, stationCode, slidePackage, webServices) " +
+                           "VALUES (@kioskName, @location, @stationCode, @slidePackage, @webServices)";
             SqlParameter[] parameters =
             {
                 new SqlParameter("@kioskName", kiosk.KioskName),
                 new SqlParameter("@location", kiosk.Location),
                 new SqlParameter("@stationCode", kiosk.StationCode),
                 new SqlParameter("@slidePackage", kiosk.SlidePackage),
-                new SqlParameter("@kioskStatus", kiosk.KioskStatus),
-                new SqlParameter("@cameraStatus", kiosk.CameraStatus),
-                new SqlParameter("@cashDepositStatus", kiosk.CashDepositStatus),
-                new SqlParameter("@scannerStatus", kiosk.ScannerStatus),
-                new SqlParameter("@printerStatus", kiosk.PrinterStatus)
+                new SqlParameter("@webServices", kiosk.WebServices),
             };
             _exQuery.ExecuteRawQuery(query, parameters);
 
@@ -158,8 +154,7 @@ namespace KMS.Controllers
         public JsonResult UpdateKiosk(int id, [FromBody] Tkiosk kiosk)
         {
             string query = "UPDATE TKiosk SET kioskName = @kioskName, location = @location, stationCode = @stationCode, " +
-                           "slidePackage = @slidePackage, kioskStatus = @kioskStatus, cameraStatus = @cameraStatus, " +
-                           "cashDepositStatus = @cashDepositStatus, scannerStatus = @scannerStatus, printerStatus = @printerStatus " +
+                           "slidePackage = @slidePackage, webServices = @webServices " +
                            "WHERE id = @id";
             SqlParameter[] parameters =
             {
@@ -168,11 +163,7 @@ namespace KMS.Controllers
                 new SqlParameter("@location", kiosk.Location),
                 new SqlParameter("@stationCode", kiosk.StationCode),
                 new SqlParameter("@slidePackage", kiosk.SlidePackage),
-                new SqlParameter("@kioskStatus", kiosk.KioskStatus),
-                new SqlParameter("@cameraStatus", kiosk.CameraStatus),
-                new SqlParameter("@cashDepositStatus", kiosk.CashDepositStatus),
-                new SqlParameter("@scannerStatus", kiosk.ScannerStatus),
-                new SqlParameter("@printerStatus", kiosk.PrinterStatus)
+                new SqlParameter("@webServices", kiosk.WebServices),
             };
             _exQuery.ExecuteRawQuery(query, parameters);
 
