@@ -4,9 +4,9 @@ import customParseFormat from 'dayjs/plugin/customParseFormat'; // Import the cu
 import 'dayjs/locale/en'; // Import the English locale
 import { DataGrid } from '@mui/x-data-grid';
 import { Button, Box } from '@mui/material';
-import DateFilter from '../../components/dateFilter/DateFilter';
 import {useNavigate} from 'react-router-dom';
 import { useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 //import MUI Library
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -22,14 +22,16 @@ dayjs.locale('en'); // Set the locale to English
 
 const CustomToolbar = ({ onButtonClick, selectedRows }) => {
     const navigate = useNavigate();
-    const { handleDelete, handleClose, open } = useDeleteHook('InsurancePackage/DeleteInsurancePackage'); 
-  
+    const { handleDelete, handleClose, open } = useDeleteHook('InsurancePackage/DeleteBenefit'); 
+    const { id } = useParams();
+    const { packageName } = useParams();
     // const [open, setOpen] = React.useState(false);
     const handleButtonClick = (buttonId) => {
+      
       onButtonClick(buttonId);
       
       if (buttonId === 'Add') {
-        navigate('/addInsurancePackage');
+        navigate(`/addBenefit/${id}`);
   
       } else if (buttonId === 'Delete') {
   
@@ -44,6 +46,8 @@ const CustomToolbar = ({ onButtonClick, selectedRows }) => {
         <Button
           variant="contained"
           startIcon={<AddIcon />}
+          component={Link}
+          to={`/addBenefit/${id}/${packageName}`}
           onClick={() => handleButtonClick('Add')}
           style={{ backgroundColor: '#655BD3', color: '#fff' }}
         >
@@ -98,8 +102,8 @@ const EditButton = ({ rowId, label, onClick }) => {
     );
   };
 
-function createData(id, content, coverage, description, dateModified, dateCreated, packageName) {
-  return {id, content, coverage, description, dateModified, dateCreated, packageName};
+function createData(id, content, coverage, description, dateModified, dateCreated) {
+  return {id, content, coverage, description, dateModified, dateCreated};
 }
 
 const columns = [ 
@@ -163,9 +167,8 @@ const InsurancePackageDetail = () => {
     const [selectedRowIds, setSelectedRowIds] = useState([]);
     const [rows, setRows] = useState([]);
     const { id } = useParams();
-
-  
-    const getRowId = (row) => row.id;
+    const { packageName } = useParams();
+    
     const API_URL = "https://localhost:7017/";
   
     
@@ -186,7 +189,7 @@ const InsurancePackageDetail = () => {
           if (Array.isArray(responseData)) {
           
             const updatedRows = responseData.map(row =>
-              createData(row.id, row.content, row.coverage, row.description, row.dateModified, row.dateCreated, row.packageName)
+              createData(row.id, row.content, row.coverage, row.description, row.dateModified, row.dateCreated)
             );
           
             setRows(updatedRows); // Update the component state with the combined data
@@ -200,8 +203,6 @@ const InsurancePackageDetail = () => {
     
       fetchData();
     }, [id]);
-    
-    const selectedPackageName = rows.length > 0 ? rows[0].packageName : '';
 
   return (
     
@@ -213,9 +214,9 @@ const InsurancePackageDetail = () => {
             <div className="bigcarddashboard">
 
             <div className="selected-package-name">
-                {selectedPackageName && (
+                {packageName && (
                     <div style={{ color: '#2C3775' }}>
-                        <strong>Package - {selectedPackageName}</strong> 
+                        <strong>Package: {packageName}</strong> 
                     </div>
                 )}
             </div>
@@ -224,7 +225,6 @@ const InsurancePackageDetail = () => {
                 <DataGrid
                       rows={rows}
                       columns={columns}
-                      getRowId={getRowId}
                       initialState={{
                       pagination: {
                           paginationModel: { page: 0, pageSize: 5 },

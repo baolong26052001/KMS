@@ -5,7 +5,7 @@ import Button from '@mui/material/Button';
 import { useNavigate } from 'react-router-dom';
 import MenuItem from '@mui/material/MenuItem';
 
-const AddUser = () => {
+const AddInsurancePackage = () => {
   const navigate = useNavigate();
   const API_URL = "https://localhost:7017/";
 
@@ -49,6 +49,10 @@ const AddUser = () => {
     } catch (error) {
       console.error('Error adding:', error);
     }
+  };
+
+  const handleCancel = () => {
+    navigate(`/insurancePackage`);
   };
 
   return (
@@ -106,9 +110,14 @@ const AddUser = () => {
                 value={newInsurancePackage.annualFee}
                 onChange={(e) => handleInputChange('annualFee', e.target.value)}
               />
-              <Button variant="contained" onClick={handleSave}>
-                Save
-              </Button>
+              <Box sx={{ display: 'flex', gap: '8px' }}>
+                <Button variant="contained" fullWidth onClick={handleSave}>
+                  Save
+                </Button>
+                <Button variant="contained" fullWidth onClick={handleCancel} style={{ backgroundColor: '#848485', color: '#fff' }}>
+                  Cancel
+                </Button>
+              </Box>
             </Box>
           </div>
         </div>
@@ -117,4 +126,4 @@ const AddUser = () => {
   );
 };
 
-export default AddUser;
+export default AddInsurancePackage;

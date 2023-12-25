@@ -18,8 +18,12 @@ const statusImages = {
     3: require('../../images/paperlow.png'), // Status: PaperLow
   };
 
-  function createData(id, kioskName, stationCode, kioskStatus, camStatus, scannerStatus, cashDeStatus) {
-    return {id, kioskName, stationCode, kioskStatus: statusImages[kioskStatus], camStatus: statusImages[camStatus], scannerStatus: statusImages[scannerStatus], cashDeStatus: statusImages[cashDeStatus],};
+  function createData(id, kioskName, stationCode, kioskStatus, camStatus, scannerStatus, cashDeStatus, printerStatus) {
+    // const kioskStatusWithDate = kioskStatus + ` ${kisokdate}`;
+    // const camStatusWithDate = camStatus + ` ${kisokdate}`;
+    // const scannerStatusWithDate = scannerStatus + ` ${kisokdate}`;
+    // const cashDeStatusWithDate = cashDeStatus + ` ${kisokdate}`;
+    return {id, kioskName, stationCode, kioskStatus: statusImages[kioskStatus], camStatus: statusImages[camStatus], scannerStatus: statusImages[scannerStatus], cashDeStatus: statusImages[cashDeStatus], printerStatus: statusImages[printerStatus]};
   }
   
   const columns = [
@@ -30,7 +34,7 @@ const statusImages = {
       field: 'kioskStatus',
       headerName: 'Kiosk Heart Beat Update',
       sortable: false,
-      minWidth: 200, 
+      minWidth: 180, 
       flex: 1,
       renderCell: (params) => (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -46,7 +50,7 @@ const statusImages = {
       field: 'camStatus',
       headerName: 'Camera Last Update',
       sortable: false,
-      minWidth: 200, 
+      minWidth: 180, 
       flex: 1,
       renderCell: (params) => (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -62,7 +66,7 @@ const statusImages = {
         field: 'scannerStatus',
         headerName: 'Scanner Last Update',
         sortable: false,
-        minWidth: 200, 
+        minWidth: 180, 
         flex: 1,
         renderCell: (params) => (
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -78,13 +82,29 @@ const statusImages = {
         field: 'cashDeStatus',
         headerName: 'Cash Deposit Last Update',
         sortable: false,
-        minWidth: 200, 
+        minWidth: 190, 
         flex: 1,
         renderCell: (params) => (
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
               <img
                 src={params.row.cashDeStatus}
                 alt={`Image for ${params.row.cashDeStatus}`}
+                style={{ height: '15px', width: '15px' }}
+              />
+            </div>
+          ),
+     },
+     {
+        field: 'printerStatus',
+        headerName: 'Printer Last Update',
+        sortable: false,
+        minWidth: 180, 
+        flex: 1,
+        renderCell: (params) => (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <img
+                src={params.row.printerStatus}
+                alt={`Image for ${params.row.printerStatus}`}
                 style={{ height: '15px', width: '15px' }}
               />
             </div>
@@ -135,7 +155,7 @@ const Dashboard = () => {
               const updatedRows = responseData.map((row) =>
                 createData(
                     row.id, row.kioskName, row.stationName, row.kioskStatus, row.cameraStatus, 
-                    row.scannerStatus, row.cashDepositStatus
+                    row.scannerStatus, row.cashDepositStatus, row.printerStatus
                 )
               );
       

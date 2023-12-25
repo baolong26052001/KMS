@@ -55,7 +55,7 @@ const Login = () => {
       if (response.ok) {
         console.log('Login successful:', data.message);
         // Redirect to /dashboard
-        // navigate('/'); 
+        navigate('/dashboard'); 
       } else {
         console.error('Login failed:', data.message);
         // Handle login failure, show error message, etc.

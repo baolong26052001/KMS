@@ -28,8 +28,8 @@ const ViewButton = ({ rowId, label, onClick }) => {
 };
 
 
-function createData(transactionDate, id, memberId, contractId, beneficiaryId, relationship, packageId, annualPay, provider, registrationDate, expireDate, status) {
-  return {transactionDate, id, memberId, contractId, beneficiaryId, relationship, packageId, annualPay, provider, registrationDate, expireDate, status};
+function createData(transactionDate, id, memberId, contractId, typeName, packageName, annualPay, provider, registrationDate, expireDate, status) {
+  return {transactionDate, id, memberId, contractId, typeName, packageName, annualPay, provider, registrationDate, expireDate, status};
 }
 
 const columns = [ 
@@ -57,9 +57,8 @@ const columns = [
   { field: 'id', headerName: 'Transaction ID', minWidth: 150, flex: 1,},
   { field: 'memberId', headerName: 'Member Id', minWidth: 150, flex: 1,},
   { field: 'contractId', headerName: 'Contract Id', minWidth: 150, flex: 1,},
-  { field: 'beneficiaryId', headerName: 'Beneficiary Id', minWidth: 150, flex: 1,},
-  { field: 'relationship', headerName: 'Relationship', minWidth: 150, flex: 1,},
-  { field: 'packageId', headerName: 'Insurance Package', minWidth: 150, flex: 1,},
+  { field: 'typeName', headerName: 'Insurance Type', minWidth: 170, flex: 1,},
+  { field: 'packageName', headerName: 'Insurance Package', minWidth: 170, flex: 1,},
   { field: 'annualPay', headerName: 'Annual Pay', minWidth: 150, flex: 1,},
   { field: 'provider', headerName: 'Insurance Provider', minWidth: 150, flex: 1,},
   {
@@ -121,12 +120,12 @@ const InsuranceTransaction = () => {
           let searchApi = ``;
     
           if (startDate || endDate) {
-            apiUrl = `${API_URL}api/Slideshow/FilterSlideshow?startDate=${encodeURIComponent(dayjs(startDate).format('YYYY/MM/DD'))}&endDate=${encodeURIComponent(dayjs(endDate).format('YYYY/MM/DD'))}`;
+            apiUrl = `${API_URL}api/InsuranceTransaction/FilterInsuranceTransaction?startDate=${encodeURIComponent(dayjs(startDate).format('YYYY/MM/DD'))}&endDate=${encodeURIComponent(dayjs(endDate).format('YYYY/MM/DD'))}`;
             if (searchTerm) {
-              searchApi = `${API_URL}api/Slideshow/SearchSlideshow?searchQuery=${encodeURIComponent(searchTerm)}`;
+              searchApi = `${API_URL}api/InsuranceTransaction/SearchInsuranceTransaction?searchQuery=${encodeURIComponent(searchTerm)}`;
             }
           } else if (searchTerm) {
-            apiUrl = `${API_URL}api/Slideshow/SearchSlideshow?searchQuery=${encodeURIComponent(searchTerm)}`;
+            apiUrl = `${API_URL}api/InsuranceTransaction/SearchInsuranceTransaction?searchQuery=${encodeURIComponent(searchTerm)}`;
           }
     
           const [apiResponse, searchApiResponse] = await Promise.all([
@@ -153,7 +152,7 @@ const InsuranceTransaction = () => {
             }
           
             const updatedRows = filteredRows.map(row =>
-              createData(row.transactionDate, row.id, row.memberId, row.contractId, row.beneficiaryId, row.relationship, row.packageId, row.annualPay, row.provider, row.registrationDate, row.expireDate, row.status)
+              createData(row.transactionDate, row.id, row.memberId, row.contractId, row.typeName, row.packageName, row.annualPay, row.provider, row.registrationDate, row.expireDate, row.status)
             );
           
             setRows(updatedRows); // Update the component state with the combined data

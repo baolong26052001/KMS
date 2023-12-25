@@ -66,12 +66,12 @@ const CustomToolbar = ({ onButtonClick, selectedRows }) => {
     );
 };
 
-const ViewButton = ({ rowId, label, onClick }) => {
+const ViewButton = ({ rowId, label, onClick, packageName }) => {
   const navigate = useNavigate();
   const handleClick = (event) => {
     event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
-    onClick(rowId);
-    navigate(`/viewPackageDetail/${rowId}`);
+    onClick(rowId, packageName);
+    navigate(`/viewPackageDetail/${rowId}/${packageName}`);
   };
 
   return (
@@ -113,6 +113,7 @@ const columns = [
     renderCell: (params) => (
         <ViewButton
         rowId={params.row.id}
+        packageName = {params.row.packageName}
         label="View"
         onClick={handleButtonClick}
       />
@@ -134,8 +135,8 @@ const columns = [
     ),
   },
   { field: 'id', headerName: 'Insurance Package ID', minWidth: 180, flex: 1,},
-  { field: 'packageName', headerName: 'Package Name', minWidth: 150, flex: 1,},
-  { field: 'insuranceType', headerName: 'Insurance Type', minWidth: 150, flex: 1,},
+  { field: 'packageName', headerName: 'Package Name', minWidth: 170, flex: 1,},
+  { field: 'insuranceType', headerName: 'Insurance Type', minWidth: 170, flex: 1,},
   { field: 'duration', headerName: 'Duration', minWidth: 150, flex: 1,},
   { field: 'payType', headerName: 'Payment Frequency', minWidth: 150, flex: 1,},
   { field: 'annualFee', headerName: 'Annual Fee', minWidth: 150, flex: 1,},
@@ -156,7 +157,7 @@ const columns = [
 
 const rows = [];
 
-const handleButtonClick = (id) => {
+const handleButtonClick = (id, packageName) => {
   // Handle button click, e.g., navigate to another page
   console.log(`Button clicked for row with ID: ${id}`);
 };

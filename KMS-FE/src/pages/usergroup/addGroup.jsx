@@ -48,6 +48,10 @@ const AddGroup = () => {
     }
   };
 
+  const handleCancel = () => {
+    navigate(`/usersgroup`);
+  };
+
   return (
     <div className="content">
       <div className="admin-dashboard-text-div pt-5">
@@ -87,9 +91,14 @@ const AddGroup = () => {
                 />
 
 
-              <Button variant="contained" onClick={handleSave}>
-                Save
-              </Button>
+              <Box sx={{ display: 'flex', gap: '8px' }}>
+                <Button variant="contained" fullWidth onClick={handleSave}>
+                  Save
+                </Button>
+                <Button variant="contained" fullWidth onClick={handleCancel} style={{ backgroundColor: '#848485', color: '#fff' }}>
+                  Cancel
+                </Button>
+              </Box>
             </Box>
           </div>
         </div>

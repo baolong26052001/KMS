@@ -1,15 +1,67 @@
 import React, { useState, useEffect } from 'react';
 
 // import components from MUI
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
-import { Button, Box, Tooltip } from '@mui/material';
+import { DataGrid} from '@mui/x-data-grid';
+import { Button, Box } from '@mui/material';
 
 // import { useHistory } from 'react-router-dom'; // Import useHistory from React Router
 import {useNavigate} from 'react-router-dom';
-//import css
-import './station.css';
+//import MUI Library
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
+
+// import Delete Hook
+import useDeleteHook from '../../components/deleteHook/deleteHook';
 
 
+const CustomToolbar = ({ onButtonClick, selectedRows }) => {
+  const navigate = useNavigate();
+  const { handleDelete, handleClose, open } = useDeleteHook('Station/DeleteStation'); 
+
+  // const [open, setOpen] = React.useState(false);
+  const handleButtonClick = (buttonId) => {
+    
+    onButtonClick(buttonId);
+    
+    if (buttonId === 'Add') {
+      navigate(`/addStation`);
+
+    } else if (buttonId === 'Delete') {
+
+      const userIdsToDelete = selectedRows;
+
+      handleDelete(userIdsToDelete);
+    }
+  };
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+      <Button
+        variant="contained"
+        startIcon={<AddIcon />}
+        onClick={() => handleButtonClick('Add')}
+        style={{ backgroundColor: '#655BD3', color: '#fff' }}
+      >
+        Add
+      </Button>
+      <Button
+        variant="contained"
+        startIcon={<DeleteIcon />}
+        onClick={() => handleButtonClick('Delete')}
+        style={{ backgroundColor: '#FF3E1D', color: '#fff' }}
+      >
+        Delete
+      </Button>
+      <Snackbar open={open} autoHideDuration={1000} onClose={handleClose}>
+        <Alert onClose={handleClose} variant="filled" severity="error">
+          No rows selected for deletion!!!
+        </Alert>
+      </Snackbar>
+    </div>
+  );
+};
 
 const ViewButton = ({ rowId, label, onClick }) => {
   const navigate = useNavigate();
@@ -29,9 +81,11 @@ const ViewButton = ({ rowId, label, onClick }) => {
 };
 
 const EditButton = ({ rowId, label, onClick }) => {
+  const navigate = useNavigate();
   const handleClick = (event) => {
     event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
     onClick(rowId);
+    navigate(`/editStation/${rowId}`);
   };
 
   return (
@@ -46,6 +100,7 @@ const EditButton = ({ rowId, label, onClick }) => {
 function createData(id, stationName, companyName, city, address, isActive) {
   return {id, stationName, companyName, city, address, isActive};
 }
+
 const columns = [
   {
     field: 'viewButton',
@@ -84,7 +139,7 @@ const columns = [
   {
     field: 'address',
     headerName: 'Address',
-    minWidth: 200,
+    minWidth: 250,
     flex: 1,
     renderCell: (params) => (
       <div style={{ whiteSpace: 'pre-wrap' }}>{params.value}</div>
@@ -99,8 +154,6 @@ const columns = [
   },
 ];
 
-
-
 const rows = [];
 
 const handleButtonClick = (id) => {
@@ -111,7 +164,7 @@ const handleButtonClick = (id) => {
 const Station = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchTermButton, setSearchTermButton] = useState('');
-
+  const [selectedRowIds, setSelectedRowIds] = useState([]);
 
   const handleSearchButton = () => {
       setSearchTerm(searchTermButton);
@@ -124,8 +177,6 @@ const Station = () => {
   };
 
   const [rows, setRows] = useState([]);
-  // Get id from Database  
-  const getRowId = (row) => row.id;
   // Get Back-end API URL to connect
   const API_URL = "https://localhost:7017/";
 
@@ -177,14 +228,25 @@ const Station = () => {
                     <DataGrid
                       rows={rows}
                       columns={columns}
-                      getRowId={getRowId}
                       initialState={{
                       pagination: {
                           paginationModel: { page: 0, pageSize: 5 },
                       },
                       }}
+                      components={{
+                        Toolbar: () => (
+                          <div style={{ position: 'absolute', bottom: 8, alignItems: 'center', marginLeft: '16px' }}>
+                            <CustomToolbar onButtonClick={(buttonId) => console.log(buttonId)} selectedRows={selectedRowIds} />
+                            <div style={{ marginLeft: 'auto' }} />
+                          </div>
+                        ),
+                      }}
                       pageSizeOptions={[5, 10, 25, 50]}
                       checkboxSelection
+                      onRowSelectionModelChange={(rowSelectionModel) => {
+                        setSelectedRowIds(rowSelectionModel.map((id) => parseInt(id, 10)));
+                        console.log('Selected IDs:', rowSelectionModel);
+                      }}  
                     />
                 </div>
             </div>

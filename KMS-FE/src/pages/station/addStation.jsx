@@ -1,25 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect  } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { useNavigate } from 'react-router-dom';
 
-const AddSlideShow = () => {
+const AddStation = () => {
   const navigate = useNavigate();
   const API_URL = "https://localhost:7017/";
-
   // State to store user information
-  const [newSlide, setnewSlide] = useState({
-    packageName: '',
-    imagevideo: '',
-    fileType: '',
-    startDate: '',
-    endDate: '',
+  const [newStation, setnewStation] = useState({
+    stationName: '',
+    companyName: '',
+    city: '',
+    address: '',
+    isActive: true,
   });
 
-
   const handleInputChange = (key, value) => {
-    setnewSlide((prev) => ({
+    setnewStation((prev) => ({
       ...prev,
       [key]: value,
     }));
@@ -28,23 +26,23 @@ const AddSlideShow = () => {
   const handleSave = async () => {
     try {
       // Assuming your API URL is correct
-      const response = await fetch(`${API_URL}api/User/AddUser`, {
+      const response = await fetch(`${API_URL}api/Station/AddStation`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(newSlide),
+        body: JSON.stringify(newStation),
       });
 
       console.log('Response Status:', response.status);
       console.log('Response Content:', await response.text());
 
       if (response.ok) {
-        navigate(`/slideshow`);
+        navigate(`/station`);
         // Provide user feedback on successful save
-        console.log('Added successfully');
+        console.log('added successfully');
       } else {
-        console.log('Add failed');
+        console.log('add failed');
       }
     } catch (error) {
       console.error('Error adding:', error);
@@ -52,13 +50,13 @@ const AddSlideShow = () => {
   };
 
   const handleCancel = () => {
-    navigate(`/slideshow`);
+    navigate(`/station`);
   };
 
   return (
     <div className="content">
       <div className="admin-dashboard-text-div pt-5">
-        <h1 className="h1-dashboard">Add Slide Show</h1>
+        <h1 className="h1-dashboard">Add Station</h1>
       </div>
       <div className="bigcarddashboard">
         <div className="App">
@@ -67,42 +65,41 @@ const AddSlideShow = () => {
               component="form"
               sx={{
                 display: 'flex',
-                flexDirection: 'column', // Set the form to vertical layout
-                gap: '16px', // Add some spacing between form elements
-                width: 300, // Adjust the width as needed
-                margin: 'auto', // Center the form
+                flexDirection: 'column', 
+                gap: '16px', 
+                width: 300, 
+                margin: 'auto', 
               }}
               noValidate
               autoComplete="off"
             >
               <TextField
-                id="packageName"
-                label="Package Name"
+                id="stationName"
+                label="Station Name"
                 variant="outlined"
-                value={newSlide.packageName}
-                onChange={(e) => handleInputChange('packageName', e.target.value)}
+                value={newStation.stationName}
+                onChange={(e) => handleInputChange('stationName', e.target.value)}
               />
               <TextField
-                id="imagevideo"
-                label="Image/Video"
+                id="companyName"
+                label="Company Name"
                 variant="outlined"
-                value={newSlide.imagevideo}
-                onChange={(e) => handleInputChange('imagevideo', e.target.value)}
+                value={newStation.companyName}
+                onChange={(e) => handleInputChange('companyName', e.target.value)}
               />
               <TextField
-                id="fileType"
-                label="File Type"
+                id="city"
+                label="City"
                 variant="outlined"
-                value={newSlide.fileType}
-                onChange={(e) => handleInputChange('fileType', e.target.value)}
+                value={newStation.city}
+                onChange={(e) => handleInputChange('city', e.target.value)}
               />
               <TextField
-                id="startDate"
-                label="Start Date"
+                id="address"
+                label="Address"
                 variant="outlined"
-                type="startDate"
-                value={newSlide.startDate}
-                onChange={(e) => handleInputChange('startDate', e.target.value)}
+                value={newStation.address}
+                onChange={(e) => handleInputChange('address', e.target.value)}
               />
               <Box sx={{ display: 'flex', gap: '8px' }}>
                 <Button variant="contained" fullWidth onClick={handleSave}>
@@ -120,4 +117,4 @@ const AddSlideShow = () => {
   );
 };
 
-export default AddSlideShow;
+export default AddStation;
