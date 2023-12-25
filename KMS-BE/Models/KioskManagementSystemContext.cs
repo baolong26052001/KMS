@@ -16,6 +16,7 @@ namespace KMS.Models
         {
         }
 
+        public virtual DbSet<Beneficiary> Beneficiaries { get; set; } = null!;
         public virtual DbSet<Benefit> Benefits { get; set; } = null!;
         public virtual DbSet<BenefitDetail> BenefitDetails { get; set; } = null!;
         public virtual DbSet<InsurancePackage> InsurancePackages { get; set; } = null!;
@@ -51,6 +52,32 @@ namespace KMS.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Beneficiary>(entity =>
+            {
+                entity.ToTable("Beneficiary");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.BeneficiaryId)
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
+                    .HasColumnName("beneficiaryId");
+
+                entity.Property(e => e.BeneficiaryName)
+                    .HasMaxLength(50)
+                    .HasColumnName("beneficiaryName");
+
+                entity.Property(e => e.MemberId).HasColumnName("memberId");
+
+                entity.Property(e => e.PackageId).HasColumnName("packageId");
+
+                entity.Property(e => e.Relationship)
+                    .HasMaxLength(20)
+                    .HasColumnName("relationship");
+
+                entity.Property(e => e.TransactionId).HasColumnName("transactionId");
+            });
+
             modelBuilder.Entity<Benefit>(entity =>
             {
                 entity.ToTable("Benefit");
@@ -131,6 +158,10 @@ namespace KMS.Models
                     .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("payType");
+
+                entity.Property(e => e.Provider)
+                    .HasMaxLength(50)
+                    .HasColumnName("provider");
             });
 
             modelBuilder.Entity<InsurancePackageGroup>(entity =>
@@ -160,14 +191,6 @@ namespace KMS.Models
 
                 entity.Property(e => e.AnnualPay).HasColumnName("annualPay");
 
-                entity.Property(e => e.BeneficiaryId)
-                    .HasMaxLength(50)
-                    .HasColumnName("beneficiaryId");
-
-                entity.Property(e => e.BeneficiaryName)
-                    .HasMaxLength(50)
-                    .HasColumnName("beneficiaryName");
-
                 entity.Property(e => e.ContractId).HasColumnName("contractId");
 
                 entity.Property(e => e.ExpireDate)
@@ -178,17 +201,9 @@ namespace KMS.Models
 
                 entity.Property(e => e.PackageId).HasColumnName("packageId");
 
-                entity.Property(e => e.Provider)
-                    .HasMaxLength(50)
-                    .HasColumnName("provider");
-
                 entity.Property(e => e.RegistrationDate)
                     .HasColumnType("datetime")
                     .HasColumnName("registrationDate");
-
-                entity.Property(e => e.Relationship)
-                    .HasMaxLength(50)
-                    .HasColumnName("relationship");
 
                 entity.Property(e => e.Status).HasColumnName("status");
 

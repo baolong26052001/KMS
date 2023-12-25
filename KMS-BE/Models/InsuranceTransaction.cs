@@ -8,11 +8,7 @@ namespace KMS.Models
         public int Id { get; set; }
         public int? MemberId { get; set; }
         public int? ContractId { get; set; }
-        public string? BeneficiaryName { get; set; }
-        public string? BeneficiaryId { get; set; }
-        public string? Relationship { get; set; }
         public int? PackageId { get; set; }
-        public string? Provider { get; set; }
         public DateTime? RegistrationDate { get; set; }
         public DateTime? ExpireDate { get; set; }
         public double? AnnualPay { get; set; }

@@ -8,6 +8,7 @@ namespace KMS.Models
         public int Id { get; set; }
         public string? PackageName { get; set; }
         public int? InsuranceType { get; set; }
+        public string? Provider { get; set; }
         public int? PackageGroup { get; set; }
         public int? Duration { get; set; }
         public string? PayType { get; set; }
