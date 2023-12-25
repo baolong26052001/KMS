@@ -145,9 +145,14 @@ namespace KMS.Controllers
                 new SqlParameter("@webServices", kiosk.WebServices),
             };
 
-            
+            string query2 = "INSERT INTO TAudit (action, dateCreated) VALUES ('Add', GETDATE())";
+            SqlParameter[] parameters2 =
+            {
+                new SqlParameter("@kioskName", kiosk.KioskName),
+            };
 
             _exQuery.ExecuteRawQuery(query, parameters);
+            _exQuery.ExecuteRawQuery(query2, parameters2);
 
             return new JsonResult("Kiosk added successfully");
         }

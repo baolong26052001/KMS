@@ -91,13 +91,18 @@ namespace KMS.Controllers
         [Route("AddSlideshow")]
         public JsonResult AddSlideshow([FromBody] Tslideshow slideshow)
         {
-            string query = "INSERT INTO TSlideshow (packageName, imagevideo, fileType, startDate, endDate) " +
-                           "VALUES (@PackageName, @ImageVideo, @FileType, @StartDate, @EndDate)";
+            string query = "INSERT INTO TSlideshow (packageName, imagevideo, fileType, description, timer, sequence, scrolltext1, scrolltext2, startDate, endDate, dateCreated, dateModified, createAt, updatedAt, isActive) " +
+                           "VALUES (@PackageName, @ImageVideo, @FileType, @Description, @Timer, @Sequence, @Scrolltext1, @Scrolltext2, @StartDate, @EndDate, GETDATE(), GETDATE(), GETDATE(), GETDATE(), 1)";
             SqlParameter[] parameters =
             {
                 new SqlParameter("@PackageName", slideshow.PackageName),
                 new SqlParameter("@ImageVideo", slideshow.Imagevideo),
                 new SqlParameter("@FileType", slideshow.FileType),
+                new SqlParameter("@Description", slideshow.Description),
+                new SqlParameter("@Timer", slideshow.Timer),
+                new SqlParameter("@Sequence", slideshow.Sequence),
+                new SqlParameter("@Scrolltext1", slideshow.Scrolltext1),
+                new SqlParameter("@Scrolltext2", slideshow.Scrolltext2),
                 new SqlParameter("@StartDate", slideshow.StartDate),
                 new SqlParameter("@EndDate", slideshow.EndDate)
             };
@@ -110,8 +115,9 @@ namespace KMS.Controllers
         [Route("UpdateSlideshow/{id}")]
         public JsonResult UpdateSlideshow(int id, [FromBody] Tslideshow slideshow)
         {
-            string query = "UPDATE TSlideshow SET packageName = @PackageName, imagevideo = @ImageVideo, " +
-                           "fileType = @FileType, startDate = @StartDate, endDate = @EndDate " +
+            string query = "UPDATE TSlideshow SET dateModified = GETDATE(), updatedAt = GETDATE(), isActive = @IsActive, packageName = @PackageName, imagevideo = @ImageVideo, " +
+                           "fileType = @FileType, startDate = @StartDate, endDate = @EndDate, " +
+                           "description = @Description, timer = @Timer, sequence = @Sequence, scrolltext1 = @Scrolltext1, scrolltext2 = @Scrolltext2 " +
                            "WHERE id = @Id";
             SqlParameter[] parameters =
             {
@@ -119,8 +125,14 @@ namespace KMS.Controllers
                 new SqlParameter("@PackageName", slideshow.PackageName),
                 new SqlParameter("@ImageVideo", slideshow.Imagevideo),
                 new SqlParameter("@FileType", slideshow.FileType),
+                new SqlParameter("@Description", slideshow.Description),
+                new SqlParameter("@Timer", slideshow.Timer),
+                new SqlParameter("@Sequence", slideshow.Sequence),
+                new SqlParameter("@Scrolltext1", slideshow.Scrolltext1),
+                new SqlParameter("@Scrolltext2", slideshow.Scrolltext2),
                 new SqlParameter("@StartDate", slideshow.StartDate),
-                new SqlParameter("@EndDate", slideshow.EndDate)
+                new SqlParameter("@EndDate", slideshow.EndDate),
+                new SqlParameter("@IsActive", slideshow.IsActive)
             };
             _exQuery.ExecuteRawQuery(query, parameters);
 
