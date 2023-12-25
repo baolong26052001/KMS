@@ -29,7 +29,7 @@ namespace KMS.Controllers
         [Route("ShowUsergroup")]
         public JsonResult GetUsergroup()
         {
-            string query = "select ug.id, ug.groupName, ug.dateModified, ug.dateCreated, ug.isActive" +
+            string query = "select ug.id, ug.groupName, ug.accessRuleId, ug.dateModified, ug.dateCreated, ug.isActive" +
                 "\r\nfrom TUserGroup ug";
             DataTable table = _exQuery.ExecuteRawQuery(query);
             return new JsonResult(table);
@@ -39,7 +39,7 @@ namespace KMS.Controllers
         [Route("ShowUsergroup/{id}")]
         public JsonResult GetUsergroupById(int id)
         {
-            string query = "SELECT id, groupName, dateModified, dateCreated, isActive " +
+            string query = "SELECT id, groupName, accessRuleId, dateModified, dateCreated, isActive " +
                            "FROM TUserGroup " +
                            "WHERE id = @Id";
 
@@ -60,7 +60,7 @@ namespace KMS.Controllers
         [Route("FilterUsergroup")] // filter user group by group name and by active
         public JsonResult FilterUsergroup([FromQuery] string? groupName = null, [FromQuery] bool? isActive = null)
         {
-            string query = "SELECT id, groupName, dateModified, dateCreated, isActive " +
+            string query = "SELECT id, groupName, accessRuleId, dateModified, dateCreated, isActive " +
                            "FROM TUserGroup ";
 
             List<SqlParameter> parameters = new List<SqlParameter>();
@@ -163,7 +163,7 @@ namespace KMS.Controllers
         [Route("SearchUsergroup")]
         public JsonResult SearchUsergroup(string searchQuery)
         {
-            string query = "SELECT id, groupName, dateModified, dateCreated, isActive " +
+            string query = "SELECT id, groupName, accessRuleId, dateModified, dateCreated, isActive " +
                            "FROM TUserGroup " +
                            "WHERE id LIKE @searchQuery OR " +
                            "groupName LIKE @searchQuery";
