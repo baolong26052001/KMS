@@ -74,6 +74,24 @@ namespace KMS.Controllers
         }
 
         [HttpGet]
+        [Route("SearchLoanTransaction")]
+        public JsonResult SearchLoanTransaction(string searchQuery)
+        {
+            string query = "SELECT * " +
+                           "FROM LoanTransaction " +
+                           "WHERE memberId LIKE @searchQuery OR " +
+                           "accountId LIKE @searchQuery OR " +
+                           "loanTerm LIKE @searchQuery OR " +
+                           "transactionType LIKE @searchQuery OR " +
+                           "interestRate LIKE @searchQuery";
+
+            SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
+            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+
+            return new JsonResult(table);
+        }
+
+        [HttpGet]
         [Route("FilterLoanTransaction")]
         public JsonResult FilterLoanTransaction([FromQuery] bool? isActive = null, [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
         {

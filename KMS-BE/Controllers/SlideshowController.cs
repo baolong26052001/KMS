@@ -93,6 +93,7 @@ namespace KMS.Controllers
         {
             string query = "INSERT INTO TSlideshow (packageName, imagevideo, fileType, description, timer, sequence, scrolltext1, scrolltext2, startDate, endDate, dateCreated, dateModified, createAt, updatedAt, isActive) " +
                            "VALUES (@PackageName, @ImageVideo, @FileType, @Description, @Timer, @Sequence, @Scrolltext1, @Scrolltext2, @StartDate, @EndDate, GETDATE(), GETDATE(), GETDATE(), GETDATE(), 1)";
+            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Add', 'TSlideshow', GETDATE(), GETDATE(), 1)";
             SqlParameter[] parameters =
             {
                 new SqlParameter("@PackageName", slideshow.PackageName),
@@ -106,8 +107,9 @@ namespace KMS.Controllers
                 new SqlParameter("@StartDate", slideshow.StartDate),
                 new SqlParameter("@EndDate", slideshow.EndDate)
             };
+            SqlParameter[] parameters2 = { };
             _exQuery.ExecuteRawQuery(query, parameters);
-
+            _exQuery.ExecuteRawQuery(query2, parameters2);
             return new JsonResult("Slideshow added successfully");
         }
 
@@ -119,6 +121,7 @@ namespace KMS.Controllers
                            "fileType = @FileType, startDate = @StartDate, endDate = @EndDate, " +
                            "description = @Description, timer = @Timer, sequence = @Sequence, scrolltext1 = @Scrolltext1, scrolltext2 = @Scrolltext2 " +
                            "WHERE id = @Id";
+            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Update', 'TSlideshow', GETDATE(), GETDATE(), 1)";
             SqlParameter[] parameters =
             {
                 new SqlParameter("@Id", id),
@@ -134,8 +137,10 @@ namespace KMS.Controllers
                 new SqlParameter("@EndDate", slideshow.EndDate),
                 new SqlParameter("@IsActive", slideshow.IsActive)
             };
-            _exQuery.ExecuteRawQuery(query, parameters);
+            SqlParameter[] parameters2 = { };
 
+            _exQuery.ExecuteRawQuery(query, parameters);
+            _exQuery.ExecuteRawQuery(query2, parameters2);
             return new JsonResult("Slideshow updated successfully");
         }
 
@@ -149,9 +154,10 @@ namespace KMS.Controllers
             }
 
             StringBuilder deleteQuery = new StringBuilder("DELETE FROM TSlideshow WHERE id IN (");
-
+            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Delete', 'TSlideshow', GETDATE(), GETDATE(), 1)";
 
             List<SqlParameter> parameters = new List<SqlParameter>();
+            SqlParameter[] parameters2 = { };
             for (int i = 0; i < slideshowIds.Count; i++)
             {
                 string parameterName = "@SlideshowId" + i;
@@ -168,7 +174,7 @@ namespace KMS.Controllers
             deleteQuery.Append(");");
 
             _exQuery.ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
-
+            _exQuery.ExecuteRawQuery(query2, parameters2);
             return new JsonResult("Slideshow deleted successfully");
         }
 

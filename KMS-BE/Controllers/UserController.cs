@@ -118,6 +118,8 @@ namespace KMS.Controllers
             string insertQuery = "INSERT INTO TUser (username, fullname, email, password, userGroupId, lastLogin, isActive, dateCreated, dateModified) " +
                                 "VALUES (@Username, @Fullname, @Email, @Password, @UserGroupId, GETDATE(), @IsActive, GETDATE(), GETDATE());";
 
+            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Add', 'TUser', GETDATE(), GETDATE(), 1)";
+
             SqlParameter[] parameters =
             {
                 new SqlParameter("@Username", newUser.Username),
@@ -128,7 +130,13 @@ namespace KMS.Controllers
                 new SqlParameter("@IsActive", newUser.IsActive),
             };
 
+            SqlParameter[] parameters2 =
+            {
+
+            };
+
             _exQuery.ExecuteRawQuery(insertQuery, parameters);
+            _exQuery.ExecuteRawQuery(query2, parameters2);
 
             return new JsonResult("User added successfully");
         }
@@ -141,6 +149,8 @@ namespace KMS.Controllers
                                  "password = @Password, userGroupId = @UserGroupId, isActive = @IsActive, " +
                                  "dateModified = GETDATE() WHERE id = @Id;";
 
+            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Update', 'TUser', GETDATE(), GETDATE(), 1)";
+
             SqlParameter[] parameters =
             {
                 new SqlParameter("@Id", id),
@@ -152,7 +162,13 @@ namespace KMS.Controllers
                 new SqlParameter("@IsActive", updatedUser.IsActive),
             };
 
+            SqlParameter[] parameters2 =
+            {
+
+            };
+
             _exQuery.ExecuteRawQuery(updateQuery, parameters);
+            _exQuery.ExecuteRawQuery(query2, parameters2);
 
             return new JsonResult("User updated successfully");
         }
@@ -167,9 +183,14 @@ namespace KMS.Controllers
             }
 
             StringBuilder deleteQuery = new StringBuilder("DELETE FROM TUser WHERE id IN (");
+            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Delete', 'TUser', GETDATE(), GETDATE(), 1)";
 
-            
             List<SqlParameter> parameters = new List<SqlParameter>();
+            SqlParameter[] parameters2 =
+            {
+
+            };
+
             for (int i = 0; i < userIds.Count; i++)
             {
                 string parameterName = "@UserId" + i;
@@ -186,6 +207,7 @@ namespace KMS.Controllers
             deleteQuery.Append(");");
 
             _exQuery.ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
+            _exQuery.ExecuteRawQuery(query2, parameters2);
 
             return new JsonResult("Users deleted successfully");
         }

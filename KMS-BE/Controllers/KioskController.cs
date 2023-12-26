@@ -31,6 +31,7 @@ namespace KMS.Controllers
                            "FROM TKiosk k " +
                            "LEFT JOIN TStation st ON k.stationCode = st.id " +
                            "LEFT JOIN TSlideshow ss ON ss.id = k.slidePackage";
+            
 
             DataTable table = _exQuery.ExecuteRawQuery(query);
             return new JsonResult(table);
@@ -136,6 +137,7 @@ namespace KMS.Controllers
         {
             string query = "INSERT INTO TKiosk (kioskName, location, stationCode, slidePackage, webServices) " +
                            "VALUES (@kioskName, @location, @stationCode, @slidePackage, @webServices)";
+            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Add', 'TKiosk', GETDATE(), GETDATE(), 1)";
             SqlParameter[] parameters =
             {
                 new SqlParameter("@kioskName", kiosk.KioskName),
@@ -145,10 +147,10 @@ namespace KMS.Controllers
                 new SqlParameter("@webServices", kiosk.WebServices),
             };
 
-            string query2 = "INSERT INTO TAudit (action, dateCreated) VALUES ('Add', GETDATE())";
+            
             SqlParameter[] parameters2 =
             {
-                new SqlParameter("@kioskName", kiosk.KioskName),
+                
             };
 
             _exQuery.ExecuteRawQuery(query, parameters);
@@ -166,6 +168,7 @@ namespace KMS.Controllers
             string query = "UPDATE TKiosk SET kioskName = @kioskName, location = @location, stationCode = @stationCode, " +
                            "slidePackage = @slidePackage, webServices = @webServices " +
                            "WHERE id = @id";
+            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Update', 'TKiosk', GETDATE(), GETDATE(), 1)";
             SqlParameter[] parameters =
             {
                 new SqlParameter("@id", id),
@@ -175,8 +178,9 @@ namespace KMS.Controllers
                 new SqlParameter("@slidePackage", kiosk.SlidePackage),
                 new SqlParameter("@webServices", kiosk.WebServices),
             };
+            SqlParameter[] parameters2 = { };
             _exQuery.ExecuteRawQuery(query, parameters);
-
+            _exQuery.ExecuteRawQuery(query2, parameters2);
             return new JsonResult("Kiosk updated successfully");
         }
 
@@ -190,9 +194,10 @@ namespace KMS.Controllers
             }
 
             StringBuilder deleteQuery = new StringBuilder("DELETE FROM TKiosk WHERE id IN (");
-
+            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Delete', 'TKiosk', GETDATE(), GETDATE(), 1)";
 
             List<SqlParameter> parameters = new List<SqlParameter>();
+            SqlParameter[] parameters2 = { };
             for (int i = 0; i < kioskIds.Count; i++)
             {
                 string parameterName = "@KioskId" + i;
@@ -209,6 +214,7 @@ namespace KMS.Controllers
             deleteQuery.Append(");");
 
             _exQuery.ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
+            _exQuery.ExecuteRawQuery(query2, parameters2);
 
             return new JsonResult("Kiosk deleted successfully");
         }

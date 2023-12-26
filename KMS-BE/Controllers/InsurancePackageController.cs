@@ -7,6 +7,7 @@ using System.Text;
 
 namespace KMS.Controllers
 {
+
     [ApiController]
     [Route("api/[controller]")]
     public class InsurancePackageController : ControllerBase
@@ -82,6 +83,7 @@ namespace KMS.Controllers
         {
             string query = "INSERT INTO InsurancePackage (packageName, insuranceType, duration, payType, annualFee, dateModified, dateCreated) " +
                            "VALUES (@PackageName, @InsuranceType, @Duration, @PayType, @AnnualFee, GETDATE(), GETDATE())";
+            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Add', 'InsurancePackage', GETDATE(), GETDATE(), 1)";
 
             SqlParameter[] parameters =
             {
@@ -91,8 +93,10 @@ namespace KMS.Controllers
                 new SqlParameter("@PayType", insurancePackage.PayType),
                 new SqlParameter("@AnnualFee", insurancePackage.AnnualFee),
             };
+            SqlParameter[] parameters2 = { };
 
             _exQuery.ExecuteRawQuery(query, parameters);
+            _exQuery.ExecuteRawQuery(query2, parameters2);
 
             return new JsonResult("Insurance Package added successfully");
         }
@@ -103,6 +107,7 @@ namespace KMS.Controllers
         {
             string query = "INSERT INTO Benefit (packageId, content, coverage, description, dateModified, dateCreated) " +
                            "VALUES (@PackageId, @Content, @Coverage, @Description, GETDATE(), GETDATE())";
+            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Add', 'Benefit', GETDATE(), GETDATE(), 1)";
 
             SqlParameter[] parameters =
             {
@@ -113,10 +118,35 @@ namespace KMS.Controllers
                 
                 
             };
+            SqlParameter[] parameters2 = { };
 
             _exQuery.ExecuteRawQuery(query, parameters);
+            _exQuery.ExecuteRawQuery(query2, parameters2);
 
             return new JsonResult("Benefit added successfully");
+        }
+
+        [HttpPost]
+        [Route("AddBenefitDetail")]
+        public JsonResult AddBenefitDetail([FromBody] BenefitDetail benefitDetail)
+        {
+            string query = "INSERT INTO BenefitDetail (benefitId, content, coverage, dateModified, dateCreated) " +
+                           "VALUES (@BenefitId, @Content, @Coverage, GETDATE(), GETDATE())";
+            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Add', 'BenefitDetail', GETDATE(), GETDATE(), 1)";
+            SqlParameter[] parameters =
+            {
+                
+                new SqlParameter("@BenefitId", benefitDetail.BenefitId),
+                new SqlParameter("@Content", benefitDetail.Content),
+                new SqlParameter("@Coverage", benefitDetail.Coverage),
+
+            };
+            SqlParameter[] parameters2 = { };
+
+            _exQuery.ExecuteRawQuery(query, parameters);
+            _exQuery.ExecuteRawQuery(query2, parameters2);
+
+            return new JsonResult("Benefit detail added successfully");
         }
 
         [HttpPut]
@@ -127,6 +157,7 @@ namespace KMS.Controllers
                            "SET content = @Content, coverage = @Coverage, description = @Description, " +
                            "packageId = @PackageId, dateModified = GETDATE() " +
                            "WHERE id = @id";
+            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Edit', 'Benefit', GETDATE(), GETDATE(), 1)";
 
             SqlParameter[] parameters =
             {
@@ -137,10 +168,38 @@ namespace KMS.Controllers
                 new SqlParameter("@PackageId", benefit.PackageId),
 
             };
+            SqlParameter[] parameters2 = { };
 
             _exQuery.ExecuteRawQuery(query, parameters);
+            _exQuery.ExecuteRawQuery(query2, parameters2);
 
             return new JsonResult("Benefit updated successfully");
+        }
+
+        [HttpPut]
+        [Route("EditBenefitDetail/{id}")]
+        public JsonResult EditBenefitDetail(int id, [FromBody] BenefitDetail benefitDetail)
+        {
+            string query = "UPDATE BenefitDetail " +
+                           "SET content = @Content, coverage = @Coverage, " +
+                           "benefitId = @BenefitId, dateModified = GETDATE() " +
+                           "WHERE id = @id";
+            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Edit', 'BenefitDetail', GETDATE(), GETDATE(), 1)";
+
+            SqlParameter[] parameters =
+            {
+                new SqlParameter("@id", id),
+                new SqlParameter("@Content", benefitDetail.Content),
+                new SqlParameter("@Coverage", benefitDetail.Coverage),
+                new SqlParameter("@BenefitId", benefitDetail.BenefitId),
+
+            };
+            SqlParameter[] parameters2 = { };
+
+            _exQuery.ExecuteRawQuery(query, parameters);
+            _exQuery.ExecuteRawQuery(query2, parameters2);
+
+            return new JsonResult("Benefit detail updated successfully");
         }
 
         [HttpDelete]
@@ -153,9 +212,10 @@ namespace KMS.Controllers
             }
 
             StringBuilder deleteQuery = new StringBuilder("DELETE FROM Benefit WHERE id IN (");
-
+            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Delete', 'Benefit', GETDATE(), GETDATE(), 1)";
 
             List<SqlParameter> parameters = new List<SqlParameter>();
+            SqlParameter[] parameters2 = { };
             for (int i = 0; i < benefitIds.Count; i++)
             {
                 string parameterName = "@BenefitId" + i;
@@ -172,8 +232,44 @@ namespace KMS.Controllers
             deleteQuery.Append(");");
 
             _exQuery.ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
+            _exQuery.ExecuteRawQuery(query2, parameters2);
 
             return new JsonResult("Benefit deleted successfully");
+        }
+
+        [HttpDelete]
+        [Route("DeleteBenefitDetail")]
+        public JsonResult DeleteBenefitDetail([FromBody] List<int> benefitDetailIds)
+        {
+            if (benefitDetailIds == null || benefitDetailIds.Count == 0)
+            {
+                return new JsonResult("No benefit detail IDs provided for deletion");
+            }
+
+            StringBuilder deleteQuery = new StringBuilder("DELETE FROM BenefitDetail WHERE id IN (");
+            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Delete', 'BenefitDetail', GETDATE(), GETDATE(), 1)";
+
+
+            List<SqlParameter> parameters = new List<SqlParameter>();
+            SqlParameter[] parameters2 = { };
+            for (int i = 0; i < benefitDetailIds.Count; i++)
+            {
+                string parameterName = "@BenefitDetailId" + i;
+                deleteQuery.Append(parameterName);
+
+                if (i < benefitDetailIds.Count - 1)
+                {
+                    deleteQuery.Append(", ");
+                }
+
+                parameters.Add(new SqlParameter(parameterName, benefitDetailIds[i]));
+            }
+
+            deleteQuery.Append(");");
+
+            _exQuery.ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
+            _exQuery.ExecuteRawQuery(query2, parameters2);
+            return new JsonResult("Benefit detail deleted successfully");
         }
 
         [HttpPut]
@@ -184,6 +280,7 @@ namespace KMS.Controllers
                            "SET packageName = @PackageName, insuranceType = @InsuranceType, duration = @Duration, " +
                            "payType = @PayType, annualFee = @AnnualFee, dateModified = GETDATE() " +
                            "WHERE id = @id";
+            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Edit', 'InsurancePackage', GETDATE(), GETDATE(), 1)";
 
             SqlParameter[] parameters =
             {
@@ -195,8 +292,10 @@ namespace KMS.Controllers
                 new SqlParameter("@AnnualFee", insurancePackage.AnnualFee),
                 
             };
+            SqlParameter[] parameters2 = { };
 
             _exQuery.ExecuteRawQuery(query, parameters);
+            _exQuery.ExecuteRawQuery(query2, parameters2);
 
             return new JsonResult("Insurance Package updated successfully");
         }
@@ -211,9 +310,11 @@ namespace KMS.Controllers
             }
 
             StringBuilder deleteQuery = new StringBuilder("DELETE FROM InsurancePackage WHERE id IN (");
+            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Delete', 'InsurancePackage', GETDATE(), GETDATE(), 1)";
 
 
             List<SqlParameter> parameters = new List<SqlParameter>();
+            SqlParameter[] parameters2 = { };
             for (int i = 0; i < insurancePackageIds.Count; i++)
             {
                 string parameterName = "@InsurancePackageId" + i;
@@ -230,6 +331,7 @@ namespace KMS.Controllers
             deleteQuery.Append(");");
 
             _exQuery.ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
+            _exQuery.ExecuteRawQuery(query2, parameters2);
 
             return new JsonResult("Insurance Package deleted successfully");
         }
@@ -257,6 +359,7 @@ namespace KMS.Controllers
 
             return new JsonResult(table);
         }
+
 
         [HttpGet]
         [Route("FilterInsurancePackage")]

@@ -92,6 +92,7 @@ namespace KMS.Controllers
         {
             string query = "INSERT INTO TUserGroup (groupName, accessRuleId, dateModified, dateCreated, isActive) " +
                            "VALUES (@GroupName, @AccessRuleId, GETDATE(), GETDATE(), @IsActive)";
+            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Add', 'TUsergroup', GETDATE(), GETDATE(), 1)";
 
             SqlParameter[] parameters =
             {
@@ -99,8 +100,10 @@ namespace KMS.Controllers
                 new SqlParameter("@AccessRuleId", usergroup.AccessRuleId),
                 new SqlParameter("@IsActive", usergroup.IsActive)
             };
+            SqlParameter[] parameters2 = { };
 
             _exQuery.ExecuteRawQuery(query, parameters);
+            _exQuery.ExecuteRawQuery(query2, parameters2);
 
             return new JsonResult("Usergroup added successfully");
         }
@@ -112,6 +115,7 @@ namespace KMS.Controllers
             string query = "UPDATE TUserGroup " +
                            "SET groupName = @GroupName, accessRuleId = @AccessRuleId, dateModified = GETDATE(), isActive = @IsActive " +
                            "WHERE id = @Id";
+            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Update', 'TUsergroup', GETDATE(), GETDATE(), 1)";
 
             SqlParameter[] parameters =
             {
@@ -120,8 +124,10 @@ namespace KMS.Controllers
                 new SqlParameter("@AccessRuleId", usergroup.AccessRuleId),
                 new SqlParameter("@IsActive", usergroup.IsActive)
             };
+            SqlParameter[] parameters2 = { };
 
             _exQuery.ExecuteRawQuery(query, parameters);
+            _exQuery.ExecuteRawQuery(query2, parameters2);
 
             return new JsonResult("Usergroup updated successfully");
         }
@@ -136,9 +142,11 @@ namespace KMS.Controllers
             }
 
             StringBuilder deleteQuery = new StringBuilder("DELETE FROM TUsergroup WHERE id IN (");
+            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Delete', 'TUsergroup', GETDATE(), GETDATE(), 1)";
 
-            
+
             List<SqlParameter> parameters = new List<SqlParameter>();
+            SqlParameter[] parameters2 = { };
             for (int i = 0; i < usergroupIds.Count; i++)
             {
                 string parameterName = "@UsergroupId" + i;
@@ -155,6 +163,7 @@ namespace KMS.Controllers
             deleteQuery.Append(");");
 
             _exQuery.ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
+            _exQuery.ExecuteRawQuery(query2, parameters2);
 
             return new JsonResult("User group deleted successfully");
         }

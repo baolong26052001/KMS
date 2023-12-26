@@ -72,6 +72,23 @@ namespace KMS.Controllers
         }
 
         [HttpGet]
+        [Route("SearchSavingTransaction")]
+        public JsonResult SearchSavingTransaction(string searchQuery)
+        {
+            string query = "SELECT * " +
+                           "FROM SavingTransaction " +
+                           "WHERE memberId LIKE @searchQuery OR " +
+                           "accountId LIKE @searchQuery OR " +
+                           "savingTerm LIKE @searchQuery OR " +
+                           "annualRate LIKE @searchQuery";
+
+            SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
+            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+
+            return new JsonResult(table);
+        }
+
+        [HttpGet]
         [Route("FilterSavingTransaction")]
         public JsonResult FilterSavingTransaction([FromQuery] bool? isActive = null, [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
         {

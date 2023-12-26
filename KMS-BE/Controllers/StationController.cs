@@ -96,6 +96,8 @@ namespace KMS.Controllers
         {
             string query = "INSERT INTO TStation (stationName, companyName, city, address, isActive, dateCreated) " +
                            "VALUES (@StationName, @CompanyName, @City, @Address, @IsActive, GETDATE())";
+            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Add', 'TStation', GETDATE(), GETDATE(), 1)";
+            
             SqlParameter[] parameters =
             {
                 new SqlParameter("@StationName", station.StationName),
@@ -104,7 +106,9 @@ namespace KMS.Controllers
                 new SqlParameter("@Address", station.Address),
                 new SqlParameter("@IsActive", station.IsActive)
             };
+            SqlParameter[] parameters2 = { };
             _exQuery.ExecuteRawQuery(query, parameters);
+            _exQuery.ExecuteRawQuery(query2, parameters2);
 
             return new JsonResult("Station added successfully");
         }
@@ -117,6 +121,8 @@ namespace KMS.Controllers
                            "SET stationName = @StationName, companyName = @CompanyName, " +
                            "city = @City, address = @Address, dateModified = GETDATE(), isActive = @IsActive " +
                            "WHERE id = @Id";
+            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Update', 'TStation', GETDATE(), GETDATE(), 1)";
+            
             SqlParameter[] parameters =
             {
                 new SqlParameter("@Id", id),
@@ -126,8 +132,9 @@ namespace KMS.Controllers
                 new SqlParameter("@Address", station.Address),
                 new SqlParameter("@IsActive", station.IsActive)
             };
+            SqlParameter[] parameters2 = { };
             _exQuery.ExecuteRawQuery(query, parameters);
-
+            _exQuery.ExecuteRawQuery(query2, parameters2);
             return new JsonResult("Station updated successfully");
         }
 
@@ -141,9 +148,10 @@ namespace KMS.Controllers
             }
 
             StringBuilder deleteQuery = new StringBuilder("DELETE FROM TStation WHERE id IN (");
-
+            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Delete', 'TStation', GETDATE(), GETDATE(), 1)";
 
             List<SqlParameter> parameters = new List<SqlParameter>();
+            SqlParameter[] parameters2 = { };
             for (int i = 0; i < stationIds.Count; i++)
             {
                 string parameterName = "@StationId" + i;
@@ -160,6 +168,7 @@ namespace KMS.Controllers
             deleteQuery.Append(");");
 
             _exQuery.ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
+            _exQuery.ExecuteRawQuery(query2, parameters2);
 
             return new JsonResult("Station deleted successfully");
         }
