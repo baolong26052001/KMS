@@ -8,6 +8,8 @@ using System.Text;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using KMS.Tools;
+using System.Net;
+using IPinfo;
 
 namespace KMS.Controllers
 {
@@ -89,6 +91,10 @@ namespace KMS.Controllers
         {
             try
             {
+                var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault() ?? HttpContext.Connection.RemoteIpAddress.ToString();
+                string host = Dns.GetHostName();
+                IPHostEntry ip = Dns.GetHostEntry(host);
+
                 string password = Password.hashPassword(user.Password);
                 var dbUser = _dbcontext.Tusers
                     .Where(u => u.Username == user.Username && u.Password == password)
@@ -103,7 +109,7 @@ namespace KMS.Controllers
                 dbUser.LastLogin = DateTime.Now;
                 await _dbcontext.SaveChangesAsync();
 
-                return Ok(new { message = "Login successful" });
+                return Ok(new { message = "Login successful", ipAddress = ip.AddressList[0].ToString() });
             }
             catch (Exception e)
             {

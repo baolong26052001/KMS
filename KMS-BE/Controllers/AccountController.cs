@@ -30,7 +30,7 @@ namespace KMS.Controllers
         [Route("ShowAccount")]
         public JsonResult GetAccount()
         {
-            string query = "select a.id, a.memberId, a.contractId, m.phone, m.department, m.companyName, m.address1, m.isActive, m.dateCreated " +
+            string query = "select a.id, a.memberId, a.contractId, m.phone, m.bankName, m.department, m.companyName, m.address1, m.isActive, m.dateCreated " +
                 "from LAccount a, LMember m " +
                 "where a.memberId = m.id";
             DataTable table = _exQuery.ExecuteRawQuery(query);
@@ -41,7 +41,7 @@ namespace KMS.Controllers
         [Route("ShowAccount/{id}")]
         public JsonResult GetAccountById(int id)
         {
-            string query = "select a.id, a.memberId, a.contractId, m.phone, m.department, m.companyName, m.address1, m.isActive, m.dateCreated " +
+            string query = "select a.id, a.memberId, a.contractId, m.phone, m.bankName, m.department, m.companyName, m.address1, m.isActive, m.dateCreated " +
                 "from LAccount a, LMember m " +
                 "where a.memberId = m.id and a.id=@Id";
 
@@ -62,7 +62,7 @@ namespace KMS.Controllers
         [Route("FilterAccount")]
         public JsonResult FilterAccount([FromQuery] int? status = null, [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
         {
-            string query = "SELECT a.id, a.memberId, a.contractId, m.phone, m.department, m.companyName, m.address1, a.status, a.dateCreated " +
+            string query = "SELECT a.id, a.memberId, a.contractId, m.phone, m.bankName, m.department, m.companyName, m.address1, a.status, a.dateCreated " +
                 "FROM LAccount a INNER JOIN LMember m ON a.memberId = m.id ";
 
             List<SqlParameter> parameters = new List<SqlParameter>();
@@ -148,7 +148,7 @@ namespace KMS.Controllers
         public JsonResult SearchAccount(string searchQuery)
         {
             string query = "SELECT a.id, a.memberId, a.contractId, " +
-                           "m.phone, m.department, m.companyName, m.address1, m.isActive, m.dateCreated, " +
+                           "m.phone, m.bankName, m.department, m.companyName, m.address1, m.isActive, m.dateCreated, " +
                            "a.accountName, a.accountType, a.balance, a.rate, a.dateDue, a.status, a.dateModified, a.dateCreated, a.isActive " +
                            "FROM LAccount a " +
                            "INNER JOIN LMember m ON a.memberId = m.id " +
@@ -161,6 +161,7 @@ namespace KMS.Controllers
                            "CONVERT(VARCHAR(20), a.rate) LIKE @searchQuery OR " +
                            "a.status LIKE @searchQuery OR " +
                            "m.phone LIKE @searchQuery OR " +
+                           "m.bankName LIKE @searchQuery OR " +
                            "m.department LIKE @searchQuery OR " +
                            "m.companyName LIKE @searchQuery OR " +
                            "m.address1 LIKE @searchQuery";
