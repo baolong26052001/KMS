@@ -3,7 +3,7 @@ import {EyeOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 
 //import Sidebar from '../components/sidebar/Sidebar';
 import { render } from '@testing-library/react';
-
+import {useNavigate} from 'react-router-dom';
 // import components from MUI
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { Button, Box } from '@mui/material';
@@ -17,9 +17,11 @@ const handleButtonClick = (id) => {
 };
 
 const ViewButton = ({ rowId, label, onClick }) => {
+  const navigate = useNavigate();
   const handleClick = (event) => {
     event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
     onClick(rowId);
+    navigate(`/viewKioskHardware/${rowId}`);
   };
 
   return (
@@ -80,8 +82,8 @@ const rows = [];
 
 const KioskHardware = () => {
   const [searchTerm, setSearchTerm] = useState('');
-
   const [searchTermButton, setSearchTermButton] = useState('');
+  const [selectedRowIds, setSelectedRowIds] = useState([]);
 
   const handleSearchButton = () => {
       setSearchTerm(searchTermButton);
@@ -93,38 +95,46 @@ const KioskHardware = () => {
     }
   };
 
-  const [rows, setRows] = useState([]);
+const [rows, setRows] = useState([]);
+// Get Back-end API URL to connect
+const API_URL = "https://localhost:7017/";
 
-  // Get Back-end API URL to connect
-  const API_URL = "https://localhost:7017/";
+useEffect(() => {
+  async function fetchData() {
+    try {
+      let apiUrl = `${API_URL}api/Kiosk/ShowKioskHardware`;
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch(`${API_URL}api/Kiosk/ShowKioskHardware`);
-        const data = await response.json();
-  
-        // Combine fetched data with createData function
-        const updatedRows = data.map((row) =>
-          createData(row.id, row.availableMemory + " GB", row.ipAddress, row.OSName, row.OSPlatform, row.OSVersion)
-        );
-  
-        // If searchTerm is empty, display all rows, otherwise filter based on the search term
-        const filteredRows = searchTerm
-          ? updatedRows.filter((row) =>
-              Object.values(row).some((value) =>
-                value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-              )
-            )
-          : updatedRows;
-  
-        setRows(filteredRows); // Update the component state with the data
-      } catch (error) {
-        console.error('Error fetching data:', error);
+      // If searchTerm is not empty, use the search API endpoint
+      if (searchTerm) {
+        apiUrl = `${API_URL}api/Kiosk/SearchKioskHardware?searchQuery=${encodeURIComponent(searchTerm)}`;
       }
+
+      const response = await fetch(apiUrl);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const responseData = await response.json();
+
+      // Check if responseData is an array before calling map
+      if (Array.isArray(responseData)) {
+        const updatedRows = responseData.map((row) =>
+          createData(
+            row.id, row.availableMemory + " GB", row.ipAddress, row.OSName, row.OSPlatform, row.OSVersion
+          )
+        );
+
+        setRows(updatedRows); // Update the component state with the combined data
+      } else {
+        console.error('Invalid data structure:', responseData);
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
     }
-  
-    fetchData();
+  }
+
+  fetchData();
   }, [searchTerm]);
 
   return (

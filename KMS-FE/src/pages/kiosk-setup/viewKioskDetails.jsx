@@ -46,7 +46,7 @@ export default function ViewKioskDetails() {
             <TableBody>
               {Object.entries(Details).map(([key, value]) => (
                 <TableRow className='row-style' key={key}>
-                  <TableCell className='cell-head'>{key}</TableCell>
+                  <TableCell className='cell-head'>{key.toUpperCase()}</TableCell>
                   <TableCell className='cell-body'>
                   {key !== 'id' && statusDes.hasOwnProperty(value) ? statusDes[value] : (typeof value === 'boolean' ? value.toString() : value)}
                   </TableCell>

@@ -67,6 +67,8 @@ const App = () => {
                     <Route path="/kiosksetup" element={<RouteKioskSetup />} />
                     <Route path="/viewKioskDetails/:id" element={<RouteKioskDetails />} />
                     <Route path="/kioskhardware" element={<RoutekioskHardware />} />
+                    <Route path="/viewKioskHardware/:id" element={<RouteKioskHardwareDetails />} />
+                    
                     <Route path="/addKiosk" element={<RouteAddKiosk />} />
                     <Route path="/editKiosk/:id" element={<RouteEditKioskSetup />} />
                     
@@ -116,7 +118,7 @@ const App = () => {
           </Grid>
         </Box>
         </React.Fragment>
-       {/* ) : (
+        {/* ) : (
           // Redirect to login if not authenticated
           <Navigate to="/login" />
         )}  */}
@@ -150,6 +152,7 @@ const RouteInsurancePackage = React.lazy(() => import('./pages/InsurancePackage/
 const RouteViewAccount = React.lazy(() => import('./pages/Account/viewAccount'));
 const RouteViewUser = React.lazy(() => import('./pages/user/viewUser'));
 const RouteKioskDetails = React.lazy(() => import('./pages/kiosk-setup/viewKioskDetails'));
+const RouteKioskHardwareDetails = React.lazy(() => import('./pages/kiosk-hardware/viewKioskHardware'));
 const RouteStationDetails = React.lazy(() => import('./pages/station/viewStation'));
 const RouteViewInsurancePackage = React.lazy(() => import('./pages/InsurancePackage/viewPackageDetail'));
 

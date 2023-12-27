@@ -1,20 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import dayjs from 'dayjs'; // Import dayjs
+import customParseFormat from 'dayjs/plugin/customParseFormat'; // Import the customParseFormat plugin
+import 'dayjs/locale/en'; // Import the English locale
+import { DataGrid } from '@mui/x-data-grid';
+import { Button, Box } from '@mui/material';
+import {useNavigate} from 'react-router-dom';
+import DateFilter from '../../components/dateFilter/DateFilter';
 
-//import Sidebar from '../components/sidebar/Sidebar';
-import { render } from '@testing-library/react';
-
-// import components from MUI
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
-import { Button, Box, Tooltip } from '@mui/material';
-
-// import { useHistory } from 'react-router-dom'; // Import useHistory from React Router
-import {Routes, Route, useNavigate} from 'react-router-dom';
-
-//import css
-import './account.css';
-import AccountFilter from './accountFilter';
-
-const ViewAccount = React.lazy(() => import('./viewAccount'));
+// Enable the customParseFormat plugin
+dayjs.extend(customParseFormat);
+dayjs.locale('en'); // Set the locale to English
 
 const ViewButton = ({ rowId, label, onClick }) => {
   const navigate = useNavigate();
@@ -41,8 +36,8 @@ const handleButtonClick = (id) => {
 };
 
 
-function createData(id, memberId, contractId, phoneNumber, department, company, bankName, memberAddress, status, dateCreate) {
-  return {id, memberId, contractId, phoneNumber, department, company, bankName, memberAddress, status, dateCreate};
+function createData(id, memberId, contractId, phoneNumber, department, company, bankName, memberAddress, status, dateCreated) {
+  return {id, memberId, contractId, phoneNumber, department, company, bankName, memberAddress, status, dateCreated};
 }
 
 const columns = [
@@ -113,8 +108,8 @@ const columns = [
     disableColumnMenu: true,
   },
   {
-    field: 'dateCreate',
-    headerName: 'Date Create',
+    field: 'dateCreated',
+    headerName: 'Date Created',
     sortable: false,
     minWidth: 200,
     flex: 1 
@@ -126,90 +121,131 @@ const rows = [];
 
 
 const Account = () => {
-    const [searchTerm, setSearchTerm] = useState('');
-    const [searchTermButton, setSearchTermButton] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTermButton, setSearchTermButton] = useState('');
 
-    const handleSearchButton = () => {
-        setSearchTerm(searchTermButton);
-    };
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [rows, setRows] = useState([]);
 
-    const handleKeyPress = (event) => {
-      if (event.key === 'Enter') {
-        handleSearchButton();
-      }
-    };
+  const handleStartDateChange = (date) => {
+    setStartDate(date);
+  };
 
-    const [rows, setRows] = useState([]);
-    // Get Back-end API URL to connect
-    const API_URL = "https://localhost:7017/";
+  const handleEndDateChange = (date) => {
+    setEndDate(date);
+  };
+
+  const getRowId = (row) => row.id;
+  const API_URL = "https://localhost:7017/";
+
+  const handleSearchButton = () => {
+    setSearchTerm(searchTermButton);
+  };
+
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      handleSearchButton();
+    }
+  };
   
-    useEffect(() => {
-      async function fetchData() {
-        try {
-          const response = await fetch(`${API_URL}api/Member/ShowMember`);
-          const data = await response.json();
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        let apiUrl = `${API_URL}api/Account/ShowAccount`;
+        let searchApi = ``;
   
-          // Combine fetched data with createData function
-          const updatedRows = data.map((row) =>
+        if (startDate || endDate) {
+          apiUrl = `${API_URL}api/Account/FilterAccount?startDate=${encodeURIComponent(dayjs(startDate).format('YYYY/MM/DD'))}&endDate=${encodeURIComponent(dayjs(endDate).format('YYYY/MM/DD'))}`;
+          if (searchTerm) {
+            searchApi = `${API_URL}api/Account/FilterAccount?searchQuery=${encodeURIComponent(searchTerm)}`;
+          }
+        } else if (searchTerm) {
+          apiUrl = `${API_URL}api/Account/SearchAccount?searchQuery=${encodeURIComponent(searchTerm)}`;
+        }
+  
+        const [apiResponse, searchApiResponse] = await Promise.all([
+          fetch(apiUrl),
+          searchApi ? fetch(searchApi) : Promise.resolve(null),
+        ]);
+  
+        if (!apiResponse.ok) {
+          throw new Error(`HTTP error! Status: ${apiResponse.status}`);
+        }
+  
+        const apiResponseData = await apiResponse.json();
+        const searchApiResponseData = searchApiResponse ? await searchApiResponse.json() : null;
+        
+        console.log(searchApiResponseData);
+  
+        if (Array.isArray(apiResponseData)) {
+          let filteredRows = apiResponseData;
+        
+          if (searchApiResponseData && Array.isArray(searchApiResponseData)) {
+            filteredRows = apiResponseData.filter(row =>
+              searchApiResponseData.some(searchRow => row.id === searchRow.id)
+            );
+          }
+        
+          const updatedRows = filteredRows.map(row =>
             createData(row.id, row.memberId, row.contractId, row.phone, row.department, row.companyName, row.bankName, row.address1, row.isActive, row.dateCreated)
           );
-
-          // If searchTerm is empty, display all rows, otherwise filter based on the search term
-          const filteredRows = searchTerm
-          ? updatedRows.filter((row) =>
-              Object.values(row).some((value) =>
-                value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-              )
-            )
-          : updatedRows;
-  
-          setRows(filteredRows); // Update the component state with the combined data
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        }
-      }
-  
-      fetchData();
-    }, [searchTerm]);
-
-  return (
-    
-    <div className="content"> 
-
-        <div className="admin-dashboard-text-div pt-5"> 
-            <h1 className="h1-dashboard">Account</h1>
-        </div>
-            <div className="bigcarddashboard">
-
-              <div className='Filter'>
-                <AccountFilter />
-              </div>
-                <div className="searchdivuser">
-                    <input onChange={(event) => setSearchTermButton(event.target.value)} onKeyDown={handleKeyPress} placeholder="  Search..." type="text" id="kioskID myInput" name="kioskID" class="searchbar"></input>
-                    <input onClick={handleSearchButton} type="button" value="Search" className="button button-search"></input>
-                </div>
-
-                
-                <div className='Table' style={{ height: 400, width: '100%'}}>
-                    <DataGrid
-                      rows={rows}
-                      columns={columns}
-                      initialState={{
-                      pagination: {
-                          paginationModel: { page: 0, pageSize: 5 },
-                      },
-                      }}
-                      pageSizeOptions={[5, 10, 25, 50]}
-                      checkboxSelection
-                    />
-                </div>
-            </div>
-
         
-    </div>
-    
-    
-  )
+          setRows(updatedRows); 
+        } else {
+          console.error('Invalid data structure:', apiResponseData);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }
+  
+    fetchData();
+  }, [searchTerm, startDate, endDate]);
+  
+  
+return (
+  
+  <div className="content"> 
+
+      <div className="admin-dashboard-text-div pt-5"> 
+          <h1 className="h1-dashboard">Account</h1>
+      </div>
+          <div className="bigcarddashboard">
+
+          <div className="Filter">
+          <DateFilter
+            startDate={startDate}
+            endDate={endDate}
+            handleStartDateChange={handleStartDateChange}
+            handleEndDateChange={handleEndDateChange}
+          />
+          </div>
+              <div className="searchdivuser">
+                  <input onChange={(event) => setSearchTermButton(event.target.value)} onKeyDown={handleKeyPress} placeholder="  Search..." type="text" id="kioskID myInput" name="kioskID" class="searchbar"></input>
+                  <input onClick={() => {handleSearchButton()}} type="button" value="Search" className="button button-search"></input>
+              </div>
+
+              
+              <div className='Table' style={{ height: 400, width: '100%'}}>
+                  <DataGrid
+                    rows={rows}
+                    columns={columns}
+                    getRowId={getRowId}
+                    initialState={{
+                    pagination: {
+                        paginationModel: { page: 0, pageSize: 5 },
+                    },
+                    }}
+                    pageSizeOptions={[5, 10, 25, 50]}
+                    checkboxSelection
+                  />
+              </div>
+          </div>
+  </div>
+  
+  
+)
 }
 
 export default Account;

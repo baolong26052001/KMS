@@ -5,7 +5,8 @@ import TableBody from '@mui/material/TableBody';
 import TableRow from '@mui/material/TableRow';
 import { useParams } from 'react-router-dom';
 
-export default function ViewUser() {
+
+export default function ViewKioskDetails() {
 
   const { id } = useParams();
   const [Details, setDetails] = useState({});
@@ -16,7 +17,7 @@ export default function ViewUser() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch(`${API_URL}api/User/ShowUsers/${id}`);
+        const response = await fetch(`${API_URL}api/Kiosk/ShowKioskHardware/${id}`);
         const data = await response.json();
         setDetails(data[0]); // Assuming the API returns an array with one element
       } catch (error) {
@@ -30,7 +31,7 @@ export default function ViewUser() {
   return (
   <div className="content">
     <div className="admin-dashboard-text-div pt-5">
-      <h1 className="h1-dashboard">View User Details</h1>
+      <h1 className="h1-dashboard">View Kiosk Hardware</h1>
     </div>
     <div className="bigcarddashboard">
       <div className="App">
@@ -40,7 +41,10 @@ export default function ViewUser() {
               {Object.entries(Details).map(([key, value]) => (
                 <TableRow className='row-style' key={key}>
                   <TableCell className='cell-head'>{key.toUpperCase()}</TableCell>
-                  <TableCell className='cell-body'>{typeof value === 'boolean' ? value.toString() : value}</TableCell>
+                  <TableCell className='cell-body'>
+                    {value}
+                  {/* {key !== 'id' && statusDes.hasOwnProperty(value) ? statusDes[value] : (typeof value === 'boolean' ? value.toString() : value)} */}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

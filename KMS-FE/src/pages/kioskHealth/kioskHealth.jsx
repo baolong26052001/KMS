@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import dayjs from 'dayjs'; // Import dayjs
+import customParseFormat from 'dayjs/plugin/customParseFormat'; // Import the customParseFormat plugin
+import 'dayjs/locale/en'; // Import the English locale
+import { DataGrid } from '@mui/x-data-grid';
+import { Button, Box } from '@mui/material';
+import {useNavigate} from 'react-router-dom';
+import DateFilter from '../../components/dateFilter/DateFilter';
 
-//import Sidebar from '../components/sidebar/Sidebar';
-import { render } from '@testing-library/react';
-
-// import components from MUI
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
-import { Button, Box, Tooltip } from '@mui/material';
-
-// import { useHistory } from 'react-router-dom'; // Import useHistory from React Router
-import {Routes, Route, useNavigate} from 'react-router-dom';
-
-//import Filter
-import Filter from './Filter';
+// Enable the customParseFormat plugin
+dayjs.extend(customParseFormat);
+dayjs.locale('en'); // Set the locale to English
 
 const ViewButton = ({ rowId, label, onClick }) => {
   const navigate = useNavigate();
@@ -19,7 +17,7 @@ const ViewButton = ({ rowId, label, onClick }) => {
   const handleClick = (event) => {
     event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
     onClick(rowId);
-    navigate(`/accountView`);
+    // navigate(`/viewAccount/${rowId}`);
   };
 
   return (
@@ -30,6 +28,7 @@ const ViewButton = ({ rowId, label, onClick }) => {
     </Box>
   );
 };
+
 
 const DetailButton = ({ rowId, label, onClick }) => {
   const handleClick = (event) => {
@@ -53,10 +52,9 @@ const DetailButton = ({ rowId, label, onClick }) => {
 };
 
 const handleButtonClick = (id) => {
-  // Handle button click, e.g., navigate to another page
   console.log(`Button clicked for row with ID: ${id}`);
- 
 };
+
 
 
 function createData(id, transactionDate, station, upTime, downTime, lastUpdate) {
@@ -96,7 +94,7 @@ const columns = [
   },
   { field: 'transactionDate', headerName: 'Transaction Date', minWidth: 180, flex: 1,},
   { field: 'id', headerName: 'Kiosk ID', minWidth: 80, flex: 1,},
-  { field: 'station', headerName: 'Station ID', minWidth: 150, flex: 1,},
+  { field: 'station', headerName: 'Station Code', minWidth: 150, flex: 1,},
   { field: 'upTime', headerName: 'Duration Uptime (Minutes)', minWidth: 200,  
     flex: 1,
     sortable: false,
@@ -119,59 +117,136 @@ const columns = [
     flex: 1 
   },
 ];
+const rows = [];
 
-const rows = [
-  createData(1, '19-12-2023 14:00:00', 'INT - SaiGon', 140, 10, '30-11-2023 14:00:00'),
-];
 
 
 const KioskHealth = () => {
-    const [searchTerm, setSearchTerm] = useState('');
-    const [searchTermButton, setSearchTermButton] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTermButton, setSearchTermButton] = useState('');
 
-    const handleSearchButton = () => {
-        setSearchTerm(searchTermButton);
-    };
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [rows, setRows] = useState([]);
 
+  const handleStartDateChange = (date) => {
+    setStartDate(date);
+  };
 
-  return (
-    
-    <div className="content"> 
+  const handleEndDateChange = (date) => {
+    setEndDate(date);
+  };
 
-        <div className="admin-dashboard-text-div pt-5"> 
-            <h1 className="h1-dashboard">Kiosk Health</h1>
-        </div>
-            <div className="bigcarddashboard">
+  const getRowId = (row) => row.id;
+  const API_URL = "https://localhost:7017/";
 
-              <div className='Filter'>
-                <Filter />
-              </div>
-                <div className="searchdivuser">
-                    <input onChange={(event) => setSearchTermButton(event.target.value)} placeholder="  Search..." type="text" id="kioskID myInput" name="kioskID" class="searchbar"></input>
-                    <input onClick={handleSearchButton} type="button" value="Search" className="button button-search"></input>
-                </div>
+  const handleSearchButton = () => {
+    setSearchTerm(searchTermButton);
+  };
 
-                
-                <div className='Table' style={{ height: 400, width: '100%'}}>
-                    <DataGrid
-                      rows={rows}
-                      columns={columns}
-                      initialState={{
-                      pagination: {
-                          paginationModel: { page: 0, pageSize: 5 },
-                      },
-                      }}
-                      pageSizeOptions={[5, 10, 25, 50]}
-                      checkboxSelection
-                    />
-                </div>
-            </div>
-
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      handleSearchButton();
+    }
+  };
+  
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        let apiUrl = `${API_URL}api/Kiosk/ShowKioskHealth`;
+        let searchApi = ``;
+  
+        if (startDate || endDate) {
+          apiUrl = `${API_URL}api/Kiosk/FilterKioskHealth?startDate=${encodeURIComponent(dayjs(startDate).format('YYYY/MM/DD'))}&endDate=${encodeURIComponent(dayjs(endDate).format('YYYY/MM/DD'))}`;
+          if (searchTerm) {
+            searchApi = `${API_URL}api/Kiosk/SearchKioskHealth?searchQuery=${encodeURIComponent(searchTerm)}`;
+          }
+        } else if (searchTerm) {
+          apiUrl = `${API_URL}api/Kiosk/SearchKioskHealth?searchQuery=${encodeURIComponent(searchTerm)}`;
+        }
+  
+        const [apiResponse, searchApiResponse] = await Promise.all([
+          fetch(apiUrl),
+          searchApi ? fetch(searchApi) : Promise.resolve(null),
+        ]);
+  
+        if (!apiResponse.ok) {
+          throw new Error(`HTTP error! Status: ${apiResponse.status}`);
+        }
+  
+        const apiResponseData = await apiResponse.json();
+        const searchApiResponseData = searchApiResponse ? await searchApiResponse.json() : null;
         
-    </div>
-    
-    
-  )
+        console.log(searchApiResponseData);
+  
+        if (Array.isArray(apiResponseData)) {
+          let filteredRows = apiResponseData;
+        
+          if (searchApiResponseData && Array.isArray(searchApiResponseData)) {
+            filteredRows = apiResponseData.filter(row =>
+              searchApiResponseData.some(searchRow => row.id === searchRow.id)
+            );
+          }
+        
+          const updatedRows = filteredRows.map(row =>
+            createData(row.id, row.dateCreated, row.stationCode, row.durationUptime, row.durationDowntime, row.lastUpdated)
+          );
+        
+          setRows(updatedRows); 
+        } else {
+          console.error('Invalid data structure:', apiResponseData);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }
+  
+    fetchData();
+  }, [searchTerm, startDate, endDate]);
+  
+  
+return (
+  
+  <div className="content"> 
+
+      <div className="admin-dashboard-text-div pt-5"> 
+          <h1 className="h1-dashboard">Kiosk Health</h1>
+      </div>
+          <div className="bigcarddashboard">
+
+          <div className="Filter">
+          <DateFilter
+            startDate={startDate}
+            endDate={endDate}
+            handleStartDateChange={handleStartDateChange}
+            handleEndDateChange={handleEndDateChange}
+          />
+          </div>
+              <div className="searchdivuser">
+                  <input onChange={(event) => setSearchTermButton(event.target.value)} onKeyDown={handleKeyPress} placeholder="  Search..." type="text" id="kioskID myInput" name="kioskID" class="searchbar"></input>
+                  <input onClick={() => {handleSearchButton()}} type="button" value="Search" className="button button-search"></input>
+              </div>
+
+              
+              <div className='Table' style={{ height: 400, width: '100%'}}>
+                  <DataGrid
+                    rows={rows}
+                    columns={columns}
+                    getRowId={getRowId}
+                    initialState={{
+                    pagination: {
+                        paginationModel: { page: 0, pageSize: 5 },
+                    },
+                    }}
+                    pageSizeOptions={[5, 10, 25, 50]}
+                    checkboxSelection
+                  />
+              </div>
+          </div>
+  </div>
+  
+  
+)
 }
 
 export default KioskHealth;

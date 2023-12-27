@@ -39,7 +39,7 @@ export default function ViewStation() {
             <TableBody>
               {Object.entries(Details).map(([key, value]) => (
                 <TableRow className='row-style' key={key}>
-                  <TableCell className='cell-head'>{key}</TableCell>
+                  <TableCell className='cell-head'>{key.toUpperCase()}</TableCell>
                   <TableCell className='cell-body'>{typeof value === 'boolean' ? value.toString() : value}</TableCell>
                 </TableRow>
               ))}
