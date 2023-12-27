@@ -1,5 +1,3 @@
-
-
 #components-form-demo-normal-login .login-form-forgot {
     float: right;
 }
@@ -37,6 +35,32 @@
     border-radius: 4px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
-.css-1pi8xg4-MuiGrid2-root {
-    
-}
+
+.login {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .Login-field {
+    width: 300px; /* Adjust the width according to your design */
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .Login-Form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Add more styling as needed for form controls */
+  FormControl {
+    margin-bottom: 16px;
+  }
+  
+  Button {
+    margin-top: 16px;
+  }

@@ -1,25 +1,21 @@
 import React, { useState, useEffect } from 'react';
+import dayjs from 'dayjs'; // Import dayjs
+import customParseFormat from 'dayjs/plugin/customParseFormat'; // Import the customParseFormat plugin
+import 'dayjs/locale/en'; // Import the English locale
+import { DataGrid } from '@mui/x-data-grid';
+import { Button, Box } from '@mui/material';
+import DateFilter from '../../components/dateFilter/DateFilter';
+import {useNavigate} from 'react-router-dom';
 
-//import Sidebar from '../components/sidebar/Sidebar';
-import { render } from '@testing-library/react';
+// Enable the customParseFormat plugin
+dayjs.extend(customParseFormat);
+dayjs.locale('en'); // Set the locale to English
 
-// import components from MUI
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
-import { Button, Box, Tooltip } from '@mui/material';
-
-// import { useHistory } from 'react-router-dom'; // Import useHistory from React Router
-import {Routes, Route, useNavigate} from 'react-router-dom';
-
-//import Filter
-import Filter from '../Account/accountFilter';
 
 const ViewButton = ({ rowId, label, onClick }) => {
-  const navigate = useNavigate();
-
   const handleClick = (event) => {
     event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
     onClick(rowId);
-    navigate(`/accountView`);
   };
 
   return (
@@ -31,15 +27,9 @@ const ViewButton = ({ rowId, label, onClick }) => {
   );
 };
 
-const handleButtonClick = (id) => {
-  // Handle button click, e.g., navigate to another page
-  console.log(`Button clicked for row with ID: ${id}`);
- 
-};
 
-
-function createData(id, kioskId, userId, action, script, field, tableName, ipAddress, macAddress, isActive, dateCreate) {
-  return {id, kioskId, userId, action, script, field, tableName, ipAddress, macAddress, isActive, dateCreate};
+function createData(id, kioskId, userId, action, script, field, tableName, ipAddress, macAddress, isActive, dateCreated) {
+  return {id, kioskId, userId, action, script, field, tableName, ipAddress, macAddress, isActive, dateCreated};
 }
 
 const columns = [
@@ -116,43 +106,124 @@ const columns = [
     disableColumnMenu: true,
   },
   {
-    field: 'dateCreate',
-    headerName: 'Date Create',
+    field: 'dateCreated',
+    headerName: 'Date Created',
     sortable: false,
     minWidth: 200,
     flex: 1 
   },
 ];
+const rows = [];
 
-const rows = [
-  createData(1, 1, 103, 'Add new user', 'changeLogs.json', 'CREATED_AT', 'Admin/Users', '192.268.1.23', 'A8-7E-EA-DA-4F-D9' , 'Yes' , '19-12-2023 14:00:00'),
-];
-
+const handleButtonClick = (id) => {
+  // Handle button click, e.g., navigate to another page
+  console.log(`Button clicked for row with ID: ${id}`);
+};
 
 const Audit = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [searchTermButton, setSearchTermButton] = useState('');
 
-    const handleSearchButton = () => {
-        setSearchTerm(searchTermButton);
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
+    const [rows, setRows] = useState([]);
+
+    const handleStartDateChange = (date) => {
+      setStartDate(date);
     };
-
-
+  
+    const handleEndDateChange = (date) => {
+      setEndDate(date);
+    };
+  
+    const getRowId = (row) => row.id;
+    const API_URL = "https://localhost:7017/";
+  
+    const handleSearchButton = () => {
+      setSearchTerm(searchTermButton);
+    };
+  
+    const handleKeyPress = (event) => {
+      if (event.key === 'Enter') {
+        handleSearchButton();
+      }
+    };
+    
+    useEffect(() => {
+      async function fetchData() {
+        try {
+          let apiUrl = `${API_URL}api/Audit/ShowAudit`;
+          let searchApi = ``;
+    
+          if (startDate || endDate) {
+            apiUrl = `${API_URL}api/Audit/FilterAudit?startDate=${encodeURIComponent(dayjs(startDate).format('YYYY/MM/DD'))}&endDate=${encodeURIComponent(dayjs(endDate).format('YYYY/MM/DD'))}`;
+            if (searchTerm) {
+              searchApi = `${API_URL}api/Audit/SearchAudit?searchQuery=${encodeURIComponent(searchTerm)}`;
+            }
+          } else if (searchTerm) {
+            apiUrl = `${API_URL}api/Audit/SearchAudit?searchQuery=${encodeURIComponent(searchTerm)}`;
+          }
+    
+          const [apiResponse, searchApiResponse] = await Promise.all([
+            fetch(apiUrl),
+            searchApi ? fetch(searchApi) : Promise.resolve(null),
+          ]);
+    
+          if (!apiResponse.ok) {
+            throw new Error(`HTTP error! Status: ${apiResponse.status}`);
+          }
+    
+          const apiResponseData = await apiResponse.json();
+          const searchApiResponseData = searchApiResponse ? await searchApiResponse.json() : null;
+          
+          console.log(searchApiResponseData);
+    
+          if (Array.isArray(apiResponseData)) {
+            let filteredRows = apiResponseData;
+          
+            if (searchApiResponseData && Array.isArray(searchApiResponseData)) {
+              filteredRows = apiResponseData.filter(row =>
+                searchApiResponseData.some(searchRow => row.id === searchRow.id)
+              );
+            }
+          
+            const updatedRows = filteredRows.map(row =>
+              createData(row.id, row.kioskId, row.userId, row.action, row.script, row.field, row.tableName, row.ipAddress, row.macAddress, row.isActive, row.dateCreated)
+            );
+          
+            setRows(updatedRows); // Update the component state with the combined data
+          } else {
+            console.error('Invalid data structure:', apiResponseData);
+          }
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+      }
+    
+      fetchData();
+    }, [searchTerm, startDate, endDate]);
+    
+    
   return (
     
     <div className="content"> 
 
         <div className="admin-dashboard-text-div pt-5"> 
-            <h1 className="h1-dashboard">Audit</h1>
+            <h1 className="h1-dashboard">Audit Trail</h1>
         </div>
             <div className="bigcarddashboard">
 
-              <div className='Filter'>
-                <Filter />
-              </div>
+            <div className="Filter">
+            <DateFilter
+              startDate={startDate}
+              endDate={endDate}
+              handleStartDateChange={handleStartDateChange}
+              handleEndDateChange={handleEndDateChange}
+            />
+            </div>
                 <div className="searchdivuser">
-                    <input onChange={(event) => setSearchTermButton(event.target.value)} placeholder="  Search..." type="text" id="kioskID myInput" name="kioskID" class="searchbar"></input>
-                    <input onClick={handleSearchButton} type="button" value="Search" className="button button-search"></input>
+                    <input onChange={(event) => setSearchTermButton(event.target.value)} onKeyDown={handleKeyPress} placeholder="  Search..." type="text" id="kioskID myInput" name="kioskID" class="searchbar"></input>
+                    <input onClick={() => {handleSearchButton()}} type="button" value="Search" className="button button-search"></input>
                 </div>
 
                 
@@ -160,6 +231,7 @@ const Audit = () => {
                     <DataGrid
                       rows={rows}
                       columns={columns}
+                      getRowId={getRowId}
                       initialState={{
                       pagination: {
                           paginationModel: { page: 0, pageSize: 5 },
@@ -170,8 +242,6 @@ const Audit = () => {
                     />
                 </div>
             </div>
-
-        
     </div>
     
     

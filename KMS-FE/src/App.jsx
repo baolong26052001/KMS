@@ -3,22 +3,18 @@ import './App.css';
 import Sidebar from './components/sidebar/Sidebar';
 import Headerbar from './components/header/Header';
 import Login from './pages/login/login';
-import { useNavigate } from 'react-router-dom';
 import { Navigate } from "react-router-dom";
 import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 import Box from '@mui/material/Box';
+import { useAuth } from './components/AuthContext/AuthContext';
 //import { Outlet, Link, Route } from "react-router-dom";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 
 
 const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  
-  const handleLogin = () => {
-    setIsAuthenticated(true);
-  };
 
+  const { isAuthenticated, login  } = useAuth();
   return (
     <div>
       <Router>
@@ -26,11 +22,11 @@ const App = () => {
         <Routes>
           <Route
             path="/login"
-            // element={<Login onLogin={handleLogin} />}
-            element={<Login />}
+            element={isAuthenticated ? <Navigate to="/dashboard" /> : <Login  onLogin={login}/>}
           />
         </Routes> 
         {/* {isAuthenticated ? (  */}
+          <React.Fragment>
           <Box>
             <Grid container spacing={0}>
               <Grid xs={2}>
@@ -119,10 +115,11 @@ const App = () => {
             </Grid>
           </Grid>
         </Box>
-        {/* ) : (
+        </React.Fragment>
+       {/* ) : (
           // Redirect to login if not authenticated
           <Navigate to="/login" />
-        )} */}
+        )}  */}
       </div>
     </Router>
     </div>

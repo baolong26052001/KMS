@@ -28,7 +28,7 @@ const statusImages = {
   
   const columns = [
     { field: 'id', headerName: 'Kiosk ID', minWidth: 100, flex: 1 },
-    { field: 'kioskName', headerName: 'Kiosk Name', minWidth: 100, flex: 1 },
+    { field: 'kioskName', headerName: 'Kiosk Name', minWidth: 120, flex: 1 },
     { field: 'stationCode', headerName: 'Station', minWidth: 100, flex: 1 },
     {
       field: 'kioskStatus',

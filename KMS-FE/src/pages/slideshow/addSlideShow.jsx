@@ -100,9 +100,17 @@ const AddSlideShow = () => {
                 id="startDate"
                 label="Start Date"
                 variant="outlined"
-                type="startDate"
+                type="date"
                 value={newSlide.startDate}
                 onChange={(e) => handleInputChange('startDate', e.target.value)}
+              />
+              <TextField
+                id="endDate"
+                label="End Date"
+                variant="outlined"
+                type="date"
+                value={newSlide.endDate}
+                onChange={(e) => handleInputChange('endDate', e.target.value)}
               />
               <Box sx={{ display: 'flex', gap: '8px' }}>
                 <Button variant="contained" fullWidth onClick={handleSave}>

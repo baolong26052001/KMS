@@ -12,7 +12,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 import '../login/login.css';
 
-const Login = () => {
+const Login = ({onLogin }) => {
   const navigate = useNavigate();
   const [values, setValues] = useState({
     username: '',
@@ -56,6 +56,7 @@ const Login = () => {
         console.log('Login successful:', data.message);
         // Redirect to /dashboard
         navigate('/dashboard'); 
+        onLogin();
       } else {
         console.error('Login failed:', data.message);
         // Handle login failure, show error message, etc.
@@ -69,47 +70,51 @@ const Login = () => {
   };
 
   return (
-    <div className="Login-Form">
-      <FormControl fullWidth variant="outlined" margin="normal">
-        <InputLabel htmlFor="outlined-username">Username</InputLabel>
-        <OutlinedInput
-          id="outlined-username"
-          value={values.username}
-          onChange={handleChange('username')}
-          label="Username"
-        />
-      </FormControl>
+    <div className='login'>
+      <div className='Login-field'>
+        <div className="Login-Form">
+          <FormControl fullWidth variant="outlined" margin="normal">
+            <InputLabel htmlFor="outlined-username">Username</InputLabel>
+            <OutlinedInput
+              id="outlined-username"
+              value={values.username}
+              onChange={handleChange('username')}
+              label="Username"
+            />
+          </FormControl>
 
-      <FormControl fullWidth variant="outlined" margin="normal">
-        <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
-        <OutlinedInput
-          id="outlined-adornment-password"
-          type={values.showPassword ? 'text' : 'password'}
-          value={values.password}
-          onChange={handleChange('password')}
-          endAdornment={
-            <InputAdornment position="end">
-              <IconButton
-                onClick={handleShowPassword}
-                edge="end"
-                aria-label="toggle password visibility"
-              >
-                {values.showPassword ? <VisibilityOff /> : <Visibility />}
-              </IconButton>
-            </InputAdornment>
-          }
-          label="Password"
-        />
-      </FormControl>
+          <FormControl fullWidth variant="outlined" margin="normal">
+            <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+            <OutlinedInput
+              id="outlined-adornment-password"
+              type={values.showPassword ? 'text' : 'password'}
+              value={values.password}
+              onChange={handleChange('password')}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={handleShowPassword}
+                    edge="end"
+                    aria-label="toggle password visibility"
+                  >
+                    {values.showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              }
+              label="Password"
+            />
+          </FormControl>
 
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={onFinish}
-        disabled={values.loading} // Disable the button during loading
-      >
-        {values.loading ? 'Signing In...' : 'Sign In'}
-      </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={onFinish}
+            disabled={values.loading} // Disable the button during loading
+          >
+            {values.loading ? 'Signing In...' : 'Sign In'}
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };
