@@ -50,7 +50,7 @@ namespace KMS.Controllers
 
         [HttpGet]
         [Route("FilterTransactionLog")]
-        public JsonResult FilterTransactionLog([FromQuery] string? transactionType = null, [FromQuery] string? stationName = null, [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
+        public JsonResult FilterTransactionLog([FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
         {
             string query = "SELECT tl.id, tl.transactionDate, tl.kioskId, k.kioskName, tl.memberId, m.fullName, tl.transactionId, st.stationName, tl.transactionType, tl.status " +
                 "FROM LTransactionLog tl, TKiosk k, LMember m, LAccount a, TStation st " +
@@ -58,27 +58,29 @@ namespace KMS.Controllers
 
             List<SqlParameter> parameters = new List<SqlParameter>();
 
-            if (!string.IsNullOrEmpty(transactionType))
-            {
-                query += " AND " + "tl.transactionType LIKE @transactionType ";
-                parameters.Add(new SqlParameter("@transactionType", "%" + transactionType + "%"));
-            }
+            //if (!string.IsNullOrEmpty(transactionType))
+            //{
+            //    query += " AND " + " tl.transactionType LIKE @transactionType ";
+            //    parameters.Add(new SqlParameter("@transactionType", "%" + transactionType + "%"));
+            //}
 
-            if (!string.IsNullOrEmpty(stationName))
-            {
-                query += (parameters.Count == 0 ? " " : "AND ") + "st.stationName LIKE @stationName ";
-                parameters.Add(new SqlParameter("@stationName", "%" + stationName + "%"));
-            }
+            //if (!string.IsNullOrEmpty(stationName))
+            //{
+            //    query += (parameters.Count == 0 ? " " : " AND ") + " st.stationName LIKE @stationName ";
+            //    parameters.Add(new SqlParameter("@stationName", "%" + stationName + "%"));
+            //}
 
             if (startDate.HasValue)
             {
-                query += (parameters.Count == 0 ? " " : "AND ") + "tl.transactionDate >= @startDate ";
+                startDate = startDate.Value.Date.AddHours(0).AddMinutes(0).AddSeconds(0);
+                query += " AND " + " tl.transactionDate >= @startDate ";
                 parameters.Add(new SqlParameter("@startDate", startDate.Value));
             }
 
             if (endDate.HasValue)
             {
-                query += (parameters.Count == 0 ? " " : "AND ") + "tl.transactionDate <= @endDate ";
+                endDate = endDate.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
+                query += " AND " + " tl.transactionDate <= @endDate ";
                 parameters.Add(new SqlParameter("@endDate", endDate.Value));
             }
 
