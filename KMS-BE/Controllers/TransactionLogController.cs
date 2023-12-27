@@ -26,7 +26,7 @@ namespace KMS.Controllers
         [Route("ShowTransactionLog")]
         public JsonResult GetTransactionLog()
         {
-            string query = "select tl.transactionDate, tl.kioskId, tl.memberId, tl.transactionId, st.stationName, tl.transactionType, tl.kioskRemainingMoney, tl.status " +
+            string query = "select tl.id, tl.transactionDate, tl.kioskId, tl.memberId, tl.transactionId, st.stationName, tl.transactionType, tl.kioskRemainingMoney, tl.status " +
                 "from LTransactionLog tl, TKiosk k, LMember m, LAccount a, TStation st " +
                 "where tl.kioskId = k.id and tl.memberId = m.id and tl.accountId = a.id and tl.stationId = st.id";
             DataTable table = _exQuery.ExecuteRawQuery(query);
@@ -37,7 +37,7 @@ namespace KMS.Controllers
         [Route("ShowTransactionLog/{id}")]
         public JsonResult GetTransactionLogById(int id)
         {
-            string query = "SELECT tl.transactionDate, tl.kioskId, tl.memberId, tl.transactionId, st.stationName, tl.transactionType, tl.kioskRemainingMoney, tl.status " +
+            string query = "SELECT tl.id, tl.transactionDate, tl.kioskId, tl.memberId, tl.transactionId, st.stationName, tl.transactionType, tl.kioskRemainingMoney, tl.status " +
                 "FROM LTransactionLog tl, TKiosk k, LMember m, LAccount a, TStation st " +
                 "WHERE tl.kioskId = k.id AND tl.memberId = m.id AND tl.accountId = a.id AND tl.stationId = st.id AND tl.transactionId = @transactionId";
 
@@ -52,7 +52,7 @@ namespace KMS.Controllers
         [Route("FilterTransactionLog")]
         public JsonResult FilterTransactionLog([FromQuery] string? transactionType = null, [FromQuery] string? stationName = null, [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
         {
-            string query = "SELECT tl.transactionDate, tl.kioskId, tl.memberId, tl.transactionId, st.stationName, tl.transactionType, tl.status " +
+            string query = "SELECT tl.id, tl.transactionDate, tl.kioskId, tl.memberId, tl.transactionId, st.stationName, tl.transactionType, tl.status " +
                 "FROM LTransactionLog tl, TKiosk k, LMember m, LAccount a, TStation st " +
                 "WHERE tl.kioskId = k.id AND tl.memberId = m.id AND tl.accountId = a.id AND tl.stationId = st.id ";
 
@@ -91,7 +91,7 @@ namespace KMS.Controllers
         [Route("SearchTransactionLog")]
         public JsonResult SearchTransactionLog(string searchQuery)
         {
-            string query = "SELECT tl.transactionDate, tl.kioskId, tl.memberId, tl.transactionId, st.stationName, tl.transactionType, tl.status " +
+            string query = "SELECT tl.id, tl.transactionDate, tl.kioskId, tl.memberId, tl.transactionId, st.stationName, tl.transactionType, tl.status " +
                 "FROM LTransactionLog tl, TKiosk k, LMember m, LAccount a, TStation st " +
                 "WHERE tl.kioskId = k.id AND tl.memberId = m.id AND tl.accountId = a.id AND tl.stationId = st.id AND " +
                 "(tl.kioskId LIKE @searchQuery OR " +
