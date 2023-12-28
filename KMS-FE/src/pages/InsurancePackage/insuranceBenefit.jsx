@@ -73,9 +73,9 @@ const CustomToolbar = ({ onButtonClick, selectedRows }) => {
 const ViewButton = ({ rowId, label, onClick }) => {
   const navigate = useNavigate();
   const handleClick = (event) => {
-    event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
+    event.stopPropagation(); 
     onClick(rowId);
-    navigate(`/viewPackageDetail/${rowId}`);
+    navigate(`/benefitDetail/${rowId}`);
   };
 
   return (
@@ -87,10 +87,15 @@ const ViewButton = ({ rowId, label, onClick }) => {
   );
 };
 
-const EditButton = ({ rowId, label, onClick }) => {
+const EditButton = ({ rowId, label, onClick}) => {
+  const { id: packageId } = useParams();
+  const { packageName } = useParams();
+  const navigate = useNavigate();
     const handleClick = (event) => {
-      event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
+      event.stopPropagation(); 
       onClick(rowId);
+      console.log(packageId, packageName)
+      navigate(`/editBenefit/${rowId}`, { state: { packageId, packageName } });
     };
   
     return (
@@ -100,6 +105,10 @@ const EditButton = ({ rowId, label, onClick }) => {
         </Button>
       </Box>
     );
+  };
+
+  const formatNumber = (value) => {
+    return value.toLocaleString('vi-VN').replace(/,/g, '.');
   };
 
 function createData(id, content, coverage, description, dateModified, dateCreated) {
@@ -132,6 +141,7 @@ const columns = [
     renderCell: (params) => (
         <EditButton
         rowId={params.row.id}
+        packageId = {params.row.packageId}
         label="Edit"
         onClick={handleButtonClick}
       />
@@ -139,8 +149,18 @@ const columns = [
   },
   { field: 'id', headerName: 'Package Benefit ID', minWidth: 180, flex: 1,},
   { field: 'content', headerName: 'Content', minWidth: 300, flex: 1,},
-  { field: 'coverage', headerName: 'Coverage', minWidth: 150, flex: 1,},
-  { field: 'description', headerName: 'Description', minWidth: 300, flex: 1,},
+  { field: 'coverage', headerName: 'Coverage', minWidth: 150, flex: 1, renderCell: (params) => formatNumber(params.value)},
+  { 
+    field: 'description', 
+    headerName: 'Description', 
+    minWidth: 600, 
+    flex: 1,
+    renderCell: (params) => (
+      <div style={{ whiteSpace: 'pre-wrap'}} title={params.value}>
+        {params.value}
+      </div>
+    ),
+  },
   {
     field: 'dateModified',
     headerName: 'Date Modified',
@@ -209,7 +229,7 @@ const InsurancePackageDetail = () => {
     <div className="content"> 
 
         <div className="admin-dashboard-text-div pt-5"> 
-            <h1 className="h1-dashboard">Insurance Package Detail</h1>
+            <h1 className="h1-dashboard">Benefit</h1>
         </div>
             <div className="bigcarddashboard">
 

@@ -84,9 +84,11 @@ const ViewButton = ({ rowId, label, onClick, packageName }) => {
 };
 
 const EditButton = ({ rowId, label, onClick }) => {
+  const navigate = useNavigate();
     const handleClick = (event) => {
       event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
       onClick(rowId);
+      navigate(`/editInsurancePackage/${rowId}`);
     };
   
     return (
@@ -96,6 +98,10 @@ const EditButton = ({ rowId, label, onClick }) => {
         </Button>
       </Box>
     );
+  };
+
+  const formatNumber = (value) => {
+    return value.toLocaleString('vi-VN').replace(/,/g, '.');
   };
 
 function createData(id, packageName, insuranceType, duration, payType, annualFee, dateModified, dateCreated) {
@@ -139,7 +145,12 @@ const columns = [
   { field: 'insuranceType', headerName: 'Insurance Type', minWidth: 170, flex: 1,},
   { field: 'duration', headerName: 'Duration', minWidth: 150, flex: 1,},
   { field: 'payType', headerName: 'Payment Frequency', minWidth: 150, flex: 1,},
-  { field: 'annualFee', headerName: 'Annual Fee', minWidth: 150, flex: 1,},
+  { field: 'annualFee', 
+    headerName: 'Fee', 
+    minWidth: 150, 
+    flex: 1,
+    renderCell: (params) => formatNumber(params.value)
+  },
   {
     field: 'dateModified',
     headerName: 'Date Modified',
@@ -157,7 +168,7 @@ const columns = [
 
 const rows = [];
 
-const handleButtonClick = (id, packageName) => {
+const handleButtonClick = (id) => {
   // Handle button click, e.g., navigate to another page
   console.log(`Button clicked for row with ID: ${id}`);
 };
@@ -230,7 +241,7 @@ const InsurancePackage = () => {
             }
           
             const updatedRows = filteredRows.map(row =>
-              createData(row.id, row.packageName, row.insuranceType, row.duration, row.payType, row.annualFee, row.dateModified, row.dateCreated)
+              createData(row.id, row.packageName, row.typeName, row.duration, row.payType, row.fee, row.dateModified, row.dateCreated)
             );
           
             setRows(updatedRows); // Update the component state with the combined data

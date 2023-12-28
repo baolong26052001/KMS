@@ -101,6 +101,9 @@ const App = () => {
                     <Route path="/insurancePackage" element={<RouteInsurancePackage />} />
                     <Route path="/viewPackageDetail/:id/:packageName" element={<RouteViewInsurancePackage />} />
                     <Route path="/addInsurancePackage" element={<RouteAddInsurancePackage />} />
+                    <Route path="/editInsurancePackage/:id" element={<RouteEditInsurancePackage />} />
+                    <Route path="/editBenefit/:id" element={<RouteEditBenefit />} />
+                    
                     {/* Route for Insurance Benefit*/}
                     <Route path="/addBenefit/:id/:packageName" element={<RouteAddBenefit />} />
                     
@@ -154,13 +157,15 @@ const RouteViewUser = React.lazy(() => import('./pages/user/viewUser'));
 const RouteKioskDetails = React.lazy(() => import('./pages/kiosk-setup/viewKioskDetails'));
 const RouteKioskHardwareDetails = React.lazy(() => import('./pages/kiosk-hardware/viewKioskHardware'));
 const RouteStationDetails = React.lazy(() => import('./pages/station/viewStation'));
-const RouteViewInsurancePackage = React.lazy(() => import('./pages/InsurancePackage/viewPackageDetail'));
+const RouteViewInsurancePackage = React.lazy(() => import('./pages/InsurancePackage/insuranceBenefit'));
 
 // Edit Route
 const RouteEditUser = React.lazy(() => import('./pages/user/editUser'));
 const RouteEditGroup = React.lazy(() => import('./pages/usergroup/editGroup'));
 const RouteEditStation = React.lazy(() => import('./pages/station/editStation'));
 const RouteEditKioskSetup = React.lazy(() => import('./pages/kiosk-setup/editKiosk'));
+const RouteEditBenefit = React.lazy(() => import('./pages/InsurancePackage/editBenefit'));
+const RouteEditInsurancePackage = React.lazy(() => import('./pages/InsurancePackage/editInsurancePackage'));
 
 // Add Route
 const RouteAddUser = React.lazy(() => import('./pages/user/addUser'));

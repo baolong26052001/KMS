@@ -15,7 +15,7 @@ const AddInsurancePackage = () => {
     insuranceType: '',
     duration: '',
     payType: '',
-    annualFee: '',
+    fee: '',
   });
 
   const handleInputChange = (key, value) => {
@@ -104,11 +104,11 @@ const AddInsurancePackage = () => {
                 onChange={(e) => handleInputChange('payType', e.target.value)}
               />
                <TextField
-                id="annualFee"
-                label="Annual Fee"
+                id="fee"
+                label="Fee"
                 variant="outlined"
-                value={newInsurancePackage.annualFee}
-                onChange={(e) => handleInputChange('annualFee', e.target.value)}
+                value={newInsurancePackage.fee}
+                onChange={(e) => handleInputChange('fee', e.target.value)}
               />
               <Box sx={{ display: 'flex', gap: '8px' }}>
                 <Button variant="contained" fullWidth onClick={handleSave}>
