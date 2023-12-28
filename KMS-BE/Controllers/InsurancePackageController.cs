@@ -29,7 +29,7 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackage")] // show ra có bao nhiêu package (packageA,packageB,packageC,...)
         public JsonResult GetInsurancePackage()
         {
-            string query = "select ipack.id, ipack.packageName, itype.typeName as insuranceType, ipack.duration, ipack.payType, ipack.fee, ipack.dateModified, ipack.dateCreated " +
+            string query = "select ipack.id, ipack.packageName, itype.typeName, ipack.duration, ipack.payType, ipack.fee, ipack.dateModified, ipack.dateCreated " +
                 "from InsurancePackage ipack, InsuranceType itype " +
                 "where ipack.insuranceType = itype.id;";
 
@@ -41,7 +41,7 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackage/{id}")] // hiện thông tin khi ở màn hình edit package
         public JsonResult GetInsurancePackageById(int id)
         {
-            string query = "select ipack.id, ipack.packageName, itype.typeName as insuranceType, ipack.duration, ipack.payType, ipack.fee, ipack.dateModified, ipack.dateCreated " +
+            string query = "select ipack.id, ipack.packageName, itype.typeName, ipack.duration, ipack.payType, ipack.fee, ipack.dateModified, ipack.dateCreated " +
                 "from InsurancePackage ipack, InsuranceType itype " +
                 "where ipack.insuranceType = itype.id and ipack.id=@id ";
 
@@ -405,7 +405,7 @@ namespace KMS.Controllers
         [Route("SearchInsurancePackage")]
         public JsonResult SearchInsurancePackage(string searchQuery)
         {
-            string query = "SELECT ipack.id, ipack.packageName, itype.typeName AS insuranceType, ipack.duration, ipack.payType, ipack.fee, ipack.dateModified, ipack.dateCreated " +
+            string query = "SELECT ipack.id, ipack.packageName, itype.typeName, ipack.duration, ipack.payType, ipack.fee, ipack.dateModified, ipack.dateCreated " +
                "FROM InsurancePackage ipack " +
                "JOIN InsuranceType itype ON ipack.insuranceType = itype.id " +
                "WHERE ipack.id LIKE @searchQuery OR " +
@@ -430,7 +430,7 @@ namespace KMS.Controllers
         [Route("FilterInsurancePackage")]
         public JsonResult FilterInsurancePackage([FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
         {
-            string query = "SELECT ipack.id, ipack.packageName, itype.typeName AS insuranceType, ipack.duration, ipack.payType, ipack.fee, ipack.dateModified, ipack.dateCreated " +
+            string query = "SELECT ipack.id, ipack.packageName, itype.typeName, ipack.duration, ipack.payType, ipack.fee, ipack.dateModified, ipack.dateCreated " +
                "FROM InsurancePackage ipack " +
                "JOIN InsuranceType itype ON ipack.insuranceType = itype.id ";
 
