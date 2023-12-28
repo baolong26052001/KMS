@@ -36,6 +36,27 @@ namespace KMS.Controllers
         }
 
         [HttpGet]
+        [Route("ShowInsurancePackage/{id}")] // hiện thông tin khi ở màn hình edit insurance
+        public JsonResult GetInsurancePackageById(int id)
+        {
+            string query = "select ipack.id, ipack.packageName, itype.typeName as insuranceType, ipack.packageGroup, ipack.duration, ipack.payType, ipack.annualFee, ipack.dateModified, ipack.dateCreated " +
+                "from InsurancePackage ipack, InsuranceType itype " +
+                "where ipack.insuranceType = itype.id and ipack.id=@id ";
+
+            SqlParameter parameter = new SqlParameter("@id", id);
+            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+
+            if (table.Rows.Count > 0)
+            {
+                return new JsonResult(table);
+            }
+            else
+            {
+                return new JsonResult("Insurance Package not found");
+            }
+        }
+
+        [HttpGet]
         [Route("ShowInsurancePackageDetail/{id}")] // khi ấn vào view package A, thì sẽ show ra benefit của package A
         public JsonResult GetInsurancePackageDetail(int id)
         {

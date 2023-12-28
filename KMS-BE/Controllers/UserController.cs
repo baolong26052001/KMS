@@ -113,7 +113,7 @@ namespace KMS.Controllers
                 string query = "INSERT INTO TAudit (action, ipAddress, macAddress, dateCreated) VALUES ('Login', @IpAddress, @Ipv6, GETDATE())";
                 SqlParameter[] parameters =
                 {
-                    new SqlParameter("@IpAddress", ip.AddressList[5].ToString()),
+                    new SqlParameter("@IpAddress", ip.AddressList[6].ToString()),
                     new SqlParameter("@Ipv6", ip.AddressList[4].ToString()),
                 };
                 _exQuery.ExecuteRawQuery(query, parameters);
