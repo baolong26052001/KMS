@@ -80,9 +80,9 @@ namespace KMS.Models
 
             modelBuilder.Entity<Benefit>(entity =>
             {
-                entity.ToTable("Benefit");
+                entity.HasNoKey();
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.ToTable("Benefit");
 
                 entity.Property(e => e.Content)
                     .HasMaxLength(50)
@@ -98,18 +98,20 @@ namespace KMS.Models
                     .HasColumnType("datetime")
                     .HasColumnName("dateModified");
 
-                entity.Property(e => e.Description)
-                    .HasMaxLength(50)
-                    .HasColumnName("description");
+                entity.Property(e => e.Description).HasColumnName("description");
+
+                entity.Property(e => e.Id)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("id");
 
                 entity.Property(e => e.PackageId).HasColumnName("packageId");
             });
 
             modelBuilder.Entity<BenefitDetail>(entity =>
             {
-                entity.ToTable("BenefitDetail");
+                entity.HasNoKey();
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.ToTable("BenefitDetail");
 
                 entity.Property(e => e.BenefitId).HasColumnName("benefitId");
 
@@ -126,15 +128,17 @@ namespace KMS.Models
                 entity.Property(e => e.DateModified)
                     .HasColumnType("datetime")
                     .HasColumnName("dateModified");
+
+                entity.Property(e => e.Id)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("id");
             });
 
             modelBuilder.Entity<InsurancePackage>(entity =>
             {
+                entity.HasNoKey();
+
                 entity.ToTable("InsurancePackage");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.AnnualFee).HasColumnName("annualFee");
 
                 entity.Property(e => e.DateCreated)
                     .HasColumnType("datetime")
@@ -146,9 +150,13 @@ namespace KMS.Models
 
                 entity.Property(e => e.Duration).HasColumnName("duration");
 
-                entity.Property(e => e.InsuranceType).HasColumnName("insuranceType");
+                entity.Property(e => e.Fee).HasColumnName("fee");
 
-                entity.Property(e => e.PackageGroup).HasColumnName("packageGroup");
+                entity.Property(e => e.Id)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("id");
+
+                entity.Property(e => e.InsuranceType).HasColumnName("insuranceType");
 
                 entity.Property(e => e.PackageName)
                     .HasMaxLength(50)

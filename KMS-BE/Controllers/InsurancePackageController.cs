@@ -27,7 +27,7 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackage")] // show ra có bao nhiêu package (packageA,packageB,packageC,...)
         public JsonResult GetInsurancePackage()
         {
-            string query = "select ipack.id, ipack.packageName, itype.typeName as insuranceType, ipack.packageGroup, ipack.duration, ipack.payType, ipack.annualFee, ipack.dateModified, ipack.dateCreated " +
+            string query = "select ipack.id, ipack.packageName, itype.typeName as insuranceType, ipack.duration, ipack.payType, ipack.fee, ipack.dateModified, ipack.dateCreated " +
                 "from InsurancePackage ipack, InsuranceType itype " +
                 "where ipack.insuranceType = itype.id;";
 
@@ -39,7 +39,7 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackage/{id}")] // hiện thông tin khi ở màn hình edit insurance
         public JsonResult GetInsurancePackageById(int id)
         {
-            string query = "select ipack.id, ipack.packageName, itype.typeName as insuranceType, ipack.packageGroup, ipack.duration, ipack.payType, ipack.annualFee, ipack.dateModified, ipack.dateCreated " +
+            string query = "select ipack.id, ipack.packageName, itype.typeName as insuranceType, ipack.duration, ipack.payType, ipack.fee, ipack.dateModified, ipack.dateCreated " +
                 "from InsurancePackage ipack, InsuranceType itype " +
                 "where ipack.insuranceType = itype.id and ipack.id=@id ";
 
@@ -60,7 +60,7 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackageDetail/{id}")] // khi ấn vào view package A, thì sẽ show ra benefit của package A
         public JsonResult GetInsurancePackageDetail(int id)
         {
-            string query = "select b.id, b.content, b.coverage, b.description, ipack.packageName, itype.typeName, ipack.annualFee, b.dateModified, b.dateCreated " +
+            string query = "select b.id, b.content, b.coverage, b.description, ipack.packageName, itype.typeName, ipack.fee, b.dateModified, b.dateCreated " +
                 "from Benefit b, InsurancePackage ipack, InsuranceType itype " +
                 "where b.packageId = ipack.id and itype.id = ipack.insuranceType and ipack.id=@id";
 
@@ -102,8 +102,8 @@ namespace KMS.Controllers
         [Route("AddInsurancePackage")]
         public JsonResult AddInsurancePackage([FromBody] InsurancePackage insurancePackage)
         {
-            string query = "INSERT INTO InsurancePackage (packageName, insuranceType, duration, payType, annualFee, dateModified, dateCreated) " +
-                           "VALUES (@PackageName, @InsuranceType, @Duration, @PayType, @AnnualFee, GETDATE(), GETDATE())";
+            string query = "INSERT INTO InsurancePackage (packageName, insuranceType, duration, payType, fee, dateModified, dateCreated) " +
+                           "VALUES (@PackageName, @InsuranceType, @Duration, @PayType, @Fee, GETDATE(), GETDATE())";
             string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Add', 'InsurancePackage', GETDATE(), GETDATE(), 1)";
 
             SqlParameter[] parameters =
@@ -112,7 +112,7 @@ namespace KMS.Controllers
                 new SqlParameter("@InsuranceType", insurancePackage.InsuranceType),
                 new SqlParameter("@Duration", insurancePackage.Duration),
                 new SqlParameter("@PayType", insurancePackage.PayType),
-                new SqlParameter("@AnnualFee", insurancePackage.AnnualFee),
+                new SqlParameter("@Fee", insurancePackage.Fee),
             };
             SqlParameter[] parameters2 = { };
 
@@ -299,7 +299,7 @@ namespace KMS.Controllers
         {
             string query = "UPDATE InsurancePackage " +
                            "SET packageName = @PackageName, insuranceType = @InsuranceType, duration = @Duration, " +
-                           "payType = @PayType, annualFee = @AnnualFee, dateModified = GETDATE() " +
+                           "payType = @PayType, fee = @Fee, dateModified = GETDATE() " +
                            "WHERE id = @id";
             string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Edit', 'InsurancePackage', GETDATE(), GETDATE(), 1)";
 
@@ -310,7 +310,7 @@ namespace KMS.Controllers
                 new SqlParameter("@InsuranceType", insurancePackage.InsuranceType),
                 new SqlParameter("@Duration", insurancePackage.Duration),
                 new SqlParameter("@PayType", insurancePackage.PayType), // đóng tiền theo năm hoặc tháng
-                new SqlParameter("@AnnualFee", insurancePackage.AnnualFee),
+                new SqlParameter("@Fee", insurancePackage.Fee),
                 
             };
             SqlParameter[] parameters2 = { };
@@ -361,7 +361,7 @@ namespace KMS.Controllers
         [Route("SearchInsurancePackage")]
         public JsonResult SearchInsurancePackage(string searchQuery)
         {
-            string query = "SELECT ipack.id, ipack.packageName, itype.typeName AS insuranceType, ipack.packageGroup, ipack.duration, ipack.payType, ipack.annualFee, ipack.dateModified, ipack.dateCreated " +
+            string query = "SELECT ipack.id, ipack.packageName, itype.typeName AS insuranceType, ipack.duration, ipack.payType, ipack.fee, ipack.dateModified, ipack.dateCreated " +
                "FROM InsurancePackage ipack " +
                "JOIN InsuranceType itype ON ipack.insuranceType = itype.id " +
                "WHERE ipack.id LIKE @searchQuery OR " +
@@ -369,7 +369,7 @@ namespace KMS.Controllers
                "itype.typeName LIKE @searchQuery OR " +
                "ipack.duration LIKE @searchQuery OR " +
                "ipack.payType LIKE @searchQuery OR " +
-               "ipack.annualFee LIKE @searchQuery";
+               "ipack.fee LIKE @searchQuery";
 
 
 
@@ -386,7 +386,7 @@ namespace KMS.Controllers
         [Route("FilterInsurancePackage")]
         public JsonResult FilterInsurancePackage([FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
         {
-            string query = "SELECT ipack.id, ipack.packageName, itype.typeName AS insuranceType, ipack.packageGroup, ipack.duration, ipack.payType, ipack.annualFee, ipack.dateModified, ipack.dateCreated " +
+            string query = "SELECT ipack.id, ipack.packageName, itype.typeName AS insuranceType, ipack.duration, ipack.payType, ipack.fee, ipack.dateModified, ipack.dateCreated " +
                "FROM InsurancePackage ipack " +
                "JOIN InsuranceType itype ON ipack.insuranceType = itype.id ";
 

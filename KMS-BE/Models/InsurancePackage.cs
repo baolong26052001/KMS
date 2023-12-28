@@ -9,10 +9,9 @@ namespace KMS.Models
         public string? PackageName { get; set; }
         public int? InsuranceType { get; set; }
         public string? Provider { get; set; }
-        public int? PackageGroup { get; set; }
         public int? Duration { get; set; }
         public string? PayType { get; set; }
-        public double? AnnualFee { get; set; }
+        public int? Fee { get; set; }
         public DateTime? DateModified { get; set; }
         public DateTime? DateCreated { get; set; }
     }
