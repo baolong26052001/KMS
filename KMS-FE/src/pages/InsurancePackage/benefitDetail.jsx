@@ -143,14 +143,14 @@ const columns = [
     ),
   },
   { field: 'id', headerName: 'Benefit Detail ID', minWidth: 180, flex: 1,},
-  { field: 'content', headerName: 'Content', minWidth: 300, flex: 1,},
-  { field: 'coverage', headerName: 'Coverage', minWidth: 150, flex: 1, renderCell: (params) => formatNumber(params.value)},
   { 
     field: 'benefitId', 
     headerName: 'Benefit Id', 
     minWidth: 120, 
     flex: 1,
   },
+  { field: 'content', headerName: 'Content', minWidth: 300, flex: 1,},
+  { field: 'coverage', headerName: 'Coverage', minWidth: 150, flex: 1, renderCell: (params) => formatNumber(params.value)},
   {
     field: 'dateModified',
     headerName: 'Date Modified',
