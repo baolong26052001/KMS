@@ -2,13 +2,14 @@ import React, { useState, useEffect  } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import { useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import MenuItem from '@mui/material/MenuItem';
 
 const AddInsurancePackage = () => {
   const navigate = useNavigate();
   const API_URL = "https://localhost:7017/";
-
+  const { id } = useParams();
+  const [insType, setinsType] = useState([]);
   // State to store user information
   const [newInsurancePackage, setnewInsurancePackage] = useState({
     packageName: '',
@@ -17,6 +18,26 @@ const AddInsurancePackage = () => {
     payType: '',
     fee: '',
   });
+
+  useEffect(() => {
+
+    const fetchInsuranceType = async () => {
+        try {
+          const response = await fetch(`${API_URL}api/InsuranceType/ShowInsuranceType`);
+          if (response.ok) {
+            const data = await response.json();
+            setinsType(data);
+          } else {
+            console.log('Failed to fetch');
+          }
+        } catch (error) {
+          console.error('Error fetching:', error);
+        }
+      };
+    
+    fetchInsuranceType();
+    
+  }, [API_URL, id]);
 
   const handleInputChange = (key, value) => {
     setnewInsurancePackage((prev) => ({
@@ -83,12 +104,19 @@ const AddInsurancePackage = () => {
                 onChange={(e) => handleInputChange('packageName', e.target.value)}
               />
               <TextField
-                id="insuranceType"
-                label="Insurance Type"
-                variant="outlined"
-                value={newInsurancePackage.insuranceType}
-                onChange={(e) => handleInputChange('insuranceType', e.target.value)}
-              />
+              id="insuranceType"
+              label="Insurance Type"
+              variant="outlined"
+              value={newInsurancePackage.insuranceType}
+              onChange={(e) => handleInputChange('insuranceType', e.target.value)}
+              select
+              >
+              {insType.map((type) => (
+                  <MenuItem key={type.id} value={type.id}>
+                  {type.typeName} 
+                  </MenuItem>
+              ))}
+              </TextField>
               <TextField
                 id="duration"
                 label="Duration"
