@@ -106,6 +106,9 @@ const App = () => {
                     
                     {/* Route for Insurance Benefit*/}
                     <Route path="/addBenefit/:id/:packageName" element={<RouteAddBenefit />} />
+                    <Route path="/benefitDetail/:id" element={<RouteBenefitDetail />} />
+                    <Route path="/addBenefitDetail/:id" element={<RouteAddBenefitDetail />} />
+                    <Route path="/editBenefitDetail/:id" element={<RouteEditBenefitDetail />} />
                     
                     
                     <Route path="/transactionlogs" element={<RouteTransactionLogs />} />
@@ -150,6 +153,7 @@ const RouteAudit = React.lazy(() => import('./pages/audit/audit'));
 const RouteKioskHealth = React.lazy(() => import('./pages/kioskHealth/kioskHealth'));
 const RouteInsuranceTransaction = React.lazy(() => import('./pages/insuranceTransaction/insuranceTransaction'));
 const RouteInsurancePackage = React.lazy(() => import('./pages/InsurancePackage/insurancePackage'));
+const RouteBenefitDetail = React.lazy(() => import('./pages/InsurancePackage/benefitDetail'));
 
 // view Route
 const RouteViewAccount = React.lazy(() => import('./pages/Account/viewAccount'));
@@ -159,6 +163,7 @@ const RouteKioskHardwareDetails = React.lazy(() => import('./pages/kiosk-hardwar
 const RouteStationDetails = React.lazy(() => import('./pages/station/viewStation'));
 const RouteViewInsurancePackage = React.lazy(() => import('./pages/InsurancePackage/insuranceBenefit'));
 
+
 // Edit Route
 const RouteEditUser = React.lazy(() => import('./pages/user/editUser'));
 const RouteEditGroup = React.lazy(() => import('./pages/usergroup/editGroup'));
@@ -166,6 +171,7 @@ const RouteEditStation = React.lazy(() => import('./pages/station/editStation'))
 const RouteEditKioskSetup = React.lazy(() => import('./pages/kiosk-setup/editKiosk'));
 const RouteEditBenefit = React.lazy(() => import('./pages/InsurancePackage/editBenefit'));
 const RouteEditInsurancePackage = React.lazy(() => import('./pages/InsurancePackage/editInsurancePackage'));
+const RouteEditBenefitDetail = React.lazy(() => import('./pages/InsurancePackage/editBenefitDetail'));
 
 // Add Route
 const RouteAddUser = React.lazy(() => import('./pages/user/addUser'));
@@ -173,6 +179,7 @@ const RouteAddGroup = React.lazy(() => import('./pages/usergroup/addGroup'));
 const RouteAddSlide = React.lazy(() => import('./pages/slideshow/addSlideShow'));
 const RouteAddInsurancePackage = React.lazy(() => import('./pages/InsurancePackage/addInsurancePackage'));
 const RouteAddBenefit = React.lazy(() => import('./pages/InsurancePackage/addBenefit'));
+const RouteAddBenefitDetail = React.lazy(() => import('./pages/InsurancePackage/addBenefitDetail'));
 const RouteAddStation = React.lazy(() => import('./pages/station/addStation'));
 const RouteAddKiosk = React.lazy(() => import('./pages/kiosk-setup/addKiosk'));
 

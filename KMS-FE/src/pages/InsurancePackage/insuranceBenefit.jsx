@@ -31,7 +31,7 @@ const CustomToolbar = ({ onButtonClick, selectedRows }) => {
       onButtonClick(buttonId);
       
       if (buttonId === 'Add') {
-        navigate(`/addBenefit/${id}`);
+        navigate(`/addBenefitDetail/${id}`);
   
       } else if (buttonId === 'Delete') {
   
@@ -229,14 +229,14 @@ const InsurancePackageDetail = () => {
     <div className="content"> 
 
         <div className="admin-dashboard-text-div pt-5"> 
-            <h1 className="h1-dashboard">Benefit</h1>
+            <h1 className="h1-dashboard">Insurance Benefits</h1>
         </div>
             <div className="bigcarddashboard">
 
             <div className="selected-package-name">
                 {packageName && (
                     <div style={{ color: '#2C3775' }}>
-                        <strong>Package: {packageName}</strong> 
+                        <strong>{packageName}</strong> 
                     </div>
                 )}
             </div>

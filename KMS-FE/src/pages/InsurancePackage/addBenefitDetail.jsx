@@ -6,17 +6,15 @@ import { useNavigate } from 'react-router-dom';
 import MenuItem from '@mui/material/MenuItem';
 import { useParams } from 'react-router-dom';
 
-const AddBenefit = () => {
+const AddBenefitDetail = () => {
   const navigate = useNavigate();
   const API_URL = "https://localhost:7017/";
   const { id } = useParams();
-  const { packageName } = useParams();
   // State to store user information
   const [newInsurancePackage, setnewInsurancePackage] = useState({
-    packageId: id,
+    benefitId: id,
     content: '',
     coverage: '',
-    description: '',
   });
 
   const handleInputChange = (key, value) => {
@@ -29,7 +27,7 @@ const AddBenefit = () => {
   const handleSave = async () => {
     try {
       // Assuming your API URL is correct
-      const response = await fetch(`${API_URL}api/InsurancePackage/AddBenefit`, {
+      const response = await fetch(`${API_URL}api/InsurancePackage/AddBenefitDetail`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -41,7 +39,7 @@ const AddBenefit = () => {
       console.log('Response Content:', await response.text());
 
       if (response.ok) {
-        navigate(`/viewPackageDetail/${id}/${packageName}`);
+        navigate(`/benefitDetail/${id}`);
         // Provide user feedback on successful save
         console.log('added successfully');
       } else {
@@ -53,13 +51,13 @@ const AddBenefit = () => {
   };
 
   const handleCancel = () => {
-    navigate(`/viewPackageDetail/${id}/${packageName}`);
+    navigate(`/benefitDetail/${id}`);
   };
 
   return (
     <div className="content">
       <div className="admin-dashboard-text-div pt-5">
-        <h1 className="h1-dashboard">Add Benefit</h1>
+        <h1 className="h1-dashboard">Add Benefit Detail</h1>
       </div>
       <div className="bigcarddashboard">
         <div className="App">
@@ -90,14 +88,6 @@ const AddBenefit = () => {
                 value={newInsurancePackage.coverage}
                 onChange={(e) => handleInputChange('coverage', e.target.value)}
               />
-              <TextField
-                id="description"
-                label="Description"
-                variant="outlined"
-                multiline
-                value={newInsurancePackage.description}
-                onChange={(e) => handleInputChange('description', e.target.value)}
-              />
               <Box sx={{ display: 'flex', gap: '8px' }}>
                 <Button variant="contained" fullWidth onClick={handleSave}>
                   Save
@@ -114,4 +104,4 @@ const AddBenefit = () => {
   );
 };
 
-export default AddBenefit;
+export default AddBenefitDetail;
