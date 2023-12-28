@@ -29,7 +29,7 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackage")] // show ra có bao nhiêu package (packageA,packageB,packageC,...)
         public JsonResult GetInsurancePackage()
         {
-            string query = "select ipack.id, ipack.packageName, itype.typeName, ipack.duration, ipack.payType, ipack.fee, ipack.dateModified, ipack.dateCreated " +
+            string query = "select ipack.id, ipack.packageName, itype.id as insuranceType, itype.typeName, ipack.duration, ipack.payType, ipack.fee, ipack.dateModified, ipack.dateCreated " +
                 "from InsurancePackage ipack, InsuranceType itype " +
                 "where ipack.insuranceType = itype.id;";
 
@@ -41,7 +41,7 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackage/{id}")] // hiện thông tin khi ở màn hình edit package
         public JsonResult GetInsurancePackageById(int id)
         {
-            string query = "select ipack.id, ipack.packageName, itype.typeName, ipack.duration, ipack.payType, ipack.fee, ipack.dateModified, ipack.dateCreated " +
+            string query = "select ipack.id, ipack.packageName, itype.id as insuranceType, itype.typeName, ipack.duration, ipack.payType, ipack.fee, ipack.dateModified, ipack.dateCreated " +
                 "from InsurancePackage ipack, InsuranceType itype " +
                 "where ipack.insuranceType = itype.id and ipack.id=@id ";
 
