@@ -247,7 +247,7 @@ namespace KMS.Controllers
         {
             string query = "UPDATE BenefitDetail " +
                            "SET content = @Content, coverage = @Coverage, " +
-                           "benefitId = @BenefitId, dateModified = GETDATE() " +
+                           "dateModified = GETDATE() " +
                            "WHERE id = @id";
             string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Edit', 'BenefitDetail', GETDATE(), GETDATE(), 1)";
 
@@ -256,7 +256,7 @@ namespace KMS.Controllers
                 new SqlParameter("@id", id),
                 new SqlParameter("@Content", benefitDetail.Content),
                 new SqlParameter("@Coverage", benefitDetail.Coverage),
-                new SqlParameter("@BenefitId", benefitDetail.BenefitId),
+                
 
             };
             SqlParameter[] parameters2 = { };
