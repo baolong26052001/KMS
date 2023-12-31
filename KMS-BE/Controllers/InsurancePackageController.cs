@@ -23,7 +23,15 @@ namespace KMS.Controllers
             _exQuery = exQuery;
         }
 
-        
+        [HttpGet]
+        [Route("ShowAllInfo")] 
+        public JsonResult GetAllInfo()
+        {
+            string query = "select packageName,fee from InsurancePackage\r\n\r\n\r\nSELECT\r\n    \r\n    b.content AS BenefitContent,\r\n    b.coverage AS BenefitCoverage,\r\n    b.description AS BenefitDescription\r\n   \r\nFROM\r\n    InsurancePackage ip\r\n    LEFT JOIN Benefit b ON ip.id = b.packageId\r\n    LEFT JOIN BenefitDetail bd ON b.id = bd.benefitId\r\n\r\n\r\nSELECT\r\n    \r\n    \r\n    \r\n    bd.content AS BenefitDetailContent,\r\n    bd.coverage AS BenefitDetailCoverage\r\n    \r\n\r\nFROM\r\n    InsurancePackage ip\r\n    LEFT JOIN Benefit b ON ip.id = b.packageId\r\n    LEFT JOIN BenefitDetail bd ON b.id = bd.benefitId";
+
+            DataTable table = _exQuery.ExecuteRawQuery(query);
+            return new JsonResult(table);
+        }
 
         [HttpGet]
         [Route("ShowInsurancePackage")] // show ra có bao nhiêu package (packageA,packageB,packageC,...)
