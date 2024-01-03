@@ -21,7 +21,7 @@ dayjs.locale('en'); // Set the locale to English
 
 const CustomToolbar = ({ onButtonClick, selectedRows }) => {
   const navigate = useNavigate();
-  const { handleDelete, handleClose, open } = useDeleteHook('Station/DeleteStation'); 
+  const { handleDelete, handleClose, open } = useDeleteHook('Slideshow/DeleteSlideshow'); 
 
   // const [open, setOpen] = React.useState(false);
   const handleButtonClick = (buttonId) => {
@@ -95,8 +95,8 @@ const EditButton = ({ rowId, label, onClick }) => {
   );
 };
 
-function createData(id, packageName, imgsrc, fileType, startDate, endDate) {
-  return {id, packageName, imgsrc, fileType, startDate, endDate};
+function createData(id, packageName, startDate, endDate) {
+  return {id, packageName, startDate, endDate};
 }
 
 const columns = [ 
@@ -131,20 +131,18 @@ const columns = [
     ),
   },
   { field: 'id', headerName: 'Package ID', minWidth: 100, flex: 1,},
-  { field: 'packageName', headerName: 'Package Name', minWidth: 200, flex: 1,},
-  { field: 'imgsrc', headerName: 'Image/Video', minWidth: 120, flex: 1,},
-  { field: 'fileType', headerName: 'File Type', minWidth: 120, flex: 1,},
+  { field: 'packageName', headerName: 'Package Name', minWidth: 250, flex: 1,},
   {
     field: 'startDate',
     headerName: 'Start Date',
-    minWidth: 200,
+    minWidth: 250,
     flex: 1,
   },
   {
     field: 'endDate',
     headerName: 'End Date',
     sortable: false,
-    minWidth: 200,
+    minWidth: 250,
     flex: 1,
   },
 ];
@@ -226,7 +224,7 @@ const Slideshow = () => {
             }
           
             const updatedRows = filteredRows.map(row =>
-              createData(row.id, row.packageName, row.imagevideo, row.fileType, row.startDate, row.endDate)
+              createData(row.id, row.packageName, row.startDate, row.endDate)
             );
           
             setRows(updatedRows); // Update the component state with the combined data
