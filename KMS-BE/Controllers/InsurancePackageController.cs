@@ -189,7 +189,7 @@ namespace KMS.Controllers
                 new SqlParameter("@Content", benefit.Content),
                 new SqlParameter("@Coverage", benefit.Coverage),
                 new SqlParameter("@Description", benefit.Description),
-                //asdabsnda
+ 
                 
             };
             SqlParameter[] parameters2 = { };
