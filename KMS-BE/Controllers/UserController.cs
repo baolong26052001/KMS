@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using KMS.Tools;
 using System.Net;
 using IPinfo;
+using System.Net.Sockets;
 
 namespace KMS.Controllers
 {
@@ -27,10 +28,6 @@ namespace KMS.Controllers
             _configuration = configuration;
             _exQuery = exQuery;
         }
-
-        
-
-        
 
         [HttpGet]
         [Route("ShowUsers")]
@@ -109,15 +106,32 @@ namespace KMS.Controllers
                 dbUser.LastLogin = DateTime.Now;
                 await _dbcontext.SaveChangesAsync();
 
-                
+
                 string query = "INSERT INTO TAudit (action, ipAddress, macAddress, dateCreated) VALUES ('Login', @IpAddress, @Ipv6, GETDATE())";
+
+                IPAddress ipv4 = null;
+                IPAddress ipv6 = null;
+
+                foreach (var address in ip.AddressList)
+                {
+                    if (address.AddressFamily == AddressFamily.InterNetwork) // IPv4
+                    {
+                        ipv4 = address;
+                    }
+                    else if (address.AddressFamily == AddressFamily.InterNetworkV6) // IPv6
+                    {
+                        ipv6 = address;
+                    }
+                }
+
                 SqlParameter[] parameters =
                 {
-                    new SqlParameter("@IpAddress", ip.AddressList[6].ToString()),
-                    new SqlParameter("@Ipv6", ip.AddressList[4].ToString()),
-                };
+                    new SqlParameter("@IpAddress", ipv4?.ToString()),
+                    new SqlParameter("@Ipv6", ipv6?.ToString()),
+};
+
                 _exQuery.ExecuteRawQuery(query, parameters);
-                
+
 
                 return Ok(new { message = "Login successful" });
                 

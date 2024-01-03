@@ -97,7 +97,7 @@ namespace KMS.Controllers
         }
 
         [HttpDelete]
-        [Route("DeleteInsuranceType")]
+        [Route("DeleteInsuranceType")]   
         public JsonResult DeleteInsuranceType([FromBody] List<int> insuranceTypeIds)
         {
             if (insuranceTypeIds == null || insuranceTypeIds.Count == 0)
