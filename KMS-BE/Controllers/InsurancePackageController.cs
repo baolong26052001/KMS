@@ -49,7 +49,7 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackage/{id}")] // hiện thông tin khi ở màn hình edit package
         public JsonResult GetInsurancePackageById(int id)
         {
-            string query = "select ipack.id, ipack.packageName, itype.id as insuranceType, itype.typeName, ipack.duration, ipack.payType, ipack.fee, ipack.dateModified, ipack.dateCreated " +
+            string query = "select ipack.id, ipack.packageName, itype.id as insuranceType, ipack.provider, itype.typeName, ipack.duration, ipack.payType, ipack.fee, ipack.dateModified, ipack.dateCreated " +
                 "from InsurancePackage ipack, InsuranceType itype " +
                 "where ipack.insuranceType = itype.id and ipack.id=@id ";
 
@@ -154,14 +154,15 @@ namespace KMS.Controllers
         [Route("AddInsurancePackage")]
         public JsonResult AddInsurancePackage([FromBody] InsurancePackage insurancePackage)
         {
-            string query = "INSERT INTO InsurancePackage (packageName, insuranceType, duration, payType, fee, dateModified, dateCreated) " +
-                           "VALUES (@PackageName, @InsuranceType, @Duration, @PayType, @Fee, GETDATE(), GETDATE())";
+            string query = "INSERT INTO InsurancePackage (packageName, insuranceType, provider, duration, payType, fee, dateModified, dateCreated) " +
+                           "VALUES (@PackageName, @InsuranceType, @Provider, @Duration, @PayType, @Fee, GETDATE(), GETDATE())";
             string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Add', 'InsurancePackage', GETDATE(), GETDATE(), 1)";
 
             SqlParameter[] parameters =
             {
                 new SqlParameter("@PackageName", insurancePackage.PackageName),
                 new SqlParameter("@InsuranceType", insurancePackage.InsuranceType),
+                new SqlParameter("@Provider", insurancePackage.Provider),
                 new SqlParameter("@Duration", insurancePackage.Duration),
                 new SqlParameter("@PayType", insurancePackage.PayType),
                 new SqlParameter("@Fee", insurancePackage.Fee),
