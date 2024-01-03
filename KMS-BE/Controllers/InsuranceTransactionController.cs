@@ -25,7 +25,7 @@ namespace KMS.Controllers
         [Route("ShowInsuranceTransaction")]
         public JsonResult GetInsuranceTransaction()
         {
-            string query = "SELECT itr.transactionDate, itr.id, itr.memberId,itr.contractId,ipa.packageName,it.typeName, " +
+            string query = "SELECT itr.transactionDate, itr.id,itr.memberId,itr.contractId,ipa.packageName,it.typeName, " +
                 "ipa.provider,itr.registrationDate,itr.expireDate,itr.annualPay,itr.status " +
 
                 "FROM InsuranceTransaction itr JOIN InsurancePackage ipa ON ipa.id = itr.packageId " +

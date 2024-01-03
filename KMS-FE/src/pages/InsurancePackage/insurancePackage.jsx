@@ -104,8 +104,8 @@ const EditButton = ({ rowId, label, onClick }) => {
     return value.toLocaleString('vi-VN').replace(/,/g, '.');
   };
 
-function createData(id, packageName, insuranceType, provider, duration, payType, annualFee, dateModified, dateCreated) {
-  return {id, packageName, insuranceType, provider, duration, payType, annualFee, dateModified, dateCreated};
+function createData(id, packageName, insuranceType, duration, payType, annualFee, dateModified, dateCreated) {
+  return {id, packageName, insuranceType, duration, payType, annualFee, dateModified, dateCreated};
 }
 
 const columns = [ 
@@ -143,7 +143,6 @@ const columns = [
   { field: 'id', headerName: 'Insurance Package ID', minWidth: 180, flex: 1,},
   { field: 'packageName', headerName: 'Package Name', minWidth: 170, flex: 1,},
   { field: 'insuranceType', headerName: 'Insurance Type', minWidth: 170, flex: 1,},
-  { field: 'provider', headerName: 'Provider', minWidth: 170, flex: 1,},
   { field: 'duration', headerName: 'Duration', minWidth: 150, flex: 1,},
   { field: 'payType', headerName: 'Payment Frequency', minWidth: 150, flex: 1,},
   { field: 'annualFee', 
@@ -217,7 +216,7 @@ const InsurancePackage = () => {
           } else if (searchTerm) {
             apiUrl = `${API_URL}api/InsurancePackage/SearchInsurancePackage?searchQuery=${encodeURIComponent(searchTerm)}`;
           }
-          console.log(apiUrl);
+    
           const [apiResponse, searchApiResponse] = await Promise.all([
             fetch(apiUrl),
             searchApi ? fetch(searchApi) : Promise.resolve(null),
@@ -242,7 +241,7 @@ const InsurancePackage = () => {
             }
           
             const updatedRows = filteredRows.map(row =>
-              createData(row.id, row.packageName, row.typeName, row.provider, row.duration, row.payType, row.fee, row.dateModified, row.dateCreated)
+              createData(row.id, row.packageName, row.typeName, row.duration, row.payType, row.fee, row.dateModified, row.dateCreated)
             );
           
             setRows(updatedRows); // Update the component state with the combined data

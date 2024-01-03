@@ -14,7 +14,6 @@ const EditInsurancePackage = () => {
   const [editedPackage, seteditedPackage] = useState({
     packageName: '',
     insuranceType: '',
-    provider: '',
     duration: '',
     payType: '',
     fee: '',
@@ -31,7 +30,6 @@ const EditInsurancePackage = () => {
           seteditedPackage({
             packageName: groupData[0].packageName,
             insuranceType: groupData[0].insuranceType, 
-            provider: groupData[0].provider,
             duration: groupData[0].duration,
             payType: groupData[0].payType,
             fee: groupData[0].fee,
@@ -139,13 +137,6 @@ const EditInsurancePackage = () => {
                 </MenuItem>
             ))}
             </TextField>
-            <TextField
-                id="provider"
-                label="Provider"
-                variant="outlined"
-                value={editedPackage.provider}
-                onChange={(e) => handleInputChange('provider', e.target.value)}
-              />
             <TextField
                 id="duration"
                 label="Duration"
