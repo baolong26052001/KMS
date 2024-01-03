@@ -14,6 +14,7 @@ const AddInsurancePackage = () => {
   const [newInsurancePackage, setnewInsurancePackage] = useState({
     packageName: '',
     insuranceType: '',
+    provider: '',
     duration: '',
     payType: '',
     fee: '',
@@ -117,6 +118,13 @@ const AddInsurancePackage = () => {
                   </MenuItem>
               ))}
               </TextField>
+              <TextField
+                id="provider"
+                label="Provider"
+                variant="outlined"
+                value={newInsurancePackage.provider}
+                onChange={(e) => handleInputChange('provider', e.target.value)}
+              />
               <TextField
                 id="duration"
                 label="Duration"
