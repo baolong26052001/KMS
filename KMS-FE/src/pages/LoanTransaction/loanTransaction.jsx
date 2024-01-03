@@ -38,8 +38,8 @@ const handleButtonClick = (id) => {
 
 
 
-function createData(id, memberId, loanId, loanTerm, debt, balance, transactionType, interestRate, isActive, loanDate) {
-  return {id, memberId, loanId, loanTerm, debt, balance, transactionType, interestRate, isActive, loanDate};
+function createData(id, memberId, accountId, loanTerm, debt, balance, transactionType, interestRate, isActive, loanDate) {
+  return {id, memberId, accountId, loanTerm, debt, balance, transactionType, interestRate, isActive, loanDate};
 }
 
 const columns = [
@@ -58,9 +58,9 @@ const columns = [
       />
     ),
   },
-  { field: 'id', headerName: 'Account ID', minWidth: 100, flex: 1,},
+  { field: 'id', headerName: 'Loan ID', minWidth: 100, flex: 1,},
   { field: 'memberId', headerName: 'Member ID', minWidth: 100, flex: 1,},
-  { field: 'loanId', headerName: 'Loan ID', minWidth: 100, flex: 1,},
+  { field: 'accountId', headerName: 'Account ID', minWidth: 100, flex: 1,},
   { field: 'loanTerm', headerName: 'Loan Term', minWidth: 150,  
     flex: 1,
     sortable: false,
@@ -187,7 +187,7 @@ const LoanTransaction = () => {
           }
         
           const updatedRows = filteredRows.map(row =>
-            createData(row.id, row.memberId, row.loanId, row.loanTerm, row.debt, row.balance, row.transactionType, row.interestRate, row.isActive, row.loanDate)
+            createData(row.id, row.memberId, row.accountId, row.loanTerm, row.debt, row.balance, row.transactionType, row.interestRate, row.isActive, row.loanDate)
           );
         
           setRows(updatedRows); 

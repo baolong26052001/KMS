@@ -116,7 +116,9 @@ const App = () => {
                     <Route path="/notificationlogs" element={<RouteNotificationLogs />} />
                     <Route path="/audit" element={<RouteAudit />} />
                     <Route path="/kioskhealth" element={<RouteKioskHealth />} />
-                    {/* <Route path="/login" element={<Login />} /> */}
+                    <Route
+                      path="/login"
+                    />
                   </Routes>
                 </React.Suspense>
               </div>
@@ -124,10 +126,10 @@ const App = () => {
           </Grid>
         </Box>
         </React.Fragment>
-        {/* ) : (
-          // Redirect to login if not authenticated
+         {/* ) : (
+           // Redirect to login if not authenticated
           <Navigate to="/login" />
-        )}  */}
+         )}  */}
       </div>
     </Router>
     </div>
@@ -162,7 +164,7 @@ const RouteKioskDetails = React.lazy(() => import('./pages/kiosk-setup/viewKiosk
 const RouteKioskHardwareDetails = React.lazy(() => import('./pages/kiosk-hardware/viewKioskHardware'));
 const RouteStationDetails = React.lazy(() => import('./pages/station/viewStation'));
 const RouteViewInsurancePackage = React.lazy(() => import('./pages/InsurancePackage/insuranceBenefit'));
-
+const RouteViewLoanTransaction = React.lazy(() => import('./pages/LoanTransaction/viewLoanTransaction'));
 
 // Edit Route
 const RouteEditUser = React.lazy(() => import('./pages/user/editUser'));

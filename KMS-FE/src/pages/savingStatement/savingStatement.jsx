@@ -37,8 +37,8 @@ const handleButtonClick = (id) => {
 
 
 
-function createData(id, memberId, savingId, savingTerm, balance, annualRate, status, dueDate, dateCreated) {
-  return {id, memberId, savingId, savingTerm, balance, annualRate, status, dueDate, dateCreated};
+function createData(id, memberId, accountId, savingTerm, balance, annualRate, status, dueDate, dateCreated) {
+  return {id, memberId, accountId, savingTerm, balance, annualRate, status, dueDate, dateCreated};
 }
 
 const columns = [
@@ -57,9 +57,9 @@ const columns = [
       />
     ),
   },
-  { field: 'id', headerName: 'Account ID', minWidth: 100, flex: 1,},
+  { field: 'id', headerName: 'Saving ID', minWidth: 100, flex: 1,},
   { field: 'memberId', headerName: 'Member ID', minWidth: 100, flex: 1,},
-  { field: 'savingId', headerName: 'Saving ID', minWidth: 100, flex: 1,},
+  { field: 'accountId', headerName: 'Account ID', minWidth: 100, flex: 1,},
   { field: 'savingTerm', headerName: 'Saving Term', minWidth: 150,  
     flex: 1,
     sortable: false,
@@ -178,7 +178,7 @@ const SavingStatement = () => {
           }
         
           const updatedRows = filteredRows.map(row =>
-            createData(row.id, row.memberId, row.savingId, row.savingTerm, row.balance, row.annualRate, row.status, row.dueDate, row.dateCreated)
+            createData(row.id, row.memberId, row.accountId, row.savingTerm, row.balance, row.annualRate, row.status, row.dueDate, row.dateCreated)
           );
         
           setRows(updatedRows); 

@@ -37,7 +37,7 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackage")] // show ra có bao nhiêu package (packageA,packageB,packageC,...)
         public JsonResult GetInsurancePackage()
         {
-            string query = "select ipack.id, ipack.packageName, itype.id as insuranceType, itype.typeName, ipack.duration, ipack.payType, ipack.fee, ipack.dateModified, ipack.dateCreated " +
+            string query = "select ipack.id, ipack.packageName, itype.id as insuranceType, ipack.provider, itype.typeName, ipack.duration, ipack.payType, ipack.fee, ipack.dateModified, ipack.dateCreated " +
                 "from InsurancePackage ipack, InsuranceType itype " +
                 "where ipack.insuranceType = itype.id;";
 

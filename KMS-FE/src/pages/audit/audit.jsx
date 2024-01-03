@@ -28,8 +28,8 @@ const ViewButton = ({ rowId, label, onClick }) => {
 };
 
 
-function createData(id, kioskId, userId, action, script, field, tableName, ipAddress, macAddress, isActive, dateCreated) {
-  return {id, kioskId, userId, action, script, field, tableName, ipAddress, macAddress, isActive, dateCreated};
+function createData(id, kioskId, userId, action, script, field, tableName, ipAddress, ipv6Address, isActive, dateCreated) {
+  return {id, kioskId, userId, action, script, field, tableName, ipAddress, ipv6Address, isActive, dateCreated};
 }
 
 const columns = [
@@ -82,7 +82,7 @@ const columns = [
   },
   {
     field: 'ipAddress',
-    headerName: 'IP Address',
+    headerName: 'IPv4 Address',
     minWidth: 150,
     flex: 1,
     sortable: false,
@@ -90,8 +90,8 @@ const columns = [
   },
   
   {
-    field: 'macAddress',
-    headerName: 'MAC Address',
+    field: 'ipv6Address',
+    headerName: 'IPv6 Address',
     minWidth: 170,
     flex: 1,
     sortable: false,

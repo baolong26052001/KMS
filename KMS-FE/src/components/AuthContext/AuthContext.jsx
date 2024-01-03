@@ -7,11 +7,15 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const login = () => {
-    setIsAuthenticated(true);
+    setIsAuthenticated(prevState => {
+      console.log('User logged in. isAuthenticated:', !prevState);
+      return true;
+    });
   };
 
   const logout = () => {
     setIsAuthenticated(false);
+    console.log('User logged out. isAuthenticated:', false);
   };
 
   return (

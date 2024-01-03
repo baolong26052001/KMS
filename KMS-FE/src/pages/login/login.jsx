@@ -30,7 +30,6 @@ const Login = ({onLogin }) => {
   };
 
   const onFinish = async () => {
-    console.log('Received values of form:', values);
     const API_URL = 'https://localhost:7017/';
 
     try {
@@ -50,7 +49,7 @@ const Login = ({onLogin }) => {
 
       // The response is in JSON format
       const data = await response.json();
-
+      console.log(data);
       // Check if login was successful based on backend response
       if (response.ok) {
         console.log('Login successful:', data.message);
