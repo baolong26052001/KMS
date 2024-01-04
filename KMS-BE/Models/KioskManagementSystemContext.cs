@@ -37,6 +37,8 @@ namespace KMS.Models
         public virtual DbSet<Taudit> Taudits { get; set; } = null!;
         public virtual DbSet<Tkiosk> Tkiosks { get; set; } = null!;
         public virtual DbSet<TnotificationLog> TnotificationLogs { get; set; } = null!;
+        public virtual DbSet<TslideDetail> TslideDetails { get; set; } = null!;
+        public virtual DbSet<TslideHeader> TslideHeaders { get; set; } = null!;
         public virtual DbSet<Tslideshow> Tslideshows { get; set; } = null!;
         public virtual DbSet<Tstation> Tstations { get; set; } = null!;
         public virtual DbSet<Tuser> Tusers { get; set; } = null!;
@@ -46,7 +48,8 @@ namespace KMS.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=DESKTOP-FQK88HL\\SQLEXPRESS;Database=KioskManagementSystem;Trusted_Connection=True;");
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                optionsBuilder.UseSqlServer("Server=THINKBOOK\\SQLEXPRESS;Database=KioskManagementSystem;Trusted_Connection=True;");
             }
         }
 
@@ -84,9 +87,7 @@ namespace KMS.Models
 
                 entity.ToTable("Benefit");
 
-                entity.Property(e => e.Content)
-                    .HasMaxLength(50)
-                    .HasColumnName("content");
+                entity.Property(e => e.Content).HasColumnName("content");
 
                 entity.Property(e => e.Coverage).HasColumnName("coverage");
 
@@ -115,9 +116,7 @@ namespace KMS.Models
 
                 entity.Property(e => e.BenefitId).HasColumnName("benefitId");
 
-                entity.Property(e => e.Content)
-                    .HasMaxLength(50)
-                    .HasColumnName("content");
+                entity.Property(e => e.Content).HasColumnName("content");
 
                 entity.Property(e => e.Coverage).HasColumnName("coverage");
 
@@ -399,9 +398,9 @@ namespace KMS.Models
 
             modelBuilder.Entity<LoanStatement>(entity =>
             {
-                entity.ToTable("LoanStatement");
+                entity.HasNoKey();
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.ToTable("LoanStatement");
 
                 entity.Property(e => e.AccountId).HasColumnName("accountId");
 
@@ -414,6 +413,10 @@ namespace KMS.Models
                 entity.Property(e => e.DueDate)
                     .HasColumnType("datetime")
                     .HasColumnName("dueDate");
+
+                entity.Property(e => e.Id)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("id");
 
                 entity.Property(e => e.InterestRate).HasColumnName("interestRate");
 
@@ -428,9 +431,9 @@ namespace KMS.Models
 
             modelBuilder.Entity<LoanTransaction>(entity =>
             {
-                entity.ToTable("LoanTransaction");
+                entity.HasNoKey();
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.ToTable("LoanTransaction");
 
                 entity.Property(e => e.AccountId).HasColumnName("accountId");
 
@@ -441,6 +444,10 @@ namespace KMS.Models
                 entity.Property(e => e.DueDate)
                     .HasColumnType("datetime")
                     .HasColumnName("dueDate");
+
+                entity.Property(e => e.Id)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("id");
 
                 entity.Property(e => e.InterestRate).HasColumnName("interestRate");
 
@@ -461,9 +468,9 @@ namespace KMS.Models
 
             modelBuilder.Entity<LoanTransactionDetail>(entity =>
             {
-                entity.ToTable("LoanTransactionDetail");
+                entity.HasNoKey();
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.ToTable("LoanTransactionDetail");
 
                 entity.Property(e => e.AccountId).HasColumnName("accountId");
 
@@ -478,6 +485,10 @@ namespace KMS.Models
                     .HasColumnName("dateCreated");
 
                 entity.Property(e => e.EndingBalance).HasColumnName("endingBalance");
+
+                entity.Property(e => e.Id)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("id");
 
                 entity.Property(e => e.InterestRate).HasColumnName("interestRate");
 
@@ -498,9 +509,9 @@ namespace KMS.Models
 
             modelBuilder.Entity<LtransactionLog>(entity =>
             {
-                entity.ToTable("LTransactionLog");
+                entity.HasNoKey();
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.ToTable("LTransactionLog");
 
                 entity.Property(e => e.AccountId).HasColumnName("accountId");
 
@@ -530,6 +541,10 @@ namespace KMS.Models
                 entity.Property(e => e.DueDate)
                     .HasColumnType("datetime")
                     .HasColumnName("dueDate");
+
+                entity.Property(e => e.Id)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("id");
 
                 entity.Property(e => e.IsActive).HasColumnName("isActive");
 
@@ -590,9 +605,9 @@ namespace KMS.Models
 
             modelBuilder.Entity<SavingStatement>(entity =>
             {
-                entity.ToTable("SavingStatement");
+                entity.HasNoKey();
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.ToTable("SavingStatement");
 
                 entity.Property(e => e.AccountId).HasColumnName("accountId");
 
@@ -608,6 +623,10 @@ namespace KMS.Models
                     .HasMaxLength(255)
                     .HasColumnName("description");
 
+                entity.Property(e => e.Id)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("id");
+
                 entity.Property(e => e.IsActive).HasColumnName("isActive");
 
                 entity.Property(e => e.MemberId).HasColumnName("memberId");
@@ -621,9 +640,9 @@ namespace KMS.Models
 
             modelBuilder.Entity<SavingTransaction>(entity =>
             {
-                entity.ToTable("SavingTransaction");
+                entity.HasNoKey();
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.ToTable("SavingTransaction");
 
                 entity.Property(e => e.AccountId).HasColumnName("accountId");
 
@@ -643,6 +662,10 @@ namespace KMS.Models
                     .HasColumnType("datetime")
                     .HasColumnName("dueDate");
 
+                entity.Property(e => e.Id)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("id");
+
                 entity.Property(e => e.IsActive).HasColumnName("isActive");
 
                 entity.Property(e => e.MemberId).HasColumnName("memberId");
@@ -654,9 +677,9 @@ namespace KMS.Models
 
             modelBuilder.Entity<SavingTransactionDetail>(entity =>
             {
-                entity.ToTable("SavingTransactionDetail");
+                entity.HasNoKey();
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.ToTable("SavingTransactionDetail");
 
                 entity.Property(e => e.AccountId).HasColumnName("accountId");
 
@@ -669,6 +692,10 @@ namespace KMS.Models
                 entity.Property(e => e.DueDate)
                     .HasColumnType("datetime")
                     .HasColumnName("dueDate");
+
+                entity.Property(e => e.Id)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("id");
 
                 entity.Property(e => e.IsActive).HasColumnName("isActive");
 
@@ -974,6 +1001,55 @@ namespace KMS.Models
                     .HasColumnName("title");
 
                 entity.Property(e => e.Type).HasColumnName("type");
+            });
+
+            modelBuilder.Entity<TslideDetail>(entity =>
+            {
+                entity.ToTable("TSlideDetail");
+
+                entity.Property(e => e.ContentUrl).HasMaxLength(100);
+
+                entity.Property(e => e.DateCreated).HasColumnType("datetime");
+
+                entity.Property(e => e.DateModified).HasColumnType("datetime");
+
+                entity.Property(e => e.Description)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TypeContent)
+                    .HasMaxLength(30)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TslideHeader>(entity =>
+            {
+                entity.ToTable("TSlideHeader");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.DateCreated)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateCreated");
+
+                entity.Property(e => e.DateModified)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateModified");
+
+                entity.Property(e => e.Description)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("description");
+
+                entity.Property(e => e.EndDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("endDate");
+
+                entity.Property(e => e.StartDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("startDate");
+
+                entity.Property(e => e.TimeNext).HasColumnName("timeNext");
             });
 
             modelBuilder.Entity<Tslideshow>(entity =>

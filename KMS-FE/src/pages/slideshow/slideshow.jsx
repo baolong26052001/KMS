@@ -21,7 +21,7 @@ dayjs.locale('en'); // Set the locale to English
 
 const CustomToolbar = ({ onButtonClick, selectedRows }) => {
   const navigate = useNavigate();
-  const { handleDelete, handleClose, open } = useDeleteHook('Slideshow/DeleteSlideshow'); 
+  const { handleDelete, handleClose, open } = useDeleteHook('SlideHeader/DeleteSlideshow'); 
 
   // const [open, setOpen] = React.useState(false);
   const handleButtonClick = (buttonId) => {
@@ -66,9 +66,11 @@ const CustomToolbar = ({ onButtonClick, selectedRows }) => {
 };
 
 const ViewButton = ({ rowId, label, onClick }) => {
+  const navigate = useNavigate();
   const handleClick = (event) => {
     event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
     onClick(rowId);
+    navigate(`/viewSlideShow/${rowId}`)
   };
 
   return (
@@ -81,9 +83,11 @@ const ViewButton = ({ rowId, label, onClick }) => {
 };
 
 const EditButton = ({ rowId, label, onClick }) => {
+  const navigate = useNavigate();
   const handleClick = (event) => {
     event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
     onClick(rowId);
+    navigate(`/editSlideShow/${rowId}`)
   };
 
   return (
@@ -95,8 +99,25 @@ const EditButton = ({ rowId, label, onClick }) => {
   );
 };
 
-function createData(id, packageName, startDate, endDate) {
-  return {id, packageName, startDate, endDate};
+const DetailButton = ({ rowId, label, onClick }) => {
+  const navigate = useNavigate();
+  const handleClick = (event) => {
+    event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
+    onClick(rowId);
+    //navigate(`/editSlideShow/${rowId}`)
+  };
+
+  return (
+    <Box sx={{alignItems: 'center'}}>
+      <Button size="small"  variant="contained" color="inherit" onClick={handleClick}>
+        {label}
+      </Button>
+    </Box>
+  );
+};
+
+function createData(id, description, startDate, endDate, isActive, timeNext, dateModified, dateCreated) {
+  return {id, description, startDate, endDate, isActive, timeNext, dateModified, dateCreated};
 }
 
 const columns = [ 
@@ -130,8 +151,24 @@ const columns = [
       />
     ),
   },
+  {
+    field: 'detailButton',
+    headerName: '',
+    minWidth: 120,
+    flex: 1,
+    disableColumnMenu: true,
+    sortable: false, 
+    filterable: false, 
+    renderCell: (params) => (
+        <DetailButton
+        rowId={params.row.id}
+        label="Slide Detail"
+        onClick={handleButtonClick}
+      />
+    ),
+  },
   { field: 'id', headerName: 'Package ID', minWidth: 100, flex: 1,},
-  { field: 'packageName', headerName: 'Package Name', minWidth: 250, flex: 1,},
+  { field: 'description', headerName: 'Package Name', minWidth: 250, flex: 1,},
   {
     field: 'startDate',
     headerName: 'Start Date',
@@ -145,9 +182,35 @@ const columns = [
     minWidth: 250,
     flex: 1,
   },
+  {
+    field: 'isActive',
+    headerName: 'Is Active',
+    sortable: false,
+    minWidth: 100,
+    flex: 1,
+  },
+  {
+    field: 'timeNext',
+    headerName: 'Time Next',
+    sortable: false,
+    minWidth: 100,
+    flex: 1,
+  },
+  {
+    field: 'dateModified',
+    headerName: 'Date Modified',
+    sortable: false,
+    minWidth: 250,
+    flex: 1,
+  },
+  {
+    field: 'dateCreated',
+    headerName: 'Date Created',
+    sortable: false,
+    minWidth: 250,
+    flex: 1,
+  },
 ];
-
-const rows = [];
 
 const handleButtonClick = (id) => {
   // Handle button click, e.g., navigate to another page
@@ -188,16 +251,16 @@ const Slideshow = () => {
     useEffect(() => {
       async function fetchData() {
         try {
-          let apiUrl = `${API_URL}api/Slideshow/ShowSlideshow`;
+          let apiUrl = `${API_URL}api/SlideHeader/ShowSlideHeader`;
           let searchApi = ``;
     
           if (startDate || endDate) {
-            apiUrl = `${API_URL}api/Slideshow/FilterSlideshow?startDate=${encodeURIComponent(dayjs(startDate).format('YYYY/MM/DD'))}&endDate=${encodeURIComponent(dayjs(endDate).format('YYYY/MM/DD'))}`;
+            apiUrl = `${API_URL}api/SlideHeader/FilterSlideshow?startDate=${encodeURIComponent(dayjs(startDate).format('YYYY/MM/DD'))}&endDate=${encodeURIComponent(dayjs(endDate).format('YYYY/MM/DD'))}`;
             if (searchTerm) {
-              searchApi = `${API_URL}api/Slideshow/SearchSlideshow?searchQuery=${encodeURIComponent(searchTerm)}`;
+              searchApi = `${API_URL}api/SlideHeader/SearchSlideshow?searchQuery=${encodeURIComponent(searchTerm)}`;
             }
           } else if (searchTerm) {
-            apiUrl = `${API_URL}api/Slideshow/SearchSlideshow?searchQuery=${encodeURIComponent(searchTerm)}`;
+            apiUrl = `${API_URL}api/SlideHeader/SearchSlideshow?searchQuery=${encodeURIComponent(searchTerm)}`;
           }
     
           const [apiResponse, searchApiResponse] = await Promise.all([
@@ -224,7 +287,7 @@ const Slideshow = () => {
             }
           
             const updatedRows = filteredRows.map(row =>
-              createData(row.id, row.packageName, row.startDate, row.endDate)
+              createData(row.id, row.description, row.startDate, row.endDate, row.IsActive, row.timeNext, row.dateModified, row.dateCreated)
             );
           
             setRows(updatedRows); // Update the component state with the combined data

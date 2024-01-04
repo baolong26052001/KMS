@@ -85,7 +85,9 @@ const App = () => {
                         element={<RouteSlideshow />}
                       />
                     <Route path="/addSlideShow" element={<RouteAddSlide />} />
-
+                    <Route path="/editSlideShow/:id" element={<RouteEditSlideShow />} />
+                    <Route path="/viewSlideShow/:id" element={<RouteViewSlideShow />} />
+                    
                     {/* Route for Account*/}
                     <Route path="/account" element={<RouteAccount />} />
                     <Route path="/viewAccount/:id" element={<RouteViewAccount />} />
@@ -163,6 +165,7 @@ const RouteViewUser = React.lazy(() => import('./pages/user/viewUser'));
 const RouteKioskDetails = React.lazy(() => import('./pages/kiosk-setup/viewKioskDetails'));
 const RouteKioskHardwareDetails = React.lazy(() => import('./pages/kiosk-hardware/viewKioskHardware'));
 const RouteStationDetails = React.lazy(() => import('./pages/station/viewStation'));
+const RouteViewSlideShow = React.lazy(() => import('./pages/slideshow/viewSlideShow'));
 const RouteViewInsurancePackage = React.lazy(() => import('./pages/InsurancePackage/insuranceBenefit'));
 const RouteViewLoanTransaction = React.lazy(() => import('./pages/LoanTransaction/viewLoanTransaction'));
 
@@ -170,6 +173,7 @@ const RouteViewLoanTransaction = React.lazy(() => import('./pages/LoanTransactio
 const RouteEditUser = React.lazy(() => import('./pages/user/editUser'));
 const RouteEditGroup = React.lazy(() => import('./pages/usergroup/editGroup'));
 const RouteEditStation = React.lazy(() => import('./pages/station/editStation'));
+const RouteEditSlideShow = React.lazy(() => import('./pages/slideshow/editSlideShow'));
 const RouteEditKioskSetup = React.lazy(() => import('./pages/kiosk-setup/editKiosk'));
 const RouteEditBenefit = React.lazy(() => import('./pages/InsurancePackage/editBenefit'));
 const RouteEditInsurancePackage = React.lazy(() => import('./pages/InsurancePackage/editInsurancePackage'));
