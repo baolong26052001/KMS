@@ -9,6 +9,8 @@ using System.Windows;
 using static Insurance.View.HealthPackageView;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace Insurance.View
 {
@@ -23,8 +25,9 @@ namespace Insurance.View
 
             FetchInsurancePackages();
             FetchPackageDetails(1);
-            
+
         }
+
         public class InsurancePackage
         {
             public int id { get; set; }
@@ -37,6 +40,7 @@ namespace Insurance.View
             public DateTime dateModified { get; set; }
             public DateTime dateCreated { get; set; }
         }
+
         public class InsurancePackageDetail
         {
             public int id { get; set; }
@@ -47,6 +51,7 @@ namespace Insurance.View
             public DateTime dateModified { get; set; }
             public DateTime dateCreated { get; set; }
         }
+
         public class BenefitDetail
         {
             public int id { get; set; }
@@ -56,6 +61,7 @@ namespace Insurance.View
             public DateTime dateModified { get; set; }
             public DateTime dateCreated { get; set; }
         }
+
         private async void FetchInsurancePackages()
         {
             try
@@ -88,7 +94,7 @@ namespace Insurance.View
             }
         }
 
-        private void UpdateUI(List<InsurancePackage> insurancePackages) // show package
+        private void UpdateUI(List<InsurancePackage> insurancePackages)
         {
             CultureInfo cultureInfo = new CultureInfo("vi-VN");
 
@@ -104,17 +110,18 @@ namespace Insurance.View
                         Content = $"Gói {i + 1}: {insurancePackages[i].fee.ToString("C", cultureInfo)}/năm",
                         Style = i == 0 ? (Style)FindResource("PackageButtonSelected") : (Style)FindResource("PackageButton"),
                         Width = 367,
-                        Margin = new Thickness(0, 0, 0, 14)
+                        Margin = new Thickness(0, 0, 0, 14),
+                        Tag = insurancePackages[i].id // Set the Tag property to store the insurancePackage.id
                     };
 
-                    // Add a click event handler for the button if needed
+                    // Add a click event handler for the button
                     packageButton.Click += PackageButton_Click;
 
                     stackPanel.Children.Add(packageButton);
                 }
             }
         }
-        
+
         private async void FetchPackageDetails(int packageId)
         {
             try
@@ -122,7 +129,6 @@ namespace Insurance.View
                 using (HttpClient client = new HttpClient())
                 {
                     string apiUrl = $"https://localhost:7017/api/InsurancePackage/ShowInsurancePackageDetail/{packageId}";
-
 
                     HttpResponseMessage response = await client.GetAsync(apiUrl);
 
@@ -132,7 +138,16 @@ namespace Insurance.View
 
                         List<InsurancePackageDetail> packageDetail = JsonConvert.DeserializeObject<List<InsurancePackageDetail>>(jsonResponse);
 
-                        UpdateBenefitsUI(packageDetail);
+                        if (packageDetail.Count > 0)
+                        {
+                            // Display the details if data is available
+                            UpdateBenefitsUI(packageDetail);
+                        }
+                        else
+                        {
+                            // Clear the UI if no data is available
+                            ClearBenefitsUI();
+                        }
                     }
                     else
                     {
@@ -148,16 +163,14 @@ namespace Insurance.View
             }
         }
 
-        private void UpdateBenefitsUI(List<InsurancePackageDetail> packageDetails) // show benefit
+        private async void UpdateBenefitsUI(List<InsurancePackageDetail> packageDetails)
         {
-            int id = 1;
-            // Assuming stackPanelBenefit is the name of your StackPanel in XAML
             StackPanel stackPanelBenefit = FindName("stackPanelBenefit") as StackPanel;
             CultureInfo cultureInfo = new CultureInfo("vi-VN");
 
             if (stackPanelBenefit != null)
             {
-                stackPanelBenefit.Children.Clear(); // Clear existing children
+                stackPanelBenefit.Children.Clear();
 
                 foreach (var packageDetail in packageDetails)
                 {
@@ -166,7 +179,7 @@ namespace Insurance.View
                     DockPanel dockPanel = new DockPanel();
                     TextBlock benefitText = new TextBlock
                     {
-                        Text = $"{id}. {packageDetail.content}",
+                        Text = $"{packageDetail.content}",
                         Foreground = Brushes.Black,
                         FontFamily = new FontFamily("Exo"),
                         FontWeight = FontWeights.Bold,
@@ -184,70 +197,39 @@ namespace Insurance.View
 
                     TextBlock descriptionText = new TextBlock
                     {
-                        Margin = new Thickness(10, 0, 0, 0),
-                        TextWrapping = TextWrapping.Wrap,
-                        Width = 300,
                         Text = $"{packageDetail.description}",
                         Foreground = Brushes.Black,
-                        Padding = new Thickness(5),
-                        HorizontalAlignment = HorizontalAlignment.Left
+                        FontFamily = new FontFamily("Exo"),
+                        FontSize = 16
                     };
 
                     dockPanel.Children.Add(benefitText);
                     dockPanel.Children.Add(coverageText);
-
+                    
                     benefitPanel.Children.Add(dockPanel);
                     benefitPanel.Children.Add(descriptionText);
-
-                    // Add any additional UI elements for the benefit, such as descriptions, grids, etc.
-
-                    Rectangle separator = new Rectangle { Fill = Brushes.Black, Height = 1, Margin = new Thickness(5, 0, 5, 0) };
-                    benefitPanel.Children.Add(separator);
+                    // Fetch and display benefit details
+                    await FetchAndDisplayBenefitDetails(packageDetail.id, benefitPanel);
 
                     stackPanelBenefit.Children.Add(benefitPanel);
-
-                    // Fetch and display benefit details
-                    FetchAndDisplayBenefitDetails(packageDetail.id);
-
-                    id++;
                 }
             }
         }
 
-        private async void FetchAndDisplayBenefitDetails(int benefitId)
+        private async Task FetchAndDisplayBenefitDetails(int packageDetailId, StackPanel benefitPanel)
         {
-            try
-            {
-                using (HttpClient client = new HttpClient())
-                {
-                    string apiUrl = $"https://localhost:7017/api/InsurancePackage/ShowBenefitDetailById/{benefitId}";
+            // Fetch BenefitDetails
+            List<BenefitDetail> benefitDetails = await FetchBenefitDetails(packageDetailId);
 
-                    HttpResponseMessage response = await client.GetAsync(apiUrl);
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string jsonResponse = await response.Content.ReadAsStringAsync();
-
-                        List<BenefitDetail> benefitDetails = JsonConvert.DeserializeObject<List<BenefitDetail>>(jsonResponse);
-
-                        UpdateBenefitDetailsUI(benefitDetails);
-                    }
-                    else
-                    {
-                        // Handle unsuccessful API request
-                        // You might want to log or display an error message
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                // Handle exceptions
-                // You might want to log or display an error message
-            }
+            // Display the BenefitDetails
+            UpdateBenefitDetailsUI(benefitDetails, benefitPanel);
         }
 
-        private void UpdateBenefitDetailsUI(List<BenefitDetail> benefitDetails)
+        private void UpdateBenefitDetailsUI(List<BenefitDetail> benefitDetails, StackPanel benefitPanel)
         {
+            // Add a nested stack panel for displaying BenefitDetails
+            StackPanel nestedStackPanel = new StackPanel { Margin = new Thickness(10, 0, 0, 0) };
+
             // Assuming gridBenefitDetails is the name of your Grid in XAML
             Grid gridBenefitDetails = FindName("gridBenefitDetails") as Grid;
             CultureInfo cultureInfo = new CultureInfo("vi-VN");
@@ -257,36 +239,124 @@ namespace Insurance.View
                 // Clear existing children in the grid
                 gridBenefitDetails.Children.Clear();
 
-                foreach (var benefitDetail in benefitDetails)
+                if (benefitDetails.Any())
                 {
-                    // Create a new TextBlock for displaying benefit details
-                    TextBlock benefitDetailText = new TextBlock
+                    foreach (var benefitDetail in benefitDetails)
                     {
-                        Margin = new Thickness(10, 0, 0, 0),
-                        TextWrapping = TextWrapping.Wrap,
-                        Width = 300,
-                        Text = $"{benefitDetail.content}: {benefitDetail.coverage.ToString("C", cultureInfo)}",
-                        Foreground = Brushes.Black,
-                        Padding = new Thickness(5),
-                        HorizontalAlignment = HorizontalAlignment.Left
-                    };
+                        // Create a new TextBlock for displaying benefit details
+                        TextBlock benefitDetailText = new TextBlock
+                        {
+                            Margin = new Thickness(10, 0, 0, 0),
+                            TextWrapping = TextWrapping.Wrap,
+                            Width = 300,
+                            Text = $"{benefitDetail.content}: {benefitDetail.coverage.ToString("C", cultureInfo)}",
+                            Foreground = Brushes.Black,
+                            Padding = new Thickness(5),
+                            HorizontalAlignment = HorizontalAlignment.Left
+                        };
 
-                    // Add the benefit detail TextBlock to the grid
-                    gridBenefitDetails.Children.Add(benefitDetailText);
+                        // Add the benefit detail TextBlock to the nested stack panel
+                        nestedStackPanel.Children.Add(benefitDetailText);
+                    }
+
+                    // Add the nested stack panel to the parent benefit panel
+                    benefitPanel.Children.Add(nestedStackPanel);
+
+                    // Show a success message
+                    // MessageBox.Show("Benefit details fetched successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    // Show a message indicating no data
+                    // MessageBox.Show("No benefit details available for the selected InsurancePackageDetail.", "No Data", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
         }
 
+        private async Task<List<BenefitDetail>> FetchBenefitDetails(int packageDetailId)
+        {
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    string apiUrl = $"https://localhost:7017/api/InsurancePackage/ShowBenefit/{packageDetailId}";
 
+                    HttpResponseMessage response = await client.GetAsync(apiUrl);
 
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string jsonResponse = await response.Content.ReadAsStringAsync();
+                        return JsonConvert.DeserializeObject<List<BenefitDetail>>(jsonResponse);
+                    }
+                    else
+                    {
+                        // Handle unsuccessful response
+                        return new List<BenefitDetail>();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle exception
+                return new List<BenefitDetail>();
+            }
+        }
 
 
         private void PackageButton_Click(object sender, RoutedEventArgs e)
         {
-            // Handle button click event if needed
+            if (sender is Button clickedButton && clickedButton.Tag is int packageId)
+            {
+                ResetButtonStyles();
+                clickedButton.Style = (Style)FindResource("PackageButtonSelected");
+
+                // Fetch and display details for the selected InsurancePackage
+                FetchPackageDetails(packageId);
+            }
         }
 
-        
+        private void ResetButtonStyles()
+        {
+            StackPanel stackPanel = FindName("StackPanel") as StackPanel;
 
+            if (stackPanel != null)
+            {
+                foreach (var child in stackPanel.Children)
+                {
+                    if (child is Button button)
+                    {
+                        button.Style = (Style)FindResource("PackageButton");
+                    }
+                }
+
+                // Clear the UI when resetting button styles
+                ClearBenefitsUI();
+            }
+        }
+
+        private void ClearBenefitsUI()
+        {
+            // Assuming stackPanelBenefit is the name of your StackPanel in XAML
+            StackPanel stackPanelBenefit = FindName("stackPanelBenefit") as StackPanel;
+
+            if (stackPanelBenefit != null)
+            {
+                stackPanelBenefit.Children.Clear(); // Clear existing children
+
+                // Optionally, you can display a message or perform other actions
+                // For example:
+                TextBlock noDataMessage = new TextBlock
+                {
+                    Text = "No data available for this package.",
+                    Foreground = Brushes.Red,
+                    FontSize = 16,
+                    FontWeight = FontWeights.Bold,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+
+                stackPanelBenefit.Children.Add(noDataMessage);
+            }
+        }
     }
 }

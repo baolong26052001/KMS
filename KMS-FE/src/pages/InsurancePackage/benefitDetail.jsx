@@ -73,7 +73,7 @@ const ViewButton = ({ rowId, label, onClick }) => {
   const handleClick = (event) => {
     event.stopPropagation(); 
     onClick(rowId);
-    navigate(`/benefitDetail/${rowId}`);
+    //navigate(`/benefitTable`);
   };
 
   return (

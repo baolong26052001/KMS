@@ -102,7 +102,9 @@ const App = () => {
                     <Route path="/savingstatement" element={<RouteSavingStatement />} />
                     {/* Route for Insurance Transaction*/}
                     <Route path="/insuranceTransaction" element={<RouteInsuranceTransaction />} />
+
                     {/* Route for Insurance Package*/}
+
                     <Route path="/insurancePackage" element={<RouteInsurancePackage />} />
                     <Route path="/viewPackageDetail/:id/:packageName" element={<RouteViewInsurancePackage />} />
                     <Route path="/addInsurancePackage" element={<RouteAddInsurancePackage />} />

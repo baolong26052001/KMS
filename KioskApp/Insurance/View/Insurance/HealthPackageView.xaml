@@ -28,13 +28,7 @@
             <StackPanel x:Name="StackPanel" VerticalAlignment="Center"  Grid.Column="0" Grid.RowSpan="2">
 
 
-                <!-- Packages List -->
-                <!-- Style for package buttons -->
 
-                <!-- <Button x:Name="PackageButton1" Content="Package 1: 146.000VND/year" Style="{StaticResource PackageButtonSelected}" Width="367" Margin="0 0 0 14" />
-                <Button x:Name="PackageButton2" Content="Package 2: 216.000VND/year" Style="{StaticResource PackageButton}" Width="367" Margin="0 0 0 14"/>
-                <Button x:Name="PackageButton3" Content="Package 3: 296.000VND/year" Style="{StaticResource PackageButton}" Width="367" Margin="0 0 0 14"/> -->
-            
             </StackPanel>
 
         </Grid>
