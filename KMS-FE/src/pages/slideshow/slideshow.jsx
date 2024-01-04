@@ -99,12 +99,12 @@ const EditButton = ({ rowId, label, onClick }) => {
   );
 };
 
-const DetailButton = ({ rowId, label, onClick }) => {
+const DetailButton = ({ rowId, label, onClick, packageName }) => {
   const navigate = useNavigate();
   const handleClick = (event) => {
     event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
-    onClick(rowId);
-    //navigate(`/editSlideShow/${rowId}`)
+    onClick(rowId, packageName);
+    navigate(`/slideDetail/${rowId}/${packageName}`);
   };
 
   return (
@@ -162,6 +162,7 @@ const columns = [
     renderCell: (params) => (
         <DetailButton
         rowId={params.row.id}
+        packageName = {params.row.description}
         label="Slide Detail"
         onClick={handleButtonClick}
       />

@@ -87,6 +87,9 @@ const App = () => {
                     <Route path="/addSlideShow" element={<RouteAddSlide />} />
                     <Route path="/editSlideShow/:id" element={<RouteEditSlideShow />} />
                     <Route path="/viewSlideShow/:id" element={<RouteViewSlideShow />} />
+                    {/* Route for Slide Detail*/}
+                    <Route path="/slideDetail/:id/:packageName" element={<RouteSlideDetail />} />
+                    
                     
                     {/* Route for Account*/}
                     <Route path="/account" element={<RouteAccount />} />
@@ -142,6 +145,7 @@ const RouteDashboard = React.lazy(() => import('./pages/dashboard/dashboard'));
 const RouteUser = React.lazy(() => import('./pages/user/User'));
 const RouteUsergroup = React.lazy(() => import('./pages/usergroup/Usergroup'));
 const RouteSlideshow = React.lazy(() => import('./pages/slideshow/slideshow'));
+const RouteSlideDetail = React.lazy(() => import('./pages/slideDetail/slideDetail'));
 const RoutekioskHardware = React.lazy(() => import('./pages/kiosk-hardware/kioskHardware'));
 const RouteKioskSetup = React.lazy(() => import('./pages/kiosk-setup/kiosk-setup'));
 const RouteStation = React.lazy(() => import('./pages/station/station'));
