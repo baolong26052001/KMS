@@ -1,0 +1,105 @@
+﻿<UserControl x:Class="Insurance.View.VirtualKeyboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Insurance.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="480" d:DesignWidth="1024">
+    <UserControl.Background>
+        <ImageBrush ImageSource="/Images/bg.jpg"/>
+    </UserControl.Background>
+    <Grid>
+        <!--Define Row-->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+
+
+        <StackPanel Grid.Row="0" HorizontalAlignment="Center" Orientation="Horizontal">
+            <Button Style="{StaticResource qwerty}" Content="1" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="2" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="3" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="4" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="5" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="6" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="7" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="8" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="9" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="0" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="-" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="Back" Width="145" Command="{Binding DeleteCommand}" Background="#515151"/>
+        </StackPanel>
+
+        <Grid>
+
+        </Grid>
+        <StackPanel Grid.Row="1" HorizontalAlignment="Center" Orientation="Horizontal">
+            <Button Style="{StaticResource qwerty}" Content="q" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="w" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="e" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="r" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="t" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="y" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="u" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="i" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="o" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="p" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="_" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="@" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+
+
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" HorizontalAlignment="Center" Orientation="Horizontal">
+            <Button Style="{StaticResource qwerty}" Content="a" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="s" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="d" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="f" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="g" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="h" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="j" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="k" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="l" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="Enter" Width="145" Command="{Binding NumberCommand}" Background="#515151"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="3" HorizontalAlignment="Center" Orientation="Horizontal">
+            <Button Style="{StaticResource Shift}" Content="Shift" Command="{Binding ShiftCommand}" Background="#515151"/>
+            <Button Style="{StaticResource qwerty}" Content="z" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="x" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="c" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="v" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="b" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="n" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="m" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="," Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="." Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content="/" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+            <Button Style="{StaticResource qwerty}" Content=".com" Command="{Binding NumberCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"/>
+
+        </StackPanel>
+        <StackPanel Grid.Row="4" HorizontalAlignment="Center" Orientation="Horizontal">
+            <Button Style="{StaticResource qwerty}" Content="Space" Width="880" Command="{Binding SpaceCommand}" Background="#515151"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Row="5">
+            <TextBox   Width="500" Text="{Binding DisplayText}"/>
+
+            <!--<TextBox  Width="100" Margin="0 0 50 0">
+                <TextBox.CommandBindings>
+                    <CommandBinding Command="{Binding NumberCommad}" Executed="NumberCommand"></CommandBinding> 
+                </TextBox.CommandBindings>
+            </TextBox>-->
+            <TextBox Width="100" Text="{Binding DisplayText1}" Margin="50 0 50 0"/>
+            <TextBox Width="100" Text="{Binding DisplayText2}" Margin="0 0 50 0"/>
+
+        </StackPanel>
+
+    </Grid>
+</UserControl>

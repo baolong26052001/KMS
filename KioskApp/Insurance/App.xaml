@@ -1,0 +1,18 @@
+﻿<Application x:Class="Insurance.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Insurance"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Style/ButtonStyle.xaml"> </ResourceDictionary>
+                <ResourceDictionary Source="/Style/TextBoxStyle.xaml"></ResourceDictionary>
+                <ResourceDictionary Source="/Style/PackageButtons.xaml"></ResourceDictionary>
+                <ResourceDictionary Source="/Style/KeyboardStyle.xaml"></ResourceDictionary>
+                <ResourceDictionary Source="/Resources/NavigationResources.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
+<!--StartupUri="MainWindow.xaml">-->

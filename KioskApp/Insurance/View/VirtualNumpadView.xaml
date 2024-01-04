@@ -1,0 +1,71 @@
+﻿<UserControl x:Class="Insurance.View.VirtualNumpadView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Insurance.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="400" d:DesignWidth="1024">
+    <UserControl.Background>
+        <ImageBrush ImageSource="/Images/bg.jpg"/>
+    </UserControl.Background>
+    
+    <!---Keyboard-->
+    <Grid>
+        <!--Define Row-->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <!--Define Column-->
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <!--Test-->
+
+        <Grid Grid.Row="1">
+            <TextBox Text="{Binding DisplayText1, Mode=TwoWay}"/>
+            <!-- Bind TextBox text to ViewModel property -->
+        </Grid>
+        <Grid Grid.Row="2">
+            <TextBox Text="{Binding DisplayText2, Mode=TwoWay}"/>
+            <!-- Bind TextBox text to ViewModel property -->
+        </Grid>
+        <Grid Grid.Row="3">
+            <TextBox Text="{Binding DisplayText3, Mode=TwoWay}"/>
+            <!-- Bind TextBox text to ViewModel property -->
+        </Grid>
+        <Grid Grid.Row="4">
+            <TextBox Text="{Binding DisplayText4, Mode=TwoWay}"/>
+            <!-- Bind TextBox text to ViewModel property -->
+        </Grid>
+        
+        <!---Numpad-->
+        <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Button Style="{StaticResource Numpad}" Content="1" Command="{Binding NumberCommand}" CommandParameter="1"/>
+            <Button Style="{StaticResource Numpad}" Content="2" Command="{Binding NumberCommand}" CommandParameter="2"/>
+            <Button Style="{StaticResource Numpad}" Content="3" Command="{Binding NumberCommand}" CommandParameter="3"/>
+        </StackPanel>
+        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Button Style="{StaticResource Numpad}" Content="4" Command="{Binding NumberCommand}" CommandParameter="4"/>
+            <Button Style="{StaticResource Numpad}" Content="5" Command="{Binding NumberCommand}" CommandParameter="5"/>
+            <Button Style="{StaticResource Numpad}" Content="6" Command="{Binding NumberCommand}" CommandParameter="6"/>
+        </StackPanel>
+        <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Button Style="{StaticResource Numpad}" Content="7" Command="{Binding NumberCommand}" CommandParameter="7"/>
+            <Button Style="{StaticResource Numpad}" Content="8" Command="{Binding NumberCommand}" CommandParameter="8"/>
+            <Button Style="{StaticResource Numpad}" Content="9" Command="{Binding NumberCommand}" CommandParameter="9"/>
+        </StackPanel>
+        <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Button Style="{StaticResource Numpad}" Content="C" Command="{Binding ClearCommand}" Background="Black"/>
+            <Button Style="{StaticResource Numpad}" Content="0" Command="{Binding NumberCommand}" CommandParameter="0"/>
+            <Button Style="{StaticResource NumpadDelete}" Content="Del" Command="{Binding DeleteCommand}" Background="Black"/>
+        </StackPanel>
+
+    </Grid>
+</UserControl>

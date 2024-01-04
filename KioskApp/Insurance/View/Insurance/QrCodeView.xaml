@@ -1,0 +1,56 @@
+﻿<UserControl x:Class="Insurance.View.QrCodeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Insurance.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="768" d:DesignWidth="1024">
+    <UserControl.Background>
+        <ImageBrush ImageSource="/Images/bg.jpg"/>
+    </UserControl.Background>
+    <Grid >
+        <!--Define Row-->
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="650"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <!--Header-->
+        <!--Logo-->
+        <Grid Grid.Row="0">
+            <TextBlock FontFamily="Bowlby One" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="40" Foreground="#0EAB00" Margin="15 0 0 0"> 
+ALM
+            </TextBlock>
+            <!---Cancel Button-->
+            <Button Command="{Binding CancelCommand}" Margin="0 0 15 0" Style="{StaticResource cancelButton}" Content="Cancel" VerticalAlignment="Center" HorizontalAlignment="Right"></Button>
+        </Grid>
+
+        <Grid Grid.Row="1" Margin="15 0 0 0">
+            <!--Define Row-->
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="650"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <!---Description-->
+
+            <Grid Grid.Row="1"  VerticalAlignment="Center" HorizontalAlignment="Center"  Width ="931" Height="520" Margin="0 0 0 40" >
+                <!---Background-->
+                <Grid.Background>
+                    <ImageBrush ImageSource="/Images/Qr_bg.png" />
+                </Grid.Background>
+                <!--QR Code-->
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock FontSize="40px" Width="565" Height="100" Foreground="#000000" FontFamily="Exo2"  FontWeight="Bold" TextWrapping="Wrap" TextAlignment="Center" >Please scan the below QR Code for payment</TextBlock>
+                    <Image Width="278" Height="278" Source="/Images/QrCode.png" Margin="0 20 0 0"/>
+                </StackPanel>
+            </Grid>
+
+            <Grid Grid.Row="1">
+                <Button Command="{Binding BackCommand}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Content="Back" Style="{StaticResource bigButton}"/>
+            </Grid>
+        </Grid>
+
+    </Grid>
+</UserControl>

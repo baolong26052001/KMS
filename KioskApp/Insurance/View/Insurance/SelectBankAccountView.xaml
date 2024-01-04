@@ -1,0 +1,45 @@
+﻿<UserControl x:Class="Insurance.View.SelectBankAccountView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Insurance.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="768" d:DesignWidth="1024">
+    <UserControl.Background>
+        <ImageBrush ImageSource="/Images/bg.jpg"/>
+    </UserControl.Background>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="650"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="1">
+            <StackPanel>
+                <TextBlock Text="Select your bank account:" Foreground="White" FontWeight="Bold" FontSize="24" VerticalAlignment="Center" FontFamily="Exo" Padding="0" Margin="15 0 0 0"/>
+                <Border Margin="0 26 0 0" Background="#A1CCAD" Width="957px" Height="146" VerticalAlignment="Top" CornerRadius="10">
+                    <Grid Margin="52 0 0 0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Image Source="/Images/bank/Vietcom.png" Height="102" VerticalAlignment="Center"/>
+                        <Grid Grid.Column="1" Margin="20,0,0,0">
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="Vietcombank" Foreground="White" FontWeight="Bold" FontSize="24" FontFamily="Exo" />
+                                <TextBlock Text="123467**********" Foreground="White" FontSize="24" FontFamily="Exo"/>
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+                </Border>
+                <Rectangle Margin="0 47 0 50" Fill="#FFFFFF" Width="957" Height="1" >
+                </Rectangle>
+            </StackPanel>
+            <Button Command="{Binding AgreeCommand}" Content="Agree to pay"  Style="{StaticResource bigButton}" Width="956" Height="85" />
+            <Button Command="{Binding BackCommand}" Content="Back" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="15 0 0 0" Style="{StaticResource bigButton}"></Button>
+        </Grid>
+
+    </Grid>
+</UserControl>

@@ -1,0 +1,60 @@
+﻿<Window x:Class="Insurance.VerifyFaceIDWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Insurance"
+        mc:Ignorable="d"
+        Title="VerifyFaceIDWindow" Height="768" Width="1024">
+    <Window.Background>
+        <ImageBrush ImageSource="/Images/bg.jpg"></ImageBrush>
+    </Window.Background>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition Height="590"></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <TextBlock FontFamily="Bowlby One" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="40" Foreground="#0EAB00" Margin="15 0 0 0"> 
+            ALM
+            </TextBlock>
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+                <RowDefinition Height="429"></RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <TextBlock Foreground="#FFFFFF" FontFamily="Exo" FontSize="25.28" HorizontalAlignment="Center" FontWeight="Bold"  VerticalAlignment="Center" >
+            Please place your face in the face detection area
+                </TextBlock>
+            </Grid>
+            <Grid Grid.Row="1" Margin="5">
+                <Image Source="\Images\FacidImg.png">
+
+                </Image>
+            </Grid>
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="490"></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="0">
+                    <Image Source="\Images\SuccessIcon.png" Height="32" HorizontalAlignment="Right" Margin="10"></Image>
+                </Grid>
+                <Grid Grid.Column="1">
+                    <TextBlock Foreground="#FFFFFF" VerticalAlignment="Center" FontFamily="Exo" FontSize="25.28" FontWeight="Bold" Margin="0 10">
+                    Success
+                    </TextBlock>
+                </Grid>
+            </Grid>
+        </Grid>
+        <Grid Grid.Row="2">
+            <TextBlock Foreground="#FFFFFF" FontFamily="Exo" FontSize="20" VerticalAlignment="Center" Margin="15 0 0 0">
+            10:47, October 20 2023
+            </TextBlock>
+        </Grid>
+    </Grid>
+</Window>

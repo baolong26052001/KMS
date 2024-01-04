@@ -1,0 +1,85 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:vm="clr-namespace:Insurance.ViewModel"
+                    xmlns:v="clr-namespace:Insurance.View" 
+                    xmlns:insurance="clr-namespace:Insurance">
+    
+    <DataTemplate DataType="{x:Type vm:MainWindowVM}">
+        <insurance:MainWindow/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:VerifyIDVM}">
+        <v:VerifyIDView/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:HomeVM}">
+        <v:HomeView/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:InsuranceHomeVM}">
+        <v:InsuranceHomeView/>
+    </DataTemplate>
+	
+    <DataTemplate DataType="{x:Type vm:HealthPackageVM}">
+        <v:HealthPackageView/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:AccidentPackageVM}">
+        <v:AccidentPackageView/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:BuyerInformationVM}">
+        <v:BuyerInformationView/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:ContractInfoVM}">
+        <v:ContractInfoView/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:DetailedPackageVM}">
+        <v:DetailedPackageView/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:PaymentMethodVM}">
+        <v:PaymentMethodView/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:CashDepositVM}">
+        <v:CashDepositView/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:QrCodeVM}">
+        <v:QrCodeView/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:SelectBankAccountVM}">
+        <v:SelectBankAccountView/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:OTPVM}">
+        <v:OTPView/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:BeneficiaryAddVM}">
+        <v:BeneficiaryAddView/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:BeneficiaryInfoVM}">
+        <v:BeneficiaryInfoView/>
+    </DataTemplate>
+    
+    <DataTemplate DataType="{x:Type vm:InsuranceSuccessVM}">
+        <v:InsuranceSuccessView/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:VirtualNumpadVM}">
+        <v:VirtualNumpadView/>
+    </DataTemplate>
+   
+    <DataTemplate DataType="{x:Type vm:VirtualKeyboardVM}">
+        <v:VirtualKeyboardView/>
+    </DataTemplate>
+
+
+
+</ResourceDictionary>

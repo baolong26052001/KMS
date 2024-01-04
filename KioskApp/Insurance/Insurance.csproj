@@ -1,0 +1,117 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Images\accident_insurance.png" />
+    <None Remove="Images\bank\ACB.png" />
+    <None Remove="Images\bank\DongA.png" />
+    <None Remove="Images\bank\Exim.png" />
+    <None Remove="Images\bank\SCB.png" />
+    <None Remove="Images\bank\techcom.png" />
+    <None Remove="Images\bank\VietCapital.png" />
+    <None Remove="Images\bank\Vietcom.png" />
+    <None Remove="Images\bank\vietin.png" />
+    <None Remove="Images\bank\VP.png" />
+    <None Remove="Images\bg.jpg" />
+    <None Remove="Images\cancel.png" />
+    <None Remove="Images\CashDeposit\100k.png" />
+    <None Remove="Images\CashDeposit\200k.png" />
+    <None Remove="Images\CashDeposit\500k.png" />
+    <None Remove="Images\CashDeposit\500kVertical.png" />
+    <None Remove="Images\CashDeposit\50k.png" />
+    <None Remove="Images\CashDeposit\MoneyInput.png" />
+    <None Remove="Images\CashLogo.png" />
+    <None Remove="Images\Delete.png" />
+    <None Remove="Images\FacidImg.png" />
+    <None Remove="Images\health_insurance.png" />
+    <None Remove="Images\home\History_Img.png" />
+    <None Remove="Images\home\Insurance_Img.png" />
+    <None Remove="Images\home\Loan_Img.png" />
+    <None Remove="Images\home\Pay_Img.png" />
+    <None Remove="Images\home\Saving_Img.png" />
+    <None Remove="Images\home\Withdraw_Img.png" />
+    <None Remove="Images\IDCardModel.png" />
+    <None Remove="Images\insurance\health_insurance.png" />
+    <None Remove="Images\Left_arrow.png" />
+    <None Remove="Images\MomoLogo.png" />
+    <None Remove="Images\PayMeLogo.png" />
+    <None Remove="Images\plus.png" />
+    <None Remove="Images\Pre-Ads.png" />
+    <None Remove="Images\QrCode.png" />
+    <None Remove="Images\Qr_bg.png" />
+    <None Remove="Images\Right_arrow.png" />
+    <None Remove="Images\SearchIcon.png" />
+    <None Remove="Images\shift.png" />
+    <None Remove="Images\SuccessIcon.png" />
+    <None Remove="Images\VNPayLogo.png" />
+    <None Remove="Images\wallet\Bank.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <DesignDataWithDesignTimeCreatableTypes Include="Images\bank\VP.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Images\CashDeposit\100k.png" />
+    <Resource Include="Images\CashDeposit\200k.png" />
+    <Resource Include="Images\CashDeposit\500k.png" />
+    <Resource Include="Images\CashDeposit\500kVertical.png" />
+    <Resource Include="Images\CashDeposit\50k.png" />
+    <Resource Include="Images\CashDeposit\MoneyInput.png" />
+    <Resource Include="Images\Delete.png" />
+    <Resource Include="Images\insurance\accident_insurance.png" />
+    <Resource Include="Images\bank\ACB.png" />
+    <Resource Include="Images\bank\DongA.png" />
+    <Resource Include="Images\bank\Exim.png" />
+    <Resource Include="Images\bank\SCB.png" />
+    <Resource Include="Images\bank\techcom.png" />
+    <Resource Include="Images\bank\VietCapital.png" />
+    <Resource Include="Images\bank\Vietcom.png" />
+    <Resource Include="Images\bank\vietin.png" />
+    <Resource Include="Images\bg.jpg" />
+    <Resource Include="Images\cancel.png" />
+    <Resource Include="Images\CashLogo.png" />
+    <Resource Include="Images\FacidImg.png" />
+    <Resource Include="Images\home\History_Img.png" />
+    <Resource Include="Images\home\Insurance_Img.png" />
+    <Resource Include="Images\home\Loan_Img.png" />
+    <Resource Include="Images\home\Pay_Img.png" />
+    <Resource Include="Images\home\Saving_Img.png" />
+    <Resource Include="Images\home\Withdraw_Img.png" />
+    <Resource Include="Images\IDCardModel.png" />
+    <Resource Include="Images\insurance\health_insurance.png" />
+    <Resource Include="Images\Left_arrow.png" />
+    <Resource Include="Images\plus.png" />
+    <Resource Include="Images\shift.png" />
+    <Resource Include="Images\wallet\Bank.png" />
+    <Resource Include="Images\wallet\MomoLogo.png" />
+    <Resource Include="Images\wallet\PayMeLogo.png" />
+    <Resource Include="Images\Pre-Ads.png" />
+    <Resource Include="Images\QrCode.png" />
+    <Resource Include="Images\Qr_bg.png" />
+    <Resource Include="Images\Right_arrow.png" />
+    <Resource Include="Images\SearchIcon.png" />
+    <Resource Include="Images\SuccessIcon.png" />
+    <Resource Include="Images\wallet\VNPayLogo.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Model\" />
+    <Folder Include="ViewModel\Loan\" />
+    <Folder Include="ViewModel\Saving\" />
+    <Folder Include="View\Loan\" />
+    <Folder Include="View\Saving\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.0" />
+    <PackageReference Include="System.IO.Ports" Version="8.0.0" />
+  </ItemGroup>
+
+</Project>

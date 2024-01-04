@@ -7,3 +7,7 @@ dotnet add package Microsoft.EntityFrameworkCore.SqlServer --version 6.0.0
 dotnet add package Microsoft.EntityFrameworkCore.Tools --version 6.0.0
 dotnet add package Swashbuckle.AspNetCore --version 6.5.0
 dotnet add package IPinfo
+
+
+After update in database, run this command:
+Scaffold-DbContext "Server=DESKTOP-FQK88HL\SQLEXPRESS;Database=KioskManagementSystem;Trusted_Connection=True;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -Force

@@ -1,0 +1,88 @@
+﻿<UserControl x:Class="Insurance.View.InsuranceHomeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Insurance.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="768" d:DesignWidth="1024"
+             xmlns:vm="clr-namespace:Insurance.ViewModel"
+             >
+    <UserControl.DataContext>
+        <vm:InsuranceHomeVM/>
+    </UserControl.DataContext>
+    <UserControl.Background>
+        <ImageBrush ImageSource="/Images/bg.jpg"></ImageBrush>
+    </UserControl.Background>
+    
+    <Grid>
+
+        <!--Define Row-->
+
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="650"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+      
+        <!---Cancel Button--><!--
+        <Grid Grid.Row="0">
+            <Button Command="{Binding CancelCommand}" Margin="0 0 15 0" Style="{StaticResource cancelButton}" Content="Cancel" VerticalAlignment="Center" HorizontalAlignment="Right"></Button>
+        </Grid>-->
+
+        <!--Insurance-->
+
+        <Grid Grid.Row="1">
+            <!---Description-->
+
+            <TextBlock  Margin="15,0,0,0" FontSize="25.28px" Foreground="#FFFFFF" FontFamily="Exo"  FontWeight="Bold" Grid.ColumnSpan="2">Insurance</TextBlock>
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+
+                <!--Health Insurance-->
+
+                <Grid Margin="0 0 0 50">
+                    <Button Command="{Binding HealthPackageCommand}" Width="497" Height="153"  Background="#0EAB00" BorderBrush="Transparent">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="10"></Setter>
+                            </Style>
+                        </Button.Resources>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Width="93" Height="89.32" Source="/Images/insurance/health_insurance.png"/>
+                            <TextBlock VerticalAlignment="Center" FontSize="40" FontFamily="Exo" Foreground="#FFFFFF" FontWeight="Bold" Text="Health Insurance" Margin="10 0 0 0"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            
+
+
+                <!--Accident Insurance-->
+
+                <Button Command="{Binding AccidentPackageCommand}" Width="497" Height="153"  Background="#0EAB00" BorderBrush="Transparent">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="10"></Setter>
+                        </Style>
+                    </Button.Resources>
+                    <StackPanel Orientation="Horizontal" Margin="20 0 0 0">
+                        <Image Width="93" Height="89.32" Source="/Images/insurance/accident_insurance.png"/>
+                        <TextBlock  VerticalAlignment="Center" FontSize="40" FontFamily="Exo" Foreground="#FFFFFF" FontWeight="Bold" Text="Accident Insurance" Margin="10 0 0 0"/>
+                    </StackPanel>
+                </Button>
+
+            </StackPanel>
+        </Grid>
+
+
+
+
+        <!---Footer--><!--
+
+        <Grid Grid.Row="2">
+            <TextBlock Foreground="#FFFFFF" FontFamily="Exo" FontSize="20" VerticalAlignment="Center" Margin="15 0 0 0">
+           10:47, October 20 2023
+            </TextBlock>
+        </Grid>-->
+   
+    </Grid>
+</UserControl>

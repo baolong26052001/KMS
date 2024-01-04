@@ -1,0 +1,187 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup />
+  <ItemGroup>
+    <ApplicationDefinition Update="App.xaml">
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="BankAccountNumberWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="HealthBenefitsWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\Insurance\BeneficiaryInfoView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\Insurance\DetailedPackageView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\Insurance\InsuranceSuccessView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\Insurance\BuyerInformationView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\Insurance\ContractInfoView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\Insurance\AccidentPackageView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\Insurance\HealthPackageView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\Insurance\BeneficiaryAddView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\Insurance\CashDepositView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\Insurance\HomeView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="InsuranceInfoWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="OTPWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="SelectBankAccountWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="VerifyFaceIDWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="VerifyIDCardWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\Insurance\InsuranceHomeView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\Insurance\PaymentMethodView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\Insurance\OTPView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\Insurance\QrCodeView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\Insurance\SelectBankAccountView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\VerifyIDView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\VirtualKeyboardView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\VirtualNumpadView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="WelcomeWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="BankAccountNumberWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="HealthBenefitsWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Style\KeyboardStyle.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\Insurance\BeneficiaryInfoView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\Insurance\DetailedPackageView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\Insurance\InsuranceSuccessView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\Insurance\BuyerInformationView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\Insurance\ContractInfoView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\Insurance\AccidentPackageView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\Insurance\HealthPackageView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\Insurance\BeneficiaryAddView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\Insurance\CashDepositView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\Insurance\HomeView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="InsuranceInfoWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="MainWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="OTPWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resources\NavigationResources.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="SelectBankAccountWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Style\ButtonStyle.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Style\PackageButtons.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Style\TextBoxStyle.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="VerifyFaceIDWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="VerifyIDCardWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\Insurance\InsuranceHomeView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\Insurance\PaymentMethodView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\Insurance\OTPView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\Insurance\QrCodeView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\Insurance\SelectBankAccountView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\VerifyIDView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\VirtualKeyboardView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\VirtualNumpadView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="WelcomeWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+</Project>

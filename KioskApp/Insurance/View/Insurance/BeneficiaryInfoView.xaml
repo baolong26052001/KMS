@@ -1,0 +1,100 @@
+﻿<UserControl x:Class="Insurance.View.BeneficiaryInfoView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Insurance.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="768" d:DesignWidth="1024">
+    <UserControl.Background>
+        <ImageBrush ImageSource="/Images/bg.jpg"/>
+    </UserControl.Background>
+    <Grid>
+        <!--Define Row-->
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="650"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <!--Define Column-->
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="9*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="9*"/>
+
+        </Grid.ColumnDefinitions>
+
+        <!---Description-->
+        <Grid Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10 0 0 0">
+            <TextBlock FontSize="25px" Foreground="#FFFFFF" FontFamily="Exo" FontWeight="Bold">Insurance beneficiary information</TextBlock>
+        </Grid>
+
+        <!---Info Column 1-->
+        <StackPanel Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Left" VerticalAlignment="Center"  Margin="20 10 0 0" Width="460">
+            <!--Full Name-->
+            <TextBlock FontSize="30px" Foreground="#FFFFFF" FontFamily="Exo">Full name*</TextBlock>
+            <TextBox HorizontalAlignment="Left" Style="{StaticResource textBox}"/>
+            <Grid Height="100">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="2*"/>
+                </Grid.ColumnDefinitions>
+                <!--Date of birth-->
+                <StackPanel Grid.Column="0">
+                    <TextBlock FontSize="30px" Foreground="#FFFFFF" FontFamily="Exo">Date of birth*</TextBlock>
+                    <!--<TextBox Width="180" HorizontalAlignment="Left" Style="{StaticResource textBox}"/>-->
+                    <DatePicker Background="Transparent" Foreground="Black" BorderBrush="#0EAB00" BorderThickness="1" FontSize="14"/>
+                </StackPanel>
+                <!--Gender-->
+                <StackPanel Grid.Column="2">
+                    <TextBlock FontSize="30px" Foreground="#FFFFFF" FontFamily="Exo">Gender*</TextBlock>
+                    <Border CornerRadius="3" BorderThickness="2" BorderBrush="#0EAB00" Background="Transparent">
+                        <ComboBox  Padding="2" SelectedIndex="0">
+                            <ComboBoxItem Content="Male"/>
+                            <ComboBoxItem Content="Female"/>
+                            <ComboBoxItem Content="Others"/>
+                        </ComboBox>
+                    </Border>
+                </StackPanel>
+
+            </Grid>
+            <!---Address-->
+            <TextBlock FontSize="30px" Foreground="#FFFFFF" FontFamily="Exo">Address*</TextBlock>
+            <TextBox HorizontalAlignment="Left" Style="{StaticResource textBox}"/>
+            <!---Occupation-->
+            <TextBlock FontSize="30px" Foreground="#FFFFFF" FontFamily="Exo">Occupation*</TextBlock>
+            <TextBox HorizontalAlignment="Left" Style="{StaticResource textBox}"/>
+        </StackPanel>
+
+        <!---Line to seperate Column 1 & 2-->
+        <Grid Grid.Row="1" Grid.Column="1">
+            <Line  X1="30"  X2="30" Y1="14" Y2="600"  Stroke="#8B8989" StrokeThickness="4"/>
+        </Grid>
+
+        <!--Info Column 2-->
+        <StackPanel Grid.Row="1" Grid.Column="2"  HorizontalAlignment="Left" VerticalAlignment="Center"   Margin="10 10 0 0" Width="460">
+            <!---ID Number-->
+            <TextBlock FontSize="30px" Foreground="#FFFFFF" FontFamily="Exo">ID number*</TextBlock>
+            <TextBox HorizontalAlignment="Left" Style="{StaticResource textBox}"/>
+            <!--Tax Number-->
+            <TextBlock FontSize="30px" Foreground="#FFFFFF" FontFamily="Exo">Tax number(optional)*</TextBlock>
+            <TextBox HorizontalAlignment="Left" Style="{StaticResource textBox}"/>
+            <!---Email-->
+            <TextBlock FontSize="30px" Foreground="#FFFFFF" FontFamily="Exo">Email*</TextBlock>
+            <TextBox HorizontalAlignment="Left" Style="{StaticResource textBox}"/>
+            <!---Phone number-->
+            <TextBlock FontSize="30px" Foreground="#FFFFFF" FontFamily="Exo">Phone number*</TextBlock>
+            <TextBox HorizontalAlignment="Left" Style="{StaticResource textBox}"/>
+        </StackPanel>
+        <!---Next Button-->
+        <Grid Grid.Row="1" Grid.Column="2" Margin="0 0 15 0">
+            <Button Command="{Binding NextCommand}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="Next" Margin="0 0 0 0" Background="LimeGreen" Foreground="White" Style="{StaticResource bigButton}"/>
+        </Grid>
+        <!---Back Button-->
+        <Grid Grid.Row="1" Grid.Column="0" Margin="15 0 0 0">
+            <Button Command="{Binding BackCommand}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Content="Back"  Margin="0 80 0 0" Background="LimeGreen" Foreground="White" Style="{StaticResource bigButton}"/>
+        </Grid>
+
+    </Grid>
+</UserControl>

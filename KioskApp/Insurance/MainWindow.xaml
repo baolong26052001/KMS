@@ -1,0 +1,52 @@
+﻿<Window x:Class="Insurance.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Insurance"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="768" Width="1024"
+        xmlns:vm="clr-namespace:Insurance.ViewModel"
+         WindowState="Maximized"
+         WindowStyle="None"
+        >
+    
+    <Window.Background>
+        <ImageBrush ImageSource="/Images/bg.jpg"/>
+    </Window.Background>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="650"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+       
+        <!---Header-->
+        <Grid Grid.Row="0" Visibility="{Binding VisibilityHeader}">
+            <TextBlock FontFamily="Bowlby One" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="40" Foreground="#0EAB00" Margin="15 0 0 0"> 
+ALM
+            </TextBlock>
+
+            <Button Command="{Binding CancelCommand}" Margin="0 0 15 0" Style="{StaticResource cancelButton}" Content="Cancel" VerticalAlignment="Center" HorizontalAlignment="Right"></Button>
+        </Grid>
+        
+        <Grid Grid.Row="{Binding RowContentIndex}" Grid.RowSpan="{Binding RowContentSpan}">
+            <ContentControl Content="{Binding CurrentView}"/>
+        </Grid>
+
+        <!---Footer-->
+        <Grid Grid.Row="2" Visibility="{Binding VisibilityFooter}">
+            <TextBlock Foreground="#FFFFFF" FontFamily="Exo" FontSize="20" VerticalAlignment="Center" Margin="15 0 0 0">
+     10:47, October 20 2023
+            </TextBlock>
+        </Grid>
+
+    </Grid>
+   
+
+</Window>
+
+
+
+
+

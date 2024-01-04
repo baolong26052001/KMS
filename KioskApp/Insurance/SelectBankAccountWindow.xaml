@@ -1,0 +1,176 @@
+﻿<Window x:Class="Insurance.SelectBankAccountWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Insurance"
+        mc:Ignorable="d"
+        Title="SelectBankAccountWindow" Height="768" Width="1024">
+    <Window.Background>
+        <ImageBrush ImageSource="Images/bg.jpg"/>
+    </Window.Background>
+    <Grid>
+        <!--Define Row-->
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="650"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <!--Header-->
+        <Grid Grid.Row="0">
+            <TextBlock FontFamily="Bowlby One" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="40" Foreground="#0EAB00" Margin="15 0 0 0"> 
+  ALM
+            </TextBlock>
+
+            <Button Margin="0 0 15 0" Style="{StaticResource cancelButton}" Content="Cancel" VerticalAlignment="Center" HorizontalAlignment="Right"></Button>
+        </Grid>
+
+        <!---Description-->
+        <Grid Grid.Row="1">
+            <!--Define Row-->
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="4*"/>
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0" Margin="15 0 0 0">
+               <!---Description-->
+                <TextBlock FontSize="25.28px" Foreground="#FFFFFF" FontFamily="Exo"  FontWeight="Bold" >Link a bank account</TextBlock>
+                <!---Search bar-->
+                <StackPanel Orientation="Horizontal" Margin="0 20 0 0" VerticalAlignment="Center" Height="36" HorizontalAlignment="Center">
+                    <Grid>
+                        <Border CornerRadius="10" BorderBrush="#0EAB00" BorderThickness="1" Background="Transparent">
+                            <TextBox Text="Type bank name" Padding="20,0,0,0" FontSize="15" VerticalContentAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Gray" Height="36" Width="900"  BorderBrush="Transparent" BorderThickness="2"  Background="Transparent"/>
+                        </Border>
+                        <Image Source="/images/SearchIcon.png" Height="24" Width="42" Margin="0,0,18,0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    </Grid>
+                </StackPanel>
+            </StackPanel>
+
+            <Grid Grid.Row="1" Margin="15 0 10 15">
+                <!--Define Row-->
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="4*"/>
+                    <RowDefinition Height="4*"/>
+                    <RowDefinition Height="4*"/>
+                    <RowDefinition Height="2*"/>
+                </Grid.RowDefinitions>
+
+                <!--Define Column-->
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">
+                    <TextBlock FontSize="20px" Foreground="#FFFFFF" FontFamily="Exo"  FontWeight="Bold" >Select your bank</TextBlock>
+                </Grid>
+
+                <!--Techcom-->
+                <Grid HorizontalAlignment="Left" Grid.Row="1" Grid.Column="0">
+                    <Border BorderBrush="#FFFFFF" BorderThickness="2.0" CornerRadius="10" Background="#FFFFFF" Width="289" Height="121" >
+                        <StackPanel  HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Width="121" Height="67" Source="Images/bank/techcom.png"/>
+                            <TextBlock  HorizontalAlignment="Center" FontSize="14" FontFamily="Exo" Foreground="#000000" FontWeight="Bold" Text="Techcombank"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!--Vietin-->
+                <Grid Grid.Row="1" Grid.Column="1">
+                    <Border  BorderBrush="#FFFFFF" BorderThickness="2.0" CornerRadius="10" Background="#FFFFFF" Width="289" Height="121" >
+                        <StackPanel  HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Width="121" Height="67" Source="Images/bank/Vietin.png"/>
+                            <TextBlock  HorizontalAlignment="Center" FontSize="14" FontFamily="Exo" Foreground="#000000" FontWeight="Bold" Text="VietinBank"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!--ACB-->
+                <Grid Grid.Row="1" Grid.Column="2" HorizontalAlignment="Right">
+                    <Border  BorderBrush="#FFFFFF" BorderThickness="2.0" CornerRadius="10" Background="#FFFFFF" Width="289" Height="121" >
+                        <StackPanel  HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Width="121" Height="67" Source="Images/bank/ACB.png"/>
+                            <TextBlock  HorizontalAlignment="Center" FontSize="14" FontFamily="Exo" Foreground="#000000" FontWeight="Bold" Text="ACB" TextAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!--Exim-->
+                <Grid Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left">
+                    <Border  BorderBrush="#FFFFFF" BorderThickness="2.0" CornerRadius="10" Background="#FFFFFF" Width="289" Height="121" >
+                        <StackPanel  VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <Image Width="121" Height="67" Source="Images/bank/Exim.png"/>
+                            <TextBlock  HorizontalAlignment="Center" FontSize="14" FontFamily="Exo" Foreground="#000000" FontWeight="Bold" Text="Eximbank"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!--VP-->
+                <Grid Grid.Row="2" Grid.Column="1">
+                    <Border  BorderBrush="#FFFFFF" BorderThickness="2.0" CornerRadius="10" Background="#FFFFFF" Width="289" Height="121" >
+                        <StackPanel  HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Width="121" Height="67" Source="Images/bank/VP.png"/>
+                            <TextBlock  HorizontalAlignment="Center" FontSize="14" FontFamily="Exo" Foreground="#000000" FontWeight="Bold" Text="VP Bank"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!--Vietcom-->
+                <Grid Grid.Row="2" Grid.Column="2" HorizontalAlignment="Right">
+                    <Border  BorderBrush="#FFFFFF" BorderThickness="2.0" CornerRadius="10" Background="#FFFFFF" Width="289" Height="121" >
+                        <StackPanel  HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Width="121" Height="67" Source="Images/bank/Vietcom.png"/>
+                            <TextBlock  HorizontalAlignment="Center" FontSize="14" FontFamily="Exo" Foreground="#000000" FontWeight="Bold" Text="Vietcombank"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!--SCB-->
+                <Grid Grid.Row="3" Grid.Column="0" HorizontalAlignment="Left">
+                    <Border  BorderBrush="#FFFFFF" BorderThickness="2.0" CornerRadius="10" Background="#FFFFFF" Width="289" Height="121" >
+                        <StackPanel  HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Width="121" Height="67" Source="Images/bank/SCB.png"/>
+                            <TextBlock HorizontalAlignment="Center" FontSize="14" FontFamily="Exo" Foreground="#000000" FontWeight="Bold" Text="SCB" TextAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!--VietCapital-->
+                <Grid Grid.Row="3" Grid.Column="1">
+                    <Border  BorderBrush="#FFFFFF" BorderThickness="2.0" CornerRadius="10" Background="#FFFFFF" Width="289" Height="121" >
+                        <StackPanel  HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Width="121" Height="67" Source="Images/bank/VietCapital.png"/>
+                            <TextBlock  HorizontalAlignment="Center" FontSize="14" FontFamily="Exo" Foreground="#000000" FontWeight="Bold" Text="Viet Capital Bank"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!--DongA-->
+                <Grid Grid.Row="3" Grid.Column="2" HorizontalAlignment="Right">
+                    <Border  BorderBrush="#FFFFFF" BorderThickness="2.0" CornerRadius="10" Background="#FFFFFF" Width="289" Height="121" >
+                        <StackPanel  HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Width="121" Height="67" Source="Images/bank/DongA.png"/>
+                            <TextBlock  HorizontalAlignment="Center" FontSize="14" FontFamily="Exo" Foreground="#000000" FontWeight="Bold" Text="Dong A Bank"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+                <!---Back Button-->
+                <Grid Grid.Row="4" Grid.Column="0">
+                    <Button VerticalAlignment="Bottom" HorizontalAlignment="Left" Content="Back" Style="{StaticResource bigButton}"/>
+                </Grid>
+            </Grid>
+            
+        </Grid>
+
+        <!---Footer-->
+        <Grid Grid.Row="2">
+            <TextBlock Foreground="#FFFFFF" FontFamily="Exo" FontSize="20" VerticalAlignment="Center" Margin="15 0 0 0">
+           10:47, October 20 2023
+            </TextBlock>
+        </Grid>
+    </Grid>
+</Window>
+
+

@@ -1,0 +1,72 @@
+﻿<UserControl x:Class="Insurance.View.ContractInfoView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Insurance.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="768" d:DesignWidth="1024">
+    <UserControl.Background>
+        <ImageBrush ImageSource="/Images/bg.jpg"></ImageBrush>
+    </UserControl.Background>
+    <Grid>
+        <!--Define Row-->
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="650"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+      
+        
+        <Grid Grid.Row="1">
+            <TextBlock  Margin="15,0,0,0" FontSize="25.28px" Foreground="#FFFFFF" FontFamily="Exo"  FontWeight="Bold" Grid.ColumnSpan="2">Insurance</TextBlock>
+
+            <Border VerticalAlignment="Center" Height="514" Width="931" Background="White" Margin="0 0 0 50" CornerRadius="10" Padding="5">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- For the header -->
+                        <RowDefinition Height="*"/>
+                        <!-- For the scrollable text content -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- For the buttons at the bottom -->
+                    </Grid.RowDefinitions>
+
+                    <!-- Header with a colored background -->
+                    <TextBlock FontFamily="Exo" Text="Please read our Insurance policy below please" Foreground="Black" FontWeight="Bold" FontSize="38" Padding="10" HorizontalAlignment="Center"/>
+
+                    <!-- Scrollable content area -->
+                    <ScrollViewer Grid.Row="1" Padding="10" VerticalScrollBarVisibility="Auto">
+                        <TextBlock  Width="663"  TextWrapping="Wrap" Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum vehicula ornare purus a vehicula. Sed condimentum orci sed arcu sollicitudin posuere. Integer lobortis eget metus nec euismod. Aliquam rhoncus vulputate blandit. In faucibus ipsum libero, vel accumsan lorem mollis euismod. Nulla vel porta purus. Integer iaculis dictum pharetra. Praesent porttitor magna gravida mauris ullamcorper venenatis. Donec suscipit eros euismod, dapibus nunc et, viverra augue. Duis sed tortor dui.
+
+Ut orci risus, maximus a rhoncus x`at, egestas eu sem. 
+                                    
+                                    Vestibulum eleifend enim eu odio consectetur pharetra ut convallis nisi. In faucibus sapien sed facilisis varius. Integer eu scelerisque magna, ullamcorper interdum justo. Nam nec elit ultrices arcu elementum lacinia ac nec nisl. 
+                                    
+                                    
+                                    Integer lacus mauris, porta at elit ut, finibus fermentum ex. Proin et placerat urna. Vivamus quis fringilla nibh. Quisque scelerisque nibh nec mollis scelerisque. Pellentesque tincidunt rhoncus odio, nec aliquet nibh imperdiet at. Maecenas nec urna mattis, viverra libero eget, ullamcorper lacus. Sed diam justo, convallis in justo ac, facilisis tempus dolor. Integer id vulputate nunc. Sed congue tempor vestibulum.
+
+Cras consectetur luctus turpis in efficitur. 
+                                   
+                                    Proin sed dui velit. Aliquam erat volutpat. Duis eu tempor elit, nec dapibus felis. Etiam congue est justo, vitae molestie massa cursus eu. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Aliquam vitae mauris facilisis, fermentum diam ac, auctor lectus. Nullam ac dui a tellus laoreet dapibus. Praesent eleifend iaculis quam rutrum volutpat. Nullam a elementum justo, a placerat dui. Etiam id scelerisque nisi. Nunc accumsan orci vel imperdiet finibus. Proin ac sodales est, sit amet elementum felis. Suspendisse eget tempus enim, ultrices volutpat dolor.
+
+
+Fusce rutrum vel leo vitae elementum. Quisque eu luctus elit. Fusce varius, nunc ultricies suscipit vehicula, mi eros tristique orci, eu blandit nulla lectus vel ligula. Sed lobortis purus vel dignissim mattis. Fusce laoreet est maximus nisi lobortis, cursus fringilla elit aliquam. Proin turpis sapien, tincidunt sed gravida sed, pellentesque non ipsum. Etiam non euismod metus.
+
+Vivamus mattis, ex id vehicula iaculis, libero ex pulvinar tortor, eu gravida sapien ante eu enim. Quisque nisi erat, scelerisque vel nulla in, ultrices fermentum odio. Proin in mauris ut sem commodo ultrices. Vivamus vitae magna eleifend, pellentesque enim eget, pharetra arcu. Nullam et rutrum lorem. Quisque placerat quis eros ut pulvinar. Fusce malesuada nunc in ipsum imperdiet dictum. Proin quis lacus in leo sagittis finibus eget quis tellus. Nam et tortor massa. Nam feugiat consectetur lectus ac molestie. Vestibulum ac tempor eros. Morbi id elit lobortis, vestibulum tellus ac, faucibus justo. Nulla at dui id risus commodo porta non at massa. Donec erat dolor, vulputate ac tellus non, pharetra egestas tortor. Ut placerat accumsan interdum. 
+                               x Praesent varius lacus non molestie eleifend." Foreground="Black" FontSize="15"/>
+                    </ScrollViewer>
+
+
+                </Grid>
+            </Border>
+
+            <!-- Buttons at the bottom -->
+            <Button Command="{Binding BackCommand}" VerticalAlignment="Bottom" Margin="15 0 0 0" HorizontalAlignment="Left" Content="Back" Style="{StaticResource bigButton}"/>
+            <Button Command="{Binding AgreeCommand}" VerticalAlignment="Bottom" Margin="0 0 15 0" HorizontalAlignment="Right" Content="Agree" Style="{StaticResource bigButton}"/>
+
+        </Grid>
+
+
+    </Grid>
+</UserControl>

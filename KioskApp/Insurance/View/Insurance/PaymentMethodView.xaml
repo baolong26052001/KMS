@@ -1,0 +1,97 @@
+﻿<UserControl x:Class="Insurance.View.PaymentMethodView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Insurance.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="768" d:DesignWidth="1024">
+    <UserControl.Background>
+        <ImageBrush ImageSource="/Images/bg.jpg"/>
+    </UserControl.Background>
+    <Grid>
+        <!--Define Row-->
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="650"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+
+        <!---Description-->
+        <Grid Grid.Row="1" Margin="15 0 15 0">
+            <TextBlock FontSize="25.28px" Foreground="#FFFFFF" FontFamily="Exo"  FontWeight="Bold" >Accident Insurance</TextBlock>
+            <TextBlock Margin="0 50 0 0" FontSize="25.28px" Foreground="#FFFFFF" FontFamily="Exo"  FontWeight="Bold" >Select the payment method</TextBlock>
+
+            <!--Payment Method Column 1-->
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Left"  Margin="0 10 0 0">
+                <!--By Cash-->
+                <Button Command="{Binding CashDepositCommand}" Width="480" Height="200"  Background="#FFFFFF" BorderBrush="Transparent">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="10"></Setter>
+                        </Style>
+                    </Button.Resources>
+                    <StackPanel  VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <Image Width="100" Height="100" Source="/Images/CashLogo.png"/>
+                        <TextBlock FontSize="35" FontFamily="Exo" Foreground="#000000" FontWeight="Bold" Text="Cash in" />
+                    </StackPanel>
+                </Button>
+
+
+                <!--Momo-->
+                <Grid Margin="0 50 0 0">
+                    <Button Command="{Binding MomoCommand}" Width="480" Height="200"  Background="#FFFFFF" BorderBrush="Transparent">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="10"></Setter>
+                            </Style>
+                        </Button.Resources>
+
+                        <StackPanel  VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <Image Width="100" Height="100" Source="/Images/Wallet/MomoLogo.png"/>
+                            <TextBlock FontSize="35" FontFamily="Exo" Foreground="#000000" FontWeight="Bold" Text="Momo" />
+                        </StackPanel>
+                    </Button>
+                </Grid>
+             
+            </StackPanel>
+            
+            <!--Payment Method Column 2-->
+            <StackPanel Grid.Row="1"  VerticalAlignment="Center" HorizontalAlignment="Right"  Margin="0 10 0 0">
+                <!--Bank AccountY-->
+                <Button Command="{Binding BankCommand}" Width="480" Height="200"  Background="#FFFFFF" BorderBrush="Transparent">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="10"></Setter>
+                        </Style>
+                    </Button.Resources>
+                    <StackPanel  VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <Image Width="100" Height="100" Source="/Images/wallet/bank.png"/>
+                        <TextBlock FontSize="35" FontFamily="Exo" Foreground="#000000" FontWeight="Bold" Text="Bank Account" />
+                    </StackPanel>
+                </Button>
+
+
+                <!--PayMe-->
+                <Grid Margin="0 50 0 0">
+                    <Button Command="{Binding PayMeCommand}" Width="480" Height="200"  Background="#FFFFFF" BorderBrush="Transparent">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="10"></Setter>
+                            </Style>
+                        </Button.Resources>
+
+                        <StackPanel  VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <Image Width="100" Height="100" Source="/Images/Wallet/PaymeLogo.png"/>
+                            <TextBlock FontSize="35" FontFamily="Exo" Foreground="#000000" FontWeight="Bold" Text="PayME" />
+                        </StackPanel>
+                    </Button>
+                </Grid> 
+            </StackPanel>
+
+            <Button Command="{Binding BackCommand}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Content="Back" Background="LimeGreen" Foreground="White" Style="{StaticResource bigButton}"/>
+        </Grid>
+      
+    </Grid>
+</UserControl>

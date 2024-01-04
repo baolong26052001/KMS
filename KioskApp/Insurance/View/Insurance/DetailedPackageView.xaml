@@ -1,0 +1,75 @@
+﻿<UserControl x:Class="Insurance.View.DetailedPackageView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Insurance.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="768" d:DesignWidth="1024">
+    <UserControl.Background>
+        <ImageBrush ImageSource="/Images/bg.jpg"/>
+    </UserControl.Background>
+
+    <Grid>
+        <!--Define Row-->
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="650"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="1">
+            <!---Description-->
+            <TextBlock  Margin="15 0 0 0" FontSize="25.28px" Foreground="#FFFFFF" FontFamily="Exo"  FontWeight="Bold">Insurance</TextBlock>
+            <TextBlock Margin="15 50 0 0" FontSize="25.28px" Foreground="#FFFFFF" FontFamily="Exo"  FontWeight="Bold" >Insurance information</TextBlock>
+
+
+            <StackPanel VerticalAlignment="Center" Margin="15 0 15 0">
+                <!---Border-->
+                <Border Background="LimeGreen" Height="448" Width="990" CornerRadius="10"  Padding="5">
+                    <StackPanel HorizontalAlignment="Center">
+                        <StackPanel Orientation="Horizontal"  Margin="0 20 0 20">
+                            <TextBlock Text="Package 1: " Foreground="White" FontSize="30" FontFamily="Exo" FontWeight="Bold"/>
+                            <TextBlock Text="44.000VND/year" Foreground="White" FontSize="25" FontFamily="Exo" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <Border Background="White" CornerRadius="5" HorizontalAlignment="Left" Width="928" Height="337" >
+                            <ScrollViewer Grid.Row="1" Padding="10"  VerticalScrollBarVisibility="Auto" Width="888">
+                                <StackPanel>
+                                    <TextBlock Text="Insurance information:" Foreground="Black" FontSize="28" FontWeight="Bold"/>
+                                    <TextBlock Text="Provider: Bao Viet" Foreground="Black" FontSize="18" Padding="2"/>
+                                    <TextBlock Text="Create date: 17/11/2023" Foreground="Black" FontSize="18" Padding="2"/>
+                                    <TextBlock Text="Expire date: 17/11/2024" Foreground="Black" FontSize="18" Padding="2"/>
+                                    <TextBlock Text="Contractor information" Foreground="Black" FontSize="28" FontWeight="Bold" Padding="5"/>
+                                    <TextBlock Text="Full name: Tran Van A" Foreground="Black" FontSize="18" Padding="2"/>
+                                    <TextBlock Text="Date of birth: 01/10/1991" Foreground="Black" FontSize="18" Padding="2"/>
+                                    <TextBlock Text="Gender: Male" Foreground="Black" FontSize="18" Padding="2"/>
+                                    <TextBlock Text="ID card: 241675****" Foreground="Black" FontSize="18" Padding="2"/>
+
+                                    <TextBlock Text="Contractor information" Foreground="Black" FontSize="28" FontWeight="Bold" Padding="5"/>
+                                    <TextBlock Text="Full name: Tran Van A" Foreground="Black" FontSize="18" Padding="2"/>
+                                    <TextBlock Text="Date of birth: 01/10/1991" Foreground="Black" FontSize="18" Padding="2"/>
+                                    <TextBlock Text="Gender: Male" Foreground="Black" FontSize="18" Padding="2"/>
+                                    <TextBlock Text="ID card: 241675****" Foreground="Black" FontSize="18" Padding="2"/>
+
+                                    <TextBlock Text="Contractor information" Foreground="Black" FontSize="28" FontWeight="Bold" Padding="5"/>
+                                    <TextBlock Text="Full name: Tran Van A" Foreground="Black" FontSize="18" Padding="2"/>
+                                    <TextBlock Text="Date of birth: 01/10/1991" Foreground="Black" FontSize="18" Padding="2"/>
+                                    <TextBlock Text="Gender: Male" Foreground="Black" FontSize="18" Padding="2"/>
+                                    <TextBlock Text="ID card: 241675****" Foreground="Black" FontSize="18" Padding="2"/>
+                                    <!-- Add more content here as needed -->
+                                </StackPanel>
+                            </ScrollViewer>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+
+            <!---Buttons-->
+            <Button Command="{Binding BackCommand}" VerticalAlignment="Bottom" Margin="15 0 0 0" HorizontalAlignment="Left" Content="Back" Style="{StaticResource bigButton}"/>
+            <Button Command ="{Binding NextCommand}"  VerticalAlignment="Bottom" Margin="0 0 15 0" HorizontalAlignment="Right" Content="Next" Style="{StaticResource bigButton}"/>
+        </Grid>
+
+
+    </Grid>
+</UserControl>
