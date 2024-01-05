@@ -43,6 +43,44 @@ namespace KMS.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("AddSlideDetail")]
+        public JsonResult AddSlideDetail([FromBody] TslideDetail slideDetail)
+        {
+            string query = "INSERT INTO TSlideDetail (description, typeContent, contentUrl, slideHeaderId, dateModified, dateCreated, isActive) " +
+                           "VALUES (@Description, @TypeContent, @ContentUrl, @SlideHeaderId, GETDATE(), GETDATE(), 1)";
+            SqlParameter[] parameters =
+            {
+                new SqlParameter("@Description", slideDetail.Description),
+                new SqlParameter("@TypeContent", slideDetail.TypeContent),
+                new SqlParameter("@ContentUrl", slideDetail.ContentUrl),
+                new SqlParameter("@SlideHeaderId", slideDetail.SlideHeaderId),
+                new SqlParameter("@IsActive", slideDetail.IsActive),
+            };
+            _exQuery.ExecuteRawQuery(query, parameters);
+            return new JsonResult("Slide detail added successfully");
+        }
+
+        [HttpPut]
+        [Route("UpdateSlideDetail/{id}")]
+        public JsonResult UpdateSlideDetail(int id, [FromBody] TslideDetail slideDetail)
+        {
+            string query = "UPDATE TSlideDetail SET description = @Description, typeContent = @TypeContent, contentUrl = @ContentUrl, slideHeaderId = @SlideHeaderId, dateModified = GETDATE(), isActive = @IsActive  " +
+                           "WHERE id = @Id";
+            SqlParameter[] parameters =
+            {
+                new SqlParameter("@Id", id),
+                new SqlParameter("@Description", slideDetail.Description),
+                new SqlParameter("@TypeContent", slideDetail.TypeContent),
+                new SqlParameter("@ContentUrl", slideDetail.ContentUrl),
+                new SqlParameter("@SlideHeaderId", slideDetail.SlideHeaderId),
+                new SqlParameter("@IsActive", slideDetail.IsActive),
+            };
+
+            _exQuery.ExecuteRawQuery(query, parameters);
+            return new JsonResult("Slide detail updated successfully");
+        }
+
         [HttpGet]
         [Route("FilterSlideDetail/{id}")]
         public JsonResult FilterSlideDetail(int id, [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
@@ -72,10 +110,10 @@ namespace KMS.Controllers
         }
 
         [HttpDelete]
-        [Route("DeleteSlideshow")]
-        public JsonResult DeleteSlideshow([FromBody] List<int> slideshowIds)
+        [Route("DeleteSlideDetail")]
+        public JsonResult DeleteSlideDetail([FromBody] List<int> slideDetailIds)
         {
-            if (slideshowIds == null || slideshowIds.Count == 0)
+            if (slideDetailIds == null || slideDetailIds.Count == 0)
             {
                 return new JsonResult("No slideshow IDs provided for deletion");
             }
@@ -84,24 +122,24 @@ namespace KMS.Controllers
 
             List<SqlParameter> parameters = new List<SqlParameter>();
 
-            for (int i = 0; i < slideshowIds.Count; i++)
+            for (int i = 0; i < slideDetailIds.Count; i++)
             {
-                string parameterName = "@SlideshowId" + i;
+                string parameterName = "@SlideDetailId" + i;
                 deleteQuery.Append(parameterName);
 
-                if (i < slideshowIds.Count - 1)
+                if (i < slideDetailIds.Count - 1)
                 {
                     deleteQuery.Append(", ");
                 }
 
-                parameters.Add(new SqlParameter(parameterName, slideshowIds[i]));
+                parameters.Add(new SqlParameter(parameterName, slideDetailIds[i]));
             }
 
             deleteQuery.Append(");");
 
             _exQuery.ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
 
-            return new JsonResult("Slideshow deleted successfully");
+            return new JsonResult("Slide detail deleted successfully");
         }
 
         [HttpGet]
