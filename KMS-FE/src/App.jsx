@@ -89,6 +89,8 @@ const App = () => {
                     <Route path="/viewSlideShow/:id" element={<RouteViewSlideShow />} />
                     {/* Route for Slide Detail*/}
                     <Route path="/slideDetail/:id/:packageName" element={<RouteSlideDetail />} />
+                    <Route path="/addSlideDetail/:id/:packageName" element={<RouteAddSlideDetail />} />
+                    <Route path="/editSlideDetail/:id/:packageName" element={<RouteEditSlideDetail />} />
                     
                     
                     {/* Route for Account*/}
@@ -180,6 +182,7 @@ const RouteEditUser = React.lazy(() => import('./pages/user/editUser'));
 const RouteEditGroup = React.lazy(() => import('./pages/usergroup/editGroup'));
 const RouteEditStation = React.lazy(() => import('./pages/station/editStation'));
 const RouteEditSlideShow = React.lazy(() => import('./pages/slideshow/editSlideShow'));
+const RouteEditSlideDetail = React.lazy(() => import('./pages/slideDetail/editSlide'));
 const RouteEditKioskSetup = React.lazy(() => import('./pages/kiosk-setup/editKiosk'));
 const RouteEditBenefit = React.lazy(() => import('./pages/InsurancePackage/editBenefit'));
 const RouteEditInsurancePackage = React.lazy(() => import('./pages/InsurancePackage/editInsurancePackage'));
@@ -189,6 +192,7 @@ const RouteEditBenefitDetail = React.lazy(() => import('./pages/InsurancePackage
 const RouteAddUser = React.lazy(() => import('./pages/user/addUser'));
 const RouteAddGroup = React.lazy(() => import('./pages/usergroup/addGroup'));
 const RouteAddSlide = React.lazy(() => import('./pages/slideshow/addSlideShow'));
+const RouteAddSlideDetail = React.lazy(() => import('./pages/slideDetail/addSlide'));
 const RouteAddInsurancePackage = React.lazy(() => import('./pages/InsurancePackage/addInsurancePackage'));
 const RouteAddBenefit = React.lazy(() => import('./pages/InsurancePackage/addBenefit'));
 const RouteAddBenefitDetail = React.lazy(() => import('./pages/InsurancePackage/addBenefitDetail'));
