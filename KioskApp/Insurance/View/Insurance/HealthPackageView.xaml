@@ -36,17 +36,17 @@
 
         <!-- Right side with benefits information -->
 
-        <Grid VerticalAlignment="Center" Grid.Column="1" Grid.Row="1">
+        <Grid VerticalAlignment="Center" Grid.Column="1" Grid.Row="1" >
             <StackPanel>
                 <Border Background="#0EAB00" CornerRadius="10" Margin="24 0 15 0">
                     <StackPanel>
                         <TextBlock Text="Quyền lợi bảo hiểm" Foreground="White" FontSize="24" FontFamily="Exo" FontWeight="Bold" Padding="20 5 0 0" />
 
                         <Border Background="white" CornerRadius="10" Padding="10" Margin="20 5 20 20">
-                            <ScrollViewer VerticalScrollBarVisibility="Auto">
-                                <StackPanel x:Name="stackPanelBenefit" Height="450" >
+                            <ScrollViewer VerticalContentAlignment="Center" CanContentScroll="True" PanningMode="HorizontalOnly" SnapsToDevicePixels="True" DataContext="{Binding}">
+                                <StackPanel x:Name="stackPanelBenefit" Height="400" VerticalAlignment="Top">
                                             <!-- Benefit 1 -->
-                                            <StackPanel Margin="5">
+                                            <StackPanel Margin="5" >
                                                 <DockPanel>
                                                     <TextBlock x:Name="Benefit1" Text="1. Death due to illness or disease:" Foreground="Black" FontFamily="Exo" FontWeight="Bold" FontSize="16"/>
                                                     <TextBlock x:Name="Coverage1" Text="10.000.000 VND" Foreground="Black" FontWeight="Bold" FontFamily="Exo" FontSize="16" HorizontalAlignment="Right"/>
@@ -106,6 +106,7 @@
                                                 </Grid>
 
                                             </StackPanel>
+                                    
                                 </StackPanel>
                             </ScrollViewer>
                         </Border>
