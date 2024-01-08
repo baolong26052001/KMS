@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import dayjs from 'dayjs'; // Import dayjs
 import customParseFormat from 'dayjs/plugin/customParseFormat'; // Import the customParseFormat plugin
@@ -37,14 +38,24 @@ const ViewModal = ({ open, handleClose, imageUrl }) => {
         }}
       >
         {imageUrl ? (
-          <img src={require(`../../images/${imageUrl}`)} alt="Slide Show" style={{ width: '100%' }} />
+          <React.Fragment>
+            {(() => {
+              try {
+                return <img src={require(`../../images/${imageUrl}`)} alt="Slide Show" style={{ width: '100%' }} />;
+              } catch (error) {
+                console.error("Error loading image:", error);
+                return <p>No Image</p>;
+              }
+            })()}
+          </React.Fragment>
         ) : (
-          <p>No image found</p>
+          <p>No Image</p>
         )}
       </Box>
     </Modal>
   );
 };
+
 
 const CustomToolbar = ({ onButtonClick, selectedRows }) => {
   const navigate = useNavigate();
