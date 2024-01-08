@@ -236,14 +236,14 @@ namespace Insurance.View
         private void UpdateBenefitDetailsUI(List<BenefitDetail> benefitDetails, StackPanel benefitPanel)
         {
             
-            StackPanel nestedStackPanel = new StackPanel { Margin = new Thickness(10, 0, 0, 0) };
+            StackPanel nestedStackPanel = new StackPanel { Margin = new Thickness(5, 0, 0, 0) };
 
             Grid gridBenefitDetails = FindName("gridBenefitDetails") as Grid;
             CultureInfo cultureInfo = new CultureInfo("vi-VN");
 
             if (gridBenefitDetails != null)
             {
-                // Clear existing children in the grid
+                int i = (int)'a';
                 gridBenefitDetails.Children.Clear();
 
                 if (benefitDetails.Any())
@@ -255,21 +255,26 @@ namespace Insurance.View
                             Margin = new Thickness(5, 0, 0, 0),
                             TextWrapping = TextWrapping.Wrap,
                             Width = 300,
-                            Text = $"{benefitDetail.content}",
+                            Text = $"{(char)i}. {benefitDetail.content}",
+                            FontFamily = new FontFamily("Exo"),
+                            FontWeight = FontWeights.Medium,
+                            FontStyle = FontStyles.Italic,
                             Foreground = Brushes.Black,
-                            Padding = new Thickness(5),
-                            HorizontalAlignment = HorizontalAlignment.Left
+                            Padding = new Thickness(0),
+                            HorizontalAlignment = HorizontalAlignment.Left,
+                            FontSize = 15,
                         };
 
                         TextBlock benefitDetailCoverageText = new TextBlock
                         {
                             Text = $"{benefitDetail.coverage.ToString("C", cultureInfo)}",
+                            FontFamily = new FontFamily("Exo"),
                             Foreground = Brushes.Black,
-                            FontSize = 16,
+                            FontSize = 15,
                             HorizontalAlignment = HorizontalAlignment.Right,
                             TextWrapping = TextWrapping.Wrap,
                             Margin = new Thickness(5, 0, 0, 0),
-                            Padding = new Thickness(5),
+                            Padding = new Thickness(0),
                         };
 
 
@@ -281,11 +286,12 @@ namespace Insurance.View
 
                         // Add the benefit detail DockPanel to the nested stack panel
                         nestedStackPanel.Children.Add(dockPanel);
+                        i++;
                     }
 
                     // Add the nested stack panel to the parent benefit panel
                     benefitPanel.Children.Add(nestedStackPanel);
-
+                    
                     // MessageBox.Show("Benefit details fetched successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 else
@@ -375,6 +381,11 @@ namespace Insurance.View
 
                 stackPanelBenefit.Children.Add(noDataMessage);
             }
+        }
+
+        private void ScrollViewer_GotMouseCapture(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+
         }
     }
 }
