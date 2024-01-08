@@ -58,25 +58,15 @@ const AddSlideDetail = () => {
         return;
       }
 
-      // Assuming your API URL is correct
       const formData = new FormData();
       formData.append('File', selectedFile);
-
-
 
       // Append other form data
       Object.entries(newItem).forEach(([key, value]) => {
         formData.append(key, value);
-        console.log(value);
       });
 
-      const response = await fetch(`${API_URL}api/SlideDetail/AddSlideDetail`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newItem),
-      });
+      const response = await axios.post(`${API_URL}api/SlideDetail/AddSlideDetail`, formData);
 
       console.log('Response Status:', response.status);
       console.log('Response Content:', response.data);
