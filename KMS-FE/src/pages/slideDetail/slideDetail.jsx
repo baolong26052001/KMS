@@ -12,6 +12,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 
+
 // import Delete Hook
 import useDeleteHook from '../../components/deleteHook/deleteHook';
 
@@ -22,13 +23,14 @@ dayjs.locale('en'); // Set the locale to English
 const CustomToolbar = ({ onButtonClick, selectedRows }) => {
   const navigate = useNavigate();
   const { handleDelete, handleClose, open } = useDeleteHook('SlideDetail/DeleteSlideshow'); 
+  const { id, packageName } = useParams();
 
   // const [open, setOpen] = React.useState(false);
   const handleButtonClick = (buttonId) => {
     onButtonClick(buttonId);
     
     if (buttonId === 'Add') {
-      navigate('/addSlideDetail');
+      navigate(`/addSlideDetail/${id}/${packageName}`);
 
     } else if (buttonId === 'Delete') {
 

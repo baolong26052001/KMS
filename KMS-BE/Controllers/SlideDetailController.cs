@@ -5,6 +5,9 @@ using Microsoft.Data.SqlClient;
 using System.Data;
 using System.Text;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace KMS.Controllers
 {
@@ -15,9 +18,11 @@ namespace KMS.Controllers
         private readonly KioskManagementSystemContext _dbcontext;
         private IConfiguration _configuration;
         private readonly ExecuteQuery _exQuery;
+        private readonly IWebHostEnvironment _hostingEnvironment;
 
-        public SlideDetailController(IConfiguration configuration, KioskManagementSystemContext _context, ExecuteQuery exQuery)
+        public SlideDetailController(IWebHostEnvironment hostingEnvironment, IConfiguration configuration, KioskManagementSystemContext _context, ExecuteQuery exQuery)
         {
+            _hostingEnvironment = hostingEnvironment;
             _dbcontext = _context;
             _configuration = configuration;
             _exQuery = exQuery;
@@ -29,7 +34,7 @@ namespace KMS.Controllers
         {
             string query = "select sd.id, sd.description, sd.typeContent, sd.contentUrl, sd.slideHeaderId, sd.isActive, sd.dateModified, sd.dateCreated " +
                 "\r\nfrom TSlideDetail sd " +
-                "WHERE slideHeaderId = @Id";
+                "WHERE sd.slideHeaderId = @Id";
             SqlParameter parameter = new SqlParameter("@Id", id);
             DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
@@ -45,20 +50,56 @@ namespace KMS.Controllers
 
         [HttpPost]
         [Route("AddSlideDetail")]
-        public JsonResult AddSlideDetail([FromBody] TslideDetail slideDetail)
+        public JsonResult AddSlideDetail([FromForm] TslideDetail slideDetail)
         {
-            string query = "INSERT INTO TSlideDetail (description, typeContent, contentUrl, slideHeaderId, dateModified, dateCreated, isActive) " +
-                           "VALUES (@Description, @TypeContent, @ContentUrl, @SlideHeaderId, GETDATE(), GETDATE(), 1)";
-            SqlParameter[] parameters =
+            try
             {
-                new SqlParameter("@Description", slideDetail.Description),
-                new SqlParameter("@TypeContent", slideDetail.TypeContent),
-                new SqlParameter("@ContentUrl", slideDetail.ContentUrl),
-                new SqlParameter("@SlideHeaderId", slideDetail.SlideHeaderId),
-                new SqlParameter("@IsActive", slideDetail.IsActive),
-            };
-            _exQuery.ExecuteRawQuery(query, parameters);
-            return new JsonResult("Slide detail added successfully");
+                // Validate and process the file
+                if (slideDetail.File != null && slideDetail.File.Length > 0)
+                {
+                    // Specify the local path where you want to save the file
+                    var localFolderPath = @"images"; // Replace with the actual path
+
+                    // Combine the local folder path and create a unique file name
+                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + slideDetail.File.FileName;
+                    var filePath = Path.Combine(localFolderPath, uniqueFileName);
+
+                    // Save the file to the specified local folder
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        slideDetail.File.CopyTo(stream);
+                    }
+
+                    // Update the contentUrl property in slideDetail with the local file path
+                    slideDetail.ContentUrl = filePath;
+                }
+
+                else
+                {
+                    return new JsonResult("Cannot detect image file");
+                }
+
+                // Insert the slideDetail into the database
+                string query = "INSERT INTO TSlideDetail (description, typeContent, contentUrl, slideHeaderId, dateModified, dateCreated, isActive) " +
+                               "VALUES (@Description, @TypeContent, @ContentUrl, @SlideHeaderId, GETDATE(), GETDATE(), 1)";
+
+                SqlParameter[] parameters =
+                {
+                    new SqlParameter("@Description", slideDetail.Description),
+                    new SqlParameter("@TypeContent", slideDetail.TypeContent),
+                    new SqlParameter("@ContentUrl", slideDetail.ContentUrl),
+                    new SqlParameter("@SlideHeaderId", slideDetail.SlideHeaderId),
+                    new SqlParameter("@IsActive", slideDetail.IsActive),
+                };
+
+                _exQuery.ExecuteRawQuery(query, parameters);
+                return new JsonResult("Slide detail added successfully");
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions appropriately
+                return new JsonResult($"Error adding slide detail: {ex.Message}");
+            }
         }
 
         [HttpPut]
