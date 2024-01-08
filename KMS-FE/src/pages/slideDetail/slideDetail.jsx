@@ -36,9 +36,12 @@ const ViewModal = ({ open, handleClose, imageUrl }) => {
           p: 1,
         }}
       >
-        {/* <img className="icon" src={require('../../images/totalkiosk.png')}></img> */}
-        <img src={require(`../../images/${imageUrl}`)} alt="Content Image" style={{ width: '100%' }} />
-
+        {imageUrl ? (
+          <img src={require(`../../images/${imageUrl}`)} alt="Slide Show" style={{ width: '100%' }} />
+        ) : (
+          <p>No image found</p>
+        )}
+       
       </Box>
     </Modal>
   );
@@ -46,7 +49,7 @@ const ViewModal = ({ open, handleClose, imageUrl }) => {
 
 const CustomToolbar = ({ onButtonClick, selectedRows }) => {
   const navigate = useNavigate();
-  const { handleDelete, handleClose, open } = useDeleteHook('SlideDetail/DeleteSlideshow'); 
+  const { handleDelete, handleClose, open } = useDeleteHook('SlideDetail/DeleteSlideDetail'); 
   const { id, packageName } = useParams();
 
   // const [open, setOpen] = React.useState(false);
@@ -96,7 +99,9 @@ const ViewImage = ({ imageUrl }) => {
 
   const handleClick = (event) => {
     event.stopPropagation();
-    setOpenModal(true);
+    if (imageUrl) {
+      setOpenModal(true);
+    }
   };
 
   const handleCloseModal = () => {
@@ -105,13 +110,20 @@ const ViewImage = ({ imageUrl }) => {
 
   return (
     <div>
-      <a href="#" onClick={handleClick}>
-        {imageUrl}
-      </a>
-      <ViewModal open={openModal} handleClose={handleCloseModal} imageUrl={imageUrl} />
+      {imageUrl ? (
+        <a href="#" onClick={handleClick}>
+          {imageUrl}
+        </a>
+      ) : (
+        <p>No image found</p>
+      )}
+      {imageUrl && <ViewModal open={openModal} handleClose={handleCloseModal} imageUrl={imageUrl} />}
     </div>
   );
 };
+
+
+
 
 
 const ViewButton = ({ rowId, label, onClick }) => {
