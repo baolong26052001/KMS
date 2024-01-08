@@ -41,7 +41,6 @@ const ViewModal = ({ open, handleClose, imageUrl }) => {
         ) : (
           <p>No image found</p>
         )}
-       
       </Box>
     </Modal>
   );
