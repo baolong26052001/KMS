@@ -29,16 +29,13 @@ const ViewModal = ({ open, handleClose, imageUrl }) => {
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: 400,
+          width: 700,
           bgcolor: 'background.paper',
           border: '2px solid #000',
           boxShadow: 24,
-          p: 4,
+          p: 1,
         }}
       >
-        <Typography variant="h6" component="div">
-          View Image
-        </Typography>
         {/* <img className="icon" src={require('../../images/totalkiosk.png')}></img> */}
         <img src={require(`../../images/${imageUrl}`)} alt="Content Image" style={{ width: '100%' }} />
 
@@ -96,6 +93,7 @@ const CustomToolbar = ({ onButtonClick, selectedRows }) => {
 
 const ViewImage = ({ imageUrl }) => {
   const [openModal, setOpenModal] = useState(false);
+
   const handleClick = (event) => {
     event.stopPropagation();
     setOpenModal(true);
@@ -107,31 +105,28 @@ const ViewImage = ({ imageUrl }) => {
 
   return (
     <div>
-      <a href="" target="_blank" rel="noopener noreferrer">
-        <ViewModal open={openModal} handleClose={handleCloseModal} imageUrl={imageUrl} />
+      <a href="#" onClick={handleClick}>
+        {imageUrl}
       </a>
+      <ViewModal open={openModal} handleClose={handleCloseModal} imageUrl={imageUrl} />
     </div>
   );
 };
 
-const ViewButton = ({ rowId, label, imageUrl }) => {
-  const [openModal, setOpenModal] = useState(false);
 
+const ViewButton = ({ rowId, label, onClick }) => {
+  const navigate = useNavigate();
   const handleClick = (event) => {
     event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
-    setOpenModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setOpenModal(false);
+    onClick(rowId);
+    // navigate(`/viewSlideShow/${rowId}`)
   };
 
   return (
-    <Box sx={{ alignItems: 'center' }}>
+    <Box sx={{alignItems: 'center' }}>
       <Button size="small" variant="contained" onClick={handleClick}>
         {label}
       </Button>
-      <ViewModal open={openModal} handleClose={handleCloseModal} imageUrl={imageUrl} />
     </Box>
   );
 };
@@ -167,7 +162,11 @@ const columns = [
     sortable: false,
     filterable: false,
     renderCell: (params) => (
-      <ViewButton rowId={params.row.id} label="View"  />
+      <ViewButton
+      rowId={params.row.id}
+      label="View"
+      onClick={handleButtonClick}
+    />
     ),
   },
   {
