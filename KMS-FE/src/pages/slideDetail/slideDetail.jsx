@@ -3,7 +3,7 @@ import dayjs from 'dayjs'; // Import dayjs
 import customParseFormat from 'dayjs/plugin/customParseFormat'; // Import the customParseFormat plugin
 import 'dayjs/locale/en'; // Import the English locale
 import { DataGrid } from '@mui/x-data-grid';
-import { Button, Box } from '@mui/material';
+import { Button, Box, Modal, Typography } from '@mui/material';
 import DateFilter from '../../components/dateFilter/DateFilter';
 import {useNavigate, useParams} from 'react-router-dom';
 //import MUI Library
@@ -19,6 +19,33 @@ import useDeleteHook from '../../components/deleteHook/deleteHook';
 // Enable the customParseFormat plugin
 dayjs.extend(customParseFormat);
 dayjs.locale('en'); // Set the locale to English
+
+const ViewModal = ({ open, handleClose, imageUrl }) => {
+  return (
+    <Modal open={open} onClose={handleClose}>
+      <Box
+        sx={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: 400,
+          bgcolor: 'background.paper',
+          border: '2px solid #000',
+          boxShadow: 24,
+          p: 4,
+        }}
+      >
+        <Typography variant="h6" component="div">
+          View Image
+        </Typography>
+        {/* <img className="icon" src={require('../../images/totalkiosk.png')}></img> */}
+        <img src={require(`../../images/${imageUrl}`)} alt="Content Image" style={{ width: '100%' }} />
+
+      </Box>
+    </Modal>
+  );
+};
 
 const CustomToolbar = ({ onButtonClick, selectedRows }) => {
   const navigate = useNavigate();
@@ -67,19 +94,44 @@ const CustomToolbar = ({ onButtonClick, selectedRows }) => {
   );
 };
 
-const ViewButton = ({ rowId, label, onClick }) => {
-  const navigate = useNavigate();
+const ViewImage = ({ imageUrl }) => {
+  const [openModal, setOpenModal] = useState(false);
   const handleClick = (event) => {
-    event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
-    onClick(rowId);
-    //navigate(`/viewSlideShow/${rowId}`)
+    event.stopPropagation();
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
   };
 
   return (
-    <Box sx={{alignItems: 'center' }}>
+    <div>
+      <a href="" target="_blank" rel="noopener noreferrer">
+        <ViewModal open={openModal} handleClose={handleCloseModal} imageUrl={imageUrl} />
+      </a>
+    </div>
+  );
+};
+
+const ViewButton = ({ rowId, label, imageUrl }) => {
+  const [openModal, setOpenModal] = useState(false);
+
+  const handleClick = (event) => {
+    event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
+
+  return (
+    <Box sx={{ alignItems: 'center' }}>
       <Button size="small" variant="contained" onClick={handleClick}>
         {label}
       </Button>
+      <ViewModal open={openModal} handleClose={handleCloseModal} imageUrl={imageUrl} />
     </Box>
   );
 };
@@ -112,14 +164,10 @@ const columns = [
     headerName: '',
     width: 80,
     disableColumnMenu: true,
-    sortable: false, // Disable sorting for this column
-    filterable: false, // Disable filtering for this column
+    sortable: false,
+    filterable: false,
     renderCell: (params) => (
-        <ViewButton
-        rowId={params.row.id}
-        label="View"
-        onClick={handleButtonClick}
-      />
+      <ViewButton rowId={params.row.id} label="View"  />
     ),
   },
   {
@@ -158,6 +206,9 @@ const columns = [
     sortable: false,
     minWidth: 250,
     flex: 1,
+    renderCell: (params) => (
+      <ViewImage imageUrl={params.row.contentUrl} />
+    ),
   },
   {
     field: 'isActive',

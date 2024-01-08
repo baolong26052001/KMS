@@ -58,10 +58,10 @@ namespace KMS.Controllers
                 if (slideDetail.File != null && slideDetail.File.Length > 0)
                 {
                     // Specify the local path where you want to save the file
-                    var localFolderPath = @"images"; // Replace with the actual path
+                    var localFolderPath = "../KMS-FE/src/images/";
 
                     // Combine the local folder path and create a unique file name
-                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + slideDetail.File.FileName;
+                    var uniqueFileName = slideDetail.File.FileName;
                     var filePath = Path.Combine(localFolderPath, uniqueFileName);
 
                     // Save the file to the specified local folder
@@ -71,7 +71,7 @@ namespace KMS.Controllers
                     }
 
                     // Update the contentUrl property in slideDetail with the local file path
-                    slideDetail.ContentUrl = filePath;
+                    slideDetail.ContentUrl = slideDetail.File.FileName;
                 }
 
                 else
