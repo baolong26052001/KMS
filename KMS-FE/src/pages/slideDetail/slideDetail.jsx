@@ -155,10 +155,11 @@ const ViewButton = ({ rowId, label, onClick }) => {
 
 const EditButton = ({ rowId, label, onClick }) => {
   const navigate = useNavigate();
+  const { packageName } = useParams();
   const handleClick = (event) => {
     event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
     onClick(rowId);
-    //navigate(`/editSlideDetail/${rowId}`)
+    navigate(`/editSlideDetail/${rowId}/${packageName}`)
   };
 
   return (
