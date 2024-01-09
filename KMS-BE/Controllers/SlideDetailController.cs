@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using System.IO;
+using System;
 
 namespace KMS.Controllers
 {
@@ -30,11 +31,31 @@ namespace KMS.Controllers
 
         [HttpGet]
         [Route("ShowSlideDetail/{id}")]
-        public JsonResult GetSlideDetailById(int id)
+        public JsonResult GetSlideDetailById(int id) // show by header id
         {
             string query = "select sd.id, sd.description, sd.typeContent, sd.contentUrl, sd.slideHeaderId, sd.isActive, sd.dateModified, sd.dateCreated " +
                 "\r\nfrom TSlideDetail sd " +
                 "WHERE sd.slideHeaderId = @Id";
+            SqlParameter parameter = new SqlParameter("@Id", id);
+            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+
+            if (table.Rows.Count > 0)
+            {
+                return new JsonResult(table);
+            }
+            else
+            {
+                return new JsonResult("SlideDetail not found");
+            }
+        }
+
+        [HttpGet]
+        [Route("ShowSlideDetailInEditPage/{id}")]
+        public JsonResult GetSlideDetailInEditPage(int id) // show data in edit page
+        {
+            string query = "select sd.id, sd.description, sd.typeContent, sd.contentUrl, sd.slideHeaderId, sd.isActive, sd.dateModified, sd.dateCreated " +
+                "\r\nfrom TSlideDetail sd " +
+                "WHERE sd.id = @Id";
             SqlParameter parameter = new SqlParameter("@Id", id);
             DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
@@ -54,23 +75,23 @@ namespace KMS.Controllers
         {
             try
             {
-                // Validate and process the file
+                
                 if (slideDetail.File != null && slideDetail.File.Length > 0)
                 {
-                    // Specify the local path where you want to save the file
+                    
                     var localFolderPath = "../KMS-FE/src/images/";
 
-                    // Combine the local folder path and create a unique file name
+                    
                     var uniqueFileName = slideDetail.File.FileName;
                     var filePath = Path.Combine(localFolderPath, uniqueFileName);
 
-                    // Save the file to the specified local folder
+                    
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
                         slideDetail.File.CopyTo(stream);
                     }
 
-                    // Update the contentUrl property in slideDetail with the local file path
+                    
                     slideDetail.ContentUrl = slideDetail.File.FileName;
                 }
 
@@ -79,7 +100,7 @@ namespace KMS.Controllers
                     return new JsonResult("Cannot detect image file");
                 }
 
-                // Insert the slideDetail into the database
+                
                 string query = "INSERT INTO TSlideDetail (description, typeContent, contentUrl, slideHeaderId, dateModified, dateCreated, isActive) " +
                                "VALUES (@Description, @TypeContent, @ContentUrl, @SlideHeaderId, GETDATE(), GETDATE(), 1)";
 
@@ -97,29 +118,95 @@ namespace KMS.Controllers
             }
             catch (Exception ex)
             {
-                // Handle exceptions appropriately
+                
                 return new JsonResult($"Error adding slide detail: {ex.Message}");
             }
         }
 
         [HttpPut]
         [Route("UpdateSlideDetail/{id}")]
-        public JsonResult UpdateSlideDetail(int id, [FromBody] TslideDetail slideDetail)
+        public JsonResult UpdateSlideDetail(int id, [FromForm] TslideDetail slideDetail)
         {
-            string query = "UPDATE TSlideDetail SET description = @Description, typeContent = @TypeContent, contentUrl = @ContentUrl, slideHeaderId = @SlideHeaderId, dateModified = GETDATE(), isActive = @IsActive  " +
-                           "WHERE id = @Id";
-            SqlParameter[] parameters =
+            try
             {
-                new SqlParameter("@Id", id),
-                new SqlParameter("@Description", slideDetail.Description),
-                new SqlParameter("@TypeContent", slideDetail.TypeContent),
-                new SqlParameter("@ContentUrl", slideDetail.ContentUrl),
-                new SqlParameter("@SlideHeaderId", slideDetail.SlideHeaderId),
-                new SqlParameter("@IsActive", slideDetail.IsActive),
-            };
+                string oldContentUrl = GetOldContentUrl(id);
 
-            _exQuery.ExecuteRawQuery(query, parameters);
-            return new JsonResult("Slide detail updated successfully");
+                if (slideDetail.File != null && slideDetail.File.Length > 0)
+                {
+                    
+                    var localFolderPath = "../KMS-FE/src/images/";
+
+                    
+                    var uniqueFileName = slideDetail.File.FileName;
+                    var filePath = Path.Combine(localFolderPath, uniqueFileName);
+
+                    
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        slideDetail.File.CopyTo(stream);
+                    }
+
+                    
+                    slideDetail.ContentUrl = slideDetail.File.FileName;
+
+                    var existingFilePath = Path.Combine(localFolderPath, oldContentUrl);
+                    if (System.IO.File.Exists(existingFilePath))
+                    {
+                        System.IO.File.Delete(existingFilePath);
+                    }
+
+
+                }
+
+                else
+                {
+                    return new JsonResult("Cannot detect image file");
+                }
+
+
+
+
+                string query = "UPDATE TSlideDetail SET description = @Description, typeContent = @TypeContent, contentUrl = @ContentUrl, slideHeaderId = @SlideHeaderId, dateModified = GETDATE(), isActive = @IsActive  " +
+                            "WHERE id = @Id";
+                SqlParameter[] parameters =
+                {
+                    new SqlParameter("@Id", id),
+                    new SqlParameter("@Description", slideDetail.Description),
+                    new SqlParameter("@TypeContent", slideDetail.TypeContent),
+                    new SqlParameter("@ContentUrl", slideDetail.ContentUrl),
+                    new SqlParameter("@SlideHeaderId", slideDetail.SlideHeaderId),
+                    new SqlParameter("@IsActive", slideDetail.IsActive),
+                };
+
+                _exQuery.ExecuteRawQuery(query, parameters);
+                return new JsonResult("Slide detail updated successfully");
+
+
+
+            }
+            catch (Exception ex)
+            {
+                
+                return new JsonResult($"Error adding slide detail: {ex.Message}");
+            }
+            
+        }
+
+        private string GetOldContentUrl(int id)
+        {
+            string query = "SELECT ContentUrl FROM TSlideDetail WHERE id = @Id";
+            SqlParameter parameter = new SqlParameter("@Id", id);
+            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+
+            if (table.Rows.Count > 0)
+            {
+                return table.Rows[0]["ContentUrl"].ToString();
+            }
+            else
+            {
+                
+                return null;
+            }
         }
 
         [HttpGet]
