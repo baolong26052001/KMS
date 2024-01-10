@@ -39,7 +39,7 @@ const AddKiosk = () => {
 
     const fetchSlide = async () => {
         try {
-          const response = await fetch(`${API_URL}api/Slideshow/ShowSlideshow`);
+          const response = await fetch(`${API_URL}api/SlideHeader/ShowSlideHeader`);
           if (response.ok) {
             const data = await response.json();
             setslidePackage(data);
@@ -151,7 +151,7 @@ const AddKiosk = () => {
                 >
                 {slidePackage.map((slideshow) => (
                     <MenuItem key={slideshow.id} value={slideshow.id}>
-                    {slideshow.packageName}
+                    {slideshow.description}
                     </MenuItem>
                 ))}
                 </TextField>

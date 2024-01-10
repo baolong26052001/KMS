@@ -13,7 +13,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 
-
 // import Delete Hook
 import useDeleteHook from '../../components/deleteHook/deleteHook';
 
@@ -40,16 +39,27 @@ const ViewModal = ({ open, handleClose, imageUrl }) => {
         {imageUrl ? (
           <React.Fragment>
             {(() => {
-              try {
-                return <img src={require(`../../images/${imageUrl}`)} alt="Slide Show" style={{ width: '100%' }} />;
-              } catch (error) {
-                console.error("Error loading image:", error);
-                return <p>No Image</p>;
+              const fileExtension = imageUrl.split('.').pop().toLowerCase();
+              const isImage = ['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension);
+              const isVideo = ['mp4', 'webm', 'ogg'].includes(fileExtension);
+
+              if (isImage) {
+                return <img src={require(`../../images/${imageUrl}`)} alt="Image" style={{ width: '100%' }} />;
+              } else if (isVideo) {
+                return (
+                  <video controls style={{ width: '100%' }}>
+                    <source src={require(`../../images/${imageUrl}`)}  type={`video/${fileExtension}`} />
+                    Your browser does not support the video tag.
+                  </video>
+                );
+              } else {
+                console.error("Unsupported file type:", fileExtension);
+                return <p>Unsupported File Type</p>;
               }
             })()}
           </React.Fragment>
         ) : (
-          <p>No Image</p>
+          <p>No File</p>
         )}
       </Box>
     </Modal>
@@ -62,7 +72,6 @@ const CustomToolbar = ({ onButtonClick, selectedRows }) => {
   const { handleDelete, handleClose, open } = useDeleteHook('SlideDetail/DeleteSlideDetail'); 
   const { id, packageName } = useParams();
 
-  // const [open, setOpen] = React.useState(false);
   const handleButtonClick = (buttonId) => {
     onButtonClick(buttonId);
     
@@ -132,10 +141,6 @@ const ViewImage = ({ imageUrl }) => {
   );
 };
 
-
-
-
-
 const ViewButton = ({ rowId, label, onClick }) => {
   const navigate = useNavigate();
   const handleClick = (event) => {
@@ -170,7 +175,6 @@ const EditButton = ({ rowId, label, onClick }) => {
     </Box>
   );
 };
-
 
 function createData(id, description, typeContent, contentUrl, isActive, slideHeaderId, dateModified, dateCreated) {
   return {id, description, typeContent, contentUrl, isActive, slideHeaderId, dateModified, dateCreated};
@@ -331,7 +335,7 @@ const SlideDetail = () => {
               createData(row.id, row.description, row.typeContent, row.contentUrl, row.isActive, row.slideHeaderId, row.dateModified, row.dateCreated)
             );
           
-            setRows(updatedRows); // Update the component state with the combined data
+            setRows(updatedRows); 
           } else {
             console.error('Invalid data structure:', apiResponseData);
           }
