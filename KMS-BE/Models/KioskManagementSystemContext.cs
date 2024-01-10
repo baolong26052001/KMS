@@ -39,7 +39,7 @@ namespace KMS.Models
         public virtual DbSet<TnotificationLog> TnotificationLogs { get; set; } = null!;
         public virtual DbSet<TslideDetail> TslideDetails { get; set; } = null!;
         public virtual DbSet<TslideHeader> TslideHeaders { get; set; } = null!;
-        public virtual DbSet<Tslideshow> Tslideshows { get; set; } = null!;
+        
         public virtual DbSet<Tstation> Tstations { get; set; } = null!;
         public virtual DbSet<Tuser> Tusers { get; set; } = null!;
         public virtual DbSet<TuserGroup> TuserGroups { get; set; } = null!;
@@ -1052,78 +1052,7 @@ namespace KMS.Models
                 entity.Property(e => e.TimeNext).HasColumnName("timeNext");
             });
 
-            modelBuilder.Entity<Tslideshow>(entity =>
-            {
-                entity.ToTable("TSlideshow");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.CreateAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("createAt");
-
-                entity.Property(e => e.CreateBy).HasColumnName("createBy");
-
-                entity.Property(e => e.DateCreated)
-                    .HasColumnType("datetime")
-                    .HasColumnName("dateCreated");
-
-                entity.Property(e => e.DateModified)
-                    .HasColumnType("datetime")
-                    .HasColumnName("dateModified");
-
-                entity.Property(e => e.Description)
-                    .HasMaxLength(255)
-                    .IsUnicode(false)
-                    .HasColumnName("description");
-
-                entity.Property(e => e.EndDate)
-                    .HasColumnType("datetime")
-                    .HasColumnName("endDate");
-
-                entity.Property(e => e.FileType)
-                    .HasMaxLength(10)
-                    .IsUnicode(false)
-                    .HasColumnName("fileType");
-
-                entity.Property(e => e.Imagevideo)
-                    .HasMaxLength(255)
-                    .IsUnicode(false)
-                    .HasColumnName("imagevideo");
-
-                entity.Property(e => e.IsActive).HasColumnName("isActive");
-
-                entity.Property(e => e.PackageName)
-                    .HasMaxLength(255)
-                    .IsUnicode(false)
-                    .HasColumnName("packageName");
-
-                entity.Property(e => e.Scrolltext1)
-                    .HasMaxLength(255)
-                    .IsUnicode(false)
-                    .HasColumnName("scrolltext1");
-
-                entity.Property(e => e.Scrolltext2)
-                    .HasMaxLength(255)
-                    .IsUnicode(false)
-                    .HasColumnName("scrolltext2");
-
-                entity.Property(e => e.Sequence).HasColumnName("sequence");
-
-                entity.Property(e => e.StartDate)
-                    .HasColumnType("datetime")
-                    .HasColumnName("startDate");
-
-                entity.Property(e => e.StationId).HasColumnName("stationId");
-
-                entity.Property(e => e.Timer).HasColumnName("timer");
-
-                entity.Property(e => e.UpdatedAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("updatedAt");
-
-                entity.Property(e => e.UpdatedBy).HasColumnName("updatedBy");
-            });
+            
 
             modelBuilder.Entity<Tstation>(entity =>
             {
