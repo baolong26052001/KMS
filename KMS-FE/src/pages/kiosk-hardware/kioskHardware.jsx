@@ -5,9 +5,8 @@ import {EyeOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import { render } from '@testing-library/react';
 import {useNavigate} from 'react-router-dom';
 // import components from MUI
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridValueGetterParams, GridToolbarExport } from '@mui/x-data-grid';
 import { Button, Box } from '@mui/material';
-
 //import css
 import './kiosk-hardware.css';
 

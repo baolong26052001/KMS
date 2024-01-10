@@ -9,8 +9,8 @@ const DateFilter = ({ startDate, endDate, handleStartDateChange, handleEndDateCh
   return (
     <div className="Filter">
       <Grid container spacing={6}>
-        <Grid item xs={4}>
-          <FormControl fullWidth sx={{ mb: 4, mt: 2, minWidth: 350 }}>
+        <Grid item xs={6}>
+          <FormControl fullWidth sx={{ mb: 4, mt: 2, minWidth: 400 }}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 label="From Date"
@@ -20,8 +20,8 @@ const DateFilter = ({ startDate, endDate, handleStartDateChange, handleEndDateCh
             </LocalizationProvider>
           </FormControl>
         </Grid>
-        <Grid item xs={4}>
-          <FormControl fullWidth sx={{ mb: 4, mt: 2, minWidth: 350 }}>
+        <Grid item xs={6}>
+          <FormControl fullWidth sx={{ mb: 4, mt: 2, minWidth: 400 }}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 label="To Date"

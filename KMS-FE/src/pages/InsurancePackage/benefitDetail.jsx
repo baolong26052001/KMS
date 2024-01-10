@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import dayjs from 'dayjs'; // Import dayjs
 import customParseFormat from 'dayjs/plugin/customParseFormat'; // Import the customParseFormat plugin
 import 'dayjs/locale/en'; // Import the English locale
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, GridToolbarExport } from '@mui/x-data-grid';
 import { Button, Box } from '@mui/material';
 import {useNavigate} from 'react-router-dom';
 import { useParams } from 'react-router-dom';
@@ -64,6 +64,7 @@ const CustomToolbar = ({ onButtonClick, selectedRows }) => {
             No rows selected for deletion!!!
           </Alert>
         </Snackbar>
+        <GridToolbarExport />
       </div>
     );
 };

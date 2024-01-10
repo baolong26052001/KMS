@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
-// import components from MUI
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, GridToolbarExport } from '@mui/x-data-grid';
 import { Button, Box, Tooltip } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -58,6 +56,7 @@ const CustomToolbar = ({ onButtonClick, selectedRows }) => {
           No rows selected for deletion!!!
         </Alert>
       </Snackbar>
+      <GridToolbarExport />
     </div>
   );
 };
