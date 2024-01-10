@@ -3,11 +3,15 @@
                     xmlns:vm="clr-namespace:Insurance.ViewModel"
                     xmlns:v="clr-namespace:Insurance.View" 
                     xmlns:insurance="clr-namespace:Insurance">
-    
+
     <DataTemplate DataType="{x:Type vm:MainWindowVM}">
         <insurance:MainWindow/>
     </DataTemplate>
 
+    <DataTemplate DataType="{x:Type vm:WelcomeVM}">
+        <v:WelcomeView/>
+    </DataTemplate>
+    
     <DataTemplate DataType="{x:Type vm:VerifyIDVM}">
         <v:VerifyIDView/>
     </DataTemplate>

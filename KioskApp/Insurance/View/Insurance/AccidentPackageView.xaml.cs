@@ -1,7 +1,10 @@
 ﻿using Insurance.ViewModel;
+using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -13,18 +16,17 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Timers;
 
 namespace Insurance.View
 {
-    /// <summary>
-    /// Interaction logic for AccidentPackageView.xaml
-    /// </summary>
     public partial class AccidentPackageView : UserControl
     {
+
         public AccidentPackageView()
         {
             InitializeComponent();
-            DataContext = (AccidentPackageVM)MainWindowVM.Instance.CurrentView;
+
         }
     }
 }
