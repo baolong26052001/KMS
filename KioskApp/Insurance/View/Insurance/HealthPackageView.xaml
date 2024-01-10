@@ -43,8 +43,8 @@
                         <TextBlock Text="Quyền lợi bảo hiểm" Foreground="White" FontSize="24" FontFamily="Exo" FontWeight="Bold" Padding="20 5 0 0" />
 
                         <Border Background="white" CornerRadius="10" Padding="10" Margin="20 5 20 20">
-                            <ScrollViewer VerticalContentAlignment="Center" CanContentScroll="True" PanningMode="HorizontalOnly" SnapsToDevicePixels="True" DataContext="{Binding}" >
-                                <StackPanel x:Name="stackPanelBenefit" Height="400" VerticalAlignment="Top">
+                            <ScrollViewer VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Center" CanContentScroll="True" PanningMode="HorizontalOnly" SnapsToDevicePixels="True" DataContext="{Binding}" >
+                                <StackPanel x:Name="stackPanelBenefit" Height="400" Margin="10" VerticalAlignment="Top">
                                             <!-- Benefit 1 -->
                                             <StackPanel Margin="5" >
                                                 <DockPanel>
