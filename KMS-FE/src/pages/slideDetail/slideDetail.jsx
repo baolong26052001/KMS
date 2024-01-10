@@ -39,22 +39,27 @@ const ViewModal = ({ open, handleClose, imageUrl }) => {
         {imageUrl ? (
           <React.Fragment>
             {(() => {
-              const fileExtension = imageUrl.split('.').pop().toLowerCase();
-              const isImage = ['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension);
-              const isVideo = ['mp4', 'webm', 'ogg'].includes(fileExtension);
+              try {
+                const fileExtension = imageUrl.split('.').pop().toLowerCase();
+                const isImage = ['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension);
+                const isVideo = ['mp4', 'webm', 'ogg'].includes(fileExtension);
 
-              if (isImage) {
-                return <img src={require(`../../images/${imageUrl}`)} alt="Image" style={{ width: '100%' }} />;
-              } else if (isVideo) {
-                return (
-                  <video controls style={{ width: '100%' }}>
-                    <source src={require(`../../images/${imageUrl}`)}  type={`video/${fileExtension}`} />
-                    Your browser does not support the video tag.
-                  </video>
-                );
-              } else {
-                console.error("Unsupported file type:", fileExtension);
-                return <p>Unsupported File Type</p>;
+                if (isImage) {
+                  return <img src={require(`../../images/${imageUrl}`)} alt="Image" style={{ width: '100%' }} />;
+                } else if (isVideo) {
+                  return (
+                    <video controls style={{ width: '100%' }}>
+                      <source src={require(`../../images/${imageUrl}`)} type={`video/${fileExtension}`} />
+                      Your browser does not support the video tag.
+                    </video>
+                  );
+                } else {
+                  console.error("Unsupported file type:", fileExtension);
+                  return <p>Unsupported File Type</p>;
+                }
+              } catch (error) {
+                console.error("Error loading file:", error);
+                return <p>Error Loading File</p>;
               }
             })()}
           </React.Fragment>

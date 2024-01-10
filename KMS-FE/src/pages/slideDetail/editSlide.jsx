@@ -186,14 +186,30 @@ const EditSlideDetail = () => {
 
                             {editedItem.contentUrl ? (
                                 <React.Fragment>
-                                    {(() => {
-                                        try {
-                                            return <img src={require(`../../images/${editedItem.contentUrl}`)} alt="Slide Show" style={{ width: '100%' }} />;
-                                        } catch (error) {
-                                            console.error("Error loading image:", error);
-                                            return null;
-                                        }
-                                    })()}
+                                {(() => {
+                                    try {
+                                    const fileExtension = editedItem.contentUrl.split('.').pop().toLowerCase();
+                                    const isImage = ['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension);
+                                    const isVideo = ['mp4', 'webm', 'ogg'].includes(fileExtension);
+
+                                    if (isImage) {
+                                        return <img src={require(`../../images/${editedItem.contentUrl}`)} alt="Image" style={{ width: '100%' }} />;
+                                    } else if (isVideo) {
+                                        return (
+                                        <video controls style={{ width: '100%' }}>
+                                            <source src={require(`../../images/${editedItem.contentUrl}`)} type={`video/${fileExtension}`} />
+                                            Your browser does not support the video tag.
+                                        </video>
+                                        );
+                                    } else {
+                                        console.error("Unsupported file type:", fileExtension);
+                                        return <p>Unsupported File Type</p>;
+                                    }
+                                    } catch (error) {
+                                    console.error("Error loading file:", error);
+                                    return <p>Error Loading File</p>;
+                                    }
+                                })()}
                                 </React.Fragment>
                             ) : (
                                 <p>No Image</p>
