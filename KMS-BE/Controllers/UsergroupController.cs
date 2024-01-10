@@ -110,10 +110,10 @@ namespace KMS.Controllers
 
         [HttpPut]
         [Route("UpdateUsergroup/{id}")]
-        public JsonResult UpdateUsergroup(int id, [FromBody] TuserGroup usergroup)
+        public JsonResult UpdateUsergroup(int id, [FromBody] Tusergroup usergroup)
         {
             string query = "UPDATE TUserGroup " +
-                           "SET groupName = @GroupName, accessRuleId = @AccessRuleId, dateModified = GETDATE(), isActive = @IsActive " +
+                           "SET groupName = @GroupName, dateModified = GETDATE(), isActive = @IsActive " +
                            "WHERE id = @Id";
             string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Update', 'TUsergroup', GETDATE(), GETDATE(), 1)";
 
@@ -121,7 +121,7 @@ namespace KMS.Controllers
             {
                 new SqlParameter("@Id", id),
                 new SqlParameter("@GroupName", usergroup.GroupName),
-                new SqlParameter("@AccessRuleId", usergroup.AccessRuleId),
+                
                 new SqlParameter("@IsActive", usergroup.IsActive)
             };
             SqlParameter[] parameters2 = { };
