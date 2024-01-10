@@ -81,8 +81,8 @@ namespace KMS.Controllers
                     
                     var localFolderPath = "../KMS-FE/src/images/";
 
-                    
-                    var uniqueFileName = slideDetail.File.FileName;
+
+                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + slideDetail.File.FileName;
                     var filePath = Path.Combine(localFolderPath, uniqueFileName);
 
                     
@@ -92,7 +92,7 @@ namespace KMS.Controllers
                     }
 
                     
-                    slideDetail.ContentUrl = slideDetail.File.FileName;
+                    slideDetail.ContentUrl = uniqueFileName;
                 }
 
                 else
@@ -136,8 +136,8 @@ namespace KMS.Controllers
                     
                     var localFolderPath = "../KMS-FE/src/images/";
 
-                    
-                    var uniqueFileName = slideDetail.File.FileName;
+
+                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + slideDetail.File.FileName;
                     var filePath = Path.Combine(localFolderPath, uniqueFileName);
 
                     
@@ -147,7 +147,7 @@ namespace KMS.Controllers
                     }
 
                     
-                    slideDetail.ContentUrl = slideDetail.File.FileName;
+                    slideDetail.ContentUrl = uniqueFileName;
 
                     var existingFilePath = Path.Combine(localFolderPath, oldContentUrl);
                     if (System.IO.File.Exists(existingFilePath))
@@ -215,7 +215,7 @@ namespace KMS.Controllers
         {
             string query = "select sd.id, sd.description, sd.typeContent, sd.contentUrl, sd.slideHeaderId, sd.isActive, sd.dateModified, sd.dateCreated " +
                            "FROM TSlideDetail sd " +
-                           "WHERE @Id = slideHeaderId";
+                           "WHERE slideHeaderId = @Id";
 
             List<SqlParameter> parameters = new List<SqlParameter>();
             parameters.Add(new SqlParameter("@Id", id));
@@ -246,8 +246,19 @@ namespace KMS.Controllers
                 return new JsonResult("No slideshow IDs provided for deletion");
             }
 
-            StringBuilder deleteQuery = new StringBuilder("DELETE FROM TSlideDetail WHERE id IN (");
+            
+            List<string> oldContentUrls = new List<string>();
+            foreach (int id in slideDetailIds)
+            {
+                string oldContentUrl = GetOldContentUrl(id);
+                if (!string.IsNullOrEmpty(oldContentUrl))
+                {
+                    oldContentUrls.Add(oldContentUrl);
+                }
+            }
 
+            
+            StringBuilder deleteQuery = new StringBuilder("DELETE FROM TSlideDetail WHERE id IN (");
             List<SqlParameter> parameters = new List<SqlParameter>();
 
             for (int i = 0; i < slideDetailIds.Count; i++)
@@ -267,7 +278,13 @@ namespace KMS.Controllers
 
             _exQuery.ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
 
-            return new JsonResult("Slide detail deleted successfully");
+            
+            foreach (string contentUrl in oldContentUrls)
+            {
+                System.IO.File.Delete("../KMS-FE/src/images/" + contentUrl);
+            }
+
+            return new JsonResult("Slide detail and associated image files deleted successfully");
         }
 
         [HttpGet]
