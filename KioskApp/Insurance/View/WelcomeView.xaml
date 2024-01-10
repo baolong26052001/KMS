@@ -1,0 +1,32 @@
+﻿<UserControl x:Class="Insurance.View.WelcomeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Insurance.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="768" d:DesignWidth="1024">
+    <UserControl.Background>
+        <ImageBrush ImageSource="/Images/bg.jpg"></ImageBrush>
+    </UserControl.Background>
+    <Grid>
+        <Grid Grid.Row="1" Grid.RowSpan="2">
+            <StackPanel Grid.Column="1">
+                <TextBlock x:Name="DescriptionTextBlock" 
+                   HorizontalAlignment="Center" 
+                   VerticalAlignment="Top" 
+                   Margin="0,10,0,0" 
+                   FontSize="30"
+                   Foreground="White"/>
+                <Image x:Name="ImageControl" Source="" Width="980" Height="659" Visibility="Collapsed"/>
+                <MediaElement x:Name="VideoControl" 
+                              Source=""
+                              LoadedBehavior="Manual"
+                              UnloadedBehavior="Manual"
+                              Width="980" Height="659" 
+                              Visibility="Collapsed"
+                              />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>

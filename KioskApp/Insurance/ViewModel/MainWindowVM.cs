@@ -139,11 +139,11 @@ namespace Insurance.ViewModel
         {
 
             _beneficiaryAddVM = new BeneficiaryAddVM();
-            CurrentView = new HomeVM();
+            CurrentView = new WelcomeVM();
 
             CancelCommand = new RelayCommand((parameter) =>
             {
-                MainWindowVM.Instance.CurrentView = new HomeVM();
+                MainWindowVM.Instance.CurrentView = new WelcomeVM();
             });
 
         }
