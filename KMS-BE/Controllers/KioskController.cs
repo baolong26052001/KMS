@@ -27,10 +27,10 @@ namespace KMS.Controllers
         [Route("ShowKiosk")] // show all kiosk setup
         public JsonResult GetKiosk()
         {
-            string query = "SELECT k.id, k.kioskName, k.location, st.stationName, ss.packageName, k.kioskStatus, k.cameraStatus, k.cashDepositStatus, k.scannerStatus, k.printerStatus " +
+            string query = "SELECT k.id, k.kioskName, k.location, st.stationName, ss.description as packageName, k.kioskStatus, k.cameraStatus, k.cashDepositStatus, k.scannerStatus, k.printerStatus " +
                            "FROM TKiosk k " +
                            "LEFT JOIN TStation st ON k.stationCode = st.id " +
-                           "LEFT JOIN TSlideshow ss ON ss.id = k.slidePackage";
+                           "LEFT JOIN TSlideHeader ss ON ss.id = k.slidePackage";
             
 
             DataTable table = _exQuery.ExecuteRawQuery(query);
@@ -44,10 +44,10 @@ namespace KMS.Controllers
         [Route("ShowKioskSetup/{id}")]
         public JsonResult GetKioskById(int id)
         {
-            string query = "SELECT k.id, k.kioskName, k.location, st.id as stationCode, st.stationName, ss.id as slidePackage, ss.packageName, k.webServices, k.kioskStatus, k.cameraStatus, k.cashDepositStatus, k.scannerStatus, k.printerStatus " +
+            string query = "SELECT k.id, k.kioskName, k.location, st.id as stationCode, st.stationName, ss.id as slidePackage, ss.description as packageName, k.webServices, k.kioskStatus, k.cameraStatus, k.cashDepositStatus, k.scannerStatus, k.printerStatus " +
                            "FROM TKiosk k " +
                            "LEFT JOIN TStation st ON k.stationCode = st.id " +
-                           "LEFT JOIN TSlideshow ss ON ss.id = k.slidePackage " +
+                           "LEFT JOIN TSlideHeader ss ON ss.id = k.slidePackage " +
                            "WHERE k.id = @id";
 
             SqlParameter parameter = new SqlParameter("@id", id);
@@ -67,10 +67,10 @@ namespace KMS.Controllers
         [Route("FilterKioskSetup")] // filter by package name, station name, country
         public JsonResult FilterKioskSetup([FromQuery] string? packageName = null, [FromQuery] string? location = null, [FromQuery] string? stationName = null)
         {
-            string query = "SELECT k.id, k.kioskName, k.location, st.stationName, ss.packageName, k.kioskStatus, k.cameraStatus, k.cashDepositStatus, k.scannerStatus, k.printerStatus " +
+            string query = "SELECT k.id, k.kioskName, k.location, st.stationName, ss.description as packageName, k.kioskStatus, k.cameraStatus, k.cashDepositStatus, k.scannerStatus, k.printerStatus " +
                            "FROM TKiosk k " +
                            "LEFT JOIN TStation st ON k.stationCode = st.id " +
-                           "LEFT JOIN TSlideshow ss ON ss.id = k.slidePackage ";
+                           "LEFT JOIN TSlideHeader ss ON ss.id = k.slidePackage ";
 
             List<SqlParameter> parameters = new List<SqlParameter>();
 
@@ -88,7 +88,7 @@ namespace KMS.Controllers
 
             if (!string.IsNullOrEmpty(packageName))
             {
-                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "ss.packageName = @packageName";
+                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "ss.description = @packageName";
                 parameters.Add(new SqlParameter("@packageName", packageName));
             }
 
@@ -223,15 +223,15 @@ namespace KMS.Controllers
         [Route("SearchKioskSetup")]
         public JsonResult SearchKioskSetup(string searchQuery)
         {
-            string query = "SELECT k.id, k.kioskName, k.location, st.stationName, ss.packageName, k.kioskStatus, k.cameraStatus, k.cashDepositStatus, k.scannerStatus, k.printerStatus " +
+            string query = "SELECT k.id, k.kioskName, k.location, st.stationName, ss.description as packageName, k.kioskStatus, k.cameraStatus, k.cashDepositStatus, k.scannerStatus, k.printerStatus " +
                            "FROM TKiosk k " +
                            "LEFT JOIN TStation st ON k.stationCode = st.id " +
-                           "LEFT JOIN TSlideshow ss ON ss.id = k.slidePackage " +
+                           "LEFT JOIN TSlideHeader ss ON ss.id = k.slidePackage " +
                            "WHERE k.id LIKE @searchQuery OR " +
                            "k.kioskName LIKE @searchQuery OR " +
                            "k.location LIKE @searchQuery OR " +
                            "st.stationName LIKE @searchQuery OR " +
-                           "ss.packageName LIKE @searchQuery";
+                           "ss.description LIKE @searchQuery";
 
             SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
             DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
