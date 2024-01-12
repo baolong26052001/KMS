@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace KMS.Models
 {
@@ -9,7 +10,10 @@ namespace KMS.Models
         public string? Description { get; set; }
         public string? TypeContent { get; set; }
         public string? ContentUrl { get; set; }
+
+        [NotMapped] 
         public IFormFile? File { get; set; }
+
         public int? SlideHeaderId { get; set; }
         public DateTime? DateModified { get; set; }
         public DateTime? DateCreated { get; set; }

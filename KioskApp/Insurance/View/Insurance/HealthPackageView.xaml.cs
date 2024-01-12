@@ -56,7 +56,7 @@ namespace Insurance.View
         {
             public int id { get; set; }
             public string content { get; set; }
-            public int coverage { get; set; }
+            public string coverage { get; set; }
             public int benefitId { get; set; }
             public DateTime dateModified { get; set; }
             public DateTime dateCreated { get; set; }
@@ -233,6 +233,20 @@ namespace Insurance.View
             UpdateBenefitDetailsUI(benefitDetails, benefitPanel);
         }
 
+        private string ConvertAndFormatCoverage(object coverage)
+        {
+            if (int.TryParse(coverage.ToString(), out int coverageValue))
+            {
+                // Format the coverage value with vi-VN culture
+                return coverageValue.ToString("C", new CultureInfo("vi-VN"));
+            }
+            else
+            {
+                // If it's not a valid number, return the original value
+                return coverage.ToString();
+            }
+        }
+
         private void UpdateBenefitDetailsUI(List<BenefitDetail> benefitDetails, StackPanel benefitPanel)
         {
             
@@ -267,7 +281,7 @@ namespace Insurance.View
 
                         TextBlock benefitDetailCoverageText = new TextBlock
                         {
-                            Text = $"{benefitDetail.coverage.ToString("C", cultureInfo)}",
+                            Text = $"{ConvertAndFormatCoverage(benefitDetail.coverage)}",
                             FontFamily = new FontFamily("Exo"),
                             Foreground = Brushes.Black,
                             FontSize = 15,

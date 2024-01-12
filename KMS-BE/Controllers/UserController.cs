@@ -88,6 +88,7 @@ namespace KMS.Controllers
         {
             try
             {
+                int idOfUser = 0;
                 var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault() ?? HttpContext.Connection.RemoteIpAddress.ToString();
                 string host = Dns.GetHostName();
                 IPHostEntry ip = Dns.GetHostEntry(host);
@@ -101,13 +102,17 @@ namespace KMS.Controllers
                 {
                     return BadRequest("Username or password is incorrect");
                 }
+                else
+                {
+                    idOfUser = dbUser.Id;
+                }
 
                 
                 dbUser.LastLogin = DateTime.Now;
                 await _dbcontext.SaveChangesAsync();
 
 
-                string query = "INSERT INTO TAudit (action, ipAddress, macAddress, dateCreated) VALUES ('Login', @IpAddress, @Ipv6, GETDATE())";
+                string query = "INSERT INTO TAudit (userId, action, ipAddress, macAddress, dateCreated) VALUES (@UserId, 'Login', @IpAddress, @Ipv6, GETDATE())";
 
                 IPAddress ipv4 = null;
                 IPAddress ipv6 = null;
@@ -128,7 +133,8 @@ namespace KMS.Controllers
                 {
                     new SqlParameter("@IpAddress", ipv4?.ToString()),
                     new SqlParameter("@Ipv6", ipv6?.ToString()),
-};
+                    new SqlParameter("@UserId", idOfUser),
+                };
 
                 _exQuery.ExecuteRawQuery(query, parameters);
 
