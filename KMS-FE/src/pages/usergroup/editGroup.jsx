@@ -12,7 +12,7 @@ const EditGroup = () => {
   // State to store user information
   const [editedGroup, setEditedGroup] = useState({
     groupName: '',
-    accessRuleId: '',
+    // accessRuleId: '',
     isActive: true, // Assuming isActive is a boolean
   });
 
@@ -24,10 +24,9 @@ const EditGroup = () => {
         if (response.ok) {
           const groupData = await response.json();
           
-          // Populate the state with fetched group details
           setEditedGroup({
             groupName: groupData[0].groupName,
-            accessRuleId: groupData[0].accessRuleId, // Convert to string
+            // accessRuleId: groupData[0].accessRuleId,
             isActive: groupData[0].isActive,
           });
         } else {
@@ -102,13 +101,6 @@ const EditGroup = () => {
                 variant="outlined"
                 value={editedGroup.groupName}
                 onChange={(e) => handleInputChange('groupName', e.target.value)}
-              />
-              <TextField
-                id="accessRuleId"
-                label="Access Rule Id"
-                variant="outlined"
-                value={editedGroup.accessRuleId}
-                onChange={(e) => handleInputChange('accessRuleId', e.target.value)}
               />
               <Box sx={{ display: 'flex', gap: '8px' }}>
                 <Button variant="contained" fullWidth onClick={handleSave}>

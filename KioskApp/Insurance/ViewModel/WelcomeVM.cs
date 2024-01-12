@@ -15,7 +15,7 @@ namespace Insurance.ViewModel
         public WelcomeVM() {
             CancelCommand = new RelayCommand((parameter) =>
             {
-                MainWindowVM.Instance.CurrentView = new InsuranceHomeVM();
+                MainWindowVM.Instance.CurrentView = new HomeVM();
             });
         }
     }

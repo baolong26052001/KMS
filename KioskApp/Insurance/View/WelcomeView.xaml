@@ -9,7 +9,8 @@
     <UserControl.Background>
         <ImageBrush ImageSource="/Images/bg.jpg"></ImageBrush>
     </UserControl.Background>
-    <Grid>
+    <Grid >
+        <!--<MouseBinding MouseAction="LeftClick" Command="{Binding CancelCommand}"/>-->
         <Button Command="{Binding CancelCommand}" VerticalAlignment="Top" Margin="15 0 0 0" HorizontalAlignment="Right" Content="Back" />
         <Grid Grid.Row="1" Grid.RowSpan="2">
             <StackPanel Grid.Column="1">

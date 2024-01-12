@@ -206,10 +206,8 @@ namespace Insurance.View
                     benefitPanel.Children.Add(dockPanel);
                     benefitPanel.Children.Add(descriptionText);
 
-                    // Fetch and display benefit details
                     await FetchAndDisplayBenefitDetails(packageDetail.id, benefitPanel);
 
-                    // Add a horizontal line (Rectangle) after FetchAndDisplayBenefitDetails
                     Rectangle horizontalLine = new Rectangle
                     {
                         Fill = new SolidColorBrush(Colors.Black),
@@ -226,10 +224,8 @@ namespace Insurance.View
 
         private async Task FetchAndDisplayBenefitDetails(int packageDetailId, StackPanel benefitPanel)
         {
-            // Fetch BenefitDetails
             List<BenefitDetail> benefitDetails = await FetchBenefitDetails(packageDetailId);
 
-            // Display the BenefitDetails
             UpdateBenefitDetailsUI(benefitDetails, benefitPanel);
         }
 
@@ -242,7 +238,6 @@ namespace Insurance.View
             }
             else
             {
-                // If it's not a valid number, return the original value
                 return coverage.ToString();
             }
         }
@@ -268,7 +263,7 @@ namespace Insurance.View
                         {
                             Margin = new Thickness(5, 0, 0, 0),
                             TextWrapping = TextWrapping.Wrap,
-                            Width = 300,
+                            Width = 700,
                             Text = $"{(char)i}. {benefitDetail.content}",
                             FontFamily = new FontFamily("Exo"),
                             FontWeight = FontWeights.Medium,
@@ -291,19 +286,15 @@ namespace Insurance.View
                             Padding = new Thickness(0),
                         };
 
-
-                        // Create a DockPanel to hold both TextBlocks and set their alignment
                         DockPanel dockPanel = new DockPanel();
 
                         dockPanel.Children.Add(benefitDetailText);
                         dockPanel.Children.Add(benefitDetailCoverageText);
 
-                        // Add the benefit detail DockPanel to the nested stack panel
                         nestedStackPanel.Children.Add(dockPanel);
                         i++;
                     }
 
-                    // Add the nested stack panel to the parent benefit panel
                     benefitPanel.Children.Add(nestedStackPanel);
                     
                     // MessageBox.Show("Benefit details fetched successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);

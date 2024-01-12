@@ -3,8 +3,11 @@ using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
@@ -25,7 +28,7 @@ namespace Insurance.View
         private List<TslideDetail> slideDetails;
         private int currentSlideIndex;
         private Timer timer;
-
+        private TslideHeader slideHeader;
         public WelcomeView()
         {
             InitializeComponent();
@@ -73,14 +76,15 @@ namespace Insurance.View
 
                         if (slideDetails.Count > 0)
                         {
-                            DescriptionTextBlock.Text = slideDetails[currentSlideIndex].Description;
+                            //DescriptionTextBlock.Text = slideDetails[currentSlideIndex].Description;
 
-                            string baseFolderPath = @"D:\RnD Project\TEMP\KMS\KMS-FE\src\images";
+                            string baseFolderPath = @"D:\RnD Project\TEMP\KMS\KioskApp\Insurance\bin\Debug\net6.0-windows\images";
                             string relativePath = slideDetails[currentSlideIndex].ContentUrl;
                             string absolutePath = System.IO.Path.Combine(baseFolderPath, relativePath);
 
                             string fileExtension = System.IO.Path.GetExtension(absolutePath).ToLower();
-
+                            string currentDate = DateTime.Now.ToString("yyyy-MM-dd");
+ 
                             if (IsImageFile(fileExtension))
                             {
                                 ImageControl.Source = new BitmapImage(new Uri(absolutePath));
@@ -94,7 +98,6 @@ namespace Insurance.View
                                 VideoControl.Visibility = Visibility.Visible;
 
                                 VideoControl.MediaEnded += VideoControl_MediaEnded;
-
                                 VideoControl.Play();
                             }
                         }
@@ -126,9 +129,8 @@ namespace Insurance.View
 
         private void SetupTimer()
         {
-            // Initialize the timer
             timer = new Timer();
-            timer.Interval = 5000; // 5 seconds interval
+            timer.Interval = slideHeader.TimeNext * 1000 ?? 5000;
             timer.Elapsed += TimerElapsed;
             timer.AutoReset = true;
             timer.Enabled = true;
@@ -165,8 +167,6 @@ namespace Insurance.View
 
                 if (IsVideoFile(System.IO.Path.GetExtension(slideDetails[currentSlideIndex].ContentUrl)))
                 {
-                    VideoControl.MediaEnded -= VideoControl_MediaEnded;
-                    VideoControl.MediaEnded += VideoControl_MediaEnded;
 
                     VideoControl.Play();
 
@@ -196,14 +196,56 @@ namespace Insurance.View
 
             await LoadSlideDetailsAsync(slideDetails[currentSlideIndex].SlideHeaderId.GetValueOrDefault());
         }
-        private void LoadSlideDetails()
+        private async void LoadSlideDetails()
         {
-            // Set default slideHeaderId, in case just set it 2
-            int defaultSlideHeaderId = 2;
+            try
+            {
+                int slideHeaderId = 1; // Set the default as 1
 
-            _ = LoadSlideDetailsAsync(defaultSlideHeaderId);
+                using (HttpClient client = new HttpClient())
+                {
+                    string headerApiUrl = "https://localhost:7017/api/SlideHeader/ShowSlideHeader/" + slideHeaderId;
 
-            SetupTimer();
+                    HttpResponseMessage headerResponse = await client.GetAsync(headerApiUrl);
+
+                    if (headerResponse.IsSuccessStatusCode)
+                    {
+                        string headerContent = await headerResponse.Content.ReadAsStringAsync();
+
+                        List<TslideHeader> slideHeaders = JsonConvert.DeserializeObject<List<TslideHeader>>(headerContent);
+
+                        if (slideHeaders.Count > 0)
+                        {
+
+                            slideHeader = slideHeaders.First();
+
+                            DateTime currentDate = DateTime.Now;
+                            if (slideHeader.StartDate <= currentDate && currentDate <= slideHeader.EndDate)
+                            {
+                                await LoadSlideDetailsAsync(slideHeaderId);
+                                SetupTimer();
+                            }
+                            else
+                            {
+                                MessageBox.Show("This Slide is not active for the current date range.");
+                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show("No slideHeader found for the specified ID.");
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show($"Error fetching slideHeader: {headerResponse.StatusCode} - {headerResponse.ReasonPhrase}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}");
+            }
         }
+
     }
 }
