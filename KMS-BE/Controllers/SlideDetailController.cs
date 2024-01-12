@@ -79,7 +79,7 @@ namespace KMS.Controllers
                 if (slideDetail.File != null && slideDetail.File.Length > 0)
                 {
                     
-                    var localFolderPath = "../KMS-FE/src/images/";
+                    var localFolderPath = "../KioskApp/Insurance/bin/Debug/net6.0-windows/images/";
 
 
                     var uniqueFileName = Guid.NewGuid().ToString() + "_" + slideDetail.File.FileName;
@@ -134,7 +134,7 @@ namespace KMS.Controllers
                 if (slideDetail.File != null && slideDetail.File.Length > 0)
                 {
                     
-                    var localFolderPath = "../KMS-FE/src/images/";
+                    var localFolderPath = "../KioskApp/Insurance/bin/Debug/net6.0-windows/images/";
 
 
                     var uniqueFileName = Guid.NewGuid().ToString() + "_" + slideDetail.File.FileName;
@@ -281,7 +281,7 @@ namespace KMS.Controllers
             
             foreach (string contentUrl in oldContentUrls)
             {
-                System.IO.File.Delete("../KMS-FE/src/images/" + contentUrl);
+                System.IO.File.Delete("../KioskApp/Insurance/bin/Debug/net6.0-windows/images/" + contentUrl);
             }
 
             return new JsonResult("Slide detail and associated image files deleted successfully");

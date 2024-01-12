@@ -193,11 +193,11 @@ const EditSlideDetail = () => {
                                     const isVideo = ['mp4', 'webm', 'ogg'].includes(fileExtension);
 
                                     if (isImage) {
-                                        return <img src={require(`../../images/${editedItem.contentUrl}`)} alt="Image" style={{ width: '100%' }} />;
+                                        return <img src={require(`../../../../KioskApp/Insurance/bin/Debug/net6.0-windows/images/${editedItem.contentUrl}`)} alt="Image" style={{ width: '100%' }} />;
                                     } else if (isVideo) {
                                         return (
                                         <video controls style={{ width: '100%' }}>
-                                            <source src={require(`../../images/${editedItem.contentUrl}`)} type={`video/${fileExtension}`} />
+                                            <source src={require(`../../../../KioskApp/Insurance/bin/Debug/net6.0-windows/images/${editedItem.contentUrl}`)} type={`video/${fileExtension}`} />
                                             Your browser does not support the video tag.
                                         </video>
                                         );

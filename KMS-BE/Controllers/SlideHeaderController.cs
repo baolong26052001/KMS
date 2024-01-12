@@ -85,13 +85,27 @@ namespace KMS.Controllers
         [Route("AddSlideshow")]
         public JsonResult AddSlideshow([FromBody] TslideHeader slideshow)
         {
+            
+            
+
             string query = "INSERT INTO TSlideHeader (description, startDate, endDate, IsActive, timeNext, dateModified, dateCreated) " +
                            "VALUES (@Description, @StartDate, @EndDate, @IsActive, @TimeNext, GETDATE(), GETDATE())";
+
+            DateTime startDate = (DateTime)slideshow.StartDate;
+            DateTime endDate = (DateTime)slideshow.EndDate;
+
+
+            if (slideshow.StartDate != null && slideshow.EndDate != null)
+            {
+                startDate = slideshow.StartDate.Value.Date.AddHours(0).AddMinutes(0).AddSeconds(0);
+                endDate = slideshow.EndDate.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
+            }
+
             SqlParameter[] parameters =
             {
                 new SqlParameter("@Description", slideshow.Description),
-                new SqlParameter("@StartDate", slideshow.StartDate),
-                new SqlParameter("@EndDate", slideshow.EndDate),
+                new SqlParameter("@StartDate", startDate),
+                new SqlParameter("@EndDate", endDate),
                 new SqlParameter("@IsActive", slideshow.IsActive),
                 new SqlParameter("@TimeNext", slideshow.TimeNext),
             };
@@ -103,15 +117,28 @@ namespace KMS.Controllers
         [Route("UpdateSlideshow/{id}")]
         public JsonResult UpdateSlideshow(int id, [FromBody] TslideHeader slideshow)
         {
+            
+
             string query = "UPDATE TslideHeader SET description = @Description, dateModified = GETDATE(), IsActive = @IsActive, timeNext = @TimeNext, " +
                            "startDate = @StartDate, endDate = @EndDate " +
                            "WHERE id = @Id";
+
+            DateTime startDate = (DateTime)slideshow.StartDate;
+            DateTime endDate = (DateTime)slideshow.EndDate;
+
+
+            if (slideshow.StartDate != null && slideshow.EndDate != null)
+            {
+                startDate = slideshow.StartDate.Value.Date.AddHours(0).AddMinutes(0).AddSeconds(0);
+                endDate = slideshow.EndDate.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
+            }
+
             SqlParameter[] parameters =
             {
                 new SqlParameter("@Id", id),
                 new SqlParameter("@Description", slideshow.Description),
-                new SqlParameter("@StartDate", slideshow.StartDate),
-                new SqlParameter("@EndDate", slideshow.EndDate),
+                new SqlParameter("@StartDate", startDate),
+                new SqlParameter("@EndDate", endDate),
                 new SqlParameter("@IsActive", slideshow.IsActive),
                 new SqlParameter("@TimeNext", slideshow.TimeNext),
             };
