@@ -11,7 +11,7 @@ namespace KMS.Models
         public string? TypeContent { get; set; }
         public string? ContentUrl { get; set; }
 
-        [NotMapped] 
+        [NotMapped]
         public IFormFile? File { get; set; }
 
         public int? SlideHeaderId { get; set; }
