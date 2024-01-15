@@ -88,7 +88,7 @@ namespace Insurance.View
             }
             catch (Exception ex)
             {
-
+                //
             }
         }
 
