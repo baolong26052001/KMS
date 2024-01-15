@@ -133,7 +133,7 @@ namespace KMS.Controllers
         [Route("ShowBenefit/{id}")] // ấn vào view benefit, sẽ ra benefit detail
         public JsonResult GetBenefitDetail(int id)
         {
-            string query = "select id,content,CASE WHEN coverage = 0 or coverage is null THEN N'Chi trả theo tỷ lệ trả tiền bảo hiểm tương ứng được quy định trong Bảng tỷ lệ trả tiền thương tật do tai nạn tại Phụ lục đính kèm Quy tắc bảo hiểm'\r\n        ELSE CAST(coverage AS VARCHAR(255))\r\n\t\tEND AS coverage,benefitId,dateCreated,dateModified\r\nfrom BenefitDetail " +
+            string query = "select id,content,coverage,benefitId,dateCreated,dateModified\r\nfrom BenefitDetail " +
                 "where benefitId=@id";
 
             SqlParameter parameter = new SqlParameter("@id", id);
@@ -263,7 +263,7 @@ namespace KMS.Controllers
             {
                 new SqlParameter("@id", id),
                 new SqlParameter("@Content", benefitDetail.Content),
-                new SqlParameter("@Coverage", (object)benefitDetail.Coverage ?? DBNull.Value),
+                new SqlParameter("@Coverage", benefitDetail.Coverage),
             };
             SqlParameter[] parameters2 = { };
 
