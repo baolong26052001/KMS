@@ -109,7 +109,7 @@ namespace KMS.Controllers
         }
 
         [HttpGet]
-        [Route("ShowInsurancePackageDetail/{id}")] // khi ấn vào view package A, thì sẽ show ra benefit của package A
+        [Route("ShowInsurancePackageDetail/{id}")] // khi ấn vào view package A, thì sẽ show ra "benefit" của package A
         public JsonResult GetInsurancePackageDetail(int id)
         {
             string query = "select b.id, b.content, b.coverage, b.description, ipack.packageName, itype.typeName, ipack.fee, b.dateModified, b.dateCreated " +

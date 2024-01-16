@@ -42,7 +42,7 @@ namespace KMS.Controllers
             string query = "SELECT itr.transactionDate,itr.id,itr.memberId,itr.contractId,ipa.packageName, it.typeName, " +
                 "ipa.provider,itr.registrationDate,itr.expireDate,itr.annualPay,itr.status " +
                 "FROM InsuranceTransaction itr JOIN InsurancePackage ipa ON ipa.id = itr.packageId JOIN InsuranceType it ON it.id = itr.packageId " +
-                "where itr.id=@id";
+                "where itr.id=@Id";
 
             SqlParameter parameter = new SqlParameter("@Id", id);
             DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
@@ -61,7 +61,7 @@ namespace KMS.Controllers
         [Route("ShowBeneficiaryOfMember/{id}")]
         public JsonResult GetBeneficiaryOfMember(int id) // id này là memberId
         {
-            string query = "select * from Beneficiary where memberId = @id";
+            string query = "select * from Beneficiary where memberId = @Id";
 
             SqlParameter parameter = new SqlParameter("@Id", id);
             DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });

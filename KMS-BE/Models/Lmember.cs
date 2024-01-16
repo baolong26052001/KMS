@@ -16,9 +16,9 @@ namespace KMS.Models
         public string? District { get; set; }
         public string? City { get; set; }
         public string? Ward { get; set; }
-        public byte[]? Image { get; set; }
-        public byte[]? Fingerprint1 { get; set; }
-        public byte[]? Fingerprint2 { get; set; }
+        public string? Image { get; set; }
+        public string? Fingerprint1 { get; set; }
+        public string? Fingerprint2 { get; set; }
         public string? IdenNumber { get; set; }
         public string? BankName { get; set; }
         public string? BankNumber { get; set; }

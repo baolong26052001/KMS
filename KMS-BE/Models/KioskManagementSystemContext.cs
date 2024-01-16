@@ -16,11 +16,15 @@ namespace KMS.Models
         {
         }
 
+        public virtual DbSet<AgeRange> AgeRanges { get; set; } = null!;
         public virtual DbSet<Beneficiary> Beneficiaries { get; set; } = null!;
         public virtual DbSet<Benefit> Benefits { get; set; } = null!;
         public virtual DbSet<BenefitDetail> BenefitDetails { get; set; } = null!;
         public virtual DbSet<InsurancePackage> InsurancePackages { get; set; } = null!;
+        public virtual DbSet<InsurancePackageDetail> InsurancePackageDetails { get; set; } = null!;
         public virtual DbSet<InsurancePackageGroup> InsurancePackageGroups { get; set; } = null!;
+        public virtual DbSet<InsurancePackageHeader> InsurancePackageHeaders { get; set; } = null!;
+        public virtual DbSet<InsuranceProvider> InsuranceProviders { get; set; } = null!;
         public virtual DbSet<InsuranceTransaction> InsuranceTransactions { get; set; } = null!;
         public virtual DbSet<InsuranceType> InsuranceTypes { get; set; } = null!;
         public virtual DbSet<Laccount> Laccounts { get; set; } = null!;
@@ -35,11 +39,11 @@ namespace KMS.Models
         public virtual DbSet<TaccessRule> TaccessRules { get; set; } = null!;
         public virtual DbSet<TactivityLog> TactivityLogs { get; set; } = null!;
         public virtual DbSet<Taudit> Taudits { get; set; } = null!;
+        public virtual DbSet<Term> Terms { get; set; } = null!;
         public virtual DbSet<Tkiosk> Tkiosks { get; set; } = null!;
         public virtual DbSet<TnotificationLog> TnotificationLogs { get; set; } = null!;
         public virtual DbSet<TslideDetail> TslideDetails { get; set; } = null!;
         public virtual DbSet<TslideHeader> TslideHeaders { get; set; } = null!;
-        public virtual DbSet<Tslideshow> Tslideshows { get; set; } = null!;
         public virtual DbSet<Tstation> Tstations { get; set; } = null!;
         public virtual DbSet<Tuser> Tusers { get; set; } = null!;
         public virtual DbSet<TuserGroup> TuserGroups { get; set; } = null!;
@@ -55,6 +59,23 @@ namespace KMS.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<AgeRange>(entity =>
+            {
+                entity.ToTable("AgeRange");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.DateCreated)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateCreated");
+
+                entity.Property(e => e.DateModified)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateModified");
+
+                entity.Property(e => e.Range).HasColumnName("range");
+            });
+
             modelBuilder.Entity<Beneficiary>(entity =>
             {
                 entity.ToTable("Beneficiary");
@@ -171,6 +192,27 @@ namespace KMS.Models
                     .HasColumnName("provider");
             });
 
+            modelBuilder.Entity<InsurancePackageDetail>(entity =>
+            {
+                entity.ToTable("InsurancePackageDetail");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.AgeRangeId).HasColumnName("ageRangeId");
+
+                entity.Property(e => e.DateCreated)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateCreated");
+
+                entity.Property(e => e.DateModified)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateModified");
+
+                entity.Property(e => e.Fee).HasColumnName("fee");
+
+                entity.Property(e => e.PackageHeaderId).HasColumnName("packageHeaderId");
+            });
+
             modelBuilder.Entity<InsurancePackageGroup>(entity =>
             {
                 entity.ToTable("InsurancePackageGroup");
@@ -188,6 +230,48 @@ namespace KMS.Models
                 entity.Property(e => e.Name)
                     .HasMaxLength(50)
                     .HasColumnName("name");
+            });
+
+            modelBuilder.Entity<InsurancePackageHeader>(entity =>
+            {
+                entity.ToTable("InsurancePackageHeader");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.DateCreated)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateCreated");
+
+                entity.Property(e => e.DateModified)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateModified");
+
+                entity.Property(e => e.InsuranceProviderId).HasColumnName("insuranceProviderId");
+
+                entity.Property(e => e.InsuranceTypeId).HasColumnName("insuranceTypeId");
+
+                entity.Property(e => e.PackageName).HasColumnName("packageName");
+
+                entity.Property(e => e.TermId).HasColumnName("termId");
+            });
+
+            modelBuilder.Entity<InsuranceProvider>(entity =>
+            {
+                entity.ToTable("InsuranceProvider");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.DateCreated)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateCreated");
+
+                entity.Property(e => e.DateModified)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateModified");
+
+                entity.Property(e => e.Email).HasColumnName("email");
+
+                entity.Property(e => e.Provider).HasColumnName("provider");
             });
 
             modelBuilder.Entity<InsuranceTransaction>(entity =>
@@ -284,9 +368,9 @@ namespace KMS.Models
 
             modelBuilder.Entity<Lmember>(entity =>
             {
-                entity.ToTable("LMember");
+                entity.HasNoKey();
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.ToTable("LMember");
 
                 entity.Property(e => e.Address1)
                     .HasMaxLength(100)
@@ -344,13 +428,9 @@ namespace KMS.Models
                     .HasMaxLength(30)
                     .HasColumnName("district");
 
-                entity.Property(e => e.Fingerprint1)
-                    .HasColumnType("image")
-                    .HasColumnName("fingerprint1");
+                entity.Property(e => e.Fingerprint1).HasColumnName("fingerprint1");
 
-                entity.Property(e => e.Fingerprint2)
-                    .HasColumnType("image")
-                    .HasColumnName("fingerprint2");
+                entity.Property(e => e.Fingerprint2).HasColumnName("fingerprint2");
 
                 entity.Property(e => e.FirstName)
                     .HasMaxLength(30)
@@ -360,14 +440,16 @@ namespace KMS.Models
                     .HasMaxLength(30)
                     .HasColumnName("fullName");
 
+                entity.Property(e => e.Id)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("id");
+
                 entity.Property(e => e.IdenNumber)
                     .HasMaxLength(20)
                     .IsUnicode(false)
                     .HasColumnName("idenNumber");
 
-                entity.Property(e => e.Image)
-                    .HasColumnType("image")
-                    .HasColumnName("image");
+                entity.Property(e => e.Image).HasColumnName("image");
 
                 entity.Property(e => e.IsActive).HasColumnName("isActive");
 
@@ -796,6 +878,23 @@ namespace KMS.Models
                 entity.Property(e => e.UserId).HasColumnName("userId");
             });
 
+            modelBuilder.Entity<Term>(entity =>
+            {
+                entity.ToTable("Term");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Content).HasColumnName("content");
+
+                entity.Property(e => e.DateCreated)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateCreated");
+
+                entity.Property(e => e.DateModified)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateModified");
+            });
+
             modelBuilder.Entity<Tkiosk>(entity =>
             {
                 entity.ToTable("TKiosk");
@@ -1036,79 +1135,6 @@ namespace KMS.Models
                     .HasColumnName("startDate");
 
                 entity.Property(e => e.TimeNext).HasColumnName("timeNext");
-            });
-
-            modelBuilder.Entity<Tslideshow>(entity =>
-            {
-                entity.ToTable("TSlideshow");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.CreateAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("createAt");
-
-                entity.Property(e => e.CreateBy).HasColumnName("createBy");
-
-                entity.Property(e => e.DateCreated)
-                    .HasColumnType("datetime")
-                    .HasColumnName("dateCreated");
-
-                entity.Property(e => e.DateModified)
-                    .HasColumnType("datetime")
-                    .HasColumnName("dateModified");
-
-                entity.Property(e => e.Description)
-                    .HasMaxLength(255)
-                    .IsUnicode(false)
-                    .HasColumnName("description");
-
-                entity.Property(e => e.EndDate)
-                    .HasColumnType("datetime")
-                    .HasColumnName("endDate");
-
-                entity.Property(e => e.FileType)
-                    .HasMaxLength(10)
-                    .IsUnicode(false)
-                    .HasColumnName("fileType");
-
-                entity.Property(e => e.Imagevideo)
-                    .HasMaxLength(255)
-                    .IsUnicode(false)
-                    .HasColumnName("imagevideo");
-
-                entity.Property(e => e.IsActive).HasColumnName("isActive");
-
-                entity.Property(e => e.PackageName)
-                    .HasMaxLength(255)
-                    .IsUnicode(false)
-                    .HasColumnName("packageName");
-
-                entity.Property(e => e.Scrolltext1)
-                    .HasMaxLength(255)
-                    .IsUnicode(false)
-                    .HasColumnName("scrolltext1");
-
-                entity.Property(e => e.Scrolltext2)
-                    .HasMaxLength(255)
-                    .IsUnicode(false)
-                    .HasColumnName("scrolltext2");
-
-                entity.Property(e => e.Sequence).HasColumnName("sequence");
-
-                entity.Property(e => e.StartDate)
-                    .HasColumnType("datetime")
-                    .HasColumnName("startDate");
-
-                entity.Property(e => e.StationId).HasColumnName("stationId");
-
-                entity.Property(e => e.Timer).HasColumnName("timer");
-
-                entity.Property(e => e.UpdatedAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("updatedAt");
-
-                entity.Property(e => e.UpdatedBy).HasColumnName("updatedBy");
             });
 
             modelBuilder.Entity<Tstation>(entity =>

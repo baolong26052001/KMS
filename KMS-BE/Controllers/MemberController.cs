@@ -62,7 +62,7 @@ namespace KMS.Controllers
         }
 
         [HttpPost]
-        [Route("AddMember")]
+        [Route("GetMemberInformationFromScanner")]
         public JsonResult AddMember()
         {
             string filePath = "ocr_result2.json";
