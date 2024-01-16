@@ -871,8 +871,7 @@ namespace KMS.Models
                     .HasColumnName("script");
 
                 entity.Property(e => e.TableName)
-                    .HasMaxLength(20)
-                    .IsUnicode(false)
+                    .HasMaxLength(50)
                     .HasColumnName("tableName");
 
                 entity.Property(e => e.UserId).HasColumnName("userId");
