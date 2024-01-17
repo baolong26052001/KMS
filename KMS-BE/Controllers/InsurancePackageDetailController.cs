@@ -26,7 +26,7 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackageDetail")]
         public JsonResult GetInsurancePackageDetail()
         {
-            string query = "select a.id, b.packageName, d.range, a.fee, c.provider, c.email, e.content " +
+            string query = "select a.id, b.packageName, d.range, a.fee, c.provider, c.email, e.content, a.dateModified, a.dateCreated " +
                 "from InsurancePackageDetail a, InsurancePackageHeader b, InsuranceProvider c, AgeRange d, Term e " +
                 "where a.packageHeaderId = b.id and c.id = b.insuranceProviderId and d.id = a.ageRangeId and e.id = b.termId";
 
@@ -38,7 +38,7 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackageDetail/{id}")]
         public JsonResult GetInsurancePackageDetailById(int id)
         {
-            string query = "select a.id, b.packageName, d.range, a.fee, c.provider, c.email, e.content " +
+            string query = "select a.id, b.packageName, d.range, a.fee, c.provider, c.email, e.content, a.dateModified, a.dateCreated " +
                 "from InsurancePackageDetail a, InsurancePackageHeader b, InsuranceProvider c, AgeRange d, Term e " +
                 "where a.packageHeaderId = b.id and c.id = b.insuranceProviderId and d.id = a.ageRangeId and e.id = b.termId and a.id=@Id";
 
@@ -136,7 +136,7 @@ namespace KMS.Controllers
         [Route("SearchInsurancePackageDetail")]
         public JsonResult SearchInsurancePackageDetail(string searchQuery)
         {
-            string query = "SELECT a.id, b.packageName, d.range, a.fee, c.provider, c.email, e.content " +
+            string query = "SELECT a.id, b.packageName, d.range, a.fee, c.provider, c.email, e.content, a.dateModified, a.dateCreated " +
                            "FROM InsurancePackageDetail a " +
                            "INNER JOIN InsurancePackageHeader b ON a.packageHeaderId = b.id " +
                            "INNER JOIN InsuranceProvider c ON c.id = b.insuranceProviderId " +
@@ -152,6 +152,35 @@ namespace KMS.Controllers
 
             SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
             DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+
+            return new JsonResult(table);
+        }
+
+        [HttpGet]
+        [Route("FilterInsurancePackageDetail")]
+        public JsonResult FilterInsurancePackageDetail([FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
+        {
+            string query = "SELECT a.id, b.packageName, d.range, a.fee, c.provider, c.email, e.content, a.dateModified, a.dateCreated " +
+                           "FROM InsurancePackageDetail a " +
+                           "INNER JOIN InsurancePackageHeader b ON a.packageHeaderId = b.id " +
+                           "INNER JOIN InsuranceProvider c ON c.id = b.insuranceProviderId " +
+                           "INNER JOIN AgeRange d ON d.id = a.ageRangeId " +
+                           "INNER JOIN Term e ON e.id = b.termId ";
+
+            List <SqlParameter> parameters = new List<SqlParameter>();
+
+            if (startDate.HasValue && endDate.HasValue)
+            {
+
+                startDate = startDate.Value.Date.AddHours(0).AddMinutes(0).AddSeconds(0);
+                endDate = endDate.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
+
+                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "a.dateCreated >= @startDate AND a.dateCreated <= @endDate";
+                parameters.Add(new SqlParameter("@startDate", startDate.Value));
+                parameters.Add(new SqlParameter("@endDate", endDate.Value));
+            }
+
+            DataTable table = _exQuery.ExecuteRawQuery(query, parameters.ToArray());
 
             return new JsonResult(table);
         }
