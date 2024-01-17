@@ -6,7 +6,6 @@ import { DataGrid, GridToolbarExport } from '@mui/x-data-grid';
 import { Button, Box } from '@mui/material';
 import {useNavigate} from 'react-router-dom';
 import { useParams } from 'react-router-dom';
-import { Link } from 'react-router-dom';
 //import MUI Library
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -151,7 +150,9 @@ const columns = [
     flex: 1,
   },
   { field: 'content', headerName: 'Content', minWidth: 300, flex: 1,},
-  { field: 'coverage', headerName: 'Coverage', minWidth: 150, flex: 1, renderCell: (params) => formatNumber(params.value)},
+  { field: 'coverage', headerName: 'Coverage', minWidth: 300, flex: 1, 
+
+  },
   {
     field: 'dateModified',
     headerName: 'Date Modified',
@@ -178,9 +179,8 @@ const InsurancePackageDetail = () => {
     const [selectedRowIds, setSelectedRowIds] = useState([]);
     const [rows, setRows] = useState([]);
     const { id } = useParams();
-    
+    const navigate = useNavigate();
     const API_URL = "https://localhost:7017/";
-  
     
     useEffect(() => {
       async function fetchData() {
@@ -222,7 +222,15 @@ const InsurancePackageDetail = () => {
             <h1 className="h1-dashboard">Benefit Details</h1>
         </div>
             <div className="bigcarddashboard">
-
+              <div>
+                <Button
+                  variant="contained"
+                  onClick={() => navigate(-1)}
+                  style={{ backgroundColor: '#4CAF50', color: '#fff' }}
+                >
+                  Go Back
+                </Button>
+              </div>
                 <div className='Table' style={{ height: 400, width: '100%'}}>
                 
                 <DataGrid

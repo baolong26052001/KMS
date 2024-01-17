@@ -179,7 +179,7 @@ return (
   <div className="content"> 
 
       <div className="admin-dashboard-text-div pt-5"> 
-          <h1 className="h1-dashboard">Account</h1>
+          <h1 className="h1-dashboard">Activity Logs</h1>
       </div>
           <div className="bigcarddashboard">
 

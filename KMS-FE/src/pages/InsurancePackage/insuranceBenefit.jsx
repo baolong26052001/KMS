@@ -81,7 +81,7 @@ const ViewButton = ({ rowId, label, onClick }) => {
 
   return (
     <Box sx={{alignItems: 'center' }}>
-      <Button size="small" variant="contained" onClick={handleClick}>
+      <Button size="small" variant="contained" color="inherit" onClick={handleClick}>
         {label}
       </Button>
     </Box>
@@ -118,21 +118,6 @@ function createData(id, content, coverage, description, dateModified, dateCreate
 
 const columns = [ 
   {
-    field: 'viewButton',
-    headerName: '',
-    width: 80,
-    disableColumnMenu: true,
-    sortable: false, // Disable sorting for this column
-    filterable: false, // Disable filtering for this column
-    renderCell: (params) => (
-        <ViewButton
-        rowId={params.row.id}
-        label="View"
-        onClick={handleButtonClick}
-      />
-    ),
-  },
-  {
     field: 'editButton',
     headerName: '',
     width: 80,
@@ -144,6 +129,21 @@ const columns = [
         rowId={params.row.id}
         packageId = {params.row.packageId}
         label="Edit"
+        onClick={handleButtonClick}
+      />
+    ),
+  },
+  {
+    field: 'viewButton',
+    headerName: '',
+    width: 80,
+    disableColumnMenu: true,
+    sortable: false, // Disable sorting for this column
+    filterable: false, // Disable filtering for this column
+    renderCell: (params) => (
+        <ViewButton
+        rowId={params.row.id}
+        label="Details"
         onClick={handleButtonClick}
       />
     ),
