@@ -26,7 +26,9 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackageDetail")]
         public JsonResult GetInsurancePackageDetail()
         {
-            string query = "SELECT * FROM InsurancePackageDetail";
+            string query = "select a.id, b.packageName, d.range, a.fee, c.provider, c.email, e.content " +
+                "from InsurancePackageDetail a, InsurancePackageHeader b, InsuranceProvider c, AgeRange d, Term e " +
+                "where a.packageHeaderId = b.id and c.id = b.insuranceProviderId and d.id = a.ageRangeId and e.id = b.termId";
 
             DataTable table = _exQuery.ExecuteRawQuery(query);
             return new JsonResult(table);
@@ -36,7 +38,9 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackageDetail/{id}")]
         public JsonResult GetInsurancePackageDetailById(int id)
         {
-            string query = "SELECT * FROM InsurancePackageDetail where id=@Id";
+            string query = "select a.id, b.packageName, d.range, a.fee, c.provider, c.email, e.content " +
+                "from InsurancePackageDetail a, InsurancePackageHeader b, InsuranceProvider c, AgeRange d, Term e " +
+                "where a.packageHeaderId = b.id and c.id = b.insuranceProviderId and d.id = a.ageRangeId and e.id = b.termId and a.id=@Id";
 
             SqlParameter parameter = new SqlParameter("@Id", id);
             DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
@@ -126,6 +130,30 @@ namespace KMS.Controllers
 
 
             return new JsonResult("Insurance Package Detail deleted successfully");
+        }
+
+        [HttpGet]
+        [Route("SearchInsurancePackageDetail")]
+        public JsonResult SearchInsurancePackageDetail(string searchQuery)
+        {
+            string query = "SELECT a.id, b.packageName, d.range, a.fee, c.provider, c.email, e.content " +
+                           "FROM InsurancePackageDetail a " +
+                           "INNER JOIN InsurancePackageHeader b ON a.packageHeaderId = b.id " +
+                           "INNER JOIN InsuranceProvider c ON c.id = b.insuranceProviderId " +
+                           "INNER JOIN AgeRange d ON d.id = a.ageRangeId " +
+                           "INNER JOIN Term e ON e.id = b.termId " +
+                           "WHERE a.id LIKE @searchQuery OR " +
+                           "b.packageName LIKE @searchQuery OR " +
+                           "d.range LIKE @searchQuery OR " +
+                           "c.provider LIKE @searchQuery OR " +
+                           "CONVERT(VARCHAR(20), a.fee) LIKE @searchQuery OR " +
+                           "c.email LIKE @searchQuery OR " +
+                           "e.content LIKE @searchQuery";
+
+            SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
+            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+
+            return new JsonResult(table);
         }
 
     }
