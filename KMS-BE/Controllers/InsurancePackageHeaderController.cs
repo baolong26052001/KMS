@@ -26,7 +26,9 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackageHeader")]
         public JsonResult GetInsurancePackageHeader()
         {
-            string query = "SELECT * FROM InsurancePackageHeader";
+            string query = "select b.id, b.packageName, c.provider, c.email, e.content, f.typeName " +
+                "from InsurancePackageHeader b, InsuranceProvider c, Term e, InsuranceType f " +
+                "where c.id = b.insuranceProviderId and e.id = b.termId and b.insuranceTypeId = f.id";
 
             DataTable table = _exQuery.ExecuteRawQuery(query);
             return new JsonResult(table);
@@ -36,7 +38,9 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackageHeader/{id}")]
         public JsonResult GetInsurancePackageHeaderById(int id)
         {
-            string query = "SELECT * FROM InsurancePackageHeader where id=@Id";
+            string query = "select b.id, b.packageName, c.provider, c.email, e.content, f.typeName " +
+                "from InsurancePackageHeader b, InsuranceProvider c, Term e, InsuranceType f " +
+                "where c.id = b.insuranceProviderId and e.id = b.termId and b.insuranceTypeId = f.id and b.id=@Id";
 
             SqlParameter parameter = new SqlParameter("@Id", id);
             DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
@@ -128,6 +132,28 @@ namespace KMS.Controllers
             
 
             return new JsonResult("Insurance Package Header deleted successfully");
+        }
+
+        [HttpGet]
+        [Route("SearchInsurancePackageHeader")]
+        public JsonResult SearchInsurancePackageHeader(string searchQuery)
+        {
+            string query = "SELECT b.id, b.packageName, c.provider, c.email, e.content, f.typeName " +
+                           "FROM InsurancePackageHeader b " +
+                           "INNER JOIN InsuranceProvider c ON c.id = b.insuranceProviderId " +
+                           "INNER JOIN Term e ON e.id = b.termId " +
+                           "INNER JOIN InsuranceType f ON b.insuranceTypeId = f.id " +
+                           "WHERE b.id LIKE @searchQuery OR " +
+                           "b.packageName LIKE @searchQuery OR " +
+                           "c.provider LIKE @searchQuery OR " +
+                           "c.email LIKE @searchQuery OR " +
+                           "f.typeName LIKE @searchQuery OR " +
+                           "e.content LIKE @searchQuery";
+
+            SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
+            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+
+            return new JsonResult(table);
         }
 
     }
