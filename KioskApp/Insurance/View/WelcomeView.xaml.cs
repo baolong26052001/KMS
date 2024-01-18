@@ -156,6 +156,8 @@ namespace Insurance.View
             {
                 await AdvanceSlideDetails();
                 timer.Start();
+                VideoControl.Position = TimeSpan.Zero;
+
             });
         }
 
@@ -164,23 +166,23 @@ namespace Insurance.View
             await Dispatcher.InvokeAsync(async () =>
             {
                 timer.Stop();
-
+                timer.Interval = slideHeader.TimeNext * 1000 ?? 5000;
                 currentSlideIndex++;
 
                 if (currentSlideIndex >= slideDetails.Count)
                 {
                     currentSlideIndex = 0;
                 }
-
+                
                 await LoadSlideDetailsAsync(slideDetails[currentSlideIndex].SlideHeaderId.GetValueOrDefault());
 
                 if (IsVideoFile(System.IO.Path.GetExtension(slideDetails[currentSlideIndex].ContentUrl)))
                 {
-
+                    timer.Interval = 300;
                     VideoControl.Play();
 
                     TimeSpan videoDuration = VideoControl.NaturalDuration.TimeSpan;
-
+                    
                     while (VideoControl.Position < videoDuration)
                     {
                         await Task.Delay(500);
@@ -194,6 +196,7 @@ namespace Insurance.View
                 timer.Start();
             });
         }
+
 
         private async Task AdvanceSlideDetails()
         {
