@@ -4,6 +4,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import { useParams, useNavigate } from 'react-router-dom';
+import InputAdornment from '@mui/material/InputAdornment';
 
 const EditSlideShow = () => {
   const navigate = useNavigate();
@@ -125,13 +126,17 @@ const EditSlideShow = () => {
                 value={editedItem.endDate}
                 onChange={(e) => handleInputChange('endDate', e.target.value)}
                 />
-                <TextField
-                    id="timeNext"
-                    label="Time Next"
-                    variant="outlined"
-                    value={editedItem.timeNext}
-                    onChange={(e) => handleInputChange('timeNext', e.target.value)}
-                />
+              <TextField
+                  id="timeNext"
+                  label="Time Next"
+                  variant="outlined"
+                  value={editedItem.timeNext}
+                  onChange={(e) => handleInputChange('timeNext', e.target.value)}
+                  InputProps={{
+                      endAdornment: <InputAdornment position="end">Seconds</InputAdornment>,
+                  }}
+              />
+
 
             <TextField
                 id="IsActive"
@@ -141,8 +146,8 @@ const EditSlideShow = () => {
                 value={editedItem.IsActive}
                 onChange={(e) => handleInputChange('IsActive', e.target.value)}
                 >
-                <MenuItem value={true}>True</MenuItem>
-                <MenuItem value={false}>False</MenuItem>
+                <MenuItem value={true}>Enable</MenuItem>
+                <MenuItem value={false}>Disable</MenuItem>
             </TextField>
 
               <Box sx={{ display: 'flex', gap: '8px' }}>

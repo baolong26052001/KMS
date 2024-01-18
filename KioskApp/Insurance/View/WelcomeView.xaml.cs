@@ -20,6 +20,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Insurance.View
 {
@@ -34,6 +35,7 @@ namespace Insurance.View
             InitializeComponent();
             LoadSlideDetails();
         }
+
         public class TslideHeader
         {
             public int Id { get; set; }
@@ -76,26 +78,33 @@ namespace Insurance.View
 
                         if (slideDetails.Count > 0)
                         {
-                            //DescriptionTextBlock.Text = slideDetails[currentSlideIndex].Description;
-
-                            string baseFolderPath = @"D:\RnD Project\TEMP\KMS\KioskApp\Insurance\bin\Debug\net6.0-windows\images";
+                            string baseFolderPath = AppDomain.CurrentDomain.BaseDirectory + "images";
                             string relativePath = slideDetails[currentSlideIndex].ContentUrl;
                             string absolutePath = System.IO.Path.Combine(baseFolderPath, relativePath);
 
                             string fileExtension = System.IO.Path.GetExtension(absolutePath).ToLower();
                             string currentDate = DateTime.Now.ToString("yyyy-MM-dd");
- 
+
+                            double screenWidth = System.Windows.SystemParameters.PrimaryScreenWidth;
+                            double screenHeight = System.Windows.SystemParameters.PrimaryScreenHeight;
+
                             if (IsImageFile(fileExtension))
                             {
                                 ImageControl.Source = new BitmapImage(new Uri(absolutePath));
                                 ImageControl.Visibility = Visibility.Visible;
                                 VideoControl.Visibility = Visibility.Collapsed;
+
+                                ImageControl.Width = screenWidth;
+                                ImageControl.Height = screenHeight;
                             }
                             else if (IsVideoFile(fileExtension))
                             {
                                 VideoControl.Source = new Uri(absolutePath);
                                 ImageControl.Visibility = Visibility.Collapsed;
                                 VideoControl.Visibility = Visibility.Visible;
+
+                                VideoControl.Width = screenWidth;
+                                VideoControl.Height = screenHeight;
 
                                 VideoControl.MediaEnded += VideoControl_MediaEnded;
                                 VideoControl.Play();

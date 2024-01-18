@@ -9,25 +9,23 @@
     <UserControl.Background>
         <ImageBrush ImageSource="/Images/bg.jpg"></ImageBrush>
     </UserControl.Background>
-    <Grid >
-        <!--<MouseBinding MouseAction="LeftClick" Command="{Binding CancelCommand}"/>-->
+    <Grid>
         <Button Command="{Binding CancelCommand}" VerticalAlignment="Top" Margin="15 0 0 0" HorizontalAlignment="Right" Content="Back" />
         <Grid Grid.Row="1" Grid.RowSpan="2">
-            <StackPanel Grid.Column="1">
+            <StackPanel Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <TextBlock x:Name="DescriptionTextBlock" 
-                   HorizontalAlignment="Center" 
-                   VerticalAlignment="Top" 
-                   Margin="0,10,0,0" 
-                   FontSize="30"
-                   Foreground="White"/>
-                <Image x:Name="ImageControl" Source="" Width="1024" Height="700" Visibility="Collapsed"/>
+                           HorizontalAlignment="Center" 
+                           VerticalAlignment="Top" 
+                           Margin="0,10,0,0" 
+                           FontSize="30"
+                           Foreground="White"/>
+                <Image x:Name="ImageControl" Width="Auto" Height="Auto" Visibility="Collapsed" Stretch="UniformToFill"/>
                 <MediaElement x:Name="VideoControl" 
-                              Source=""
+                              Width="Auto" Height="Auto" 
+                              Visibility="Collapsed"
                               LoadedBehavior="Manual"
                               UnloadedBehavior="Manual"
-                              Width="1024" Height="700" 
-                              Visibility="Collapsed"
-                              />
+                              Stretch="UniformToFill"/>
             </StackPanel>
         </Grid>
     </Grid>

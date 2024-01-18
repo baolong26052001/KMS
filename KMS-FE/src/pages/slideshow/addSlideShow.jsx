@@ -3,6 +3,7 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { useNavigate } from 'react-router-dom';
+import InputAdornment from '@mui/material/InputAdornment';
 
 const AddSlideShow = () => {
   const navigate = useNavigate();
@@ -85,6 +86,9 @@ const AddSlideShow = () => {
                 label="Time Next"
                 variant="outlined"
                 value={newItem.timeNext}
+                InputProps={{
+                  endAdornment: <InputAdornment position="end">Seconds</InputAdornment>,
+                }}
                 onChange={(e) => handleInputChange('timeNext', e.target.value)}
               />
               <TextField

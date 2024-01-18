@@ -249,7 +249,7 @@ const User = () => {
     <div className="content"> 
 
         <div className="admin-dashboard-text-div pt-5"> 
-            <h1 className="h1-dashboard">User</h1>
+            <h1 className="h1-dashboard">Users</h1>
         </div>
             <div className="bigcarddashboard">
                 <div className="searchdivuser">
