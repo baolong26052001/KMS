@@ -167,6 +167,7 @@ namespace Insurance.View
             {
                 timer.Stop();
                 timer.Interval = slideHeader.TimeNext * 1000 ?? 5000;
+                VideoControl.Position = TimeSpan.Zero;
                 currentSlideIndex++;
 
                 if (currentSlideIndex >= slideDetails.Count)
@@ -178,14 +179,14 @@ namespace Insurance.View
 
                 if (IsVideoFile(System.IO.Path.GetExtension(slideDetails[currentSlideIndex].ContentUrl)))
                 {
-                    timer.Interval = 300;
+                    timer.Interval = 200;
                     VideoControl.Play();
-
+                    
                     TimeSpan videoDuration = VideoControl.NaturalDuration.TimeSpan;
                     
                     while (VideoControl.Position < videoDuration)
                     {
-                        await Task.Delay(500);
+                        await Task.Delay(200);
                     }
 
                     await Dispatcher.InvokeAsync(async () =>
