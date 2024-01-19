@@ -26,9 +26,12 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackageDetail")]
         public JsonResult GetInsurancePackageDetail()
         {
-            string query = "select a.id, b.packageName, N'Từ ' + CAST(d.startAge AS NVARCHAR) + N' đến ' + CAST(d.endAge AS NVARCHAR) + N' tuổi' AS ageRange, a.fee, c.provider, c.email, e.content, a.dateModified, a.dateCreated " +
-                "from InsurancePackageDetail a, InsurancePackageHeader b, InsuranceProvider c, AgeRange d, Term e " +
-                "where a.packageHeaderId = b.id and c.id = b.insuranceProviderId and d.id = a.ageRangeId and e.id = b.termId";
+            string query = "SELECT a.id, b.packageName, N'Từ ' + CAST(d.startAge AS NVARCHAR) + N' đến ' + CAST(d.endAge AS NVARCHAR) + N' tuổi' AS ageRange, a.fee, c.provider, c.email, e.content, a.dateModified, a.dateCreated " +
+                "FROM InsurancePackageDetail a " +
+                "JOIN InsurancePackageHeader b ON a.packageHeaderId = b.id " +
+                "LEFT JOIN InsuranceProvider c ON c.id = b.insuranceProviderId " +
+                "LEFT JOIN AgeRange d ON d.id = a.ageRangeId " +
+                "LEFT JOIN Term e ON e.id = b.termId";
 
             DataTable table = _exQuery.ExecuteRawQuery(query);
             return new JsonResult(table);
@@ -38,9 +41,12 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackageDetail/{id}")]
         public JsonResult GetInsurancePackageDetailById(int id)
         {
-            string query = "select a.id, b.packageName, N'Từ ' + CAST(d.startAge AS NVARCHAR) + N' đến ' + CAST(d.endAge AS NVARCHAR) + N' tuổi' AS ageRange, a.fee, c.provider, c.email, e.content, a.dateModified, a.dateCreated " +
-                "from InsurancePackageDetail a, InsurancePackageHeader b, InsuranceProvider c, AgeRange d, Term e " +
-                "where a.packageHeaderId = b.id and c.id = b.insuranceProviderId and d.id = a.ageRangeId and e.id = b.termId and a.id=@Id";
+            string query = "SELECT a.id, b.packageName, N'Từ ' + CAST(d.startAge AS NVARCHAR) + N' đến ' + CAST(d.endAge AS NVARCHAR) + N' tuổi' AS ageRange, a.fee, c.provider, c.email, e.content, a.dateModified, a.dateCreated " +
+                "FROM InsurancePackageDetail a " +
+                "JOIN InsurancePackageHeader b ON a.packageHeaderId = b.id " +
+                "LEFT JOIN InsuranceProvider c ON c.id = b.insuranceProviderId " +
+                "LEFT JOIN AgeRange d ON d.id = a.ageRangeId " +
+                "LEFT JOIN Term e ON e.id = b.termId and a.id=@Id";
 
             SqlParameter parameter = new SqlParameter("@Id", id);
             DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
@@ -138,10 +144,10 @@ namespace KMS.Controllers
         {
             string query = "SELECT a.id, b.packageName, N'Từ ' + CAST(d.startAge AS NVARCHAR) + N' đến ' + CAST(d.endAge AS NVARCHAR) + N' tuổi' AS ageRange, a.fee, c.provider, c.email, e.content, a.dateModified, a.dateCreated " +
                            "FROM InsurancePackageDetail a " +
-                           "INNER JOIN InsurancePackageHeader b ON a.packageHeaderId = b.id " +
-                           "INNER JOIN InsuranceProvider c ON c.id = b.insuranceProviderId " +
-                           "INNER JOIN AgeRange d ON d.id = a.ageRangeId " +
-                           "INNER JOIN Term e ON e.id = b.termId " +
+                           "LEFT JOIN InsurancePackageHeader b ON a.packageHeaderId = b.id " +
+                           "LEFT JOIN InsuranceProvider c ON c.id = b.insuranceProviderId " +
+                           "LEFT JOIN AgeRange d ON d.id = a.ageRangeId " +
+                           "LEFT JOIN Term e ON e.id = b.termId " +
                            "WHERE a.id LIKE @searchQuery OR " +
                            "b.packageName LIKE @searchQuery OR " +
                            "c.provider LIKE @searchQuery OR " +
@@ -161,10 +167,10 @@ namespace KMS.Controllers
         {
             string query = "SELECT a.id, b.packageName, N'Từ ' + CAST(d.startAge AS NVARCHAR) + N' đến ' + CAST(d.endAge AS NVARCHAR) + N' tuổi' AS ageRange, a.fee, c.provider, c.email, e.content, a.dateModified, a.dateCreated " +
                            "FROM InsurancePackageDetail a " +
-                           "INNER JOIN InsurancePackageHeader b ON a.packageHeaderId = b.id " +
-                           "INNER JOIN InsuranceProvider c ON c.id = b.insuranceProviderId " +
-                           "INNER JOIN AgeRange d ON d.id = a.ageRangeId " +
-                           "INNER JOIN Term e ON e.id = b.termId ";
+                           "LEFT JOIN InsurancePackageHeader b ON a.packageHeaderId = b.id " +
+                           "LEFT JOIN InsuranceProvider c ON c.id = b.insuranceProviderId " +
+                           "LEFT JOIN AgeRange d ON d.id = a.ageRangeId " +
+                           "LEFT JOIN Term e ON e.id = b.termId ";
 
             List <SqlParameter> parameters = new List<SqlParameter>();
 
