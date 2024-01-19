@@ -42,9 +42,7 @@ const items = [
     getItem('Video slideshow setup', 'slideshow', <VideoSettingsIcon />),
   ]),
   getItem('Transaction', 'sub2', <AccountBalanceWalletIcon />, [
-    getItem('Account', 'account', <LockOutlined />, [
-      getItem('View Account', 'viewAccount')
-    ]),
+    getItem('Account', 'account', <LockOutlined />),
     getItem('Loan Transaction', 'loantransaction', <CreditScoreIcon />),
     getItem('Loan Statement', 'loanstatement', <AccountBookOutlined />),
     getItem('Saving Transaction', 'savingtransaction', <SavingsIcon />),
