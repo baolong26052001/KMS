@@ -38,7 +38,7 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackageHeader/{id}")]
         public JsonResult GetInsurancePackageHeaderById(int id)
         {
-            string query = "select b.id, b.packageName, c.provider, c.email, e.content, f.typeName, b.dateModified, b.dateCreated " +
+            string query = "select b.id, f.id as insuranceTypeId, e.id as termId, c.id as insuranceProviderId, b.packageName, c.provider, c.email, e.content, f.typeName, b.dateModified, b.dateCreated " +
                 "from InsurancePackageHeader b, InsuranceProvider c, Term e, InsuranceType f " +
                 "where c.id = b.insuranceProviderId and e.id = b.termId and b.insuranceTypeId = f.id and b.id=@Id";
 
