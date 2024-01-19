@@ -26,7 +26,7 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackageDetail")]
         public JsonResult GetInsurancePackageDetail()
         {
-            string query = "select a.id, b.packageName, d.range, a.fee, c.provider, c.email, e.content, a.dateModified, a.dateCreated " +
+            string query = "select a.id, b.packageName, N'Từ ' + CAST(d.startAge AS NVARCHAR) + N' đến ' + CAST(d.endAge AS NVARCHAR) + N' tuổi' AS ageRange, a.fee, c.provider, c.email, e.content, a.dateModified, a.dateCreated " +
                 "from InsurancePackageDetail a, InsurancePackageHeader b, InsuranceProvider c, AgeRange d, Term e " +
                 "where a.packageHeaderId = b.id and c.id = b.insuranceProviderId and d.id = a.ageRangeId and e.id = b.termId";
 
@@ -38,7 +38,7 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackageDetail/{id}")]
         public JsonResult GetInsurancePackageDetailById(int id)
         {
-            string query = "select a.id, b.packageName, d.range, a.fee, c.provider, c.email, e.content, a.dateModified, a.dateCreated " +
+            string query = "select a.id, b.packageName, N'Từ ' + CAST(d.startAge AS NVARCHAR) + N' đến ' + CAST(d.endAge AS NVARCHAR) + N' tuổi' AS ageRange, a.fee, c.provider, c.email, e.content, a.dateModified, a.dateCreated " +
                 "from InsurancePackageDetail a, InsurancePackageHeader b, InsuranceProvider c, AgeRange d, Term e " +
                 "where a.packageHeaderId = b.id and c.id = b.insuranceProviderId and d.id = a.ageRangeId and e.id = b.termId and a.id=@Id";
 
@@ -136,7 +136,7 @@ namespace KMS.Controllers
         [Route("SearchInsurancePackageDetail")]
         public JsonResult SearchInsurancePackageDetail(string searchQuery)
         {
-            string query = "SELECT a.id, b.packageName, d.range, a.fee, c.provider, c.email, e.content, a.dateModified, a.dateCreated " +
+            string query = "SELECT a.id, b.packageName, N'Từ ' + CAST(d.startAge AS NVARCHAR) + N' đến ' + CAST(d.endAge AS NVARCHAR) + N' tuổi' AS ageRange, a.fee, c.provider, c.email, e.content, a.dateModified, a.dateCreated " +
                            "FROM InsurancePackageDetail a " +
                            "INNER JOIN InsurancePackageHeader b ON a.packageHeaderId = b.id " +
                            "INNER JOIN InsuranceProvider c ON c.id = b.insuranceProviderId " +
@@ -144,7 +144,6 @@ namespace KMS.Controllers
                            "INNER JOIN Term e ON e.id = b.termId " +
                            "WHERE a.id LIKE @searchQuery OR " +
                            "b.packageName LIKE @searchQuery OR " +
-                           "d.range LIKE @searchQuery OR " +
                            "c.provider LIKE @searchQuery OR " +
                            "CONVERT(VARCHAR(20), a.fee) LIKE @searchQuery OR " +
                            "c.email LIKE @searchQuery OR " +
@@ -160,7 +159,7 @@ namespace KMS.Controllers
         [Route("FilterInsurancePackageDetail")]
         public JsonResult FilterInsurancePackageDetail([FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
         {
-            string query = "SELECT a.id, b.packageName, d.range, a.fee, c.provider, c.email, e.content, a.dateModified, a.dateCreated " +
+            string query = "SELECT a.id, b.packageName, N'Từ ' + CAST(d.startAge AS NVARCHAR) + N' đến ' + CAST(d.endAge AS NVARCHAR) + N' tuổi' AS ageRange, a.fee, c.provider, c.email, e.content, a.dateModified, a.dateCreated " +
                            "FROM InsurancePackageDetail a " +
                            "INNER JOIN InsurancePackageHeader b ON a.packageHeaderId = b.id " +
                            "INNER JOIN InsuranceProvider c ON c.id = b.insuranceProviderId " +
