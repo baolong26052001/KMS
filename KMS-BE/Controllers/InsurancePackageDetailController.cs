@@ -38,6 +38,30 @@ namespace KMS.Controllers
         }
 
         [HttpGet]
+        [Route("ShowInsurancePackageDetailByHeaderId/{id}")]
+        public JsonResult GetInsurancePackageDetailByHeaderId(int id)
+        {
+            string query = "SELECT a.id, b.packageName, N'Từ ' + CAST(d.startAge AS NVARCHAR) + N' đến ' + CAST(d.endAge AS NVARCHAR) + N' tuổi' AS ageRange, a.fee, c.provider, c.email, e.content, a.dateModified, a.dateCreated " +
+                "FROM InsurancePackageDetail a " +
+                "JOIN InsurancePackageHeader b ON a.packageHeaderId = b.id " +
+                "LEFT JOIN InsuranceProvider c ON c.id = b.insuranceProviderId " +
+                "LEFT JOIN AgeRange d ON d.id = a.ageRangeId " +
+                "LEFT JOIN Term e ON e.id = b.termId where b.id=@Id";
+
+            SqlParameter parameter = new SqlParameter("@Id", id);
+            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+
+            if (table.Rows.Count > 0)
+            {
+                return new JsonResult(table);
+            }
+            else
+            {
+                return new JsonResult("Insurance Package Detail ID not found");
+            }
+        }
+
+        [HttpGet]
         [Route("ShowInsurancePackageDetail/{id}")]
         public JsonResult GetInsurancePackageDetailById(int id)
         {
@@ -46,7 +70,7 @@ namespace KMS.Controllers
                 "JOIN InsurancePackageHeader b ON a.packageHeaderId = b.id " +
                 "LEFT JOIN InsuranceProvider c ON c.id = b.insuranceProviderId " +
                 "LEFT JOIN AgeRange d ON d.id = a.ageRangeId " +
-                "LEFT JOIN Term e ON e.id = b.termId and a.id=@Id";
+                "LEFT JOIN Term e ON e.id = b.termId where a.id=@Id";
 
             SqlParameter parameter = new SqlParameter("@Id", id);
             DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
