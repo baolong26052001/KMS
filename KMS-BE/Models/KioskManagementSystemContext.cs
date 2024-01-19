@@ -73,7 +73,9 @@ namespace KMS.Models
                     .HasColumnType("datetime")
                     .HasColumnName("dateModified");
 
-                entity.Property(e => e.Range).HasColumnName("range");
+                entity.Property(e => e.EndAge).HasColumnName("endAge");
+
+                entity.Property(e => e.StartAge).HasColumnName("startAge");
             });
 
             modelBuilder.Entity<Beneficiary>(entity =>

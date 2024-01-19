@@ -23,6 +23,29 @@ namespace KMS.Controllers
         }
 
         [HttpGet]
+        [Route("CheckAgeRange/{id}")] // id của member
+        public JsonResult CheckAgeRange(int id)
+        {
+            string query = "SELECT lm.id, lm.fullName, DATEDIFF(DAY, lm.birthday, GETDATE()) / 365.25 AS age, " +
+                "ar.id AS ageRangeId, N'Từ ' + CAST(ar.startAge AS NVARCHAR) + N' đến ' + CAST(ar.endAge AS NVARCHAR) + N' tuổi' AS description " +
+                "FROM LMember lm " +
+                "JOIN AgeRange ar ON ar.startAge <= (DATEDIFF(DAY, lm.birthday, GETDATE()) / 365.25) " +
+                "and DATEDIFF(DAY, lm.birthday, GETDATE()) / 365.25 < ar.endAge + 1 and lm.id=@Id";
+
+            SqlParameter parameter = new SqlParameter("@Id", id);
+            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+
+            if (table.Rows.Count > 0)
+            {
+                return new JsonResult(table);
+            }
+            else
+            {
+                return new JsonResult("Member not found, cannot check age range");
+            }
+        }
+
+        [HttpGet]
         [Route("ShowAgeRange")]
         public JsonResult GetAgeRange()
         {
@@ -55,12 +78,13 @@ namespace KMS.Controllers
         [Route("AddAgeRange")]
         public JsonResult AddAgeRange([FromBody] AgeRange ageRange)
         {
-            string query = "INSERT INTO AgeRange (range, dateCreated, dateModified) " +
-                           "VALUES (@Range, GETDATE(), GETDATE())";
+            string query = "INSERT INTO AgeRange (startAge, endAge, dateCreated, dateModified) " +
+                           "VALUES (@StartAge, @EndAge, GETDATE(), GETDATE())";
 
             SqlParameter[] parameters =
             {
-                new SqlParameter("@Range", ageRange.Range),
+                new SqlParameter("@StartAge", ageRange.StartAge),
+                new SqlParameter("@EndAge", ageRange.EndAge),
             };
 
             _exQuery.ExecuteRawQuery(query, parameters);
@@ -73,14 +97,14 @@ namespace KMS.Controllers
         public JsonResult EditAgeRange(int id, [FromBody] AgeRange ageRange)
         {
             string query = "UPDATE AgeRange " +
-                           "SET range = @Range, dateModified = GETDATE() " +
+                           "SET startAge = @StartAge, endAge = @EndAge, dateModified = GETDATE() " +
                            "WHERE id = @Id";
             
             SqlParameter[] parameters =
             {
                 new SqlParameter("@Id", id),
-                new SqlParameter("@Range", ageRange.Range),
-
+                new SqlParameter("@StartAge", ageRange.StartAge),
+                new SqlParameter("@EndAge", ageRange.EndAge),
             };
             
 
