@@ -42,7 +42,9 @@ const items = [
     getItem('Video slideshow setup', 'slideshow', <VideoSettingsIcon />),
   ]),
   getItem('Transaction', 'sub2', <AccountBalanceWalletIcon />, [
-    getItem('Account', 'account', <LockOutlined />),
+    getItem('Account', 'account', <LockOutlined />, [
+      getItem('View Account', 'viewAccount')
+    ]),
     getItem('Loan Transaction', 'loantransaction', <CreditScoreIcon />),
     getItem('Loan Statement', 'loanstatement', <AccountBookOutlined />),
     getItem('Saving Transaction', 'savingtransaction', <SavingsIcon />),
@@ -68,20 +70,29 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const currentPath = location.pathname.split('/').filter(Boolean).pop();
-  console.log(currentPath);
   const parentName = items.find(item => item.children && item.children.some(subItem => subItem.key === currentPath))?.key;
   const subopen = parentName || '';
-  
 
-  const [openKeys, setOpenKeys] = useState([subopen]);
+  // Load openKeys and selectedKey from localStorage on component mount
+  const [openKeys, setOpenKeys] = useState(() => {
+    const storedOpenKeys = localStorage.getItem('openKeys');
+    return storedOpenKeys ? [storedOpenKeys] : [subopen];
+  });
+  const [selectedKey, setSelectedKey] = useState(() => {
+    const storedSelectedKey = localStorage.getItem('selectedKey');
+    return storedSelectedKey || currentPath;
+  });
   const [defaultOpenKeys] = useState([]);
+
+  useEffect(() => {
+    localStorage.setItem('openKeys', openKeys[0]);
+    localStorage.setItem('selectedKey', selectedKey);
+  }, [openKeys, selectedKey]);
 
   const onOpenChange = (keys) => {
     const latestOpenKey = keys.find((key) => openKeys.indexOf(key) === -1);
     setOpenKeys(latestOpenKey ? [latestOpenKey] : []);
   };
-  
-
 
   return (
     <Menu
@@ -90,11 +101,11 @@ const Sidebar = () => {
       openKeys={openKeys}
       onOpenChange={onOpenChange}
       defaultOpenKeys={defaultOpenKeys}
-      defaultSelectedKeys={[currentPath]}
+      defaultSelectedKeys={[selectedKey]}
     >
       {items.map((item) => {
-        if (item.type == 'divider') {
-          return <Divider style={{ background: 'white' }} />;
+        if (item.type === 'divider') {
+          return <Divider style={{ background: 'white' }} key={item.key} />;
         }
 
         if (item.children) {
@@ -102,7 +113,9 @@ const Sidebar = () => {
             <Menu.SubMenu key={item.key} title={item.label} icon={item.icon}>
               {item.children.map((subItem) => (
                 <Menu.Item key={subItem.key} icon={subItem.icon}>
-                  <Link to={`/${subItem.key}`}>{subItem.label}</Link>
+                  <Link to={`/${subItem.key}`} onClick={() => setSelectedKey(subItem.key)}>
+                    {subItem.label}
+                  </Link>
                 </Menu.Item>
               ))}
             </Menu.SubMenu>
@@ -110,7 +123,9 @@ const Sidebar = () => {
         } else {
           return (
             <Menu.Item key={item.key} icon={item.icon}>
-              <Link to={`/${item.key}`}>{item.label}</Link>
+              <Link to={`/${item.key}`} onClick={() => setSelectedKey(item.key)}>
+                {item.label}
+              </Link>
             </Menu.Item>
           );
         }
