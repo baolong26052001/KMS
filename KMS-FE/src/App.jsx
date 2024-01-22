@@ -116,7 +116,7 @@ const App = () => {
                     {/* Route for Insurance Package*/}
                     <Route path="/insurancePackageDetail/:id" element={<RouteInsuranceDetail />} />
                     <Route path="/addInsurancePackageDetail/:id" element={<RouteAddInsurancePackageDetail />} />
-                    <Route path="/editInsurancePackageDetail/:id" element={<RouteEditInsurancePackageDetail />} />
+                    <Route path="/editInsurancePackageDetail/:id/:packageHeaderId" element={<RouteEditInsurancePackageDetail />} />
                     
                     {/* Route for Insurance Benefit*/}
                     <Route path="/addBenefit/:id/:packageName" element={<RouteAddBenefit />} />

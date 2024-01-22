@@ -128,7 +128,7 @@ const EditSlideShow = () => {
                 />
               <TextField
                   id="timeNext"
-                  label="Time Next"
+                  label="Duration"
                   variant="outlined"
                   value={editedItem.timeNext}
                   onChange={(e) => handleInputChange('timeNext', e.target.value)}

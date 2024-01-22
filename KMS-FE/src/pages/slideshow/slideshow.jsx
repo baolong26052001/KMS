@@ -193,7 +193,7 @@ const columns = [
   },
   {
     field: 'timeNext',
-    headerName: 'Time Next',
+    headerName: 'Duration',
     sortable: false,
     minWidth: 100,
     flex: 1,

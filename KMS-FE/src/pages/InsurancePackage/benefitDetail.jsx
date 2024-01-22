@@ -113,21 +113,6 @@ function createData(id, content, coverage, benefitId, dateModified, dateCreated)
 
 const columns = [ 
   {
-    field: 'viewButton',
-    headerName: '',
-    width: 80,
-    disableColumnMenu: true,
-    sortable: false, // Disable sorting for this column
-    filterable: false, // Disable filtering for this column
-    renderCell: (params) => (
-        <ViewButton
-        rowId={params.row.id}
-        label="View"
-        onClick={handleButtonClick}
-      />
-    ),
-  },
-  {
     field: 'editButton',
     headerName: '',
     width: 80,

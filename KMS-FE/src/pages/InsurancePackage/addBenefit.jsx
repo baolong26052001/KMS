@@ -87,6 +87,7 @@ const AddBenefit = () => {
                 id="coverage"
                 label="Coverage"
                 variant="outlined"
+                multiline
                 value={newInsurancePackage.coverage}
                 onChange={(e) => handleInputChange('coverage', e.target.value)}
               />

@@ -111,8 +111,9 @@ const AddInsurancePackageDetail = () => {
               autoComplete="off"
             >
               <TextField
-              label="Insurance Package"
+              //label="Insurance Package"
               variant="outlined"
+              defaultValue = {insPackageHeader.packageName}
               value={insPackageHeader.packageName}
               disabled
               onChange={(e) => handleInputChange('fee', e.target.value)}

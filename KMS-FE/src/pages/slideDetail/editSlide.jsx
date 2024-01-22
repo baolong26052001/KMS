@@ -44,12 +44,12 @@ const EditSlideDetail = () => {
         const file = e.target.files[0];
         setSelectedFile(file);
 
-        // if (file) {
-        //     const fileType = file.type.startsWith('image/') ? 'Image' : file.type.startsWith('video/') ? 'Video' : "";
-        //     handleInputChange('fileType', fileType);
-        // } else {
-        //     handleInputChange('fileType', "");
-        // }
+        if (file) {
+            const typeContent = file.type.startsWith('image/') ? 'Image' : file.type.startsWith('video/') ? 'Video' : "";
+            handleInputChange('typeContent', typeContent);
+        } else {
+            handleInputChange('typeContent', "");
+        }
     };
 
     useEffect(() => {

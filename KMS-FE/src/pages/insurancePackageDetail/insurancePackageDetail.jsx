@@ -21,59 +21,59 @@ dayjs.extend(customParseFormat);
 dayjs.locale('en'); // Set the locale to English
 
 const CustomToolbar = ({ onButtonClick, selectedRows }) => {
-    const { id } = useParams();
-    const navigate = useNavigate();
-    const { handleDelete, handleClose, open } = useDeleteHook('InsurancePackageDetail/DeleteInsurancePackageDetail'); 
-  
-    // const [open, setOpen] = React.useState(false);
-    const handleButtonClick = (buttonId) => {
-      onButtonClick(buttonId);
-      
-      if (buttonId === 'Add') {
-        navigate(`/addInsurancePackageDetail/${id}`);
-  
-      } else if (buttonId === 'Delete') {
-  
-        const userIdsToDelete = selectedRows;
-  
-        handleDelete(userIdsToDelete);
-      }
-    };
-  
-    return (
-      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={() => handleButtonClick('Add')}
-          style={{ backgroundColor: '#655BD3', color: '#fff' }}
-        >
-          Add
-        </Button>
-        <Button
-          variant="contained"
-          startIcon={<DeleteIcon />}
-          onClick={() => handleButtonClick('Delete')}
-          style={{ backgroundColor: '#FF3E1D', color: '#fff' }}
-        >
-          Delete
-        </Button>
-        <Snackbar open={open} autoHideDuration={1000} onClose={handleClose}>
-          <Alert onClose={handleClose} variant="filled" severity="error">
-            No rows selected for deletion!!!
-          </Alert>
-        </Snackbar>
-        <GridToolbarExport />
-      </div>
-    );
+  const navigate = useNavigate();
+  const { handleDelete, handleClose, open } = useDeleteHook('InsurancePackageDetail/DeleteInsurancePackageDetail'); 
+  const { id, packageName } = useParams();
+
+  const handleButtonClick = (buttonId) => {
+    onButtonClick(buttonId);
+    
+    if (buttonId === 'Add') {
+      navigate(`/addInsurancePackageDetail/${id}`);
+
+    } else if (buttonId === 'Delete') {
+
+      const userIdsToDelete = selectedRows;
+
+      handleDelete(userIdsToDelete);
+    }
+  };
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+      <Button
+        variant="contained"
+        startIcon={<AddIcon />}
+        onClick={() => handleButtonClick('Add')}
+        style={{ backgroundColor: '#655BD3', color: '#fff' }}
+      >
+        Add
+      </Button>
+      <Button
+        variant="contained"
+        startIcon={<DeleteIcon />}
+        onClick={() => handleButtonClick('Delete')}
+        style={{ backgroundColor: '#FF3E1D', color: '#fff' }}
+      >
+        Delete
+      </Button>
+      <Snackbar open={open} autoHideDuration={1000} onClose={handleClose}>
+        <Alert onClose={handleClose} variant="filled" severity="error">
+          No rows selected for deletion!!!
+        </Alert>
+      </Snackbar>
+      <GridToolbarExport />
+    </div>
+  );
 };
 
 const EditButton = ({ rowId, label, onClick }) => {
+  const { id: packageHeaderId } = useParams();
   const navigate = useNavigate();
     const handleClick = (event) => {
       event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
-      onClick(rowId);
-      navigate(`/editInsurancePackageDetail/${rowId}`);
+      onClick(rowId, packageHeaderId);
+      navigate(`/editInsurancePackageDetail/${rowId}/${packageHeaderId}`);
     };
    
     return (
@@ -104,6 +104,7 @@ const columns = [
     renderCell: (params) => (
         <EditButton
         rowId={params.row.id}
+        packageHeaderId={params.row.packageHeaderId}
         label="Edit"
         onClick={handleButtonClick}
       />

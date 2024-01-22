@@ -217,13 +217,6 @@ const columns = [
     ),
   },
   { field: 'id', headerName: 'Slide Detail ID', minWidth: 150, flex: 1,},
-  {
-    field: 'slideHeaderId',
-    headerName: 'Package ID',
-    sortable: false,
-    minWidth: 100,
-    flex: 1,
-  },
   { field: 'description', headerName: 'Description', minWidth: 200, flex: 1,},
   {
     field: 'typeContent',

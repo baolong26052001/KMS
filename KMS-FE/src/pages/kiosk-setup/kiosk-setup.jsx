@@ -211,7 +211,7 @@ const columns = [
   },
   {
     field: 'slidePackage',
-    headerName: 'Slide Show Package',
+    headerName: 'Package Name',
     sortable: false,
     minWidth: 170,
     flex: 1,
