@@ -49,7 +49,7 @@ namespace KMS.Controllers
         [Route("ShowAgeRange")]
         public JsonResult GetAgeRange()
         {
-            string query = "SELECT * FROM AgeRange";
+            string query = "SELECT a.*, N'Từ ' + CAST(a.startAge AS NVARCHAR) + N' đến ' + CAST(a.endAge AS NVARCHAR) + N' tuổi' AS description FROM AgeRange a";
 
             DataTable table = _exQuery.ExecuteRawQuery(query);
             return new JsonResult(table);
@@ -59,7 +59,7 @@ namespace KMS.Controllers
         [Route("ShowAgeRange/{id}")]
         public JsonResult GetAgeRangeById(int id)
         {
-            string query = "SELECT * FROM AgeRange where id=@Id";
+            string query = "SELECT a.*,N'Từ ' + CAST(a.startAge AS NVARCHAR) + N' đến ' + CAST(a.endAge AS NVARCHAR) + N' tuổi' AS description FROM AgeRange a where a.id=@Id";
 
             SqlParameter parameter = new SqlParameter("@Id", id);
             DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
