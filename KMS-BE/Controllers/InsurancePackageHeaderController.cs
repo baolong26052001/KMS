@@ -55,6 +55,48 @@ namespace KMS.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("ShowInsurancePackageHeaderByInsuranceType/{insuranceType}")]
+        public JsonResult GetInsurancePackageHeaderByInsuranceType(int insuranceType)
+        {
+            string query = "select b.id, b.packageName, c.provider, c.email, e.content, f.typeName, b.dateModified, b.dateCreated " +
+                "from InsurancePackageHeader b, InsuranceProvider c, Term e, InsuranceType f " +
+                "where c.id = b.insuranceProviderId and e.id = b.termId and b.insuranceTypeId = f.id and f.id=@InsuranceTypeId";
+
+            SqlParameter parameter = new SqlParameter("@InsuranceTypeId", insuranceType);
+            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+
+            if (table.Rows.Count > 0)
+            {
+                return new JsonResult(table);
+            }
+            else
+            {
+                return new JsonResult("Insurance Package Header ID not found");
+            }
+        }
+
+        [HttpGet]
+        [Route("ShowInsurancePackageHeaderByInsuranceProvider/{insuranceProvider}")]
+        public JsonResult GetInsurancePackageHeaderByInsuranceProvider(int insuranceProvider)
+        {
+            string query = "select b.id, b.packageName, c.provider, c.email, e.content, f.typeName, b.dateModified, b.dateCreated " +
+                "from InsurancePackageHeader b, InsuranceProvider c, Term e, InsuranceType f " +
+                "where c.id = b.insuranceProviderId and e.id = b.termId and b.insuranceTypeId = f.id and c.id=@InsuranceProviderId";
+
+            SqlParameter parameter = new SqlParameter("@InsuranceProviderId", insuranceProvider);
+            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+
+            if (table.Rows.Count > 0)
+            {
+                return new JsonResult(table);
+            }
+            else
+            {
+                return new JsonResult("Insurance Package Header ID not found");
+            }
+        }
+
         [HttpPost]
         [Route("AddInsurancePackageHeader")]
         public JsonResult AddInsurancePackageHeader([FromBody] InsurancePackageHeader insurancePackageHeader)
