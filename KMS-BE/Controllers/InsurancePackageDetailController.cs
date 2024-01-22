@@ -38,6 +38,25 @@ namespace KMS.Controllers
         }
 
         [HttpGet]
+        [Route("ShowInsurancePackageDetailByAgeRangeId/{id}")]
+        public JsonResult GetInsurancePackageDetailByAgeRangeId(int id)
+        {
+            string query = "SELECT\r\n    a.id,\r\n\tb.id as headerId,\r\n\te.id as termId,\r\n    b.packageName,\r\n    a.ageRangeId,\r\n    N'Từ ' + CAST(d.startAge AS NVARCHAR) + N' đến ' + CAST(d.endAge AS NVARCHAR) + N' tuổi' AS ageRange,\r\n    a.fee,\r\n    c.provider,\r\n    c.email,\r\n    e.content,\r\n    a.dateModified,\r\n    a.dateCreated\r\nFROM\r\n    InsurancePackageDetail a\r\nJOIN\r\n    AgeRange h ON h.id = a.ageRangeId\r\nJOIN\r\n    InsurancePackageHeader b ON a.packageHeaderId = b.id\r\nLEFT JOIN\r\n    InsuranceProvider c ON c.id = b.insuranceProviderId\r\nLEFT JOIN\r\n    AgeRange d ON d.id = a.ageRangeId\r\nLEFT JOIN\r\n    Term e ON e.id = b.termId\r\nwhere d.id = @Id";
+
+            SqlParameter parameter = new SqlParameter("@Id", id);
+            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+
+            if (table.Rows.Count > 0)
+            {
+                return new JsonResult(table);
+            }
+            else
+            {
+                return new JsonResult("Age Range ID not found");
+            }
+        }
+
+        [HttpGet]
         [Route("ShowInsurancePackageDetailByHeaderId/{id}")]
         public JsonResult GetInsurancePackageDetailByHeaderId(int id)
         {

@@ -23,48 +23,9 @@ namespace KMS.Controllers
             _exQuery = exQuery;
         }
 
-        [HttpGet]
-        [Route("ShowAllInfo")] 
-        public JsonResult GetAllInfo()
-        {
-            string query = "select packageName,fee from InsurancePackage\r\n\r\n\r\nSELECT\r\n    \r\n    b.content AS BenefitContent,\r\n    b.coverage AS BenefitCoverage,\r\n    b.description AS BenefitDescription\r\n   \r\nFROM\r\n    InsurancePackage ip\r\n    LEFT JOIN Benefit b ON ip.id = b.packageId\r\n    LEFT JOIN BenefitDetail bd ON b.id = bd.benefitId\r\n\r\n\r\nSELECT\r\n    \r\n    \r\n    \r\n    bd.content AS BenefitDetailContent,\r\n    bd.coverage AS BenefitDetailCoverage\r\n    \r\n\r\nFROM\r\n    InsurancePackage ip\r\n    LEFT JOIN Benefit b ON ip.id = b.packageId\r\n    LEFT JOIN BenefitDetail bd ON b.id = bd.benefitId";
+        
 
-            DataTable table = _exQuery.ExecuteRawQuery(query);
-            return new JsonResult(table);
-        }
 
-        [HttpGet]
-        [Route("ShowInsurancePackage")] // show ra có bao nhiêu package (packageA,packageB,packageC,...)
-        public JsonResult GetInsurancePackage()
-        {
-            string query = "select ipack.id, ipack.packageName, itype.id as insuranceType, ipack.provider, itype.typeName, ipack.duration, ipack.payType, ipack.fee, ipack.dateModified, ipack.dateCreated " +
-                "from InsurancePackage ipack, InsuranceType itype " +
-                "where ipack.insuranceType = itype.id;";
-
-            DataTable table = _exQuery.ExecuteRawQuery(query);
-            return new JsonResult(table);
-        }
-
-        [HttpGet]
-        [Route("ShowInsurancePackage/{id}")] // hiện thông tin khi ở màn hình edit package
-        public JsonResult GetInsurancePackageById(int id)
-        {
-            string query = "select ipack.id, ipack.packageName, itype.id as insuranceType, ipack.provider, itype.typeName, ipack.duration, ipack.payType, ipack.fee, ipack.dateModified, ipack.dateCreated " +
-                "from InsurancePackage ipack, InsuranceType itype " +
-                "where ipack.insuranceType = itype.id and ipack.id=@id ";
-
-            SqlParameter parameter = new SqlParameter("@id", id);
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
-
-            if (table.Rows.Count > 0)
-            {
-                return new JsonResult(table);
-            }
-            else
-            {
-                return new JsonResult("Insurance Package not found");
-            }
-        }
 
         [HttpGet]
         [Route("ShowBenefitById/{id}")] // hiện thông tin khi ở màn hình edit benefit
@@ -108,26 +69,6 @@ namespace KMS.Controllers
             }
         }
 
-        [HttpGet]
-        [Route("ShowInsurancePackageDetail/{id}")] // khi ấn vào view package A, thì sẽ show ra "benefit" của package A
-        public JsonResult GetInsurancePackageDetail(int id)
-        {
-            string query = "select b.id, b.content, b.coverage, b.description, ipack.packageName, itype.typeName, ipack.fee, b.dateModified, b.dateCreated " +
-                "from Benefit b, InsurancePackage ipack, InsuranceType itype " +
-                "where b.packageId = ipack.id and itype.id = ipack.insuranceType and ipack.id=@id";
-
-            SqlParameter parameter = new SqlParameter("@id", id);
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
-
-            if (table.Rows.Count > 0)
-            {
-                return new JsonResult(table);
-            }
-            else
-            {
-                return new JsonResult("Insurance Package Detail not found");
-            }
-        }
 
         [HttpGet]
         [Route("ShowBenefit/{id}")] // ấn vào view benefit, sẽ ra benefit detail
@@ -149,30 +90,7 @@ namespace KMS.Controllers
             }
         }
 
-        [HttpPost]
-        [Route("AddInsurancePackage")]
-        public JsonResult AddInsurancePackage([FromBody] InsurancePackage insurancePackage)
-        {
-            string query = "INSERT INTO InsurancePackage (packageName, insuranceType, provider, duration, payType, fee, dateModified, dateCreated) " +
-                           "VALUES (@PackageName, @InsuranceType, @Provider, @Duration, @PayType, @Fee, GETDATE(), GETDATE())";
-            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Add', 'InsurancePackage', GETDATE(), GETDATE(), 1)";
-
-            SqlParameter[] parameters =
-            {
-                new SqlParameter("@PackageName", insurancePackage.PackageName),
-                new SqlParameter("@InsuranceType", insurancePackage.InsuranceType),
-                new SqlParameter("@Provider", insurancePackage.Provider),
-                new SqlParameter("@Duration", insurancePackage.Duration),
-                new SqlParameter("@PayType", insurancePackage.PayType),
-                new SqlParameter("@Fee", insurancePackage.Fee),
-            };
-            SqlParameter[] parameters2 = { };
-
-            _exQuery.ExecuteRawQuery(query, parameters);
-            _exQuery.ExecuteRawQuery(query2, parameters2);
-
-            return new JsonResult("Insurance Package added successfully");
-        }
+      
 
         [HttpPost]
         [Route("AddBenefit")]
@@ -343,125 +261,11 @@ namespace KMS.Controllers
             return new JsonResult("Benefit detail deleted successfully");
         }
 
-        [HttpPut]
-        [Route("EditInsurancePackage/{id}")]
-        public JsonResult EditInsurancePackage(int id, [FromBody] InsurancePackage insurancePackage)
-        {
-            string query = "UPDATE InsurancePackage " +
-                           "SET packageName = @PackageName, insuranceType = @InsuranceType, duration = @Duration, " +
-                           "payType = @PayType, fee = @Fee, dateModified = GETDATE() " +
-                           "WHERE id = @id";
-            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Edit', 'InsurancePackage', GETDATE(), GETDATE(), 1)";
+       
 
-            SqlParameter[] parameters =
-            {
-                new SqlParameter("@id", id),
-                new SqlParameter("@PackageName", insurancePackage.PackageName),
-                new SqlParameter("@InsuranceType", insurancePackage.InsuranceType),
-                new SqlParameter("@Duration", insurancePackage.Duration),
-                new SqlParameter("@PayType", insurancePackage.PayType), // đóng tiền theo năm hoặc tháng
-                new SqlParameter("@Fee", insurancePackage.Fee),
-                
-            };
-            SqlParameter[] parameters2 = { };
+        
 
-            _exQuery.ExecuteRawQuery(query, parameters);
-            _exQuery.ExecuteRawQuery(query2, parameters2);
-
-            return new JsonResult("Insurance Package updated successfully");
-        }
-
-        [HttpDelete]
-        [Route("DeleteInsurancePackage")]
-        public JsonResult DeleteInsurancePackage([FromBody] List<int> insurancePackageIds)
-        {
-            if (insurancePackageIds == null || insurancePackageIds.Count == 0)
-            {
-                return new JsonResult("No insurance package IDs provided for deletion");
-            }
-
-            StringBuilder deleteQuery = new StringBuilder("DELETE FROM InsurancePackage WHERE id IN (");
-            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Delete', 'InsurancePackage', GETDATE(), GETDATE(), 1)";
-
-
-            List<SqlParameter> parameters = new List<SqlParameter>();
-            SqlParameter[] parameters2 = { };
-            for (int i = 0; i < insurancePackageIds.Count; i++)
-            {
-                string parameterName = "@InsurancePackageId" + i;
-                deleteQuery.Append(parameterName);
-
-                if (i < insurancePackageIds.Count - 1)
-                {
-                    deleteQuery.Append(", ");
-                }
-
-                parameters.Add(new SqlParameter(parameterName, insurancePackageIds[i]));
-            }
-
-            deleteQuery.Append(");");
-
-            _exQuery.ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
-            _exQuery.ExecuteRawQuery(query2, parameters2);
-
-            return new JsonResult("Insurance Package deleted successfully");
-        }
-
-        [HttpGet]
-        [Route("SearchInsurancePackage")]
-        public JsonResult SearchInsurancePackage(string searchQuery)
-        {
-            string query = "SELECT ipack.id, ipack.packageName, itype.typeName, ipack.provider, ipack.duration, ipack.payType, ipack.fee, ipack.dateModified, ipack.dateCreated " +
-               "FROM InsurancePackage ipack " +
-               "JOIN InsuranceType itype ON ipack.insuranceType = itype.id " +
-               "WHERE ipack.id LIKE @searchQuery OR " +
-               "ipack.packageName LIKE @searchQuery OR " +
-               "ipack.provider LIKE @searchQuery OR " +
-               "itype.typeName LIKE @searchQuery OR " +
-               "ipack.duration LIKE @searchQuery OR " +
-               "ipack.payType LIKE @searchQuery OR " +
-               "ipack.fee LIKE @searchQuery";
-
-
-
-            
-
-            SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
-
-            return new JsonResult(table);
-        }
-
-
-        [HttpGet]
-        [Route("FilterInsurancePackage")]
-        public JsonResult FilterInsurancePackage([FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
-        {
-            string query = "SELECT ipack.id, ipack.packageName, itype.typeName, ipack.provider, ipack.duration, ipack.payType, ipack.fee, ipack.dateModified, ipack.dateCreated " +
-               "FROM InsurancePackage ipack " +
-               "JOIN InsuranceType itype ON ipack.insuranceType = itype.id ";
-
-            List <SqlParameter> parameters = new List<SqlParameter>();
-
-
-
-            
-
-            if (startDate.HasValue && endDate.HasValue)
-            {
-
-                startDate = startDate.Value.Date.AddHours(0).AddMinutes(0).AddSeconds(0);
-                endDate = endDate.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
-
-                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "ipack.dateCreated >= @startDate AND ipack.dateCreated <= @endDate";
-                parameters.Add(new SqlParameter("@startDate", startDate.Value));
-                parameters.Add(new SqlParameter("@endDate", endDate.Value));
-            }
-
-            DataTable table = _exQuery.ExecuteRawQuery(query, parameters.ToArray());
-
-            return new JsonResult(table);
-        }
+       
 
 
     }

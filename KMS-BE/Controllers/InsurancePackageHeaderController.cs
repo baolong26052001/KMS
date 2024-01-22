@@ -108,7 +108,7 @@ namespace KMS.Controllers
             {
                 new SqlParameter("@PackageName", insurancePackageHeader.PackageName),
                 new SqlParameter("@InsuranceTypeId", insurancePackageHeader.InsuranceTypeId),
-                new SqlParameter("@TermId", insurancePackageHeader.TermId),
+                new SqlParameter("@TermId", (object)insurancePackageHeader.TermId ?? DBNull.Value),
                 new SqlParameter("@InsuranceProviderId", insurancePackageHeader.InsuranceProviderId),
             };
 
