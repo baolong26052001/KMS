@@ -41,11 +41,13 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackageHeader/{id}")]
         public JsonResult GetInsurancePackageHeaderById(int id)
         {
-            string query = "SELECT b.id, b.packageName, c.provider, c.email, e.content, f.typeName, b.dateModified, b.dateCreated " +
+            string query = "SELECT b.id, f.id AS insuranceTypeId, e.id AS termId, c.id AS insuranceProviderId, b.packageName, c.provider, c.email, e.content, f.typeName, b.dateModified, b.dateCreated " +
                 "FROM InsurancePackageHeader b " +
                 "LEFT JOIN InsuranceProvider c ON c.id = b.insuranceProviderId " +
                 "LEFT JOIN Term e ON e.id = b.termId " +
-                "LEFT JOIN InsuranceType f ON b.insuranceTypeId = f.id where b.id=@Id";
+                "LEFT JOIN InsuranceType f ON b.insuranceTypeId = f.id " +
+                "WHERE b.id = @Id";
+
 
 
             SqlParameter parameter = new SqlParameter("@Id", id);
