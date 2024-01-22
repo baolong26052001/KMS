@@ -10,31 +10,29 @@ const EditInsurancePackage = () => {
   const { id } = useParams();
   const API_URL = "https://localhost:7017/";
   const [insType, setinsType] = useState([]);
+  const [insTerm, setinsTerm] = useState([]);
+  const [insProvider, setinsProvider] = useState([]);
   // State to store user information
   const [editedPackage, seteditedPackage] = useState({
     packageName: '',
-    insuranceType: '',
-    provider: '',
-    duration: '',
-    payType: '',
-    fee: '',
+    insuranceTypeId: '',
+    termId: '',
+    insuranceProviderId: '',
   });
 
   useEffect(() => {
     const fetchGroupDetails = async () => {
       try {
-        const response = await fetch(`${API_URL}api/InsurancePackage/ShowInsurancePackage/${id}`);
+        const response = await fetch(`${API_URL}api/InsurancePackageHeader/ShowInsurancePackageHeader/${id}`);
         
         if (response.ok) {
           const groupData = await response.json();
           
           seteditedPackage({
             packageName: groupData[0].packageName,
-            insuranceType: groupData[0].insuranceType, 
-            provider: groupData[0].provider,
-            duration: groupData[0].duration,
-            payType: groupData[0].payType,
-            fee: groupData[0].fee,
+            insuranceTypeId: groupData[0].insuranceTypeId, 
+            termId: groupData[0].termId,
+            insuranceProviderId: groupData[0].insuranceProviderId,
           });
         } else {
           console.log('Failed to fetch group details');
@@ -57,7 +55,38 @@ const EditInsurancePackage = () => {
           console.error('Error fetching:', error);
         }
       };
-    
+
+      const fetchInsuranceTerm = async () => {
+        try {
+          const response = await fetch(`${API_URL}api/Term/ShowTerm`);
+          if (response.ok) {
+            const data = await response.json();
+            setinsTerm(data);
+          } else {
+            console.log('Failed to fetch');
+          }
+        } catch (error) {
+          console.error('Error fetching:', error);
+        }
+      };
+  
+      const fetchInsuranceProvider = async () => {
+        try {
+          const response = await fetch(`${API_URL}api/InsuranceProvider/ShowInsuranceProvider`);
+          if (response.ok) {
+            const data = await response.json();
+            setinsProvider(data);
+          } else {
+            console.log('Failed to fetch');
+          }
+        } catch (error) {
+          console.error('Error fetching:', error);
+        }
+      };
+      
+
+    fetchInsuranceTerm();
+    fetchInsuranceProvider();
     fetchGroupDetails();
     fetchInsuranceType();
     
@@ -72,7 +101,7 @@ const EditInsurancePackage = () => {
 
   const handleSave = async () => {
     try {
-      const response = await fetch(`${API_URL}api/InsurancePackage/EditInsurancePackage/${id}`, {
+      const response = await fetch(`${API_URL}api/InsurancePackageHeader/EditInsurancePackageHeader/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -125,48 +154,49 @@ const EditInsurancePackage = () => {
                 value={editedPackage.packageName}
                 onChange={(e) => handleInputChange('packageName', e.target.value)}
               />
-            <TextField
-            id="insuranceType"
-            label="Insurance Type"
-            variant="outlined"
-            value={editedPackage.insuranceType}
-            onChange={(e) => handleInputChange('insuranceType', e.target.value)}
-            select
-            >
-            {insType.map((type) => (
-                <MenuItem key={type.id} value={type.id}>
-                {type.typeName} 
-                </MenuItem>
-            ))}
-            </TextField>
-            <TextField
-                id="provider"
-                label="Provider"
-                variant="outlined"
-                value={editedPackage.provider}
-                onChange={(e) => handleInputChange('provider', e.target.value)}
-              />
-            <TextField
-                id="duration"
-                label="Duration"
-                variant="outlined"
-                value={editedPackage.duration}
-                onChange={(e) => handleInputChange('duration', e.target.value)}
-              />
-            <TextField
-                id="payType"
-                label="Pay Type"
-                variant="outlined"
-                value={editedPackage.payType}
-                onChange={(e) => handleInputChange('payType', e.target.value)}
-              />
-            <TextField
-                id="fee"
-                label="Fee"
-                variant="outlined"
-                value={editedPackage.fee}
-                onChange={(e) => handleInputChange('fee', e.target.value)}
-              />
+              <TextField
+              id="insuranceTypeId"
+              label="Insurance Type"
+              variant="outlined"
+              value={editedPackage.insuranceTypeId}
+              onChange={(e) => handleInputChange('insuranceTypeId', e.target.value)}
+              select
+              >
+              {insType.map((type) => (
+                  <MenuItem key={type.id} value={type.id}>
+                  {type.typeName} 
+                  </MenuItem>
+              ))}
+              </TextField>
+              <TextField
+              id="insuranceProviderId"
+              label="Insurance Provider"
+              variant="outlined"
+              value={editedPackage.insuranceProviderId}
+              onChange={(e) => handleInputChange('insuranceProviderId', e.target.value)}
+              select
+              >
+              {insProvider.map((provider) => (
+                  <MenuItem key={provider.id} value={provider.id}>
+                  {provider.provider} 
+                  </MenuItem>
+              ))}
+              </TextField>
+              <TextField
+              id="termId"
+              label="Insurance Term"
+              variant="outlined"
+              value={editedPackage.termId}
+              onChange={(e) => handleInputChange('termId', e.target.value)}
+              multiline
+              select
+              >
+              {insTerm.map((term) => (
+                  <MenuItem key={term.id} value={term.id}>
+                  {term.content} 
+                  </MenuItem>
+              ))}
+              </TextField>
               <Box sx={{ display: 'flex', gap: '8px' }}>
                 <Button variant="contained" fullWidth onClick={handleSave}>
                   Save

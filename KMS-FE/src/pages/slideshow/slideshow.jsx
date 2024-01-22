@@ -110,7 +110,7 @@ const DetailButton = ({ rowId, label, onClick, packageName }) => {
 
   return (
     <Box sx={{alignItems: 'center'}}>
-      <Button size="small"  variant="contained" color="inherit" onClick={handleClick}>
+      <Button size="small"  variant="contained" color="info" onClick={handleClick}>
         {label}
       </Button>
     </Box>

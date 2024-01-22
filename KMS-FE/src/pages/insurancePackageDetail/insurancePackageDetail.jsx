@@ -4,9 +4,9 @@ import customParseFormat from 'dayjs/plugin/customParseFormat'; // Import the cu
 import 'dayjs/locale/en'; // Import the English locale
 import { DataGrid, GridToolbarExport } from '@mui/x-data-grid';
 import { Button, Box } from '@mui/material';
-import {useNavigate} from 'react-router-dom';
-import { useParams } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import DateFilter from '../../components/dateFilter/DateFilter';
+import {useNavigate, useParams} from 'react-router-dom';
+
 //import MUI Library
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -21,17 +21,16 @@ dayjs.extend(customParseFormat);
 dayjs.locale('en'); // Set the locale to English
 
 const CustomToolbar = ({ onButtonClick, selectedRows }) => {
-    const navigate = useNavigate();
-    const { handleDelete, handleClose, open } = useDeleteHook('InsurancePackage/DeleteBenefit'); 
     const { id } = useParams();
-    const { packageName } = useParams();
+    const navigate = useNavigate();
+    const { handleDelete, handleClose, open } = useDeleteHook('InsurancePackageDetail/DeleteInsurancePackageDetail'); 
+  
     // const [open, setOpen] = React.useState(false);
     const handleButtonClick = (buttonId) => {
-      
       onButtonClick(buttonId);
       
       if (buttonId === 'Add') {
-        navigate(`/addBenefitDetail/${id}`);
+        navigate(`/addInsurancePackageDetail/${id}`);
   
       } else if (buttonId === 'Delete') {
   
@@ -46,8 +45,6 @@ const CustomToolbar = ({ onButtonClick, selectedRows }) => {
         <Button
           variant="contained"
           startIcon={<AddIcon />}
-          component={Link}
-          to={`/addBenefit/${id}/${packageName}`}
           onClick={() => handleButtonClick('Add')}
           style={{ backgroundColor: '#655BD3', color: '#fff' }}
         >
@@ -71,34 +68,14 @@ const CustomToolbar = ({ onButtonClick, selectedRows }) => {
     );
 };
 
-const ViewButton = ({ rowId, label, onClick }) => {
-  const navigate = useNavigate();
-  const handleClick = (event) => {
-    event.stopPropagation(); 
-    onClick(rowId);
-    navigate(`/benefitDetail/${rowId}`);
-  };
-
-  return (
-    <Box sx={{alignItems: 'center' }}>
-      <Button size="small" variant="contained" color="info" onClick={handleClick}>
-        {label}
-      </Button>
-    </Box>
-  );
-};
-
-const EditButton = ({ rowId, label, onClick}) => {
-  const { id: packageId } = useParams();
-  const { packageName } = useParams();
+const EditButton = ({ rowId, label, onClick }) => {
   const navigate = useNavigate();
     const handleClick = (event) => {
-      event.stopPropagation(); 
+      event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
       onClick(rowId);
-      console.log(packageId, packageName)
-      navigate(`/editBenefit/${rowId}`, { state: { packageId, packageName } });
+      navigate(`/editInsurancePackageDetail/${rowId}`);
     };
-  
+   
     return (
       <Box sx={{alignItems: 'center'}}>
         <Button size="small"  variant="contained" color="warning" onClick={handleClick}>
@@ -108,13 +85,13 @@ const EditButton = ({ rowId, label, onClick}) => {
     );
   };
 
-  const formatNumber = (value) => {
-    return value.toLocaleString('vi-VN').replace(/,/g, '.');
-  };
-
-function createData(id, content, coverage, description, dateModified, dateCreated) {
-  return {id, content, coverage, description, dateModified, dateCreated};
+function createData(id, packageName, ageRange, fee, provider, email, content, dateModified, dateCreated) {
+  return {id, packageName, ageRange, fee, provider, email, content, dateModified, dateCreated};
 }
+
+const formatNumber = (value) => {
+  return value.toLocaleString('vi-VN').replace(/,/g, '.');
+};
 
 const columns = [ 
   {
@@ -127,41 +104,20 @@ const columns = [
     renderCell: (params) => (
         <EditButton
         rowId={params.row.id}
-        packageId = {params.row.packageId}
         label="Edit"
         onClick={handleButtonClick}
       />
     ),
   },
-  {
-    field: 'viewButton',
-    headerName: '',
-    width: 80,
-    disableColumnMenu: true,
-    sortable: false, // Disable sorting for this column
-    filterable: false, // Disable filtering for this column
-    renderCell: (params) => (
-        <ViewButton
-        rowId={params.row.id}
-        label="Details"
-        onClick={handleButtonClick}
-      />
-    ),
+  { field: 'id', headerName: 'Insurance Detail Id', minWidth: 180, flex: 1,},
+  { field: 'packageName', headerName: 'Package Name', minWidth: 170, flex: 1,},
+  { field: 'ageRange', headerName: 'Age Range', minWidth: 170, flex: 1,},
+  { field: 'fee', headerName: 'Fee', minWidth: 170, flex: 1,
+    renderCell: (params) => formatNumber(params.value)
   },
-  { field: 'id', headerName: 'Package Benefit ID', minWidth: 180, flex: 1,},
-  { field: 'content', headerName: 'Content', minWidth: 300, flex: 1,},
-  { field: 'coverage', headerName: 'Coverage', minWidth: 150, flex: 1, renderCell: (params) => formatNumber(params.value)},
-  { 
-    field: 'description', 
-    headerName: 'Description', 
-    minWidth: 600, 
-    flex: 1,
-    renderCell: (params) => (
-      <div style={{ whiteSpace: 'pre-wrap'}} title={params.value}>
-        {params.value}
-      </div>
-    ),
-  },
+  { field: 'provider', headerName: 'Provider', minWidth: 170, flex: 1,},
+  { field: 'email', headerName: 'Provider Email', minWidth: 170, flex: 1,},
+  { field: 'content', headerName: 'Term', minWidth: 170, flex: 1,},
   {
     field: 'dateModified',
     headerName: 'Date Modified',
@@ -185,37 +141,79 @@ const handleButtonClick = (id) => {
 };
 
 const InsurancePackageDetail = () => {
+    const [searchTerm, setSearchTerm] = useState('');
+    const [searchTermButton, setSearchTermButton] = useState('');
     const [selectedRowIds, setSelectedRowIds] = useState([]);
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
     const [rows, setRows] = useState([]);
     const { id } = useParams();
-    const { packageName } = useParams();
-    
+    const handleStartDateChange = (date) => {
+      setStartDate(date);
+    };
+  
+    const handleEndDateChange = (date) => {
+      setEndDate(date);
+    };
+  
+    const getRowId = (row) => row.id;
     const API_URL = "https://localhost:7017/";
   
+    const handleSearchButton = () => {
+      setSearchTerm(searchTermButton);
+    };
+  
+    const handleKeyPress = (event) => {
+      if (event.key === 'Enter') {
+        handleSearchButton();
+      }
+    };
     
     useEffect(() => {
       async function fetchData() {
         try {
-          let apiUrl = `${API_URL}api/InsurancePackage/ShowInsurancePackageDetail/${id}`;
+          let apiUrl = `${API_URL}api/InsurancePackageDetail/ShowInsurancePackageDetailByHeaderId/${id}`;
+          let searchApi = ``;
     
-          const response = await fetch(apiUrl);
+          if (startDate || endDate) {
+            apiUrl = `${API_URL}api/InsurancePackageDetail/FilterInsurancePackageDetail?startDate=${encodeURIComponent(dayjs(startDate).format('YYYY/MM/DD'))}&endDate=${encodeURIComponent(dayjs(endDate).format('YYYY/MM/DD'))}`;
+            if (searchTerm) {
+              searchApi = `${API_URL}api/InsurancePackageDetail/FilterInsurancePackageDetail?searchQuery=${encodeURIComponent(searchTerm)}`;
+            }
+          } else if (searchTerm) {
+            apiUrl = `${API_URL}api/InsurancePackageDetail/FilterInsurancePackageDetail?searchQuery=${encodeURIComponent(searchTerm)}`;
+          }
+          console.log(apiUrl);
+          const [apiResponse, searchApiResponse] = await Promise.all([
+            fetch(apiUrl),
+            searchApi ? fetch(searchApi) : Promise.resolve(null),
+          ]);
     
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
+          if (!apiResponse.ok) {
+            throw new Error(`HTTP error! Status: ${apiResponse.status}`);
           }
     
-          const responseData = await response.json();
+          const apiResponseData = await apiResponse.json();
+          const searchApiResponseData = searchApiResponse ? await searchApiResponse.json() : null;
           
+          console.log(searchApiResponseData);
     
-          if (Array.isArray(responseData)) {
+          if (Array.isArray(apiResponseData)) {
+            let filteredRows = apiResponseData;
           
-            const updatedRows = responseData.map(row =>
-              createData(row.id, row.content, row.coverage, row.description, row.dateModified, row.dateCreated)
+            if (searchApiResponseData && Array.isArray(searchApiResponseData)) {
+              filteredRows = apiResponseData.filter(row =>
+                searchApiResponseData.some(searchRow => row.id === searchRow.id)
+              );
+            }
+          
+            const updatedRows = filteredRows.map(row =>
+              createData(row.id, row.packageName, row.ageRange, row.fee, row.provider, row.email, row.content, row.dateModified, row.dateCreated)
             );
           
-            setRows(updatedRows); // Update the component state with the combined data
+            setRows(updatedRows);
           } else {
-            console.error('Invalid data structure:', responseData);
+            console.error('Invalid data structure:', apiResponseData);
           }
         } catch (error) {
           console.error('Error fetching data:', error);
@@ -223,29 +221,37 @@ const InsurancePackageDetail = () => {
       }
     
       fetchData();
-    }, [id]);
-
+    }, [searchTerm, startDate, endDate]);
+    
+    
   return (
     
     <div className="content"> 
 
         <div className="admin-dashboard-text-div pt-5"> 
-            <h1 className="h1-dashboard">Insurance Benefits</h1>
+            <h1 className="h1-dashboard">Insurance Package Details</h1>
         </div>
             <div className="bigcarddashboard">
 
-            <div className="selected-package-name">
-                {packageName && (
-                    <div style={{ color: '#2C3775' }}>
-                        <strong>{packageName}</strong> 
-                    </div>
-                )}
+            <div className="Filter">
+            <DateFilter
+              startDate={startDate}
+              endDate={endDate}
+              handleStartDateChange={handleStartDateChange}
+              handleEndDateChange={handleEndDateChange}
+            />
             </div>
-                <div className='Table' style={{ height: 400, width: '100%'}}>
+                <div className="searchdivuser">
+                    <input onChange={(event) => setSearchTermButton(event.target.value)} onKeyDown={handleKeyPress} placeholder="  Search..." type="text" id="kioskID myInput" name="kioskID" class="searchbar"></input>
+                    <input onClick={() => {handleSearchButton()}} type="button" value="Search" className="button button-search"></input>
+                </div>
+
                 
+                <div className='Table' style={{ height: 400, width: '100%'}}>
                 <DataGrid
                       rows={rows}
                       columns={columns}
+                      getRowId={getRowId}
                       initialState={{
                       pagination: {
                           paginationModel: { page: 0, pageSize: 5 },

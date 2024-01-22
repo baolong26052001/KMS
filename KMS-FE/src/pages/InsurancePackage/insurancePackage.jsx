@@ -77,7 +77,24 @@ const ViewButton = ({ rowId, label, onClick, packageName }) => {
 
   return (
     <Box sx={{alignItems: 'center' }}>
-      <Button size="small" variant="contained" color="inherit" onClick={handleClick}>
+      <Button size="small" variant="contained" color="success" onClick={handleClick}>
+        {label}
+      </Button>
+    </Box>
+  );
+};
+
+const DetailButton = ({ rowId, label, onClick, packageName }) => {
+  const navigate = useNavigate();
+  const handleClick = (event) => {
+    event.stopPropagation(); 
+    onClick(rowId, packageName);
+    navigate(`/insurancePackageDetail/${rowId}`);
+  };
+
+  return (
+    <Box sx={{alignItems: 'center' }}>
+      <Button size="small" variant="contained" color="info" onClick={handleClick}>
         {label}
       </Button>
     </Box>
@@ -91,7 +108,7 @@ const EditButton = ({ rowId, label, onClick }) => {
       onClick(rowId);
       navigate(`/editInsurancePackage/${rowId}`);
     };
-  
+   
     return (
       <Box sx={{alignItems: 'center'}}>
         <Button size="small"  variant="contained" color="warning" onClick={handleClick}>
@@ -101,12 +118,8 @@ const EditButton = ({ rowId, label, onClick }) => {
     );
   };
 
-  const formatNumber = (value) => {
-    return value.toLocaleString('vi-VN').replace(/,/g, '.');
-  };
-
-function createData(id, packageName, insuranceType, provider, duration, payType, annualFee, dateModified, dateCreated) {
-  return {id, packageName, insuranceType, provider, duration, payType, annualFee, dateModified, dateCreated};
+function createData(id, packageName, insuranceType, provider, dateModified, dateCreated) {
+  return {id, packageName, insuranceType, provider, dateModified, dateCreated};
 }
 
 const columns = [ 
@@ -126,9 +139,25 @@ const columns = [
     ),
   },
   {
-    field: 'viewButton',
+    field: 'detailButton',
     headerName: '',
     width: 80,
+    disableColumnMenu: true,
+    sortable: false, // Disable sorting for this column
+    filterable: false, // Disable filtering for this column
+    renderCell: (params) => (
+        <DetailButton
+        rowId={params.row.id}
+        packageName = {params.row.packageName}
+        label="Details"
+        onClick={handleButtonClick}
+      />
+    ),
+  },
+  {
+    field: 'viewButton',
+    headerName: '',
+    width: 100,
     disableColumnMenu: true,
     sortable: false, // Disable sorting for this column
     filterable: false, // Disable filtering for this column
@@ -136,7 +165,7 @@ const columns = [
         <ViewButton
         rowId={params.row.id}
         packageName = {params.row.packageName}
-        label="Details"
+        label="Benefits"
         onClick={handleButtonClick}
       />
     ),
@@ -145,14 +174,6 @@ const columns = [
   { field: 'packageName', headerName: 'Package Name', minWidth: 170, flex: 1,},
   { field: 'insuranceType', headerName: 'Insurance Type', minWidth: 170, flex: 1,},
   { field: 'provider', headerName: 'Provider', minWidth: 170, flex: 1,},
-  { field: 'duration', headerName: 'Duration', minWidth: 150, flex: 1,},
-  { field: 'payType', headerName: 'Payment Frequency', minWidth: 150, flex: 1,},
-  { field: 'annualFee', 
-    headerName: 'Fee', 
-    minWidth: 150, 
-    flex: 1,
-    renderCell: (params) => formatNumber(params.value)
-  },
   {
     field: 'dateModified',
     headerName: 'Date Modified',
@@ -175,7 +196,7 @@ const handleButtonClick = (id) => {
   console.log(`Button clicked for row with ID: ${id}`);
 };
 
-const InsurancePackage = () => {
+const InsurancePackageHeader = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [searchTermButton, setSearchTermButton] = useState('');
     const [selectedRowIds, setSelectedRowIds] = useState([]);
@@ -207,16 +228,16 @@ const InsurancePackage = () => {
     useEffect(() => {
       async function fetchData() {
         try {
-          let apiUrl = `${API_URL}api/InsurancePackage/ShowInsurancePackage`;
+          let apiUrl = `${API_URL}api/InsurancePackageHeader/ShowInsurancePackageHeader`;
           let searchApi = ``;
     
           if (startDate || endDate) {
-            apiUrl = `${API_URL}api/InsurancePackage/FilterInsurancePackage?startDate=${encodeURIComponent(dayjs(startDate).format('YYYY/MM/DD'))}&endDate=${encodeURIComponent(dayjs(endDate).format('YYYY/MM/DD'))}`;
+            apiUrl = `${API_URL}api/InsurancePackageHeader/FilterInsurancePackageHeader?startDate=${encodeURIComponent(dayjs(startDate).format('YYYY/MM/DD'))}&endDate=${encodeURIComponent(dayjs(endDate).format('YYYY/MM/DD'))}`;
             if (searchTerm) {
-              searchApi = `${API_URL}api/InsurancePackage/SearchInsurancePackage?searchQuery=${encodeURIComponent(searchTerm)}`;
+              searchApi = `${API_URL}api/InsurancePackageHeader/SearchInsurancePackageHeader?searchQuery=${encodeURIComponent(searchTerm)}`;
             }
           } else if (searchTerm) {
-            apiUrl = `${API_URL}api/InsurancePackage/SearchInsurancePackage?searchQuery=${encodeURIComponent(searchTerm)}`;
+            apiUrl = `${API_URL}api/InsurancePackageHeader/SearchInsurancePackageHeader?searchQuery=${encodeURIComponent(searchTerm)}`;
           }
           console.log(apiUrl);
           const [apiResponse, searchApiResponse] = await Promise.all([
@@ -243,10 +264,10 @@ const InsurancePackage = () => {
             }
           
             const updatedRows = filteredRows.map(row =>
-              createData(row.id, row.packageName, row.typeName, row.provider, row.duration, row.payType, row.fee, row.dateModified, row.dateCreated)
+              createData(row.id, row.packageName, row.typeName, row.provider, row.dateModified, row.dateCreated)
             );
           
-            setRows(updatedRows); // Update the component state with the combined data
+            setRows(updatedRows);
           } else {
             console.error('Invalid data structure:', apiResponseData);
           }
@@ -315,4 +336,4 @@ const InsurancePackage = () => {
   )
 }
 
-export default InsurancePackage;
+export default InsurancePackageHeader;

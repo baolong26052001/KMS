@@ -5,30 +5,28 @@ import Button from '@mui/material/Button';
 import { useParams, useNavigate } from 'react-router-dom';
 import MenuItem from '@mui/material/MenuItem';
 
-const AddInsurancePackage = () => {
+const AddInsurancePackageDetail = () => {
   const navigate = useNavigate();
   const API_URL = "https://localhost:7017/";
   const { id } = useParams();
-  const [insType, setinsType] = useState([]);
-  const [insTerm, setinsTerm] = useState([]);
-  const [insProvider, setinsProvider] = useState([]);
+  const [insAge, setinsAge] = useState([]);
+  const [insPackageHeader, setinsPackageHeader] = useState([]);
   
   // State to store user information
   const [newInsurancePackage, setnewInsurancePackage] = useState({
-    packageName: '',
-    insuranceTypeId: '',
-    termId: '',
-    insuranceProviderId: '',
+    packageHeaderId: id,
+    ageRangeId: '',
+    fee: '',
   });
 
   useEffect(() => {
 
-    const fetchInsuranceType = async () => {
+    const fetchAgeRange = async () => {
       try {
-        const response = await fetch(`${API_URL}api/InsuranceType/ShowInsuranceType`);
+        const response = await fetch(`${API_URL}api/AgeRange/ShowAgeRange`);
         if (response.ok) {
           const data = await response.json();
-          setinsType(data);
+          setinsAge(data);
         } else {
           console.log('Failed to fetch');
         }
@@ -37,12 +35,12 @@ const AddInsurancePackage = () => {
       }
     };
 
-    const fetchInsuranceTerm = async () => {
+    const fetchPackageHeader = async () => {
       try {
-        const response = await fetch(`${API_URL}api/Term/ShowTerm`);
+        const response = await fetch(`${API_URL}api/InsurancePackageHeader/ShowInsurancePackageHeader/${newInsurancePackage.packageHeaderId}`);
         if (response.ok) {
           const data = await response.json();
-          setinsTerm(data);
+          setinsPackageHeader({packageName: data[0].packageName});
         } else {
           console.log('Failed to fetch');
         }
@@ -51,24 +49,9 @@ const AddInsurancePackage = () => {
       }
     };
 
-    const fetchInsuranceProvider = async () => {
-      try {
-        const response = await fetch(`${API_URL}api/InsuranceProvider/ShowInsuranceProvider`);
-        if (response.ok) {
-          const data = await response.json();
-          setinsProvider(data);
-        } else {
-          console.log('Failed to fetch');
-        }
-      } catch (error) {
-        console.error('Error fetching:', error);
-      }
-    };
-    
-    fetchInsuranceType();
-    fetchInsuranceTerm();
-    fetchInsuranceProvider();
-    
+    fetchAgeRange();
+    fetchPackageHeader();
+
   }, [API_URL, id]);
 
   const handleInputChange = (key, value) => {
@@ -81,7 +64,7 @@ const AddInsurancePackage = () => {
   const handleSave = async () => {
     try {
       // Assuming your API URL is correct
-      const response = await fetch(`${API_URL}api/InsurancePackageHeader/AddInsurancePackageHeader`, {
+      const response = await fetch(`${API_URL}api/InsurancePackageDetail/AddInsurancePackageDetail`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -93,7 +76,7 @@ const AddInsurancePackage = () => {
       console.log('Response Content:', await response.text());
 
       if (response.ok) {
-        navigate(`/insurancePackage`);
+        navigate(`/insurancePackageDetail/${id}`);
         console.log('added successfully');
       } else {
         console.log('add failed');
@@ -104,13 +87,13 @@ const AddInsurancePackage = () => {
   };
 
   const handleCancel = () => {
-    navigate(`/insurancePackage`);
+    navigate(`/insurancePackageDetail/${id}`);
   };
-
+  
   return (
     <div className="content">
       <div className="admin-dashboard-text-div pt-5">
-        <h1 className="h1-dashboard">Add Insurance Package</h1>
+        <h1 className="h1-dashboard">Add Insurance Package Details</h1>
       </div>
       <div className="bigcarddashboard">
         <div className="App">
@@ -128,55 +111,36 @@ const AddInsurancePackage = () => {
               autoComplete="off"
             >
               <TextField
-                id="packageName"
-                label="Package Name"
-                variant="outlined"
-                value={newInsurancePackage.packageName}
-                onChange={(e) => handleInputChange('packageName', e.target.value)}
-              />
-              <TextField
-              id="insuranceTypeId"
-              label="Insurance Type"
+              label="Insurance Package"
               variant="outlined"
-              value={newInsurancePackage.insuranceTypeId}
-              onChange={(e) => handleInputChange('insuranceTypeId', e.target.value)}
+              value={insPackageHeader.packageName}
+              disabled
+              onChange={(e) => handleInputChange('fee', e.target.value)}
+              >
+              </TextField>
+              <TextField
+              id="ageRangeId"
+              label="Age Range"
+              variant="outlined"
+              value={newInsurancePackage.ageRangeId}
+              onChange={(e) => handleInputChange('ageRangeId', e.target.value)}
               select
               >
-              {insType.map((type) => (
-                  <MenuItem key={type.id} value={type.id}>
-                  {type.typeName} 
+              {insAge.map((age) => (
+                  <MenuItem key={age.id} value={age.id}>
+                  {age.description} 
                   </MenuItem>
               ))}
               </TextField>
               <TextField
-                id="termId"
-                label="Term"
-                variant="outlined"
-                multiline
-                value={newInsurancePackage.termId}
-                onChange={(e) => handleInputChange('termId', e.target.value)}
-                select
+              id="fee"
+              label="Insurance Fee"
+              variant="outlined"
+              value={newInsurancePackage.fee}
+              onChange={(e) => handleInputChange('fee', e.target.value)}
               >
-              {insTerm.map((term) => (
-                  <MenuItem key={term.id} value={term.id}>
-                  {term.content} 
-                  </MenuItem>
-              ))}
               </TextField>
-              <TextField
-                id="insuranceProviderId"
-                label="Insurance Provider"
-                variant="outlined"
-                value={newInsurancePackage.insuranceProviderId}
-                onChange={(e) => handleInputChange('insuranceProviderId', e.target.value)}
-                select
-              >
-              {insProvider.map((provider) => (
-                  <MenuItem key={provider.id} value={provider.id}>
-                  {provider.provider} 
-                  </MenuItem>
-              ))}
-              </TextField>
+             
               <Box sx={{ display: 'flex', gap: '8px' }}>
                 <Button variant="contained" fullWidth onClick={handleSave}>
                   Save
@@ -193,4 +157,4 @@ const AddInsurancePackage = () => {
   );
 };
 
-export default AddInsurancePackage;
+export default AddInsurancePackageDetail;

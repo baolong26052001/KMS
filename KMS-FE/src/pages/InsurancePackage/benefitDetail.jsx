@@ -151,7 +151,7 @@ const columns = [
   },
   { field: 'content', headerName: 'Content', minWidth: 300, flex: 1,},
   { field: 'coverage', headerName: 'Coverage', minWidth: 300, flex: 1, 
-
+    renderCell: (params) => formatNumber(params.value)
   },
   {
     field: 'dateModified',
