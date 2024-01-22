@@ -26,7 +26,7 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackageDetail")]
         public JsonResult GetInsurancePackageDetail()
         {
-            string query = "SELECT a.id, b.packageName, N'Từ ' + CAST(d.startAge AS NVARCHAR) + N' đến ' + CAST(d.endAge AS NVARCHAR) + N' tuổi' AS ageRange, a.fee, c.provider, c.email, e.content, a.dateModified, a.dateCreated " +
+            string query = "SELECT a.id, b.packageName, a.ageRangeId, N'Từ ' + CAST(d.startAge AS NVARCHAR) + N' đến ' + CAST(d.endAge AS NVARCHAR) + N' tuổi' AS ageRange, a.fee, c.provider, c.email, e.content, a.dateModified, a.dateCreated " +
                 "FROM InsurancePackageDetail a " +
                 "JOIN InsurancePackageHeader b ON a.packageHeaderId = b.id " +
                 "LEFT JOIN InsuranceProvider c ON c.id = b.insuranceProviderId " +
@@ -41,7 +41,7 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackageDetailByHeaderId/{id}")]
         public JsonResult GetInsurancePackageDetailByHeaderId(int id)
         {
-            string query = "SELECT a.id, b.packageName, N'Từ ' + CAST(d.startAge AS NVARCHAR) + N' đến ' + CAST(d.endAge AS NVARCHAR) + N' tuổi' AS ageRange, a.fee, c.provider, c.email, e.content, a.dateModified, a.dateCreated " +
+            string query = "SELECT a.id, b.packageName, a.ageRangeId, N'Từ ' + CAST(d.startAge AS NVARCHAR) + N' đến ' + CAST(d.endAge AS NVARCHAR) + N' tuổi' AS ageRange, a.fee, c.provider, c.email, e.content, a.dateModified, a.dateCreated " +
                 "FROM InsurancePackageDetail a " +
                 "JOIN InsurancePackageHeader b ON a.packageHeaderId = b.id " +
                 "LEFT JOIN InsuranceProvider c ON c.id = b.insuranceProviderId " +
@@ -65,7 +65,7 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackageDetail/{id}")]
         public JsonResult GetInsurancePackageDetailById(int id)
         {
-            string query = "SELECT a.id, b.packageName, N'Từ ' + CAST(d.startAge AS NVARCHAR) + N' đến ' + CAST(d.endAge AS NVARCHAR) + N' tuổi' AS ageRange, a.fee, c.provider, c.email, e.content, a.dateModified, a.dateCreated " +
+            string query = "SELECT a.id, b.packageName, a.ageRangeId, N'Từ ' + CAST(d.startAge AS NVARCHAR) + N' đến ' + CAST(d.endAge AS NVARCHAR) + N' tuổi' AS ageRange, a.fee, c.provider, c.email, e.content, a.dateModified, a.dateCreated " +
                 "FROM InsurancePackageDetail a " +
                 "JOIN InsurancePackageHeader b ON a.packageHeaderId = b.id " +
                 "LEFT JOIN InsuranceProvider c ON c.id = b.insuranceProviderId " +
