@@ -193,7 +193,7 @@ const EditInsurancePackage = () => {
               >
               {insTerm.map((term) => (
                   <MenuItem key={term.id} value={term.id}>
-                  {term.content} 
+                  {term.content}
                   </MenuItem>
               ))}
               </TextField>

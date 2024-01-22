@@ -35,28 +35,34 @@ const items = [
   getItem('Dashboard', 'dashboard', <HomeOutlined />),
   getItem('Admin', 'sub1', <SettingOutlined />, [
     getItem('Users', 'users', <UserOutlined />),
-    getItem('Users Group', 'usersgroup', <UsergroupAddOutlined />),
-    getItem('Kiosk Setup', 'kiosksetup', <AppstoreAddOutlined />),
-    getItem('Kiosk Hardware', 'kioskhardware', <HardwareIcon />),
+    getItem('Users Group', 'usersGroup', <UsergroupAddOutlined />),
+    getItem('Kiosk Setup', 'kioskSetup', <AppstoreAddOutlined />),
+    getItem('Kiosk Hardware', 'kioskHardware', <HardwareIcon />),
     getItem('Station', 'station', <FmdGoodIcon />),
     getItem('Video slideshow setup', 'slideshow', <VideoSettingsIcon />),
   ]),
-  getItem('Transaction', 'sub2', <AccountBalanceWalletIcon />, [
+  getItem('Insurance Config', 'sub2', <AccountBalanceWalletIcon />, [
+    getItem('Insurance Package', 'insurancePackage', <HealthAndSafetyIcon />),
+    getItem('Insurance Provider', 'insuranceProvider', <HealthAndSafetyIcon />),
+    getItem('Insurance Type', 'insuranceType', <HealthAndSafetyIcon />),
+    getItem('Insurance Term', 'insuranceTerm', <SavingsIcon />),
+    getItem('Insurance Age Range', 'insuranceAgeRange', <SavingsIcon />),
+  ]),
+  getItem('Transaction', 'sub3', <AccountBalanceWalletIcon />, [
     getItem('Account', 'account', <LockOutlined />),
     getItem('Loan Transaction', 'loantransaction', <CreditScoreIcon />),
     getItem('Loan Statement', 'loanstatement', <AccountBookOutlined />),
     getItem('Saving Transaction', 'savingtransaction', <SavingsIcon />),
     getItem('Saving Statement', 'savingstatement', <MoneyCollectOutlined />),
     getItem('Insurance Transaction', 'insurancetransaction', <AddModeratorIcon />),
-    getItem('Insurance Package', 'insurancepackage', <HealthAndSafetyIcon />),
   ]),
-  getItem('Logs', 'sub3', <ProfileOutlined />, [
+  getItem('Logs', 'sub4', <ProfileOutlined />, [
     getItem('Transaction Logs', 'transactionlogs', <ReceiptLongIcon />),
     getItem('Activity Logs', 'activitylogs', <CopyOutlined />),
     getItem('Notification Logs', 'notificationlogs', <BellOutlined />),
     getItem('Audit', 'audit', <CreditCardOutlined />),
   ]),
-  getItem('Report', 'sub4', <FileTextOutlined />, [
+  getItem('Report', 'sub5', <FileTextOutlined />, [
     getItem('Kiosk Health', 'kioskhealth', <WifiOutlined />),
   ]),
   getItem('Logout', 'login', <LogoutIcon />),
@@ -71,7 +77,6 @@ const Sidebar = () => {
   const parentName = items.find(item => item.children && item.children.some(subItem => subItem.key === currentPath))?.key;
   const subopen = parentName || '';
 
-  // Load openKeys and selectedKey from localStorage on component mount
   const [openKeys, setOpenKeys] = useState(() => {
     const storedOpenKeys = localStorage.getItem('openKeys');
     return storedOpenKeys ? [storedOpenKeys] : [subopen];
