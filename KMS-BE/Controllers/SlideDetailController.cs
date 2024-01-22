@@ -154,32 +154,47 @@ namespace KMS.Controllers
                     {
                         System.IO.File.Delete(existingFilePath);
                     }
+                    string query = "UPDATE TSlideDetail SET description = @Description, typeContent = @TypeContent, contentUrl = @ContentUrl, slideHeaderId = @SlideHeaderId, dateModified = GETDATE(), isActive = @IsActive  " +
+                            "WHERE id = @Id";
 
+                    SqlParameter[] parameters =
+                    {
+                        new SqlParameter("@Id", id),
+                        new SqlParameter("@Description", slideDetail.Description),
+                        new SqlParameter("@TypeContent", slideDetail.TypeContent),
+                        new SqlParameter("@ContentUrl", slideDetail.ContentUrl),
+                        new SqlParameter("@SlideHeaderId", slideDetail.SlideHeaderId),
+                        new SqlParameter("@IsActive", slideDetail.IsActive),
+                    };
+
+                    _exQuery.ExecuteRawQuery(query, parameters);
+                    return new JsonResult("Slide detail updated successfully");
 
                 }
 
                 else
                 {
-                    return new JsonResult("Cannot detect image file");
+                    string query = "UPDATE TSlideDetail SET description = @Description, typeContent = @TypeContent, contentUrl = @ContentUrl, slideHeaderId = @SlideHeaderId, dateModified = GETDATE(), isActive = @IsActive  " +
+                            "WHERE id = @Id";
+
+                    SqlParameter[] parameters =
+                    {
+                        new SqlParameter("@Id", id),
+                        new SqlParameter("@Description", slideDetail.Description),
+                        new SqlParameter("@TypeContent", slideDetail.TypeContent),
+                        new SqlParameter("@ContentUrl", slideDetail.ContentUrl),
+                        new SqlParameter("@SlideHeaderId", slideDetail.SlideHeaderId),
+                        new SqlParameter("@IsActive", slideDetail.IsActive),
+                    };
+
+                    _exQuery.ExecuteRawQuery(query, parameters);
+                    return new JsonResult("Slide detail updated successfully");
                 }
 
 
 
 
-                string query = "UPDATE TSlideDetail SET description = @Description, typeContent = @TypeContent, contentUrl = @ContentUrl, slideHeaderId = @SlideHeaderId, dateModified = GETDATE(), isActive = @IsActive  " +
-                            "WHERE id = @Id";
-                SqlParameter[] parameters =
-                {
-                    new SqlParameter("@Id", id),
-                    new SqlParameter("@Description", slideDetail.Description),
-                    new SqlParameter("@TypeContent", slideDetail.TypeContent),
-                    new SqlParameter("@ContentUrl", slideDetail.ContentUrl),
-                    new SqlParameter("@SlideHeaderId", slideDetail.SlideHeaderId),
-                    new SqlParameter("@IsActive", slideDetail.IsActive),
-                };
-
-                _exQuery.ExecuteRawQuery(query, parameters);
-                return new JsonResult("Slide detail updated successfully");
+                
 
 
 
