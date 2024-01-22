@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const useDeleteHook = (deleteEndpoint) => {
+const useDeleteHook = (deleteEndpoint, onSuccessCallback) => {
   const [open, setOpen] = useState(false);
 
   const deleteItems = async (itemIds) => {
@@ -22,7 +22,10 @@ const useDeleteHook = (deleteEndpoint) => {
 
       const responseData = await response.json();
       console.log('Response from the backend:', responseData);
-      window.location.reload();
+
+      onSuccessCallback();
+
+      setOpen(false); 
     } catch (error) {
       console.error(`Error deleting ${deleteEndpoint}:`, error);
     }

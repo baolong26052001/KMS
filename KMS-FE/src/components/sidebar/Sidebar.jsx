@@ -30,7 +30,7 @@ function getItem(label, key, icon, children, type) {
 }
 
 const items = [
-  getItem('ADMIN', 'g1', null, [], 'group'),
+  getItem('ADMIN', '#', null, null, 'group'),
   { type: 'divider' },
   getItem('Dashboard', 'dashboard', <HomeOutlined />),
   getItem('Admin', 'sub1', <SettingOutlined />, [
