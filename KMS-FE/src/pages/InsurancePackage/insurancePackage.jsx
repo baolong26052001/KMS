@@ -22,7 +22,7 @@ dayjs.locale('en'); // Set the locale to English
 
 const CustomToolbar = ({ onButtonClick, selectedRows }) => {
     const navigate = useNavigate();
-    const { handleDelete, handleClose, open } = useDeleteHook('InsurancePackage/DeleteInsurancePackage'); 
+    const { handleDelete, handleClose, open } = useDeleteHook('InsurancePackageHeader/DeleteInsurancePackageHeader'); 
   
     // const [open, setOpen] = React.useState(false);
     const handleButtonClick = (buttonId) => {
