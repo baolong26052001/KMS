@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Menu } from 'antd';
 import './sidebar.css';
-import { Outlet, Link } from 'react-router-dom';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import Divider from '@mui/material/Divider';
-import { AppstoreOutlined, HomeOutlined, ProfileOutlined, WifiOutlined, CreditCardOutlined, CopyOutlined, BellOutlined, UnorderedListOutlined, AccountBookOutlined, MoneyCollectOutlined, FileTextOutlined, LockOutlined, SettingOutlined, UserOutlined, UsergroupAddOutlined, AppstoreAddOutlined } from '@ant-design/icons';
+import { HomeOutlined, ProfileOutlined, WifiOutlined, CreditCardOutlined, CopyOutlined, BellOutlined, AccountBookOutlined, MoneyCollectOutlined, FileTextOutlined, LockOutlined, SettingOutlined, UserOutlined, UsergroupAddOutlined, AppstoreAddOutlined } from '@ant-design/icons';
 
 
 // Import Icon from MUI
@@ -18,6 +18,11 @@ import HardwareIcon from '@mui/icons-material/Hardware';
 import LogoutIcon from '@mui/icons-material/Logout';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import HandshakeIcon from '@mui/icons-material/Handshake';
+import LabelIcon from '@mui/icons-material/Label';
+import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox';
+import PermContactCalendarIcon from '@mui/icons-material/PermContactCalendar';
 
 function getItem(label, key, icon, children, type) {
   return {
@@ -41,12 +46,12 @@ const items = [
     getItem('Station', 'station', <FmdGoodIcon />),
     getItem('Video slideshow setup', 'slideshow', <VideoSettingsIcon />),
   ]),
-  getItem('Insurance Config', 'sub2', <AccountBalanceWalletIcon />, [
+  getItem('Insurance Config', 'sub2', <AdminPanelSettingsIcon />, [
     getItem('Insurance Package', 'insurancePackage', <HealthAndSafetyIcon />),
-    getItem('Insurance Provider', 'insuranceProvider', <HealthAndSafetyIcon />),
-    getItem('Insurance Type', 'insuranceType', <HealthAndSafetyIcon />),
-    getItem('Insurance Term', 'insuranceTerm', <SavingsIcon />),
-    getItem('Insurance Age Range', 'insuranceAgeRange', <SavingsIcon />),
+    getItem('Insurance Provider', 'insuranceProvider', <HandshakeIcon />),
+    getItem('Insurance Type', 'insuranceType', <LabelIcon />),
+    getItem('Insurance Term', 'insuranceTerm', <IndeterminateCheckBoxIcon />),
+    getItem('Insurance Age Range', 'insuranceAgeRange', <PermContactCalendarIcon />),
   ]),
   getItem('Transaction', 'sub3', <AccountBalanceWalletIcon />, [
     getItem('Account', 'account', <LockOutlined />),
@@ -71,7 +76,6 @@ const items = [
 
 
 const Sidebar = () => {
-  const navigate = useNavigate();
   const location = useLocation();
   const currentPath = location.pathname.split('/').filter(Boolean).pop();
   const parentName = items.find(item => item.children && item.children.some(subItem => subItem.key === currentPath))?.key;
