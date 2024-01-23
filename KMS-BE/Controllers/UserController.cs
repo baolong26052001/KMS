@@ -127,11 +127,11 @@ namespace KMS.Controllers
 
                 foreach (var address in ip.AddressList)
                 {
-                    if (address.AddressFamily == AddressFamily.InterNetwork) // IPv4
+                    if (address.AddressFamily == AddressFamily.InterNetwork) 
                     {
                         ipv4 = address;
                     }
-                    else if (address.AddressFamily == AddressFamily.InterNetworkV6) // IPv6
+                    else if (address.AddressFamily == AddressFamily.InterNetworkV6)  
                     {
                         ipv6 = address;
                     }
@@ -147,8 +147,8 @@ namespace KMS.Controllers
                 _exQuery.ExecuteRawQuery(query, parameters);
 
                 string token = CreateToken(user, groupId);
-                return Ok(new { message = "Login successful", Token = token, GroupId = groupId });
-                
+                return Ok(new { message = "Login successful", Token = token, GroupId = groupId, Role = GetGroupNameList()[GetGroupIdList().IndexOf(groupId)] });
+
             }
             catch (Exception e)
             {
@@ -188,26 +188,63 @@ namespace KMS.Controllers
             return new JsonResult(new { Message = "User added successfully" });
         }
 
-        private JsonResult GetGroupName()
+        private List<int> GetGroupIdList()
         {
-            string query = "select TUserGroup.groupName from tuser, tusergroup where tuser.userGroupId = TUserGroup.id group by TUserGroup.groupName";
+            string query = "select id from TUserGroup";
             DataTable table = _exQuery.ExecuteRawQuery(query);
-            return new JsonResult(table);
+
+            List<int> groupIdList = new List<int>();
+
+            foreach (DataRow row in table.Rows)
+            {
+                if (row["id"] != null && row["id"] != DBNull.Value)
+                {
+                    int groupId = Convert.ToInt32(row["id"]);
+                    groupIdList.Add(groupId);
+                }
+            }
+
+            return groupIdList;
         }
+
+        private List<string> GetGroupNameList()
+        {
+            string query = "select groupName from TUserGroup";
+            DataTable table = _exQuery.ExecuteRawQuery(query);
+
+            List<string> groupNameList = new List<string>();
+
+            foreach (DataRow row in table.Rows)
+            {
+                if (row["groupName"] != null && row["groupName"] != DBNull.Value)
+                {
+                    string groupName = row["groupName"].ToString();
+                    groupNameList.Add(groupName);
+                }
+            }
+
+            return groupNameList;
+        }
+
 
         private string CreateToken(Tuser user, int groupId)
         {
-            string roleName = "";
+            
 
             List<Claim> claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.Username),
             };
 
-            if (groupId == 1)
+            for (int i = 0; i < GetGroupIdList().Count; i++)
             {
-                claims.Add(new Claim(ClaimTypes.Role, "Admin"));
+                if (groupId == GetGroupIdList()[i])
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, GetGroupNameList()[i]));
+                }
             }
+
+            
 
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
 
