@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
@@ -10,22 +9,16 @@ import axios from 'axios';
 
 const EditSlideDetail = () => {
     const navigate = useNavigate();
-
-
     const location = useLocation();
     const { id, packageName } = useParams();
-
-    //const { slideHeaderId } = location.state;
-
     const API_URL = "https://localhost:7017/";
-
-    // State to store user information
 
     const [editedItem, seteditedItem] = useState({
         description: '',
         typeContent: '',
         contentUrl: '',
         slideHeaderId: id,
+        sequence: '',
         isActive: '',
     });
 
@@ -66,6 +59,7 @@ const EditSlideDetail = () => {
                         typeContent: groupData[0].typeContent,
                         contentUrl: groupData[0].contentUrl,
                         slideHeaderId: groupData[0].slideHeaderId,
+                        sequence: groupData[0].sequence,
                         isActive: groupData[0].isActive,
                     });
                 } else {
@@ -230,9 +224,14 @@ const EditSlideDetail = () => {
                                     ) : null}
                                 </div>
                             )}
-
-
-
+                            <TextField
+                                id="sequence"
+                                label="Sequence"
+                                variant="outlined"
+                                type='number'
+                                value={editedItem.sequence}
+                                onChange={(e) => handleInputChange('sequence', e.target.value)}
+                            />
                             <TextField
                                 id="isActive"
                                 label="Is Active"

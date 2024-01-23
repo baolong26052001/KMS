@@ -18,6 +18,7 @@ const EditInsurancePackage = () => {
     insuranceTypeId: '',
     termId: '',
     insuranceProviderId: '',
+    isActive: '',
   });
 
   useEffect(() => {
@@ -33,6 +34,7 @@ const EditInsurancePackage = () => {
             insuranceTypeId: groupData[0].insuranceTypeId, 
             termId: groupData[0].termId,
             insuranceProviderId: groupData[0].insuranceProviderId,
+            isActive: groupData[0].isActive,
           });
         } else {
           console.log('Failed to fetch group details');
@@ -197,6 +199,17 @@ const EditInsurancePackage = () => {
                   </MenuItem>
               ))}
               </TextField>
+              <TextField
+                id="isActive"
+                label="Is Active"
+                variant="outlined"
+                select
+                value={editedPackage.isActive}
+                onChange={(e) => handleInputChange('isActive', e.target.value)}
+                >
+                <MenuItem value={true}>Enable</MenuItem>
+                <MenuItem value={false}>Disable</MenuItem>
+            </TextField>
               <Box sx={{ display: 'flex', gap: '8px' }}>
                 <Button variant="contained" fullWidth onClick={handleSave}>
                   Save

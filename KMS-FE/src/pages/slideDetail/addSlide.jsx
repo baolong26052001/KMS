@@ -15,6 +15,7 @@ const AddSlideDetail = () => {
     description: '',
     typeContent: '',
     contentUrl: '',
+    sequence: '',
     slideHeaderId: id,
     isActive: true,
   });
@@ -159,6 +160,13 @@ const AddSlideDetail = () => {
                   </div>
                 )}
               </div>
+              <TextField
+                id="sequence"
+                label="Sequence"
+                variant="outlined"
+                value={newItem.sequence}
+                onChange={(e) => handleInputChange('sequence', e.target.value)}
+              />
               <Box sx={{ display: 'flex', gap: '8px' }}>
                 <Button variant="contained" fullWidth onClick={handleSave}>
                   Save

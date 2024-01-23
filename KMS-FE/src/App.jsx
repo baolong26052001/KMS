@@ -61,6 +61,8 @@ const App = () => {
                       />
                     <Route path="/addGroup" element={<RouteAddGroup />} />
                     <Route path="/editGroup/:id" element={<RouteEditGroup />} />
+                    <Route path="/permission/:id" element={<RoutePermission />} />
+                    
 
                     {/* Route for Kiosk*/}
                     <Route path="/kiosksetup" element={<RouteKioskSetup />} />
@@ -86,6 +88,7 @@ const App = () => {
                     <Route path="/addSlideShow" element={<RouteAddSlide />} />
                     <Route path="/editSlideShow/:id" element={<RouteEditSlideShow />} />
                     <Route path="/viewSlideShow/:id" element={<RouteViewSlideShow />} />
+
                     {/* Route for Slide Detail*/}
                     <Route path="/slideDetail/:id/:packageName" element={<RouteSlideDetail />} />
                     <Route path="/addSlideDetail/:id/:packageName" element={<RouteAddSlideDetail />} />
@@ -236,5 +239,8 @@ const RouteAddInsuranceProvider = React.lazy(() => import('./pages/insuranceProv
 const RouteAddInsuranceType = React.lazy(() => import('./pages/insuranceType/addInsuranceType'));
 const RouteAddInsuranceTerm = React.lazy(() => import('./pages/insuranceTerm/addInsuranceTerm'));
 const RouteAddInsuranceAgeRange = React.lazy(() => import('./pages/insuranceAgeRange/addAgeRange'));
+
+// Permission
+const RoutePermission = React.lazy(() => import('./pages/usergroup/permission'));
 
 export default App;

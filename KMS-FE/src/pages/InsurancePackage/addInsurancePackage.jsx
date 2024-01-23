@@ -19,6 +19,7 @@ const AddInsurancePackage = () => {
     insuranceTypeId: '',
     termId: '',
     insuranceProviderId: '',
+    isActive: true,
   });
 
   useEffect(() => {
@@ -176,6 +177,17 @@ const AddInsurancePackage = () => {
                   </MenuItem>
               ))}
               </TextField>
+              <TextField
+                id="isActive"
+                label="Is Active"
+                variant="outlined"
+                select
+                value={newInsurancePackage.isActive}
+                onChange={(e) => handleInputChange('isActive', e.target.value)}
+                >
+                <MenuItem value={true}>Enable</MenuItem>
+                <MenuItem value={false}>Disable</MenuItem>
+            </TextField>
               <Box sx={{ display: 'flex', gap: '8px' }}>
                 <Button variant="contained" fullWidth onClick={handleSave}>
                   Save

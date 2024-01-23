@@ -181,8 +181,8 @@ const EditButton = ({ rowId, label, onClick }) => {
   );
 };
 
-function createData(id, description, typeContent, contentUrl, isActive, slideHeaderId, dateModified, dateCreated) {
-  return {id, description, typeContent, contentUrl, isActive, slideHeaderId, dateModified, dateCreated};
+function createData(id, description, typeContent, contentUrl, isActive, slideHeaderId, sequence, dateModified, dateCreated) {
+  return {id, description, typeContent, contentUrl, isActive, slideHeaderId, sequence, dateModified, dateCreated};
 }
 
 const columns = [ 
@@ -233,6 +233,13 @@ const columns = [
     renderCell: (params) => (
       <ViewImage imageUrl={params.row.contentUrl} />
     ),
+  },
+  {
+    field: 'sequence',
+    headerName: 'Sequence',
+    sortable: false,
+    minWidth: 100,
+    flex: 1,
   },
   {
     field: 'isActive',
@@ -330,7 +337,7 @@ const SlideDetail = () => {
             }
           
             const updatedRows = filteredRows.map(row =>
-              createData(row.id, row.description, row.typeContent, row.contentUrl, row.isActive, row.slideHeaderId, row.dateModified, row.dateCreated)
+              createData(row.id, row.description, row.typeContent, row.contentUrl, row.isActive, row.slideHeaderId, row.sequence, row.dateModified, row.dateCreated)
             );
           
             setRows(updatedRows); 

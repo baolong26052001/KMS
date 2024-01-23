@@ -68,9 +68,11 @@ function createData(id, groupName, dateModified, dateCreated, isActive) {
 }
 
 const PermissionButton = ({ rowId, label, onClick }) => {
+  const navigate = useNavigate();
   const handleClick = (event) => {
     event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
     onClick(rowId);
+    navigate(`/permission/${rowId}`);
   };
 
   return (

@@ -118,8 +118,8 @@ const EditButton = ({ rowId, label, onClick }) => {
     );
   };
 
-function createData(id, packageName, insuranceType, provider, term, dateModified, dateCreated) {
-  return {id, packageName, insuranceType, provider, term, dateModified, dateCreated};
+function createData(id, packageName, insuranceType, provider, term, dateModified, dateCreated, isActive) {
+  return {id, packageName, insuranceType, provider, term, dateModified, dateCreated, isActive};
 }
 
 const columns = [ 
@@ -188,6 +188,7 @@ const columns = [
     minWidth: 200,
     flex: 1,
   },
+  { field: 'isActive', headerName: 'Is Active', minWidth: 100, flex: 1,},
 ];
 
 const rows = [];
@@ -265,7 +266,7 @@ const InsurancePackageHeader = () => {
             }
           
             const updatedRows = filteredRows.map(row =>
-              createData(row.id, row.packageName, row.typeName, row.provider, row.content, row.dateModified, row.dateCreated)
+              createData(row.id, row.packageName, row.typeName, row.provider, row.content, row.dateModified, row.dateCreated, row.isActive)
             );
           
             setRows(updatedRows);
