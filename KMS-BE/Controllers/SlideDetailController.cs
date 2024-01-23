@@ -33,7 +33,7 @@ namespace KMS.Controllers
         [Route("ShowSlideDetail/{id}")]
         public JsonResult GetSlideDetailById(int id) // show by header id
         {
-            string query = "select sd.id, sd.description, sd.typeContent, sd.contentUrl, sd.slideHeaderId, sd.isActive, sd.dateModified, sd.dateCreated " +
+            string query = "select sd.id, sd.description, sd.typeContent, sd.sequence, sd.contentUrl, sd.slideHeaderId, sd.isActive, sd.dateModified, sd.dateCreated " +
                 "\r\nfrom TSlideDetail sd " +
                 "WHERE sd.slideHeaderId = @Id";
             SqlParameter parameter = new SqlParameter("@Id", id);
@@ -53,7 +53,7 @@ namespace KMS.Controllers
         [Route("ShowSlideDetailInEditPage/{id}")]
         public JsonResult GetSlideDetailInEditPage(int id) // show data in edit page
         {
-            string query = "select sd.id, sd.description, sd.typeContent, sd.contentUrl, sd.slideHeaderId, sd.isActive, sd.dateModified, sd.dateCreated " +
+            string query = "select sd.id, sd.description, sd.typeContent, sd.sequence, sd.contentUrl, sd.slideHeaderId, sd.isActive, sd.dateModified, sd.dateCreated " +
                 "\r\nfrom TSlideDetail sd " +
                 "WHERE sd.id = @Id";
             SqlParameter parameter = new SqlParameter("@Id", id);
@@ -101,11 +101,12 @@ namespace KMS.Controllers
                 }
 
                 
-                string query = "INSERT INTO TSlideDetail (description, typeContent, contentUrl, slideHeaderId, dateModified, dateCreated, isActive) " +
-                               "VALUES (@Description, @TypeContent, @ContentUrl, @SlideHeaderId, GETDATE(), GETDATE(), 1)";
+                string query = "INSERT INTO TSlideDetail (sequence, description, typeContent, contentUrl, slideHeaderId, dateModified, dateCreated, isActive) " +
+                               "VALUES (@Sequence, @Description, @TypeContent, @ContentUrl, @SlideHeaderId, GETDATE(), GETDATE(), 1)";
 
                 SqlParameter[] parameters =
                 {
+                    new SqlParameter("@Sequence", slideDetail.Sequence),
                     new SqlParameter("@Description", slideDetail.Description),
                     new SqlParameter("@TypeContent", slideDetail.TypeContent),
                     new SqlParameter("@ContentUrl", slideDetail.ContentUrl),
@@ -154,12 +155,13 @@ namespace KMS.Controllers
                     {
                         System.IO.File.Delete(existingFilePath);
                     }
-                    string query = "UPDATE TSlideDetail SET description = @Description, typeContent = @TypeContent, contentUrl = @ContentUrl, slideHeaderId = @SlideHeaderId, dateModified = GETDATE(), isActive = @IsActive  " +
+                    string query = "UPDATE TSlideDetail SET sequence = @Sequence, description = @Description, typeContent = @TypeContent, contentUrl = @ContentUrl, slideHeaderId = @SlideHeaderId, dateModified = GETDATE(), isActive = @IsActive  " +
                             "WHERE id = @Id";
 
                     SqlParameter[] parameters =
                     {
                         new SqlParameter("@Id", id),
+                        new SqlParameter("@Sequence", slideDetail.Sequence),
                         new SqlParameter("@Description", slideDetail.Description),
                         new SqlParameter("@TypeContent", slideDetail.TypeContent),
                         new SqlParameter("@ContentUrl", slideDetail.ContentUrl),
@@ -174,12 +176,13 @@ namespace KMS.Controllers
 
                 else
                 {
-                    string query = "UPDATE TSlideDetail SET description = @Description, typeContent = @TypeContent, contentUrl = @ContentUrl, slideHeaderId = @SlideHeaderId, dateModified = GETDATE(), isActive = @IsActive  " +
+                    string query = "UPDATE TSlideDetail SET sequence = @Sequence, description = @Description, typeContent = @TypeContent, contentUrl = @ContentUrl, slideHeaderId = @SlideHeaderId, dateModified = GETDATE(), isActive = @IsActive  " +
                             "WHERE id = @Id";
 
                     SqlParameter[] parameters =
                     {
                         new SqlParameter("@Id", id),
+                        new SqlParameter("@Sequence", slideDetail.Sequence),
                         new SqlParameter("@Description", slideDetail.Description),
                         new SqlParameter("@TypeContent", slideDetail.TypeContent),
                         new SqlParameter("@ContentUrl", slideDetail.ContentUrl),
@@ -228,7 +231,7 @@ namespace KMS.Controllers
         [Route("FilterSlideDetail/{id}")]
         public JsonResult FilterSlideDetail(int id, [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
         {
-            string query = "select sd.id, sd.description, sd.typeContent, sd.contentUrl, sd.slideHeaderId, sd.isActive, sd.dateModified, sd.dateCreated " +
+            string query = "select sd.id, sd.description, sd.typeContent, sd.sequence, sd.contentUrl, sd.slideHeaderId, sd.isActive, sd.dateModified, sd.dateCreated " +
                            "FROM TSlideDetail sd " +
                            "WHERE slideHeaderId = @Id";
 
@@ -306,7 +309,7 @@ namespace KMS.Controllers
         [Route("SearchSlideDetail")]
         public JsonResult SearchSlideDetail(string searchQuery)
         {
-            string query = "SELECT  sd.id, sd.description, sd.typeContent, sd.contentUrl, sd.slideHeaderId, sd.isActive, sd.dateModified, sd.dateCreated " +
+            string query = "SELECT  sd.id, sd.description, sd.typeContent, sd.sequence, sd.contentUrl, sd.slideHeaderId, sd.isActive, sd.dateModified, sd.dateCreated " +
                            "FROM TSlideDetail sd " +
                            "WHERE sd.id LIKE @searchQuery OR " +
                            "sd.description LIKE @searchQuery OR " +
