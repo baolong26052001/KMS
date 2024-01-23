@@ -12,5 +12,6 @@ namespace KMS.Models
         public int? InsuranceProviderId { get; set; }
         public DateTime? DateCreated { get; set; }
         public DateTime? DateModified { get; set; }
+        public bool? IsActive { get; set; }
     }
 }

@@ -252,6 +252,8 @@ namespace KMS.Models
 
                 entity.Property(e => e.InsuranceTypeId).HasColumnName("insuranceTypeId");
 
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
+
                 entity.Property(e => e.PackageName).HasColumnName("packageName");
 
                 entity.Property(e => e.TermId).HasColumnName("termId");
@@ -1099,6 +1101,8 @@ namespace KMS.Models
                     .HasColumnName("description");
 
                 entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.Sequence).HasColumnName("sequence");
 
                 entity.Property(e => e.SlideHeaderId).HasColumnName("slideHeaderId");
 
