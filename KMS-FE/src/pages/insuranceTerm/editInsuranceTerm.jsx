@@ -3,34 +3,27 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
 
-const EditBenefitDetail = () => {
+const EditInsuranceTerm = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const { id } = useParams();
-  const { benefitId } = location.state;
+
   const API_URL = "https://localhost:7017/";
 
-  const [editedGroup, setEditedGroup] = useState({
-    benefitId: benefitId,
+  const [editedItem, seteditedItem] = useState({
     content: '',
-    coverage: '',
   });
-
 
   useEffect(() => {
     const fetchGroupDetails = async () => {
       try {
-        const response = await fetch(`${API_URL}api/InsurancePackage/ShowBenefitDetailById/${id}`);
+        const response = await fetch(`${API_URL}api/Term/ShowTerm/${id}`);
         
         if (response.ok) {
           const groupData = await response.json();
-          
-          // Populate the state with fetched group details
-          setEditedGroup({
+
+          seteditedItem({
             content: groupData[0].content,
-            coverage: groupData[0].coverage, 
           });
         } else {
           console.log('Failed to fetch group details');
@@ -44,7 +37,7 @@ const EditBenefitDetail = () => {
   }, [API_URL, id]);
 
   const handleInputChange = (key, value) => {
-    setEditedGroup((prev) => ({
+    seteditedItem((prev) => ({
       ...prev,
       [key]: value,
     }));
@@ -52,19 +45,18 @@ const EditBenefitDetail = () => {
 
   const handleSave = async () => {
     try {
-      const response = await fetch(`${API_URL}api/InsurancePackage/EditBenefitDetail/${id}`, {
+      const response = await fetch(`${API_URL}api/Term/EditTerm/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(editedGroup),
+        body: JSON.stringify(editedItem),
       });
 
       console.log('Response Status:', response.status);
-      console.log('Response Content:', await response.text());
 
       if (response.ok) {
-        navigate(`/benefitDetail/${benefitId}`);
+        navigate(`/insuranceTerm`);
         console.log(' updated successfully');
       } else {
         console.log(' update failed');
@@ -75,13 +67,13 @@ const EditBenefitDetail = () => {
   };
 
   const handleCancel = () => {
-    navigate(`/benefitDetail/${benefitId}`);
+    navigate(`/insuranceTerm`);
   };
 
   return (
     <div className="content">
       <div className="admin-dashboard-text-div pt-5">
-        <h1 className="h1-dashboard">Edit Benefit Detail</h1>
+        <h1 className="h1-dashboard">Edit Insurance Term</h1>
       </div>
       <div className="bigcarddashboard">
         <div className="App">
@@ -92,7 +84,7 @@ const EditBenefitDetail = () => {
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '16px',
-                width: 300,
+                width: '100%' ,
                 margin: 'auto',
               }}
               noValidate
@@ -100,19 +92,13 @@ const EditBenefitDetail = () => {
             >
               <TextField
                 id="content"
-                label="Benefit Content"
+                label="Insurance Term"
                 variant="outlined"
-                value={editedGroup.content}
+                multiline
+                value={editedItem.content}
                 onChange={(e) => handleInputChange('content', e.target.value)}
               />
-              <TextField
-                id="coverage"
-                label="Coverage"
-                variant="outlined"
-                value={editedGroup.coverage}
-                onChange={(e) => handleInputChange('coverage', e.target.value)}
-              />
-              <Box sx={{ display: 'flex', gap: '8px' }}>
+              <Box sx={{ display: 'flex', gap: '8px' , width: 300, marginTop: 1}}>
                 <Button variant="contained" fullWidth onClick={handleSave}>
                   Save
                 </Button>
@@ -128,4 +114,4 @@ const EditBenefitDetail = () => {
   );
 };
 
-export default EditBenefitDetail;
+export default EditInsuranceTerm;

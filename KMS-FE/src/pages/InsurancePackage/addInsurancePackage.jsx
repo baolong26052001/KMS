@@ -80,7 +80,6 @@ const AddInsurancePackage = () => {
 
   const handleSave = async () => {
     try {
-      // Assuming your API URL is correct
       const response = await fetch(`${API_URL}api/InsurancePackageHeader/AddInsurancePackageHeader`, {
         method: 'POST',
         headers: {

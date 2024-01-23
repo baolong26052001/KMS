@@ -13,7 +13,6 @@ const EditInsurancePackage = () => {
 
   const API_URL = "https://localhost:7017/";
 
-  // State to store user information
   const [editedGroup, setEditedGroup] = useState({
     id: id,
     content: '',

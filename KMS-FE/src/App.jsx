@@ -11,7 +11,6 @@ import { useAuth } from './components/AuthContext/AuthContext';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 
-
 const App = () => {
 
   const { isAuthenticated, login  } = useAuth();
@@ -102,11 +101,11 @@ const App = () => {
                     <Route path="/savingtransaction" element={<RouteSavingTransaction />} />
                     <Route path="/loanstatement" element={<RouteLoanStatement />} />
                     <Route path="/savingstatement" element={<RouteSavingStatement />} />
+
                     {/* Route for Insurance Transaction*/}
                     <Route path="/insuranceTransaction" element={<RouteInsuranceTransaction />} />
 
                     {/* Route for Insurance Package*/}
-
                     <Route path="/insurancePackage" element={<RouteInsurancePackage />} />
                     <Route path="/viewPackageDetail/:id/:packageName" element={<RouteViewInsurancePackage />} />
                     <Route path="/addInsurancePackage" element={<RouteAddInsurancePackage />} />
@@ -124,7 +123,26 @@ const App = () => {
                     <Route path="/addBenefitDetail/:id" element={<RouteAddBenefitDetail />} />
                     <Route path="/editBenefitDetail/:id" element={<RouteEditBenefitDetail />} />
                     
+                    {/* Route for Insurance Provider*/}
+                    <Route path="/insuranceProvider" element={<RouteInsuranceProvider />} />
+                    <Route path="/addInsuranceProvider" element={<RouteAddInsuranceProvider />} />
+                    <Route path="/editInsuranceProvider/:id" element={<RouteEditInsuranceProvider />} />                    
                     
+                    {/* Route for Insurance Type*/}
+                    <Route path="/insuranceType" element={<RouteInsuranceType />} />
+                    <Route path="/addInsuranceType" element={<RouteAddInsuranceType />} />
+                    <Route path="/editInsuranceType/:id" element={<RouteEditInsuranceType />} />   
+
+                    {/* Route for Insurance Term*/}
+                    <Route path="/insuranceTerm" element={<RouteInsuranceTerm />} />
+                    <Route path="/addInsuranceTerm" element={<RouteAddInsuranceTerm />} />
+                    <Route path="/editInsuranceTerm/:id" element={<RouteEditInsuranceTerm />} />   
+
+                    {/* Route for Insurance Age Range*/}
+                    <Route path="/insuranceAgeRange" element={<RouteInsuranceAgeRange />} />
+                    <Route path="/addAgeRange" element={<RouteAddInsuranceAgeRange />} />
+                    <Route path="/editAgeRange/:id" element={<RouteEditInsuranceAgeRange />} />       
+
                     <Route path="/transactionlogs" element={<RouteTransactionLogs />} />
                     <Route path="/activitylogs" element={<RouteActivityLogs />} />
                     <Route path="/notificationlogs" element={<RouteNotificationLogs />} />
@@ -172,6 +190,10 @@ const RouteInsuranceTransaction = React.lazy(() => import('./pages/insuranceTran
 const RouteInsurancePackage = React.lazy(() => import('./pages/InsurancePackage/insurancePackage'));
 const RouteBenefitDetail = React.lazy(() => import('./pages/InsurancePackage/benefitDetail'));
 const RouteInsuranceDetail = React.lazy(() => import('./pages/insurancePackageDetail/insurancePackageDetail'));
+const RouteInsuranceProvider = React.lazy(() => import('./pages/insuranceProvider/insuranceProvider'));
+const RouteInsuranceType = React.lazy(() => import('./pages/insuranceType/insuranceType'));
+const RouteInsuranceTerm = React.lazy(() => import('./pages/insuranceTerm/insuranceTerm'));
+const RouteInsuranceAgeRange = React.lazy(() => import('./pages/insuranceAgeRange/insuranceAgeRange'));
 
 // view Route
 const RouteViewAccount = React.lazy(() => import('./pages/Account/viewAccount'));
@@ -194,6 +216,10 @@ const RouteEditBenefit = React.lazy(() => import('./pages/InsurancePackage/editB
 const RouteEditInsurancePackage = React.lazy(() => import('./pages/InsurancePackage/editInsurancePackage'));
 const RouteEditBenefitDetail = React.lazy(() => import('./pages/InsurancePackage/editBenefitDetail'));
 const RouteEditInsurancePackageDetail = React.lazy(() => import('./pages/insurancePackageDetail/editInsurancePackageDetail'));
+const RouteEditInsuranceProvider = React.lazy(() => import('./pages/insuranceProvider/editInsuranceProvider'));
+const RouteEditInsuranceType = React.lazy(() => import('./pages/insuranceType/editInsuranceType'));
+const RouteEditInsuranceTerm = React.lazy(() => import('./pages/insuranceTerm/editInsuranceTerm'));
+const RouteEditInsuranceAgeRange = React.lazy(() => import('./pages/insuranceAgeRange/editAgeRange'));
 
 // Add Route
 const RouteAddUser = React.lazy(() => import('./pages/user/addUser'));
@@ -206,5 +232,9 @@ const RouteAddBenefit = React.lazy(() => import('./pages/InsurancePackage/addBen
 const RouteAddBenefitDetail = React.lazy(() => import('./pages/InsurancePackage/addBenefitDetail'));
 const RouteAddStation = React.lazy(() => import('./pages/station/addStation'));
 const RouteAddKiosk = React.lazy(() => import('./pages/kiosk-setup/addKiosk'));
+const RouteAddInsuranceProvider = React.lazy(() => import('./pages/insuranceProvider/addInsuranceProvider'));
+const RouteAddInsuranceType = React.lazy(() => import('./pages/insuranceType/addInsuranceType'));
+const RouteAddInsuranceTerm = React.lazy(() => import('./pages/insuranceTerm/addInsuranceTerm'));
+const RouteAddInsuranceAgeRange = React.lazy(() => import('./pages/insuranceAgeRange/addAgeRange'));
 
 export default App;
