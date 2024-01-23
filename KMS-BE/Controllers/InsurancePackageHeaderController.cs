@@ -26,7 +26,7 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackageHeader")]
         public JsonResult GetInsurancePackageHeader()
         {
-            string query = "SELECT b.id, b.packageName, c.provider, c.email, e.content, f.typeName, b.dateModified, b.dateCreated " +
+            string query = "SELECT b.id, b.packageName, c.provider, c.email, e.content, f.typeName, b.isActive, b.dateModified, b.dateCreated " +
                 "FROM InsurancePackageHeader b " +
                 "LEFT JOIN InsuranceProvider c ON c.id = b.insuranceProviderId " +
                 "LEFT JOIN Term e ON e.id = b.termId " +
@@ -41,7 +41,7 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackageHeader/{id}")]
         public JsonResult GetInsurancePackageHeaderById(int id)
         {
-            string query = "SELECT b.id, f.id AS insuranceTypeId, e.id AS termId, c.id AS insuranceProviderId, b.packageName, c.provider, c.email, e.content, f.typeName, b.dateModified, b.dateCreated " +
+            string query = "SELECT b.id, f.id AS insuranceTypeId, e.id AS termId, c.id AS insuranceProviderId, b.packageName, c.provider, c.email, e.content, f.typeName, b.isActive, b.dateModified, b.dateCreated " +
                 "FROM InsurancePackageHeader b " +
                 "LEFT JOIN InsuranceProvider c ON c.id = b.insuranceProviderId " +
                 "LEFT JOIN Term e ON e.id = b.termId " +
@@ -67,7 +67,7 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackageHeaderByInsuranceType/{insuranceType}")]
         public JsonResult GetInsurancePackageHeaderByInsuranceType(int insuranceType)
         {
-            string query = "select b.id, b.packageName, c.provider, c.email, e.content, f.typeName, b.dateModified, b.dateCreated " +
+            string query = "select b.id, b.packageName, c.provider, c.email, e.content, f.typeName, b.isActive, b.dateModified, b.dateCreated " +
                 "from InsurancePackageHeader b, InsuranceProvider c, Term e, InsuranceType f " +
                 "where c.id = b.insuranceProviderId and e.id = b.termId and b.insuranceTypeId = f.id and f.id=@InsuranceTypeId";
 
@@ -88,7 +88,7 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackageHeaderByInsuranceProvider/{insuranceProvider}")]
         public JsonResult GetInsurancePackageHeaderByInsuranceProvider(int insuranceProvider)
         {
-            string query = "select b.id, b.packageName, c.provider, c.email, e.content, f.typeName, b.dateModified, b.dateCreated " +
+            string query = "select b.id, b.packageName, c.provider, c.email, e.content, f.typeName, b.isActive, b.dateModified, b.dateCreated " +
                 "from InsurancePackageHeader b, InsuranceProvider c, Term e, InsuranceType f " +
                 "where c.id = b.insuranceProviderId and e.id = b.termId and b.insuranceTypeId = f.id and c.id=@InsuranceProviderId";
 
@@ -109,8 +109,8 @@ namespace KMS.Controllers
         [Route("AddInsurancePackageHeader")]
         public JsonResult AddInsurancePackageHeader([FromBody] InsurancePackageHeader insurancePackageHeader)
         {
-            string query = "INSERT INTO InsurancePackageHeader (packageName, insuranceTypeId, termId, insuranceProviderId, dateCreated, dateModified) " +
-                           "VALUES (@PackageName, @InsuranceTypeId, @TermId, @InsuranceProviderId, GETDATE(), GETDATE())";
+            string query = "INSERT INTO InsurancePackageHeader (packageName, insuranceTypeId, termId, insuranceProviderId, dateCreated, dateModified, isActive) " +
+                           "VALUES (@PackageName, @InsuranceTypeId, @TermId, @InsuranceProviderId, GETDATE(), GETDATE(), @IsActive)";
 
             SqlParameter[] parameters =
             {
@@ -118,6 +118,7 @@ namespace KMS.Controllers
                 new SqlParameter("@InsuranceTypeId", insurancePackageHeader.InsuranceTypeId),
                 new SqlParameter("@TermId", (object)insurancePackageHeader.TermId ?? DBNull.Value),
                 new SqlParameter("@InsuranceProviderId", insurancePackageHeader.InsuranceProviderId),
+                new SqlParameter("@IsActive", insurancePackageHeader.IsActive),
             };
 
             _exQuery.ExecuteRawQuery(query, parameters);
@@ -130,7 +131,7 @@ namespace KMS.Controllers
         public JsonResult EditInsurancePackageHeader(int id, [FromBody] InsurancePackageHeader insurancePackageHeader)
         {
             string query = "UPDATE InsurancePackageHeader " +
-                           "SET packageName = @PackageName, insuranceTypeId = @InsuranceTypeId, termId = @TermId, insuranceProviderId = @InsuranceProviderId, dateModified = GETDATE() " +
+                           "SET packageName = @PackageName, insuranceTypeId = @InsuranceTypeId, termId = @TermId, insuranceProviderId = @InsuranceProviderId, isActive = @IsActive, dateModified = GETDATE() " +
                            "WHERE id = @Id";
 
             SqlParameter[] parameters =
@@ -140,6 +141,7 @@ namespace KMS.Controllers
                 new SqlParameter("@InsuranceTypeId", insurancePackageHeader.InsuranceTypeId),
                 new SqlParameter("@TermId", (object)insurancePackageHeader.TermId ?? DBNull.Value),
                 new SqlParameter("@InsuranceProviderId", insurancePackageHeader.InsuranceProviderId),
+                new SqlParameter("@IsActive", insurancePackageHeader.IsActive),
             };
 
 
