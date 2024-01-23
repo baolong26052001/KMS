@@ -11,6 +11,11 @@ using KMS.Tools;
 using System.Net;
 using IPinfo;
 using System.Net.Sockets;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+
 
 namespace KMS.Controllers
 {
@@ -40,7 +45,7 @@ namespace KMS.Controllers
             return new JsonResult(table);
         }
 
-        [HttpGet]
+        [HttpGet, Authorize(Roles = "Admin")]
         [Route("ShowUsers/{id}")]
         public JsonResult GetUserById(int id)
         {
@@ -94,9 +99,12 @@ namespace KMS.Controllers
                 IPHostEntry ip = Dns.GetHostEntry(host);
 
                 string password = Password.hashPassword(user.Password);
+
                 var dbUser = _dbcontext.Tusers
                     .Where(u => u.Username == user.Username && u.Password == password)
                     .FirstOrDefault();
+
+                int groupId = (int)dbUser.UserGroupId;
 
                 if (dbUser == null)
                 {
@@ -138,8 +146,8 @@ namespace KMS.Controllers
 
                 _exQuery.ExecuteRawQuery(query, parameters);
 
-
-                return Ok(new { message = "Login successful" });
+                string token = CreateToken(user, groupId);
+                return Ok(new { message = "Login successful", Token = token, GroupId = groupId });
                 
             }
             catch (Exception e)
@@ -175,8 +183,46 @@ namespace KMS.Controllers
             _exQuery.ExecuteRawQuery(insertQuery, parameters);
             _exQuery.ExecuteRawQuery(query2, parameters2);
 
-            return new JsonResult("User added successfully");
+            
+
+            return new JsonResult(new { Message = "User added successfully" });
         }
+
+        private JsonResult GetGroupName()
+        {
+            string query = "select TUserGroup.groupName from tuser, tusergroup where tuser.userGroupId = TUserGroup.id group by TUserGroup.groupName";
+            DataTable table = _exQuery.ExecuteRawQuery(query);
+            return new JsonResult(table);
+        }
+
+        private string CreateToken(Tuser user, int groupId)
+        {
+            string roleName = "";
+
+            List<Claim> claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.Username),
+            };
+
+            if (groupId == 1)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, "Admin"));
+            }
+
+            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
+
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
+
+            var token = new JwtSecurityToken(
+                claims: claims,
+                expires: DateTime.Now.AddDays(1),
+                signingCredentials: creds);
+
+            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return jwt;
+        }
+
 
         [HttpPut]
         [Route("UpdateUser/{id}")]

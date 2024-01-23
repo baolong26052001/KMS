@@ -6,6 +6,7 @@ using System.Data;
 using System.Security.Principal;
 using System.Text;
 using KMS.Tools;
+using Microsoft.AspNetCore.Authorization;
 
 namespace KMS.Controllers
 {
@@ -26,13 +27,14 @@ namespace KMS.Controllers
 
         
 
-        [HttpGet]
+        [HttpGet, Authorize(Roles = "Admin")]
         [Route("ShowAccount")]
         public JsonResult GetAccount()
         {
             string query = "select a.id, a.memberId, a.contractId, m.phone, m.bankName, m.department, m.companyName, m.address1, m.isActive, m.dateCreated " +
                 "from LAccount a, LMember m " +
                 "where a.memberId = m.id";
+            
             DataTable table = _exQuery.ExecuteRawQuery(query);
             return new JsonResult(table);
         }
