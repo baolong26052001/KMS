@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import MenuItem from '@mui/material/MenuItem';
 import { useParams, useNavigate } from 'react-router-dom';
 
 const EditGroup = () => {
@@ -13,7 +14,7 @@ const EditGroup = () => {
   const [editedGroup, setEditedGroup] = useState({
     groupName: '',
     // accessRuleId: '',
-    isActive: true, // Assuming isActive is a boolean
+    isActive: '', 
   });
 
   useEffect(() => {
@@ -102,6 +103,17 @@ const EditGroup = () => {
                 value={editedGroup.groupName}
                 onChange={(e) => handleInputChange('groupName', e.target.value)}
               />
+              <TextField
+                id="isActive"
+                label="Is Active"
+                variant="outlined"
+                value={editedGroup.isActive}
+                select
+                onChange={(e) => handleInputChange('isActive', e.target.value)}
+                >
+                  <MenuItem value={true}>True</MenuItem>
+                  <MenuItem value={false}>False</MenuItem>
+                </TextField>
               <Box sx={{ display: 'flex', gap: '8px' }}>
                 <Button variant="contained" fullWidth onClick={handleSave}>
                   Save
