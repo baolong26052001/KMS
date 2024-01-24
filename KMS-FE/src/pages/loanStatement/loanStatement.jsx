@@ -17,7 +17,7 @@ const ViewButton = ({ rowId, label, onClick }) => {
   const handleClick = (event) => {
     event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
     onClick(rowId);
-    navigate(`/viewAccount/${rowId}`);
+    //navigate(`/viewAccount/${rowId}`);
   };
 
   return (

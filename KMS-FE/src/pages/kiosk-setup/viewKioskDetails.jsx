@@ -25,7 +25,7 @@ export default function ViewKioskDetails() {
       try {
         const response = await fetch(`${API_URL}api/Kiosk/ShowKioskSetup/${id}`);
         const data = await response.json();
-        setDetails(data[0]); // Assuming the API returns an array with one element
+        setDetails(data[0]);
       } catch (error) {
         console.error('Error fetching data:', error);
       }

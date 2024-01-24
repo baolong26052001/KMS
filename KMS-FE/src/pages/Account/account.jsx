@@ -128,6 +128,8 @@ const Account = () => {
   const [endDate, setEndDate] = useState(null);
   const [rows, setRows] = useState([]);
 
+  const [errorMessage, setErrorMessage] = useState('');
+
   const handleStartDateChange = (date) => {
     setStartDate(date);
   };
@@ -168,6 +170,11 @@ const Account = () => {
           fetch(apiUrl),
           searchApi ? fetch(searchApi) : Promise.resolve(null),
         ]);
+
+        if (apiResponse.status === 401) {
+          setErrorMessage("You don't have permission");
+          return;
+        }
   
         if (!apiResponse.ok) {
           throw new Error(`HTTP error! Status: ${apiResponse.status}`);
@@ -176,7 +183,6 @@ const Account = () => {
         const apiResponseData = await apiResponse.json();
         const searchApiResponseData = searchApiResponse ? await searchApiResponse.json() : null;
         
-        console.log(searchApiResponseData);
   
         if (Array.isArray(apiResponseData)) {
           let filteredRows = apiResponseData;
@@ -204,48 +210,62 @@ const Account = () => {
   }, [searchTerm, startDate, endDate]);
   
   
-return (
-  
-  <div className="content"> 
-
-      <div className="admin-dashboard-text-div pt-5"> 
-          <h1 className="h1-dashboard">Account</h1>
+  return (
+    
+    <div className="content">
+      <div className="admin-dashboard-text-div pt-5">
+        <h1 className="h1-dashboard">Account</h1>
       </div>
-          <div className="bigcarddashboard">
-
-          <div className="Filter">
+      <div className="bigcarddashboard">
+        <div className="Filter">
           <DateFilter
             startDate={startDate}
             endDate={endDate}
             handleStartDateChange={handleStartDateChange}
             handleEndDateChange={handleEndDateChange}
           />
-          </div>
-              <div className="searchdivuser">
-                  <input onChange={(event) => setSearchTermButton(event.target.value)} onKeyDown={handleKeyPress} placeholder="  Search..." type="text" id="kioskID myInput" name="kioskID" class="searchbar"></input>
-                  <input onClick={() => {handleSearchButton()}} type="button" value="Search" className="button button-search"></input>
-              </div>
+        </div>
+        <div className="searchdivuser">
+          <input
+            onChange={(event) => setSearchTermButton(event.target.value)}
+            onKeyDown={handleKeyPress}
+            placeholder="  Search..."
+            type="text"
+            id="kioskID myInput"
+            name="kioskID"
+            className="searchbar"
+          ></input>
+          <input
+            onClick={() => {
+              handleSearchButton();
+            }}
+            type="button"
+            value="Search"
+            className="button button-search"
+          ></input>
+        </div>
 
-              
-              <div className='Table' style={{ height: 400, width: '100%'}}>
-                  <DataGrid
-                    rows={rows}
-                    columns={columns}
-                    getRowId={getRowId}
-                    initialState={{
-                    pagination: {
-                        paginationModel: { page: 0, pageSize: 5 },
-                    },
-                    }}
-                    pageSizeOptions={[5, 10, 25, 50]}
-                    checkboxSelection
-                  />
-              </div>
+        {errorMessage ? (
+          <h3 className="error-message">{errorMessage}</h3>
+        ) : (
+          <div className='Table' style={{ height: 400, width: '100%' }}>
+            <DataGrid
+              rows={rows}
+              columns={columns}
+              getRowId={getRowId}
+              initialState={{
+                pagination: {
+                  paginationModel: { page: 0, pageSize: 5 },
+                },
+              }}
+              pageSizeOptions={[5, 10, 25, 50]}
+              checkboxSelection
+            />
           </div>
-  </div>
-  
-  
-)
+        )}
+      </div>
+    </div>
+  )
 }
 
 export default Account;
