@@ -73,9 +73,7 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackageDetail/{id}")] // khi ấn vào view package A, thì sẽ show ra "benefit" của package A
         public JsonResult GetInsurancePackageDetail(int id)
         {
-            string query = "select b.id, b.content, b.coverage, b.description, ipack.packageName, itype.typeName, ipack.fee, b.dateModified, b.dateCreated " +
-                "from Benefit b, InsurancePackage ipack, InsuranceType itype " +
-                "where b.packageId = ipack.id and itype.id = ipack.insuranceType and ipack.id=@id";
+            string query = "select b.id, b.content, b.coverage, b.description, ipack.packageName, itype.typeName, b.dateModified, b.dateCreated\r\n                from Benefit b \r\n\t\t\t\tLEFT JOIN InsurancePackageHeader ipack ON b.packageId = ipack.id\r\n\t\t\t\tLEFT JOIN InsuranceType itype ON itype.id = ipack.insuranceTypeId\r\n\t\t\t\t\r\n                where ipack.id=@id";
 
             SqlParameter parameter = new SqlParameter("@id", id);
             DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
