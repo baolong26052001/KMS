@@ -45,7 +45,7 @@ namespace KMS.Controllers
             return new JsonResult(table);
         }
 
-        [HttpGet, Authorize(Roles = "Admin")]
+        [HttpGet]
         [Route("ShowUsers/{id}")]
         public JsonResult GetUserById(int id)
         {
@@ -101,7 +101,7 @@ namespace KMS.Controllers
                 string password = Password.hashPassword(user.Password);
 
                 var dbUser = _dbcontext.Tusers
-                    .Where(u => u.Username == user.Username && u.Password == password)
+                    .Where(u => u.Username == user.Username && u.Password == password && u.IsActive == true)
                     .FirstOrDefault();
 
                 int groupId = (int)dbUser.UserGroupId;
@@ -147,6 +147,7 @@ namespace KMS.Controllers
                 _exQuery.ExecuteRawQuery(query, parameters);
 
                 string token = CreateToken(user, groupId);
+                HttpContext.Request.Headers.Add("Authorization", "Bearer " + token);
                 return Ok(new { message = "Login successful", Token = token, GroupId = groupId, Role = GetGroupNameList()[GetGroupIdList().IndexOf(groupId)] });
 
             }
