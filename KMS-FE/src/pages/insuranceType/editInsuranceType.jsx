@@ -83,12 +83,12 @@ const EditInsuranceType = () => {
               sx={{
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '16px',
-                width: '100%' ,
+                gap: '20px', // Add some spacing between form elements
+                //width: 300, 
                 margin: 'auto',
               }}
               noValidate
-              autoComplete="on"
+              autoComplete="off"
             >
               <TextField
                 id="typeName"
@@ -97,7 +97,7 @@ const EditInsuranceType = () => {
                 value={editedItem.typeName}
                 onChange={(e) => handleInputChange('typeName', e.target.value)}
               />
-              <Box sx={{ display: 'flex', gap: '8px' , width: 300, marginTop: 1}}>
+              <Box sx={{ display: 'flex', gap: '8px' , marginTop: 1}}>
                 <Button variant="contained" fullWidth onClick={handleSave}>
                   Save
                 </Button>

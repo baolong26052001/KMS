@@ -17,7 +17,7 @@ const EditUser = () => {
     email: '',
     password: '',
     userGroupId: '',
-    isActive: true, // Assuming isActive is a boolean
+    isActive: '', // Assuming isActive is a boolean
   });
 
   const [userGroups, setUserGroups] = useState([]);
@@ -117,8 +117,8 @@ const EditUser = () => {
               sx={{
                 display: 'flex',
                 flexDirection: 'column', // Set the form to vertical layout
-                gap: '16px', // Add some spacing between form elements
-                width: 300, // Adjust the width as needed
+                gap: '20px', // Add some spacing between form elements
+                //width: 300, 
                 margin: 'auto', // Center the form
               }}
               noValidate
@@ -128,6 +128,7 @@ const EditUser = () => {
                 id="username"
                 label="Username"
                 variant="outlined"
+                fullWidth
                 value={editedUser.username}
                 onChange={(e) => handleInputChange('username', e.target.value)}
               />
@@ -167,6 +168,17 @@ const EditUser = () => {
                   </MenuItem>
                 ))}
               </TextField>
+              <TextField
+                id="isActive"
+                label="Is Active"
+                variant="outlined"
+                select
+                value={editedUser.isActive}
+                onChange={(e) => handleInputChange('isActive', e.target.value)}
+                >
+                <MenuItem value={true}>Enable</MenuItem>
+                <MenuItem value={false}>Disable</MenuItem>
+            </TextField>
               <Box sx={{ display: 'flex', gap: '8px' }}>
                 <Button variant="contained" fullWidth onClick={handleSave}>
                   Save

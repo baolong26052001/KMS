@@ -120,8 +120,8 @@ const AddInsurancePackage = () => {
               sx={{
                 display: 'flex',
                 flexDirection: 'column', 
-                gap: '16px', 
-                width: 300, 
+                gap: '20px', // Add some spacing between form elements
+                //width: 300, 
                 margin: 'auto', 
               }}
               noValidate
@@ -150,18 +150,23 @@ const AddInsurancePackage = () => {
               </TextField>
               <TextField
                 id="termId"
-                label="Term"
+                label="Insurance Term"
                 variant="outlined"
+                style={{ textAlign: 'left' }}
                 multiline
                 value={newInsurancePackage.termId}
                 onChange={(e) => handleInputChange('termId', e.target.value)}
                 select
               >
-              {insTerm.map((term) => (
+                <MenuItem value="">
+                  <em>No Term</em>
+                </MenuItem>
+
+                {insTerm.map((term) => (
                   <MenuItem key={term.id} value={term.id}>
-                  {term.content} 
+                    {term.content}
                   </MenuItem>
-              ))}
+                ))}
               </TextField>
               <TextField
                 id="insuranceProviderId"

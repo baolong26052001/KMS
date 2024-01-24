@@ -102,8 +102,8 @@ const AddSlideDetail = () => {
               sx={{
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '16px',
-                width: 300,
+                gap: '20px', // Add some spacing between form elements
+                //width: 300, 
                 margin: 'auto',
               }}
               noValidate
@@ -148,10 +148,10 @@ const AddSlideDetail = () => {
                       <img
                         src={URL.createObjectURL(selectedFile)}
                         alt="Selected Image"
-                        style={{ maxWidth: '100%', maxHeight: '200px' }}
+                        style={{ maxWidth: '100%', maxHeight: '100%' }}
                       />
                     ) : selectedFile.type.startsWith('video/') ? (
-                      <video controls style={{ maxWidth: '100%', maxHeight: '200px' }}>
+                      <video controls style={{ maxWidth: '100%', maxHeight: '100%' }}>
                         <source src={URL.createObjectURL(selectedFile)} type={selectedFile.type} />
                         Your browser does not support the video tag.
                       </video>

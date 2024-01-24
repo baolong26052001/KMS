@@ -65,8 +65,8 @@ const AddGroup = () => {
               sx={{
                 display: 'flex',
                 flexDirection: 'column', // Set the form to vertical layout
-                gap: '16px', // Add some spacing between form elements
-                width: 300, // Adjust the width as needed
+                gap: '20px', // Add some spacing between form elements
+                //width: 300, 
                 margin: 'auto', // Center the form
               }}
               noValidate

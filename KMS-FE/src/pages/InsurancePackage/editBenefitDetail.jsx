@@ -91,8 +91,8 @@ const EditBenefitDetail = () => {
               sx={{
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '16px',
-                width: 300,
+                gap: '20px', // Add some spacing between form elements
+                //width: 300, 
                 margin: 'auto',
               }}
               noValidate

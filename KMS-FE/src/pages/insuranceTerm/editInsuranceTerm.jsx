@@ -83,8 +83,8 @@ const EditInsuranceTerm = () => {
               sx={{
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '16px',
-                width: '100%' ,
+                gap: '20px', // Add some spacing between form elements
+                //width: 300, 
                 margin: 'auto',
               }}
               noValidate
@@ -98,7 +98,7 @@ const EditInsuranceTerm = () => {
                 value={editedItem.content}
                 onChange={(e) => handleInputChange('content', e.target.value)}
               />
-              <Box sx={{ display: 'flex', gap: '8px' , width: 300, marginTop: 1}}>
+              <Box sx={{ display: 'flex', gap: '8px' , marginTop: 1}}>
                 <Button variant="contained" fullWidth onClick={handleSave}>
                   Save
                 </Button>

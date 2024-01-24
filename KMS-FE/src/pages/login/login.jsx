@@ -58,7 +58,6 @@ const Login = ({onLogin }) => {
         onLogin();
       } else {
         console.error('Login failed:', data.message);
-        // Handle login failure, show error message, etc.
       }
     } catch (error) {
       console.error('Error during login:', error);
@@ -71,6 +70,7 @@ const Login = ({onLogin }) => {
   return (
     <div className='login'>
       <div className='Login-field'>
+        <h3>Login</h3>
         <div className="Login-Form">
           <FormControl fullWidth variant="outlined" margin="normal">
             <InputLabel htmlFor="outlined-username">Username</InputLabel>

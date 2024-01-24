@@ -142,8 +142,8 @@ const EditInsurancePackage = () => {
               sx={{
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '16px',
-                width: 300,
+                gap: '20px', // Add some spacing between form elements
+                //width: 300, 
                 margin: 'auto',
               }}
               noValidate
@@ -188,11 +188,15 @@ const EditInsurancePackage = () => {
               id="termId"
               label="Insurance Term"
               variant="outlined"
+              style={{textAlign: 'left'}}
               value={editedPackage.termId}
               onChange={(e) => handleInputChange('termId', e.target.value)}
               multiline
               select
               >
+              <MenuItem value="">
+                <em>No Term</em>
+              </MenuItem>
               {insTerm.map((term) => (
                   <MenuItem key={term.id} value={term.id}>
                   {term.content}
