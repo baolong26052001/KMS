@@ -67,9 +67,13 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackageHeaderByInsuranceType/{insuranceType}")]
         public JsonResult GetInsurancePackageHeaderByInsuranceType(int insuranceType)
         {
-            string query = "select b.id, b.packageName, c.provider, c.email, e.content, f.typeName, b.isActive, b.dateModified, b.dateCreated " +
-                "from InsurancePackageHeader b, InsuranceProvider c, Term e, InsuranceType f " +
-                "where c.id = b.insuranceProviderId and e.id = b.termId and b.insuranceTypeId = f.id and f.id=@InsuranceTypeId";
+            string query = "SELECT b.id, b.packageName, c.provider, c.email, e.content, f.typeName, b.isActive, b.dateModified, b.dateCreated " +
+                "FROM InsurancePackageHeader b " +
+                "LEFT JOIN InsuranceProvider c ON c.id = b.insuranceProviderId " +
+                "LEFT JOIN Term e ON e.id = b.termId " +
+                "LEFT JOIN InsuranceType f ON b.insuranceTypeId = f.id " +
+                "WHERE f.id = @InsuranceTypeId";
+
 
             SqlParameter parameter = new SqlParameter("@InsuranceTypeId", insuranceType);
             DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
@@ -88,9 +92,13 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackageHeaderByInsuranceProvider/{insuranceProvider}")]
         public JsonResult GetInsurancePackageHeaderByInsuranceProvider(int insuranceProvider)
         {
-            string query = "select b.id, b.packageName, c.provider, c.email, e.content, f.typeName, b.isActive, b.dateModified, b.dateCreated " +
-                "from InsurancePackageHeader b, InsuranceProvider c, Term e, InsuranceType f " +
-                "where c.id = b.insuranceProviderId and e.id = b.termId and b.insuranceTypeId = f.id and c.id=@InsuranceProviderId";
+            string query = "SELECT b.id, b.packageName, c.provider, c.email, e.content, f.typeName, b.isActive, b.dateModified, b.dateCreated " +
+                "FROM InsurancePackageHeader b " +
+                "LEFT JOIN InsuranceProvider c ON c.id = b.insuranceProviderId " +
+                "LEFT JOIN Term e ON e.id = b.termId " +
+                "LEFT JOIN InsuranceType f ON b.insuranceTypeId = f.id " +
+                "WHERE c.id = @InsuranceProviderId";
+
 
             SqlParameter parameter = new SqlParameter("@InsuranceProviderId", insuranceProvider);
             DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
