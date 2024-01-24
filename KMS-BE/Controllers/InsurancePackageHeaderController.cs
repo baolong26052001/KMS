@@ -67,11 +67,12 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackageHeaderByInsuranceType/{insuranceType}")]
         public JsonResult GetInsurancePackageHeaderByInsuranceType(int insuranceType)
         {
-            string query = "SELECT b.id, b.packageName, c.provider, c.email, e.content, f.typeName, b.isActive, b.dateModified, b.dateCreated " +
+            string query = "SELECT b.id, b.packageName, de.fee, c.provider, c.email, e.content, f.typeName, b.isActive, b.dateModified, b.dateCreated " +
                 "FROM InsurancePackageHeader b " +
                 "LEFT JOIN InsuranceProvider c ON c.id = b.insuranceProviderId " +
                 "LEFT JOIN Term e ON e.id = b.termId " +
                 "LEFT JOIN InsuranceType f ON b.insuranceTypeId = f.id " +
+                "LEFT JOIN InsurancePackageDetail de on de.packageHeaderId = b.id " +
                 "WHERE f.id = @InsuranceTypeId";
 
 
@@ -92,11 +93,12 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackageHeaderByInsuranceProvider/{insuranceProvider}")]
         public JsonResult GetInsurancePackageHeaderByInsuranceProvider(int insuranceProvider)
         {
-            string query = "SELECT b.id, b.packageName, c.provider, c.email, e.content, f.typeName, b.isActive, b.dateModified, b.dateCreated " +
+            string query = "SELECT b.id, b.packageName, de.fee, c.provider, c.email, e.content, f.typeName, b.isActive, b.dateModified, b.dateCreated " +
                 "FROM InsurancePackageHeader b " +
                 "LEFT JOIN InsuranceProvider c ON c.id = b.insuranceProviderId " +
                 "LEFT JOIN Term e ON e.id = b.termId " +
                 "LEFT JOIN InsuranceType f ON b.insuranceTypeId = f.id " +
+                "LEFT JOIN InsurancePackageDetail de on de.packageHeaderId = b.id " +
                 "WHERE c.id = @InsuranceProviderId";
 
 

@@ -135,7 +135,7 @@ namespace KMS.Controllers
             {
                 new SqlParameter("@Id", id),
                 new SqlParameter("@PackageHeaderId", insurancePackageDetail.PackageHeaderId),
-                new SqlParameter("@AgeRangeId", insurancePackageDetail.AgeRangeId),
+                new SqlParameter("@AgeRangeId", (object)insurancePackageDetail.AgeRangeId ?? DBNull.Value),
                 new SqlParameter("@Fee", insurancePackageDetail.Fee),
             };
 
