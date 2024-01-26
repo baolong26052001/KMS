@@ -13,5 +13,6 @@ namespace KMS.Models
         public DateTime? DateCreated { get; set; }
         public DateTime? DateModified { get; set; }
         public bool? IsActive { get; set; }
+        public int? Priority { get; set; }
     }
 }

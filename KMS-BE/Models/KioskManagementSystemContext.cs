@@ -52,8 +52,7 @@ namespace KMS.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=THINKBOOK\\SQLEXPRESS;Database=KioskManagementSystem;Trusted_Connection=True;");
+                optionsBuilder.UseSqlServer("ConnectionStrings:DefaultConnection");
             }
         }
 
@@ -256,6 +255,10 @@ namespace KMS.Models
 
                 entity.Property(e => e.PackageName).HasColumnName("packageName");
 
+                entity.Property(e => e.Priority).HasColumnName("priority");
+
+                
+
                 entity.Property(e => e.TermId).HasColumnName("termId");
             });
 
@@ -444,6 +447,10 @@ namespace KMS.Models
                     .HasMaxLength(30)
                     .HasColumnName("fullName");
 
+                entity.Property(e => e.Gender)
+                    .HasMaxLength(10)
+                    .HasColumnName("gender");
+
                 entity.Property(e => e.Id)
                     .ValueGeneratedOnAdd()
                     .HasColumnName("id");
@@ -453,13 +460,17 @@ namespace KMS.Models
                     .IsUnicode(false)
                     .HasColumnName("idenNumber");
 
-                entity.Property(e => e.Image).HasColumnName("image");
+                entity.Property(e => e.ImageIdCard).HasColumnName("imageIdCard");
+
+                entity.Property(e => e.ImageMember).HasColumnName("imageMember");
 
                 entity.Property(e => e.IsActive).HasColumnName("isActive");
 
                 entity.Property(e => e.LastName)
                     .HasMaxLength(30)
                     .HasColumnName("lastName");
+
+                entity.Property(e => e.Occupation).HasColumnName("occupation");
 
                 entity.Property(e => e.Phone)
                     .HasMaxLength(30)

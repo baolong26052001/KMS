@@ -16,7 +16,7 @@ namespace KMS.Models
         public string? District { get; set; }
         public string? City { get; set; }
         public string? Ward { get; set; }
-        public string? Image { get; set; }
+        public string? ImageIdCard { get; set; }
         public string? Fingerprint1 { get; set; }
         public string? Fingerprint2 { get; set; }
         public string? IdenNumber { get; set; }
@@ -34,5 +34,8 @@ namespace KMS.Models
         public DateTime? DateModified { get; set; }
         public DateTime? DateCreated { get; set; }
         public bool? IsActive { get; set; }
+        public string? Gender { get; set; }
+        public string? ImageMember { get; set; }
+        public string? Occupation { get; set; }
     }
 }
