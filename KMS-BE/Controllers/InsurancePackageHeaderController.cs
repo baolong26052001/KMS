@@ -26,7 +26,7 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackageHeader")]
         public JsonResult GetInsurancePackageHeader()
         {
-            string query = "SELECT b.id, b.packageName, c.provider, c.email, e.content, f.typeName, b.isActive, b.dateModified, b.dateCreated " +
+            string query = "SELECT b.id, b.packageName, c.provider, c.email, e.content, f.typeName, b.priority, b.isActive, b.dateModified, b.dateCreated " +
                 "FROM InsurancePackageHeader b " +
                 "LEFT JOIN InsuranceProvider c ON c.id = b.insuranceProviderId " +
                 "LEFT JOIN Term e ON e.id = b.termId " +
@@ -41,7 +41,7 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackageHeader/{id}")]
         public JsonResult GetInsurancePackageHeaderById(int id)
         {
-            string query = "SELECT b.id, f.id AS insuranceTypeId, e.id AS termId, c.id AS insuranceProviderId, b.packageName, c.provider, c.email, e.content, f.typeName, b.isActive, b.dateModified, b.dateCreated " +
+            string query = "SELECT b.id, f.id AS insuranceTypeId, e.id AS termId, c.id AS insuranceProviderId, b.packageName, c.provider, c.email, e.content, f.typeName, b.priority, b.isActive, b.dateModified, b.dateCreated " +
                 "FROM InsurancePackageHeader b " +
                 "LEFT JOIN InsuranceProvider c ON c.id = b.insuranceProviderId " +
                 "LEFT JOIN Term e ON e.id = b.termId " +
@@ -67,7 +67,7 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackageHeaderByInsuranceType/{insuranceType}")]
         public JsonResult GetInsurancePackageHeaderByInsuranceType(int insuranceType)
         {
-            string query = "SELECT b.id, b.packageName, de.fee, c.provider, c.email, e.content, f.typeName, b.isActive, b.dateModified, b.dateCreated " +
+            string query = "SELECT b.id, b.packageName, de.fee, c.provider, c.email, e.content, f.typeName, b.priority, b.isActive, b.dateModified, b.dateCreated " +
                 "FROM InsurancePackageHeader b " +
                 "LEFT JOIN InsuranceProvider c ON c.id = b.insuranceProviderId " +
                 "LEFT JOIN Term e ON e.id = b.termId " +
@@ -93,7 +93,7 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackageHeaderByInsuranceProvider/{insuranceProvider}")]
         public JsonResult GetInsurancePackageHeaderByInsuranceProvider(int insuranceProvider)
         {
-            string query = "SELECT b.id, b.packageName, de.fee, c.provider, c.email, e.content, f.typeName, b.isActive, b.dateModified, b.dateCreated " +
+            string query = "SELECT b.id, b.packageName, de.fee, c.provider, c.email, e.content, f.typeName, b.priority, b.isActive, b.dateModified, b.dateCreated " +
                 "FROM InsurancePackageHeader b " +
                 "LEFT JOIN InsuranceProvider c ON c.id = b.insuranceProviderId " +
                 "LEFT JOIN Term e ON e.id = b.termId " +
@@ -119,11 +119,12 @@ namespace KMS.Controllers
         [Route("AddInsurancePackageHeader")]
         public JsonResult AddInsurancePackageHeader([FromBody] InsurancePackageHeader insurancePackageHeader)
         {
-            string query = "INSERT INTO InsurancePackageHeader (packageName, insuranceTypeId, termId, insuranceProviderId, dateCreated, dateModified, isActive) " +
-                           "VALUES (@PackageName, @InsuranceTypeId, @TermId, @InsuranceProviderId, GETDATE(), GETDATE(), @IsActive)";
+            string query = "INSERT INTO InsurancePackageHeader (priority, packageName, insuranceTypeId, termId, insuranceProviderId, dateCreated, dateModified, isActive) " +
+                           "VALUES (@Priority, @PackageName, @InsuranceTypeId, @TermId, @InsuranceProviderId, GETDATE(), GETDATE(), @IsActive)";
 
             SqlParameter[] parameters =
             {
+                new SqlParameter("@Priority", insurancePackageHeader.Priority),
                 new SqlParameter("@PackageName", insurancePackageHeader.PackageName),
                 new SqlParameter("@InsuranceTypeId", insurancePackageHeader.InsuranceTypeId),
                 new SqlParameter("@TermId", (object)insurancePackageHeader.TermId ?? DBNull.Value),
@@ -141,12 +142,13 @@ namespace KMS.Controllers
         public JsonResult EditInsurancePackageHeader(int id, [FromBody] InsurancePackageHeader insurancePackageHeader)
         {
             string query = "UPDATE InsurancePackageHeader " +
-                           "SET packageName = @PackageName, insuranceTypeId = @InsuranceTypeId, termId = @TermId, insuranceProviderId = @InsuranceProviderId, isActive = @IsActive, dateModified = GETDATE() " +
+                           "SET priority = @Priority, packageName = @PackageName, insuranceTypeId = @InsuranceTypeId, termId = @TermId, insuranceProviderId = @InsuranceProviderId, isActive = @IsActive, dateModified = GETDATE() " +
                            "WHERE id = @Id";
 
             SqlParameter[] parameters =
             {
                 new SqlParameter("@Id", id),
+                new SqlParameter("@Priority", insurancePackageHeader.Priority),
                 new SqlParameter("@PackageName", insurancePackageHeader.PackageName),
                 new SqlParameter("@InsuranceTypeId", insurancePackageHeader.InsuranceTypeId),
                 new SqlParameter("@TermId", (object)insurancePackageHeader.TermId ?? DBNull.Value),
@@ -200,7 +202,7 @@ namespace KMS.Controllers
         [Route("SearchInsurancePackageHeader")]
         public JsonResult SearchInsurancePackageHeader(string searchQuery)
         {
-            string query = "SELECT b.id, b.packageName, c.provider, c.email, e.content, f.typeName, b.dateModified, b.dateCreated " +
+            string query = "SELECT b.id, b.packageName, b.priority, c.provider, c.email, e.content, f.typeName, b.dateModified, b.dateCreated " +
                            "FROM InsurancePackageHeader b " +
                            "LEFT JOIN InsuranceProvider c ON c.id = b.insuranceProviderId " +
                            "LEFT JOIN Term e ON e.id = b.termId " +
@@ -222,7 +224,7 @@ namespace KMS.Controllers
         [Route("FilterInsurancePackageHeader")]
         public JsonResult FilterInsurancePackageHeader([FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
         {
-            string query = "SELECT b.id, b.packageName, c.provider, c.email, e.content, f.typeName, b.dateModified, b.dateCreated " +
+            string query = "SELECT b.id, b.packageName, b.priority, c.provider, c.email, e.content, f.typeName, b.dateModified, b.dateCreated " +
                            "FROM InsurancePackageHeader b " +
                            "INNER JOIN InsuranceProvider c ON c.id = b.insuranceProviderId " +
                            "INNER JOIN Term e ON e.id = b.termId " +
