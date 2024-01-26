@@ -18,6 +18,7 @@ const EditInsurancePackage = () => {
     insuranceTypeId: '',
     termId: '',
     insuranceProviderId: '',
+    priority: '',
     isActive: '',
   });
 
@@ -34,6 +35,7 @@ const EditInsurancePackage = () => {
             insuranceTypeId: groupData[0].insuranceTypeId, 
             termId: groupData[0].termId,
             insuranceProviderId: groupData[0].insuranceProviderId,
+            priority: groupData[0].priority,
             isActive: groupData[0].isActive,
           });
         } else {
@@ -203,6 +205,14 @@ const EditInsurancePackage = () => {
                   </MenuItem>
               ))}
               </TextField>
+              <TextField
+                id="priority"
+                label="Priority"
+                variant="outlined"
+                type='number'
+                value={editedPackage.priority}
+                onChange={(e) => handleInputChange('priority', e.target.value)}
+              />
               <TextField
                 id="isActive"
                 label="Is Active"

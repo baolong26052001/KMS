@@ -19,6 +19,7 @@ const AddInsurancePackage = () => {
     insuranceTypeId: '',
     termId: '',
     insuranceProviderId: '',
+    priority: '',
     isActive: true,
   });
 
@@ -182,6 +183,14 @@ const AddInsurancePackage = () => {
                   </MenuItem>
               ))}
               </TextField>
+              <TextField
+                id="priority"
+                label="Priority"
+                variant="outlined"
+                type='number'
+                value={newInsurancePackage.priority}
+                onChange={(e) => handleInputChange('priority', e.target.value)}
+              />
               <TextField
                 id="isActive"
                 label="Is Active"

@@ -18,7 +18,7 @@ const Login = ({onLogin }) => {
     username: '',
     password: '',
     showPassword: false,
-    loading: false, // Added loading state 
+    loading: false,
   });
 
   const handleChange = (prop) => (event) => {
@@ -33,14 +33,12 @@ const Login = ({onLogin }) => {
     const API_URL = 'https://localhost:7017/';
 
     try {
-      setValues({ ...values, loading: true }); // Set loading state
+      setValues({ ...values, loading: true }); 
 
-      // Perform login logic here
       const response = await fetch(`${API_URL}api/User/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          //'Authorization': 'Bearer eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW41IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3MDYxNTU5NTZ9.UjfuLu7AG1AnkzNLxJj29O5fS3tLNHBqRHO8mNckHAc',
         },
         body: JSON.stringify({
           username: values.username,
@@ -51,22 +49,17 @@ const Login = ({onLogin }) => {
       // The response is in JSON format
       const data = await response.json();
       console.log(data);
-      // Check if login was successful based on backend response
       if (response.ok) {
-        console.log('Login successful:', data.message);
         localStorage.setItem('token', data.Token);
-        console.log('storage ', localStorage);
-        // Redirect to /dashboard
-        navigate('/dashboard'); 
         onLogin();
+        navigate('/dashboard'); 
       } else {
         console.error('Login failed:', data.message);
       }
     } catch (error) {
       console.error('Error during login:', error);
-      // Handle network or other errors
     } finally {
-      setValues({ ...values, loading: false }); // Reset loading state
+      setValues({ ...values, loading: false });
     }
   };
 
