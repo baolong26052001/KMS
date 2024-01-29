@@ -257,8 +257,6 @@ namespace KMS.Models
 
                 entity.Property(e => e.Priority).HasColumnName("priority");
 
-                
-
                 entity.Property(e => e.TermId).HasColumnName("termId");
             });
 
@@ -793,6 +791,14 @@ namespace KMS.Models
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
+                entity.Property(e => e.CanAdd).HasColumnName("canAdd");
+
+                entity.Property(e => e.CanDelete).HasColumnName("canDelete");
+
+                entity.Property(e => e.CanUpdate).HasColumnName("canUpdate");
+
+                entity.Property(e => e.CanView).HasColumnName("canView");
+
                 entity.Property(e => e.DateCreated)
                     .HasColumnType("datetime")
                     .HasColumnName("dateCreated");
@@ -809,6 +815,8 @@ namespace KMS.Models
                 entity.Property(e => e.GroupId).HasColumnName("groupId");
 
                 entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.Site).HasColumnName("site");
             });
 
             modelBuilder.Entity<TactivityLog>(entity =>
