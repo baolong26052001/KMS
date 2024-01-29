@@ -73,12 +73,27 @@ const items = [
   getItem('Logout', 'login', <LogoutIcon />),
 ];
 
-
+function getCookie(name) {
+  const cookies = document.cookie.split(';');
+  for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.startsWith(name + '=')) {
+          return cookie.substring(name.length + 1);
+      }
+  }
+  return null;
+}
 
 const Sidebar = () => {
   const location = useLocation();
   const currentPath = location.pathname.split('/').filter(Boolean).pop();
   const [permissions, setPermissions] = useState([]);
+
+  const role = getCookie('role');
+  const groupId = getCookie('groupId');
+
+  console.log('Role:', role);
+  console.log('Group ID:', groupId);
 
   const parentName = items.find(item => item.children && item.children.some(subItem => subItem.key === currentPath))?.key;
   const subopen = parentName || '';
@@ -102,7 +117,7 @@ const Sidebar = () => {
     }
   };
 
-  const userRole = localStorage.getItem('role');
+  const userRole = role;
 
   useEffect(() => {
     fetch('https://localhost:7017/api/AccessRule/ShowPermission')
@@ -119,7 +134,7 @@ const Sidebar = () => {
     if (item.children) {
       const filteredChildren = item.children.map((subItem) => {
         const hasPermission =
-          userRole === 'Admin' ||
+        userRole === 'Admin' ||
           permissions.some((permission) =>
             permission.site === subItem.key &&
             permission.groupName === userRole &&
