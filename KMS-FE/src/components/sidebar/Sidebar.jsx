@@ -119,6 +119,7 @@ const Sidebar = () => {
     if (item.children) {
       const filteredChildren = item.children.map((subItem) => {
         const hasPermission =
+          userRole === 'Admin' ||
           permissions.some((permission) =>
             permission.site === subItem.key &&
             permission.groupName === userRole &&
