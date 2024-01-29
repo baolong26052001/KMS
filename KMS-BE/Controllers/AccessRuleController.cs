@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using KMS.Models;
 using KMS.Tools;
+using System.Data;
 
 namespace KMS.Controllers
 {
@@ -19,7 +20,14 @@ namespace KMS.Controllers
             _exQuery = exQuery;
         }
 
-
+        [HttpGet]
+        [Route("ShowPermission")]
+        public JsonResult ShowPermission()
+        {
+            string query = "select TUserGroup.groupName, TAccessRule.* from TAccessRule, TUserGroup where TAccessRule.groupId = TUserGroup.id";
+            DataTable table = _exQuery.ExecuteRawQuery(query);
+            return new JsonResult(table);
+        }
 
     }
 }

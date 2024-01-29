@@ -78,6 +78,8 @@ const items = [
 const Sidebar = () => {
   const location = useLocation();
   const currentPath = location.pathname.split('/').filter(Boolean).pop();
+  const [permissions, setPermissions] = useState([]);
+
   const parentName = items.find(item => item.children && item.children.some(subItem => subItem.key === currentPath))?.key;
   const subopen = parentName || '';
 
@@ -99,6 +101,39 @@ const Sidebar = () => {
     }
   };
 
+  const userRole = localStorage.getItem('role');
+
+  useEffect(() => {
+    // Fetch permissions from the API
+    fetch('https://localhost:7017/api/AccessRule/ShowPermission')
+      .then((response) => response.json())
+      .then((data) => setPermissions(data))
+      .catch((error) => console.error('Error fetching permissions:', error));
+  }, []);
+
+  const filteredItems = items.map((item) => {
+    if (item.type === 'divider') {
+      return item;
+    }
+
+    if (item.children) {
+      const filteredChildren = item.children.map((subItem) => {
+        const hasPermission =
+          permissions.some((permission) =>
+            permission.site === subItem.key &&
+            permission.groupName === userRole &&
+            permission.canView
+          );
+
+        return hasPermission ? subItem : null;
+      }).filter(Boolean);
+
+      return filteredChildren.length > 0 ? { ...item, children: filteredChildren } : null;
+    }
+
+    return item;
+  }).filter(Boolean);
+
   useEffect(() => {
     localStorage.setItem('openKeys', openKeys[0]);
     localStorage.setItem('selectedKey', selectedKey);
@@ -117,7 +152,7 @@ const Sidebar = () => {
       onOpenChange={onOpenChange}
       selectedKeys={[selectedKey]} 
     >
-      {items.map((item) => {
+      {filteredItems.map((item) => {
         if (item.type === 'divider') {
           return <Divider style={{ background: 'white' }} key={item.key} />;
         }
