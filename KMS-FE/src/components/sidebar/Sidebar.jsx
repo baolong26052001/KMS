@@ -89,7 +89,15 @@ const Sidebar = () => {
     const storedSelectedKey = localStorage.getItem('selectedKey');
     return storedSelectedKey || currentPath;
   });
-  const [defaultOpenKeys] = useState([]);
+
+  const handleLoginClick = () => {
+    setSelectedKey('dashboard');
+    try {
+      localStorage.setItem('selectedKey', 'dashboard');
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     localStorage.setItem('openKeys', openKeys[0]);
@@ -107,12 +115,21 @@ const Sidebar = () => {
       mode="inline"
       openKeys={openKeys}
       onOpenChange={onOpenChange}
-      defaultOpenKeys={defaultOpenKeys}
-      defaultSelectedKeys={[selectedKey]}
+      selectedKeys={[selectedKey]} 
     >
       {items.map((item) => {
         if (item.type === 'divider') {
           return <Divider style={{ background: 'white' }} key={item.key} />;
+        }
+
+        if (item.key === 'login') {
+          return (
+            <Menu.Item key={item.key} icon={item.icon} onClick={handleLoginClick}>
+              <Link to={`/${item.key}`}>
+                {item.label}
+              </Link>
+            </Menu.Item>
+          );
         }
 
         if (item.children) {

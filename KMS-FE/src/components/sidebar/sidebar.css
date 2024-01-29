@@ -32,16 +32,18 @@
     color: white;
     padding: 10px 20px;
     font-weight: bold;
-    /* Add any additional styles you need */
-    pointer-events: none; /* Disables mouse events */
-    user-select: none; /* Disables text selection */
+    pointer-events: none;
+    user-select: none;
 
 }
 .non-clickable-text:hover {
-    /* No hover effect */
-    cursor: default; /* Sets default cursor */
+    cursor: default; 
 }
 .admin-text {
     font-size: 20px;
     margin-left: 20px;
+}
+
+hr.MuiDivider-root.MuiDivider-fullWidth.css-9mgopn-MuiDivider-root {
+    margin-bottom: 25px;
 }
