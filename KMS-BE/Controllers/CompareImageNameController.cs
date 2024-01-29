@@ -40,7 +40,7 @@ namespace KMS.Controllers
         {
             try
             {
-                string query = "SELECT * FROM LMember WHERE LOWER(image) LIKE '%' + LOWER(@imageName) + '%'";
+                string query = "SELECT * FROM LMember WHERE LOWER(imageIdCard) LIKE '%' + LOWER(@imageName) + '%'";
                 
                 SqlParameter parameter = new SqlParameter("@imageName", imageName);
                 DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
