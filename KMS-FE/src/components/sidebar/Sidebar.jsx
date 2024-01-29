@@ -96,6 +96,7 @@ const Sidebar = () => {
     setSelectedKey('dashboard');
     try {
       localStorage.setItem('selectedKey', 'dashboard');
+      localStorage.clear();
     } catch (error) {
       console.log(error);
     }
@@ -104,7 +105,6 @@ const Sidebar = () => {
   const userRole = localStorage.getItem('role');
 
   useEffect(() => {
-    // Fetch permissions from the API
     fetch('https://localhost:7017/api/AccessRule/ShowPermission')
       .then((response) => response.json())
       .then((data) => setPermissions(data))
