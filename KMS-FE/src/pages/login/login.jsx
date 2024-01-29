@@ -51,6 +51,7 @@ const Login = ({onLogin }) => {
       console.log(data);
       if (response.ok) {
         localStorage.setItem('token', data.Token);
+        localStorage.setItem('role', data.Role);
         onLogin();
         navigate('/dashboard'); 
       } else {
