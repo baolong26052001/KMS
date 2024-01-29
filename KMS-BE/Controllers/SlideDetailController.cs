@@ -34,8 +34,9 @@ namespace KMS.Controllers
         public JsonResult GetSlideDetailById(int id) // show by header id
         {
             string query = "select sd.id, sd.description, sd.typeContent, sd.sequence, sd.contentUrl, sd.slideHeaderId, sd.isActive, sd.dateModified, sd.dateCreated " +
-                "\r\nfrom TSlideDetail sd " +
-                "WHERE sd.slideHeaderId = @Id";
+                "from TSlideDetail sd " +
+                "WHERE sd.slideHeaderId = @Id ORDER BY sd.sequence ASC";
+
             SqlParameter parameter = new SqlParameter("@Id", id);
             DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
