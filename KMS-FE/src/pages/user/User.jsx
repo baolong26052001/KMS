@@ -13,7 +13,7 @@ import Alert from '@mui/material/Alert';
 // import Delete Hook
 import useDeleteHook from '../../components/deleteHook/deleteHook';
 
-
+const API_URL = "https://localhost:7017/";
 
 const CustomToolbar = ({ onButtonClick, selectedRows }) => {
   const navigate = useNavigate();
@@ -83,16 +83,43 @@ const ViewButton = ({ rowId, label, onClick }) => {
 
 const EditButton = ({ rowId, label, onClick }) => {
   const navigate = useNavigate();
+  const [permissions, setPermissions] = useState([]);
+  useEffect(() => {
+    async function fetchPermissions() {
+      try {
+        const permissionResponse = await fetch(`${API_URL}api/AccessRule/ShowPermission`);
+        if (!permissionResponse.ok) {
+          throw new Error(`HTTP error! Status: ${permissionResponse.status}`);
+        }
 
+        const permissionData = await permissionResponse.json();
+        setPermissions(permissionData);
+      } catch (error) {
+        console.error('Error fetching permissions:', error);
+      }
+    }
+
+    fetchPermissions();
+  }, []);
   const handleClick = (event) => {
     event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
     onClick(rowId);
     navigate(`/editUser/${rowId}`);
   };
 
+  // Check if "canUpdate" is false and "site" is "users"
+  const currentSite = window.location.pathname.split('/')[1]; // Extract the first part of the path after the domain
+  const canUpdate = permissions.find(permission => permission.site === currentSite)?.canUpdate;
+  const userRoleId = permissions.find(permission => permission.site === currentSite)?.groupId;
+  const userRoleInCookie = parseInt(document.cookie.split('; ').find(row => row.startsWith('groupId')).split('=')[1]);
+
+  if (!canUpdate && userRoleId == userRoleInCookie) {
+    return null; // Return null to hide the Edit button
+  }
+
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0 }}>
-      <Button size="small"  variant="contained" color="warning" onClick={handleClick}>
+      <Button size="small" variant="contained" color="warning" onClick={handleClick}>
         {label}
       </Button>
     </Box>
