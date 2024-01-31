@@ -67,22 +67,28 @@ function createData(id, groupName, dateModified, dateCreated, isActive) {
   return {id, groupName, dateModified, dateCreated, isActive };
 }
 
-const PermissionButton = ({ rowId, label, onClick }) => {
+const PermissionButton = ({ rowId, groupName, label, onClick }) => {
   const navigate = useNavigate();
+
   const handleClick = (event) => {
-    event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
+    event.stopPropagation();
     onClick(rowId);
     navigate(`/permission/${rowId}`);
   };
 
+  const isPermissionButtonVisible = groupName !== 'Admin';
+
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-      <Button size="small" variant="contained" color="error" onClick={handleClick}>
-        {label}
-      </Button>
+      {isPermissionButtonVisible && (
+        <Button size="small" variant="contained" color="error" onClick={handleClick}>
+          {label}
+        </Button>
+      )}
     </Box>
   );
 };
+
 
 const EditButton = ({ rowId, label, onClick }) => {
   const navigate = useNavigate();
@@ -121,11 +127,12 @@ const columns = [
     field: 'permissionButton',
     headerName: '',
     width: 120,
-    sortable: false, // Disable sorting for this column
-    filterable: false, // Disable filtering for this column
+    sortable: false,
+    filterable: false,
     renderCell: (params) => (
-        <PermissionButton
+      <PermissionButton
         rowId={params.row.id}
+        groupName={params.row.groupName}
         label="Permission"
         onClick={handleButtonClick}
       />
