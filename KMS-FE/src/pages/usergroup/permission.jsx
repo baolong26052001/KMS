@@ -12,8 +12,6 @@ const columns = [
     minWidth: 500,
     flex: 1,
     sortable: false,
-    filterable: false,
-    disableColumnMenu: true,
   },
   {
     field: 'canView',
@@ -113,10 +111,15 @@ const Permission = ({ routes }) => {
     const fetchRoles = async () => {
       try {
         const response = await fetch(`${API_URL}api/AccessRule/ShowPermissionInfoInEditPage/${id}`);
-
         if (response.ok) {
           const data = await response.json();
-          setRows(data);
+    
+          if (typeof data === 'string' && data.includes('Group ID not found')) {
+            console.log('Group ID not found. Adding default site...');
+            await addDefaultSite();
+          } else {
+            setRows(data);
+          }
         } else {
           console.log('Failed to fetch group details');
         }
@@ -124,7 +127,43 @@ const Permission = ({ routes }) => {
         console.error('Error fetching group details:', error);
       }
     };
+    
+    
+    const addDefaultSite = async () => {
+      try {
+        const sites = JSON.parse(sessionStorage.childrenKeys || '[]');
 
+        for (const site of sites) {
+          try {
+            const response = await fetch(`${API_URL}api/AccessRule/AddPermission`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                groupId: id,
+                isActive: true,
+                site,
+              }),
+            });
+
+            if (!response.ok) {
+              console.error(`Error adding permission for site ${site}: ${response.statusText}`);
+            } else {
+              console.log(`Successfully added permission for site ${site}`);
+            }
+          } catch (error) {
+            console.error(`Error adding permission for site ${site}:`, error);
+          }
+        }
+
+        fetchRoles();
+      } catch (error) {
+        console.error('Error parsing session storage keys:', error);
+      }
+    };
+    
+    
     fetchGroupDetails();
     fetchRoles();
   }, [routes, API_URL, id]);
@@ -142,7 +181,7 @@ const Permission = ({ routes }) => {
       return row;
     });
 
-    setRows(updatedRows);
+    setRows(updatedRows); 
   };
 
   const handleSave = async () => {

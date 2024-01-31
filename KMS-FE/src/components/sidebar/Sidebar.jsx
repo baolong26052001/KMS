@@ -92,9 +92,6 @@ const Sidebar = () => {
   const role = getCookie('role');
   const groupId = getCookie('groupId');
 
-  console.log('Role:', role);
-  console.log('Group ID:', groupId);
-
   const parentName = items.find(item => item.children && item.children.some(subItem => subItem.key === currentPath))?.key;
   const subopen = parentName || '';
 
@@ -107,6 +104,32 @@ const Sidebar = () => {
     return storedSelectedKey || currentPath;
   });
 
+  const extractAndStoreChildrenKeys = () => {
+    const extractedKeys = [];
+
+    function traverse(item) {
+      if (item.children) {
+        item.children.forEach((childItem) => {
+          traverse(childItem);
+        });
+      } else {
+        extractedKeys.push(item.key);
+      }
+    }
+
+    items.forEach((item) => {
+      if (item.children) {
+        item.children.forEach((childItem) => {
+          traverse(childItem);
+        });
+      }
+    });
+
+    sessionStorage.setItem('childrenKeys', JSON.stringify(extractedKeys));
+
+    return extractedKeys;
+  };
+
   const handleLoginClick = () => {
     setSelectedKey('dashboard');
     try {
@@ -115,6 +138,7 @@ const Sidebar = () => {
     } catch (error) {
       console.log(error);
     }
+    extractAndStoreChildrenKeys();
   };
 
   const userRole = role;
