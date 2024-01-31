@@ -49,19 +49,21 @@ namespace KMS.Controllers
         }
 
         [HttpPut]
-        [Route("UpdatePermission/{groupId}")]
-        public JsonResult UpdatePermission(int groupId, [FromBody] TaccessRule accessRule)
+        [Route("UpdatePermission/{groupId}/{site}")]
+        public JsonResult UpdatePermission(int groupId, string site, [FromBody] TaccessRule accessRule)
         {
-            string query = "UPDATE TAccessRule SET canView = @CanView, canAdd = @CanAdd, canUpdate = @CanUpdate, canDelete = @CanDelete, site = @Site " +
-                           "WHERE groupId = @GroupId";
+            string query = "UPDATE TAccessRule SET canView = @CanView, canAdd = @CanAdd, canUpdate = @CanUpdate, canDelete = @CanDelete " +
+                           "WHERE groupId = @GroupId and site = @Site";
 
             SqlParameter[] parameters =
             {
                 new SqlParameter("@GroupId", groupId),
+                new SqlParameter("@Site", site),
                 new SqlParameter("@CanView", (object)accessRule.CanView ?? DBNull.Value),
                 new SqlParameter("@CanAdd", (object)accessRule.CanAdd ?? DBNull.Value),
                 new SqlParameter("@CanUpdate", (object)accessRule.CanUpdate ?? DBNull.Value),
                 new SqlParameter("@CanDelete", (object)accessRule.CanDelete ?? DBNull.Value),
+                
             };
 
             _exQuery.ExecuteRawQuery(query, parameters);
