@@ -136,7 +136,7 @@ namespace KMS.Controllers
 
         [HttpPost]
         [Route("GetMemberInformationFromScanner2")]
-        public JsonResult AddMember2(IFormFile file)
+        public JsonResult AddMember2(IFormFile file, IFormFile imageIdCardFile)
         {
             try
             {
@@ -162,7 +162,7 @@ namespace KMS.Controllers
                             Ward = cardInfo.address_split.ward,
                             District = cardInfo.address_split.district,
                             City = cardInfo.address_split.province,
-
+                            ImageIdCard = imageIdCardFile?.FileName,
                             Address1 = $"{cardInfo.address_split?.village}, {cardInfo.address_split?.ward}, {cardInfo.address_split?.district}, {cardInfo.address_split?.province}".TrimEnd(',', ' '),
                             Address2 = $"{cardInfo.domicile_split?.village}, {cardInfo.domicile_split?.ward}, {cardInfo.domicile_split?.district}, {cardInfo.domicile_split?.province}".TrimEnd(',', ' '),
                             // ... Map other properties as needed
@@ -170,13 +170,14 @@ namespace KMS.Controllers
                         };
 
                         // Now, insert the member into the database using your existing code
-                        string query = "INSERT INTO LMember (gender, firstName, lastName, fullName, birthday, idenNumber, ward, district, city, address1, address2, " +
+                        string query = "INSERT INTO LMember (imageIdCard, gender, firstName, lastName, fullName, birthday, idenNumber, ward, district, city, address1, address2, " +
                                        "isActive, dateCreated, dateModified) " +
-                                       "VALUES (@Gender, @FirstName, @LastName, @FullName, @Birthday, @IdenNumber, @Ward, @District, @City, @Address1, @Address2, " +
+                                       "VALUES (@ImageIdCard, @Gender, @FirstName, @LastName, @FullName, @Birthday, @IdenNumber, @Ward, @District, @City, @Address1, @Address2, " +
                                        "@IsActive, GETDATE(), GETDATE())";
 
                         SqlParameter[] parameters =
                         {
+                            new SqlParameter("@ImageIdCard", member.ImageIdCard),
                             new SqlParameter("@Gender", member.Gender),
                             new SqlParameter("@FirstName", member.FirstName),
                             new SqlParameter("@LastName", member.LastName),
@@ -207,6 +208,8 @@ namespace KMS.Controllers
                 return new JsonResult($"Error: {ex.Message}");
             }
         }
+
+
 
 
         [HttpPut]
