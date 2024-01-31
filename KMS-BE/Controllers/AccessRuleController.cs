@@ -48,6 +48,27 @@ namespace KMS.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("AddPermission")]
+        public JsonResult AddPermission([FromBody] TaccessRule taccessRule)
+        {
+            string query = "INSERT INTO TAccessRule (groupId, isActive, canView, canAdd, canUpdate, canDelete, site) " +
+                           "VALUES (@GroupId, @IsActive, 0, 0, 0, 0, @Site)";
+            
+            SqlParameter[] parameters =
+            {
+                new SqlParameter("@GroupId", taccessRule.GroupId),
+                new SqlParameter("@IsActive", taccessRule.IsActive),
+                new SqlParameter("@Site", taccessRule.Site),
+            };
+            
+
+            _exQuery.ExecuteRawQuery(query, parameters);
+            
+
+            return new JsonResult("Permission added successfully");
+        }
+
         [HttpPut]
         [Route("UpdatePermission/{groupId}/{site}")]
         public JsonResult UpdatePermission(int groupId, string site, [FromBody] TaccessRule accessRule)
