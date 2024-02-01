@@ -48,6 +48,30 @@ namespace KMS.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("ShowPermissionBySiteAndGroupId/{groupId}/{site}")]
+        public JsonResult ShowPermissionBySiteAndGroupId(int groupId, string site)
+        {
+            string query = "select * from TAccessRule where groupId = @GroupId and site = @Site";
+
+            SqlParameter[] parameters =
+            {
+                new SqlParameter("@GroupId", groupId),
+                new SqlParameter("@Site", site),
+            };
+
+            DataTable table = _exQuery.ExecuteRawQuery(query, parameters);
+
+            if (table.Rows.Count > 0)
+            {
+                return new JsonResult(table);
+            }
+            else
+            {
+                return new JsonResult("Group ID and Site not found");
+            }
+        }
+
         [HttpPost]
         [Route("AddPermission")]
         public JsonResult AddPermission([FromBody] TaccessRule taccessRule)

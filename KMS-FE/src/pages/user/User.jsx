@@ -87,7 +87,25 @@ const EditButton = ({ rowId, label, onClick }) => {
   useEffect(() => {
     async function fetchPermissions() {
       try {
-        const permissionResponse = await fetch(`${API_URL}api/AccessRule/ShowPermission`);
+        const siteVariable = (new URL(window.location.href)).pathname.split('/').find(Boolean) || '';
+        console.log('siteVariable: ', siteVariable);
+        const groupIdVariable = getGroupIdFromCookie();
+        console.log('groupIdVariable: ', groupIdVariable);
+
+        function getGroupIdFromCookie() {
+          // Retrieve the value of groupId from the cookie
+          const cookies = document.cookie.split('; ');
+          for (const cookie of cookies) {
+            const [name, value] = cookie.split('=');
+            if (name === 'groupId') {
+              return value;
+            }
+          }
+          
+          return null;
+        }
+
+        const permissionResponse = await fetch(`${API_URL}api/AccessRule/ShowPermissionBySiteAndGroupId/${groupIdVariable}/${siteVariable}`);
         if (!permissionResponse.ok) {
           throw new Error(`HTTP error! Status: ${permissionResponse.status}`);
         }
@@ -108,12 +126,26 @@ const EditButton = ({ rowId, label, onClick }) => {
   };
 
   // Check if "canUpdate" is false and "site" is "users"
-  const currentSite = window.location.pathname.split('/')[1]; // Extract the first part of the path after the domain
-  const canUpdate = permissions.find(permission => permission.site === currentSite)?.canUpdate;
-  const userRoleId = permissions.find(permission => permission.site === currentSite)?.groupId;
-  const userRoleInCookie = parseInt(document.cookie.split('; ').find(row => row.startsWith('groupId')).split('=')[1]);
+  const currentSite = (new URL(window.location.href)).pathname.split('/').find(Boolean) || '';
+  console.log(currentSite);
+  const canUpdate = Array.isArray(permissions) ? permissions.find(permission => permission.site === currentSite)?.canUpdate : undefined;
+  const roleNameVariable = getRoleNameFromCookie();
+  console.log('role name: ', roleNameVariable);
+  function getRoleNameFromCookie() {
+    // Retrieve the value of groupId from the cookie
+    const cookies = document.cookie.split('; ');
+    for (const cookie of cookies) {
+      const [name, value] = cookie.split('=');
+      if (name === 'role') {
+        return value;
+      }
+    }
 
-  if (!canUpdate && userRoleId == userRoleInCookie) {
+    return null;
+  }
+  
+
+  if (!canUpdate && roleNameVariable != 'Admin') {
     return null; // Return null to hide the Edit button
   }
 
