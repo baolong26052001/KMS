@@ -146,6 +146,15 @@ h1, p {
   visibility: hidden;
 }
 
+td.MuiTableCell-root.MuiTableCell-body.MuiTableCell-sizeMedium.cell-head.css-1ex1afd-MuiTableCell-root {
+  text-align-last: left;
+}
+
+td.MuiTableCell-root.MuiTableCell-body.MuiTableCell-sizeMedium.cell-body.css-1ex1afd-MuiTableCell-root {
+  text-align-last: left;
+}
+
+
 /* View css */
 .custom-table {
   width: 100%;

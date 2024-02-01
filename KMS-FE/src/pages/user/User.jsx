@@ -88,9 +88,7 @@ const EditButton = ({ rowId, label, onClick }) => {
     async function fetchPermissions() {
       try {
         const siteVariable = (new URL(window.location.href)).pathname.split('/').find(Boolean) || '';
-        console.log('siteVariable: ', siteVariable);
         const groupIdVariable = getGroupIdFromCookie();
-        console.log('groupIdVariable: ', groupIdVariable);
 
         function getGroupIdFromCookie() {
           // Retrieve the value of groupId from the cookie
@@ -127,10 +125,8 @@ const EditButton = ({ rowId, label, onClick }) => {
 
   // Check if "canUpdate" is false and "site" is "users"
   const currentSite = (new URL(window.location.href)).pathname.split('/').find(Boolean) || '';
-  console.log(currentSite);
   const canUpdate = Array.isArray(permissions) ? permissions.find(permission => permission.site === currentSite)?.canUpdate : undefined;
   const roleNameVariable = getRoleNameFromCookie();
-  console.log('role name: ', roleNameVariable);
   function getRoleNameFromCookie() {
     // Retrieve the value of groupId from the cookie
     const cookies = document.cookie.split('; ');

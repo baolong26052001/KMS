@@ -207,15 +207,6 @@ const InsurancePackageDetail = () => {
             <h1 className="h1-dashboard">Benefit Details</h1>
         </div>
             <div className="bigcarddashboard">
-              <div>
-                <Button
-                  variant="contained"
-                  onClick={() => navigate(-1)}
-                  style={{ backgroundColor: '#4CAF50', color: '#fff' }}
-                >
-                  Go Back
-                </Button>
-              </div>
                 <div className='Table' style={{ height: 400, width: '100%'}}>
                 
                 <DataGrid

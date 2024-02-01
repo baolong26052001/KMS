@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Menu } from 'antd';
 import './sidebar.css';
-import { Link } from 'react-router-dom';
+import { Link  } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import Divider from '@mui/material/Divider';
 import { HomeOutlined, ProfileOutlined, WifiOutlined, CreditCardOutlined, CopyOutlined, BellOutlined, AccountBookOutlined, MoneyCollectOutlined, FileTextOutlined, LockOutlined, SettingOutlined, UserOutlined, UsergroupAddOutlined, AppstoreAddOutlined } from '@ant-design/icons';
@@ -70,7 +70,7 @@ const items = [
   getItem('Report', 'sub5', <FileTextOutlined />, [
     getItem('Kiosk Health', 'kioskhealth', <WifiOutlined />),
   ]),
-  getItem('Logout', 'login', <LogoutIcon />),
+  getItem('Logout', 'logout', <LogoutIcon />),
 ];
 
 function getCookie(name) {
@@ -88,7 +88,6 @@ const Sidebar = () => {
   const location = useLocation();
   const currentPath = location.pathname.split('/').filter(Boolean).pop();
   const [permissions, setPermissions] = useState([]);
-
   const role = getCookie('role');
   const groupId = getCookie('groupId');
 
@@ -130,7 +129,7 @@ const Sidebar = () => {
     return extractedKeys;
   };
 
-  const handleLoginClick = () => {
+  const handleLogoutClick = () => {
     setSelectedKey('dashboard');
     try {
       localStorage.setItem('selectedKey', 'dashboard');
@@ -154,25 +153,28 @@ const Sidebar = () => {
     if (item.type === 'divider') {
       return item;
     }
-
+  
     if (item.children) {
       const filteredChildren = item.children.map((subItem) => {
         const hasPermission =
-        userRole === 'Admin' ||
-          permissions.some((permission) =>
-            permission.site === subItem.key &&
-            permission.groupName === userRole &&
-            permission.canView
-          );
-
+          userRole === 'Admin' ||
+          (subItem.key !== 'usersGroup' && 
+            permissions.some(
+              (permission) =>
+                permission.site === subItem.key &&
+                permission.groupName === userRole &&
+                permission.canView
+            ));
+  
         return hasPermission ? subItem : null;
       }).filter(Boolean);
-
+  
       return filteredChildren.length > 0 ? { ...item, children: filteredChildren } : null;
     }
-
+  
     return item;
   }).filter(Boolean);
+  
 
   useEffect(() => {
     localStorage.setItem('openKeys', openKeys[0]);
@@ -197,9 +199,9 @@ const Sidebar = () => {
           return <Divider style={{ background: 'white' }} key={item.key} />;
         }
 
-        if (item.key === 'login') {
+        if (item.key === 'logout') {
           return (
-            <Menu.Item key={item.key} icon={item.icon} onClick={handleLoginClick}>
+            <Menu.Item key={item.key} icon={item.icon} onClick={handleLogoutClick}>
               <Link to={`/${item.key}`}>
                 {item.label}
               </Link>

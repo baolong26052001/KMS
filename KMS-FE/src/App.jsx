@@ -1,19 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import Sidebar from './components/sidebar/Sidebar';
 import Headerbar from './components/header/Header';
 import Login from './pages/login/login';
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 import Box from '@mui/material/Box';
 import { useAuth } from './components/AuthContext/AuthContext';
-//import { Outlet, Link, Route } from "react-router-dom";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 
 const App = () => {
 
-  const { isAuthenticated, login  } = useAuth();
+  const { isAuthenticated, login, logout  } = useAuth();
+  const [showHeaderbar, setShowHeaderbar] = useState(isAuthenticated);
+
+  useEffect(() => {
+    setShowHeaderbar(isAuthenticated);
+  }, [isAuthenticated]);
+
+
   return (
     <div>
       <Router>
@@ -21,10 +27,10 @@ const App = () => {
         <Routes>
           <Route
             path="/login"
-            element={isAuthenticated ? <Navigate to="/dashboard" /> : <Login  onLogin={login}/>}
+            element={<Login  onLogin={login}/> }
           />
-        </Routes> 
-        {/* {isAuthenticated ? (  */}
+        </Routes>
+        {isAuthenticated ? ( 
           <React.Fragment>
           <Box>
             <Grid container spacing={0}>
@@ -32,7 +38,7 @@ const App = () => {
                 <Sidebar />
               </Grid>
               <Grid xs={10}>
-                <Headerbar />
+              {showHeaderbar && <Headerbar onLogout={logout} />}
               <div className='Dashboard-table'>
                 <React.Suspense>      
                   <Routes> 
@@ -151,9 +157,8 @@ const App = () => {
                     <Route path="/notificationlogs" element={<RouteNotificationLogs />} />
                     <Route path="/audit" element={<RouteAudit />} />
                     <Route path="/kioskhealth" element={<RouteKioskHealth />} />
-                    <Route
-                      path="/login"
-                    />
+                    <Route path="/logout" element={<RouteLogout />} />
+                    
                   </Routes>
                 </React.Suspense>
               </div>
@@ -161,10 +166,9 @@ const App = () => {
           </Grid>
         </Box>
         </React.Fragment>
-         {/* ) : (
-           // Redirect to login if not authenticated
+         ) : (
           <Navigate to="/login" />
-         )}  */}
+         )} 
       </div>
     </Router>
     </div>
@@ -197,6 +201,7 @@ const RouteInsuranceProvider = React.lazy(() => import('./pages/insuranceProvide
 const RouteInsuranceType = React.lazy(() => import('./pages/insuranceType/insuranceType'));
 const RouteInsuranceTerm = React.lazy(() => import('./pages/insuranceTerm/insuranceTerm'));
 const RouteInsuranceAgeRange = React.lazy(() => import('./pages/insuranceAgeRange/insuranceAgeRange'));
+const RouteLogout = React.lazy(() => import('./components/logout/logout'));
 
 // view Route
 const RouteViewAccount = React.lazy(() => import('./pages/Account/viewAccount'));
