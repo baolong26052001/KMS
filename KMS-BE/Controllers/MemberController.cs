@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Components.Authorization;
 using KMS.Tools;
+using System.Globalization;
 
 namespace KMS.Controllers
 {
@@ -176,7 +177,7 @@ namespace KMS.Controllers
                             LastName = cardInfo.name?.Split(' ')[spaceCount],
                             FullName = cardInfo.name,
                             Gender = cardInfo.gender,
-                            Birthday = DateTime.Parse(cardInfo.birthday),
+                            Birthday = DateTime.ParseExact(cardInfo.birthday,"dd/MM/yyyy",CultureInfo.CurrentCulture),
                             IdenNumber = cardInfo.id,
                             Ward = cardInfo.address_split.ward,
                             District = cardInfo.address_split.district,
