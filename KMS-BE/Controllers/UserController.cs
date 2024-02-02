@@ -147,8 +147,8 @@ namespace KMS.Controllers
                 _exQuery.ExecuteRawQuery(query, parameters);
 
                 string token = CreateToken(user, groupId);
-                HttpContext.Request.Headers.Add("Authorization", "Bearer " + token);
-                return Ok(new { message = "Login successful", Token = token, GroupId = groupId, Role = GetGroupNameList()[GetGroupIdList().IndexOf(groupId)] });
+                
+                return Ok(new { message = "Login successful", UserId = idOfUser, Username = user.Username, Token = token, GroupId = groupId, Role = GetGroupNameList()[GetGroupIdList().IndexOf(groupId)] });
 
             }
             catch (Exception e)
