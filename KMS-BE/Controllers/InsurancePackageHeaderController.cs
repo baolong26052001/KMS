@@ -67,16 +67,42 @@ namespace KMS.Controllers
         [Route("ShowInsurancePackageHeaderByInsuranceType/{insuranceType}")]
         public JsonResult GetInsurancePackageHeaderByInsuranceType(int insuranceType)
         {
-            string query = "SELECT b.id, b.packageName, de.fee, c.provider, c.email, e.content, f.typeName, b.priority, b.isActive, b.dateModified, b.dateCreated " +
+            string query = "SELECT b.id, b.packageName, c.provider, c.email, e.content, f.typeName, b.priority, b.isActive, b.dateModified, b.dateCreated " +
                 "FROM InsurancePackageHeader b " +
                 "LEFT JOIN InsuranceProvider c ON c.id = b.insuranceProviderId " +
                 "LEFT JOIN Term e ON e.id = b.termId " +
                 "LEFT JOIN InsuranceType f ON b.insuranceTypeId = f.id " +
-                "LEFT JOIN InsurancePackageDetail de on de.packageHeaderId = b.id " +
-                "WHERE f.id = @InsuranceTypeId";
+                
+                "WHERE f.id = @InsuranceTypeId ORDER BY b.priority asc";
 
 
             SqlParameter parameter = new SqlParameter("@InsuranceTypeId", insuranceType);
+            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+
+            if (table.Rows.Count > 0)
+            {
+                return new JsonResult(table);
+            }
+            else
+            {
+                return new JsonResult("Insurance Type not found");
+            }
+        }
+
+        [HttpGet]
+        [Route("ShowInsurancePackageHeaderByInsuranceProvider/{insuranceProvider}")]
+        public JsonResult GetInsurancePackageHeaderByInsuranceProvider(int insuranceProvider)
+        {
+            string query = "SELECT b.id, b.packageName, c.provider, c.email, e.content, f.typeName, b.priority, b.isActive, b.dateModified, b.dateCreated " +
+                "FROM InsurancePackageHeader b " +
+                "LEFT JOIN InsuranceProvider c ON c.id = b.insuranceProviderId " +
+                "LEFT JOIN Term e ON e.id = b.termId " +
+                "LEFT JOIN InsuranceType f ON b.insuranceTypeId = f.id " +
+                
+                "WHERE c.id = @InsuranceProviderId ORDER BY b.priority asc";
+
+
+            SqlParameter parameter = new SqlParameter("@InsuranceProviderId", insuranceProvider);
             DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
             if (table.Rows.Count > 0)
@@ -90,19 +116,19 @@ namespace KMS.Controllers
         }
 
         [HttpGet]
-        [Route("ShowInsurancePackageHeaderByInsuranceProvider/{insuranceProvider}")]
-        public JsonResult GetInsurancePackageHeaderByInsuranceProvider(int insuranceProvider)
+        [Route("ShowInsurancePackageHeaderByTypeId/{typeId}")]
+        public JsonResult GetInsurancePackageHeaderByTypeId(int typeId)
         {
-            string query = "SELECT b.id, b.packageName, de.fee, c.provider, c.email, e.content, f.typeName, b.priority, b.isActive, b.dateModified, b.dateCreated " +
+            string query = "SELECT b.id, b.packageName, c.provider, c.email, e.content, f.typeName, b.priority, b.isActive, b.dateModified, b.dateCreated " +
                 "FROM InsurancePackageHeader b " +
                 "LEFT JOIN InsuranceProvider c ON c.id = b.insuranceProviderId " +
                 "LEFT JOIN Term e ON e.id = b.termId " +
                 "LEFT JOIN InsuranceType f ON b.insuranceTypeId = f.id " +
-                "LEFT JOIN InsurancePackageDetail de on de.packageHeaderId = b.id " +
-                "WHERE c.id = @InsuranceProviderId";
+
+                "WHERE f.id = @TypeId ORDER BY b.priority asc";
 
 
-            SqlParameter parameter = new SqlParameter("@InsuranceProviderId", insuranceProvider);
+            SqlParameter parameter = new SqlParameter("@TypeId", typeId);
             DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
             if (table.Rows.Count > 0)
@@ -111,7 +137,7 @@ namespace KMS.Controllers
             }
             else
             {
-                return new JsonResult("Insurance Package Header ID not found");
+                return new JsonResult("Insurance Type not found");
             }
         }
 
