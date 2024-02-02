@@ -50,9 +50,11 @@ const Login = ({onLogin }) => {
       const data = await response.json();
       console.log(data);
       if (response.ok) {
-        document.cookie = `token=${data.Token}; path=/`;
+        //document.cookie = `token=${data.Token}; path=/`;
         document.cookie = `role=${data.Role}; path=/`;
         document.cookie = `groupId=${data.GroupId}; path=/`;
+        localStorage.setItem('userName', data.Username)
+        document.cookie = `userId=${data.UserId}; path=/`;
         onLogin();
         navigate('/dashboard'); 
       } else {

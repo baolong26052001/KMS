@@ -9,16 +9,42 @@ import Box from '@mui/material/Box';
 import { useAuth } from './components/AuthContext/AuthContext';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
+function getCookie(name) {
+  const cookies = document.cookie.split(';');
+  for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.startsWith(name + '=')) {
+          return cookie.substring(name.length + 1);
+      }
+  }
+  return null;
+}
+
+function fetchPermissionInfo(groupId) {
+  const apiUrl = `https://localhost:7017/api/AccessRule/ShowPermissionInfoInEditPage/${groupId}`;
+
+  fetch(apiUrl)
+    .then(response => response.json())
+    .then(data => {
+      console.log('Permission Info:', data);
+    })
+    .catch(error => {
+      console.error('Error fetching permission info:', error);
+    });
+}
+
 
 const App = () => {
 
   const { isAuthenticated, login, logout  } = useAuth();
   const [showHeaderbar, setShowHeaderbar] = useState(isAuthenticated);
+  const groupId = getCookie('groupId');
 
   useEffect(() => {
     setShowHeaderbar(isAuthenticated);
   }, [isAuthenticated]);
-
+  console.log(groupId);
+  fetchPermissionInfo(groupId);
 
   return (
     <div>
