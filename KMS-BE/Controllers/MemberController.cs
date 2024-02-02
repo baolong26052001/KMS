@@ -33,9 +33,7 @@ namespace KMS.Controllers
         [Route("ShowMember")]
         public JsonResult GetMember()
         {
-            string query = "select a.id, a.memberId, a.contractId, m.phone, m.department, m.companyName, m.bankName, m.address1, m.isActive, m.dateCreated " +
-                "from LAccount a, LMember m " +
-                "where a.memberId = m.id";
+            string query = "select * from LMember";
             DataTable table = _exQuery.ExecuteRawQuery(query);
             return new JsonResult(table);
         }
@@ -44,9 +42,7 @@ namespace KMS.Controllers
         [Route("ShowMember/{id}")]
         public JsonResult GetMemberById(int id)
         {
-            string query = "select a.id, a.memberId, a.contractId, m.phone, m.department, m.companyName, m.bankName, m.address1, m.isActive, m.dateCreated " +
-                "from LAccount a, LMember m " +
-                "where a.memberId = m.id and a.id=@Id";
+            string query = "select * from LMember where id=@Id";
 
             SqlParameter parameter = new SqlParameter("@Id", id);
             DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
@@ -59,6 +55,29 @@ namespace KMS.Controllers
             {
                 return new JsonResult("Member not found");
             }
+        }
+
+        [HttpPut]
+        [Route("EditMember/{id}")]
+        public JsonResult EditMember(int id, [FromBody] Lmember lmember)
+        {
+            string query = "UPDATE LMember " +
+                           "SET email = @Email, phone = @Phone " +
+                           "WHERE id = @Id";
+
+            SqlParameter[] parameters =
+            {
+                new SqlParameter("@Id", id),
+                new SqlParameter("@Email", lmember.Email),
+                new SqlParameter("@Phone", lmember.Phone),
+                
+            };
+
+
+            _exQuery.ExecuteRawQuery(query, parameters);
+
+
+            return new JsonResult("Member updated successfully");
         }
 
         [HttpPost]

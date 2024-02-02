@@ -27,7 +27,7 @@ namespace KMS.Controllers
 
         
 
-        [HttpGet, Authorize(Roles = "Admin")]
+        [HttpGet]
         [Route("ShowAccount")]
         public JsonResult GetAccount()
         {

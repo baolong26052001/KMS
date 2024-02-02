@@ -433,6 +433,8 @@ namespace KMS.Models
                     .HasMaxLength(30)
                     .HasColumnName("district");
 
+                entity.Property(e => e.Email).HasColumnName("email");
+
                 entity.Property(e => e.Fingerprint1).HasColumnName("fingerprint1");
 
                 entity.Property(e => e.Fingerprint2).HasColumnName("fingerprint2");
