@@ -58,7 +58,7 @@ namespace KMS.Controllers
         }
 
         [HttpPut]
-        [Route("EditMember/{id}")]
+        [Route("UpdateMemberEmailAndPhone/{id}")]
         public JsonResult EditMember(int id, [FromBody] Lmember lmember)
         {
             string query = "UPDATE LMember " +
