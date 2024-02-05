@@ -64,7 +64,7 @@ namespace KMS.Controllers
         [Route("FilterAccount")]
         public JsonResult FilterAccount([FromQuery] int? status = null, [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
         {
-            string query = "SELECT a.id, a.memberId, a.contractId, m.phone, m.bankName, m.department, m.companyName, m.address1, a.status, a.dateCreated " +
+            string query = "SELECT a.id, a.memberId, m.fullname, a.contractId, m.phone, m.bankName, m.department, m.companyName, m.address1, a.status, a.dateCreated " +
                 "FROM LAccount a INNER JOIN LMember m ON a.memberId = m.id ";
 
             List<SqlParameter> parameters = new List<SqlParameter>();
@@ -150,7 +150,7 @@ namespace KMS.Controllers
         public JsonResult SearchAccount(string searchQuery)
         {
             string query = "SELECT a.id, a.memberId, a.contractId, " +
-                           "m.phone, m.bankName, m.department, m.companyName, m.address1, m.isActive, m.dateCreated, " +
+                           "m.phone, m.fullname, m.bankName, m.department, m.companyName, m.address1, m.isActive, m.dateCreated, " +
                            "a.accountName, a.accountType, a.balance, a.rate, a.dateDue, a.status, a.dateModified, a.dateCreated, a.isActive " +
                            "FROM LAccount a " +
                            "INNER JOIN LMember m ON a.memberId = m.id " +
