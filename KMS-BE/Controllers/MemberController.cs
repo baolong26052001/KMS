@@ -71,8 +71,8 @@ namespace KMS.Controllers
                                      "SET email = @Email, phone = @Phone, isActive = 1 " +
                                      "WHERE id = @Id";
 
-                string insertQuery = "INSERT INTO LAccount (memberId, balance) " +
-                                     "VALUES (@MemberId, 0)";
+                string insertQuery = "INSERT INTO LAccount (memberId, balance, dateCreated, dateModified, isActive, status) " +
+                                     "VALUES (@MemberId, 0, GETDATE(), GETDATE(), 1, 1)";
 
                 SqlParameter[] updateParameters =
                 {
