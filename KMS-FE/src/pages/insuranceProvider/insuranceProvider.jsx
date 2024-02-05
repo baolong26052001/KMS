@@ -89,8 +89,9 @@ const columns = [
     field: 'editButton',
     headerName: '',
     width: 80,
-    sortable: false, // Disable sorting for this column
-    filterable: false, // Disable filtering for this column
+    disableColumnMenu: true,
+    sortable: false,
+    filterable: false, 
     renderCell: (params) => (
         <EditButton
         rowId={params.row.id}

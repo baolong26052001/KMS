@@ -36,8 +36,8 @@ const handleButtonClick = (id) => {
 };
 
 
-function createData(id, memberId, contractId, phoneNumber, department, company, bankName, memberAddress, status, dateCreated) {
-  return {id, memberId, contractId, phoneNumber, department, company, bankName, memberAddress, status, dateCreated};
+function createData(id, memberId, memberName, contractId, phoneNumber, department, company, bankName, memberAddress, status, dateCreated) {
+  return {id, memberId, memberName, contractId, phoneNumber, department, company, bankName, memberAddress, status, dateCreated};
 }
 
 const columns = [
@@ -58,6 +58,7 @@ const columns = [
   },
   { field: 'id', headerName: 'Account ID', minWidth: 100, flex: 1,},
   { field: 'memberId', headerName: 'Member ID', minWidth: 100, flex: 1,},
+  { field: 'memberName', headerName: 'Member', minWidth: 200, flex: 1,},
   { field: 'contractId', headerName: 'Contract ID', minWidth: 100, flex: 1,},
   { field: 'phoneNumber', headerName: 'Phone Number', minWidth: 150,  
     flex: 1,
@@ -199,7 +200,7 @@ const Account = () => {
           }
         
           const updatedRows = filteredRows.map(row =>
-            createData(row.id, row.memberId, row.contractId, row.phone, row.department, row.companyName, row.bankName, row.address1, row.isActive, row.dateCreated)
+            createData(row.id, row.memberId, row.fullname, row.contractId, row.phone, row.department, row.companyName, row.bankName, row.address1, row.isActive, row.dateCreated)
           );
         
           setRows(updatedRows); 

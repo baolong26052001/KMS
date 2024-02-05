@@ -163,8 +163,9 @@ const columns = [
     field: 'permissionButton',
     headerName: '',
     width: 80,
-    sortable: false, // Disable sorting for this column
-    filterable: false, // Disable filtering for this column
+    disableColumnMenu: true,
+    sortable: false,
+    filterable: false, 
     renderCell: (params) => (
         <ViewButton
         rowId={params.row.id}
@@ -177,8 +178,9 @@ const columns = [
     field: 'editButton',
     headerName: '',
     width: 80,
-    sortable: false, // Disable sorting for this column
-    filterable: false, // Disable filtering for this column
+    disableColumnMenu: true,
+    sortable: false,
+    filterable: false, 
     renderCell: (params) => (
         <EditButton
         rowId={params.row.id}
@@ -242,7 +244,6 @@ const User = () => {
     };
 
     const handleKeyPress = (event) => {
-      // Check if the pressed key is Enter (key code 13)
       if (event.key === 'Enter') {
         handleSearchButton();
       }
@@ -250,15 +251,13 @@ const User = () => {
 
     const [rows, setRows] = useState([]);
 
-    // Get Back-end API URL to connect
     const API_URL = "https://localhost:7017/";
   
     useEffect(() => {
       async function fetchData() {
         try {
           let apiUrl = `${API_URL}api/User/ShowUsers`;
-    
-          // If searchTerm is not empty, use the search API endpoint
+
           if (searchTerm) {
             apiUrl = `${API_URL}api/User/SearchUsers?searchQuery=${encodeURIComponent(searchTerm)}`;
           }
@@ -270,8 +269,7 @@ const User = () => {
           }
     
           const responseData = await response.json();
-    
-          // Check if responseData is an array before calling map
+
           if (Array.isArray(responseData)) {
             const updatedRows = responseData.map((row) =>
               createData(
@@ -285,7 +283,7 @@ const User = () => {
               )
             );
     
-            setRows(updatedRows); // Update the component state with the combined data
+            setRows(updatedRows);
           } else {
             console.error('Invalid data structure:', responseData);
           }

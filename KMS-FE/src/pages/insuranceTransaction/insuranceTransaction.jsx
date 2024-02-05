@@ -27,9 +27,12 @@ const ViewButton = ({ rowId, label, onClick }) => {
   );
 };
 
+const formatNumber = (value) => {
+  return value.toLocaleString('vi-VN').replace(/,/g, '.');
+};
 
-function createData(transactionDate, id, memberId, contractId, typeName, packageName, annualPay, provider, registrationDate, expireDate, status) {
-  return {transactionDate, id, memberId, contractId, typeName, packageName, annualPay, provider, registrationDate, expireDate, status};
+function createData(transactionDate, id, memberId, contractId, fullName, typeName, packageName, annualPay, provider, registrationDate, expireDate, status) {
+  return {transactionDate, id, memberId, contractId, fullName, typeName, packageName, annualPay, provider, registrationDate, expireDate, status};
 }
 
 const columns = [ 
@@ -57,9 +60,10 @@ const columns = [
   { field: 'id', headerName: 'Transaction ID', minWidth: 150, flex: 1,},
   { field: 'memberId', headerName: 'Member Id', minWidth: 150, flex: 1,},
   { field: 'contractId', headerName: 'Contract Id', minWidth: 150, flex: 1,},
+  { field: 'fullName', headerName: 'Member', minWidth: 200, flex: 1,},
   { field: 'typeName', headerName: 'Insurance Type', minWidth: 170, flex: 1,},
   { field: 'packageName', headerName: 'Insurance Package', minWidth: 170, flex: 1,},
-  { field: 'annualPay', headerName: 'Annual Pay', minWidth: 150, flex: 1,},
+  { field: 'annualPay', headerName: 'Annual Pay', minWidth: 150, flex: 1, renderCell: (params) => formatNumber(params.value)},
   { field: 'provider', headerName: 'Insurance Provider', minWidth: 150, flex: 1,},
   {
     field: 'registrationDate',
@@ -152,7 +156,7 @@ const InsuranceTransaction = () => {
             }
           
             const updatedRows = filteredRows.map(row =>
-              createData(row.transactionDate, row.id, row.memberId, row.contractId, row.typeName, row.packageName, row.annualPay, row.provider, row.registrationDate, row.expireDate, row.status)
+              createData(row.transactionDate, row.id, row.memberId, row.contractId, row.fullName, row.typeName, row.packageName, row.annualPay, row.provider, row.registrationDate, row.expireDate, row.status)
             );
           
             setRows(updatedRows); // Update the component state with the combined data
