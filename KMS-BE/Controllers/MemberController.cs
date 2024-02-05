@@ -192,60 +192,61 @@ namespace KMS.Controllers
 
                     if (cardInfo != null)
                     {
-                        if (IdenNumberExists(cardInfo.id))
+                        // Check if cardInfo.id already exists
+                        List<string> existingIdenNumbers = IdenNumbersExist(cardInfo.id);
+
+                        if (existingIdenNumbers.Count > 0)
                         {
-                            return new JsonResult("Member with the same IdenNumber already exists");
+                            // cardInfo.id already exists in the database
+                            return new JsonResult("IdenNumber already exists in the database");
                         }
-                        else
+
+                        Lmember member = new Lmember
                         {
-                            Lmember member = new Lmember
-                            {
-                                FirstName = cardInfo.name?.Split(' ')[0],
-                                LastName = cardInfo.name?.Split(' ')[spaceCount],
-                                FullName = cardInfo.name,
-                                Gender = cardInfo.gender,
-                                Birthday = DateTime.ParseExact(cardInfo.birthday, "dd/MM/yyyy", CultureInfo.CurrentCulture),
-                                IdenNumber = cardInfo.id,
-                                Ward = cardInfo.address_split.ward,
-                                District = cardInfo.address_split.district,
-                                City = cardInfo.address_split.province,
-                                ImageIdCard = imageIdCardFile?.FileName,
-                                Address1 = $"{cardInfo.address_split?.village}, {cardInfo.address_split?.ward}, {cardInfo.address_split?.district}, {cardInfo.address_split?.province}".TrimEnd(',', ' '),
-                                Address2 = $"{cardInfo.domicile_split?.village}, {cardInfo.domicile_split?.ward}, {cardInfo.domicile_split?.district}, {cardInfo.domicile_split?.province}".TrimEnd(',', ' '),
-                                // ... Map other properties as needed
-                                IsActive = false, // Assuming default value for IsActive
-                            };
+                            FirstName = cardInfo.name?.Split(' ')[0],
+                            LastName = cardInfo.name?.Split(' ')[spaceCount],
+                            FullName = cardInfo.name,
+                            Gender = cardInfo.gender,
+                            Birthday = DateTime.ParseExact(cardInfo.birthday, "dd/MM/yyyy", CultureInfo.CurrentCulture),
+                            IdenNumber = cardInfo.id,
+                            Ward = cardInfo.address_split.ward,
+                            District = cardInfo.address_split.district,
+                            City = cardInfo.address_split.province,
+                            ImageIdCard = imageIdCardFile?.FileName,
+                            Address1 = $"{cardInfo.address_split?.village}, {cardInfo.address_split?.ward}, {cardInfo.address_split?.district}, {cardInfo.address_split?.province}".TrimEnd(',', ' '),
+                            Address2 = $"{cardInfo.domicile_split?.village}, {cardInfo.domicile_split?.ward}, {cardInfo.domicile_split?.district}, {cardInfo.domicile_split?.province}".TrimEnd(',', ' '),
+                            // ... Map other properties as needed
+                            IsActive = false, // Assuming default value for IsActive
+                        };
 
-                            // Now, insert the member into the database using your existing code
-                            string query = "INSERT INTO LMember (imageIdCard, gender, firstName, lastName, fullName, birthday, idenNumber, ward, district, city, address1, address2, " +
-                                           "isActive, dateCreated, dateModified) " +
-                                           "VALUES (@ImageIdCard, @Gender, @FirstName, @LastName, @FullName, @Birthday, @IdenNumber, @Ward, @District, @City, @Address1, @Address2, " +
-                                           "@IsActive, GETDATE(), GETDATE())";
+                        // Now, insert the member into the database using your existing code
+                        string query = "INSERT INTO LMember (imageIdCard, gender, firstName, lastName, fullName, birthday, idenNumber, ward, district, city, address1, address2, " +
+                                       "isActive, dateCreated, dateModified) " +
+                                       "VALUES (@ImageIdCard, @Gender, @FirstName, @LastName, @FullName, @Birthday, @IdenNumber, @Ward, @District, @City, @Address1, @Address2, " +
+                                       "@IsActive, GETDATE(), GETDATE())";
 
-                            SqlParameter[] parameters =
-                            {
-                                new SqlParameter("@ImageIdCard", member.ImageIdCard),
-                                new SqlParameter("@Gender", member.Gender),
-                                new SqlParameter("@FirstName", member.FirstName),
-                                new SqlParameter("@LastName", member.LastName),
-                                new SqlParameter("@FullName", member.FullName),
-                                new SqlParameter("@Birthday", member.Birthday),
+                        SqlParameter[] parameters =
+                        {
+                            new SqlParameter("@ImageIdCard", member.ImageIdCard),
+                            new SqlParameter("@Gender", member.Gender),
+                            new SqlParameter("@FirstName", member.FirstName),
+                            new SqlParameter("@LastName", member.LastName),
+                            new SqlParameter("@FullName", member.FullName),
+                            new SqlParameter("@Birthday", member.Birthday),
 
-                                new SqlParameter("@IdenNumber", member.IdenNumber),
-                                new SqlParameter("@Address1", member.Address1),
-                                new SqlParameter("@Address2", member.Address2),
-                                new SqlParameter("@District", member.District),
-                                new SqlParameter("@City", member.City),
-                                new SqlParameter("@Ward", member.Ward),
+                            new SqlParameter("@IdenNumber", member.IdenNumber),
+                            new SqlParameter("@Address1", member.Address1),
+                            new SqlParameter("@Address2", member.Address2),
+                            new SqlParameter("@District", member.District),
+                            new SqlParameter("@City", member.City),
+                            new SqlParameter("@Ward", member.Ward),
 
-                                new SqlParameter("@IsActive", member.IsActive)
-                            };
+                            new SqlParameter("@IsActive", member.IsActive)
+                        };
 
-                            _exQuery.ExecuteRawQuery(query, parameters);
+                        _exQuery.ExecuteRawQuery(query, parameters);
 
-                            return new JsonResult("Member added successfully");
-                        }
-                        
+                        return new JsonResult("Member added successfully");
                     }
 
                     return new JsonResult("Invalid JSON data");
@@ -258,19 +259,26 @@ namespace KMS.Controllers
             }
         }
 
-        private bool IdenNumberExists(string idenNumber)
+        private List<string> IdenNumbersExist(string idenNumber)
         {
-            string query = "SELECT COUNT(*) FROM LMember WHERE IdenNumber = @IdenNumber";
-            SqlParameter[] parameter =
+            string query = "SELECT idenNumber FROM LMember WHERE idenNumber = @IdenNumber";
+            SqlParameter[] parameters =
             {
                 new SqlParameter("@IdenNumber", idenNumber),
             };
 
-            DataTable table = _exQuery.ExecuteRawQuery(query, parameter);
+            DataTable table = _exQuery.ExecuteRawQuery(query, parameters);
 
-            
-            return table.Rows.Count > 0;
+            List<string> existingIdenNumbers = new List<string>();
+
+            foreach (DataRow row in table.Rows)
+            {
+                existingIdenNumbers.Add(row["idenNumber"].ToString());
+            }
+
+            return existingIdenNumbers;
         }
+
 
 
         [HttpPut]
