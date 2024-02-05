@@ -158,6 +158,7 @@ namespace KMS.Controllers
                            "a.memberId LIKE @searchQuery OR " +
                            "a.contractId LIKE @searchQuery OR " +
                            "a.accountName LIKE @searchQuery OR " +
+                           "m.fullName LIKE @searchQuery OR " +
                            "a.accountType LIKE @searchQuery OR " +
                            "CONVERT(VARCHAR(20), a.balance) LIKE @searchQuery OR " +
                            "CONVERT(VARCHAR(20), a.rate) LIKE @searchQuery OR " +
