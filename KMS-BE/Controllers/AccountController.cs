@@ -89,59 +89,59 @@ namespace KMS.Controllers
 
 
 
-        [HttpPost]
-        [Route("AddAccount")]
-        public JsonResult AddAccount([FromBody] Laccount account)
-        {
-            string query = "INSERT INTO LAccount (contractId, memberId, accountName, accountType, balance, rate, dateDue, status, dateModified, dateCreated, isActive) " +
-                           "VALUES (@ContractId, @MemberId, @AccountName, @AccountType, @Balance, @Rate, @DateDue, @Status, GETDATE(), GETDATE(), @IsActive)";
+        //[HttpPost]
+        //[Route("AddAccount")]
+        //public JsonResult AddAccount([FromBody] Laccount account)
+        //{
+        //    string query = "INSERT INTO LAccount (contractId, memberId, accountName, accountType, balance, rate, dateDue, status, dateModified, dateCreated, isActive) " +
+        //                   "VALUES (@ContractId, @MemberId, @AccountName, @AccountType, @Balance, @Rate, @DateDue, @Status, GETDATE(), GETDATE(), @IsActive)";
 
-            SqlParameter[] parameters =
-            {
-                new SqlParameter("@ContractId", account.ContractId),
-                new SqlParameter("@MemberId", account.MemberId),
-                new SqlParameter("@AccountName", account.AccountName),
-                new SqlParameter("@AccountType", account.AccountType),
-                new SqlParameter("@Balance", account.Balance),
-                new SqlParameter("@Rate", account.Rate),
-                new SqlParameter("@DateDue", account.DateDue),
-                new SqlParameter("@Status", account.Status),
-                new SqlParameter("@IsActive", account.IsActive)
-            };
+        //    SqlParameter[] parameters =
+        //    {
+        //        new SqlParameter("@ContractId", account.ContractId),
+        //        new SqlParameter("@MemberId", account.MemberId),
+        //        new SqlParameter("@AccountName", account.AccountName),
+        //        new SqlParameter("@AccountType", account.AccountType),
+        //        new SqlParameter("@Balance", account.Balance),
+        //        new SqlParameter("@Rate", account.Rate),
+        //        new SqlParameter("@DateDue", account.DateDue),
+        //        new SqlParameter("@Status", account.Status),
+        //        new SqlParameter("@IsActive", account.IsActive)
+        //    };
 
-            _exQuery.ExecuteRawQuery(query, parameters);
+        //    _exQuery.ExecuteRawQuery(query, parameters);
 
-            return new JsonResult("Account added successfully");
-        }
+        //    return new JsonResult("Account added successfully");
+        //}
 
-        [HttpPut]
-        [Route("UpdateAccount/{id}")]
-        public JsonResult UpdateAccount(int id,[FromBody] Laccount updatedAccount)
-        {
-            string query = "UPDATE LAccount " +
-                           "SET contractId = @ContractId, memberId = @MemberId, accountName = @AccountName, accountType = @AccountType, " +
-                           "balance = @Balance, rate = @Rate, dateDue = @DateDue, status = @Status, dateModified = GETDATE(), " +
-                           "dateCreated = GETDATE(), isActive = @IsActive " +
-                           "WHERE id = @Id";
+        //[HttpPut]
+        //[Route("UpdateAccount/{id}")]
+        //public JsonResult UpdateAccount(int id,[FromBody] Laccount updatedAccount)
+        //{
+        //    string query = "UPDATE LAccount " +
+        //                   "SET contractId = @ContractId, memberId = @MemberId, accountName = @AccountName, accountType = @AccountType, " +
+        //                   "balance = @Balance, rate = @Rate, dateDue = @DateDue, status = @Status, dateModified = GETDATE(), " +
+        //                   "dateCreated = GETDATE(), isActive = @IsActive " +
+        //                   "WHERE id = @Id";
 
-            SqlParameter[] parameters =
-            {
-                new SqlParameter("@Id", id),
-                new SqlParameter("@ContractId", updatedAccount.ContractId),
-                new SqlParameter("@MemberId", updatedAccount.MemberId),
-                new SqlParameter("@AccountName", updatedAccount.AccountName),
-                new SqlParameter("@AccountType", updatedAccount.AccountType),
-                new SqlParameter("@Balance", updatedAccount.Balance),
-                new SqlParameter("@Rate", updatedAccount.Rate),
-                new SqlParameter("@DateDue", updatedAccount.DateDue),
-                new SqlParameter("@Status", updatedAccount.Status),
-                new SqlParameter("@IsActive", updatedAccount.IsActive)
-            };
+        //    SqlParameter[] parameters =
+        //    {
+        //        new SqlParameter("@Id", id),
+        //        new SqlParameter("@ContractId", updatedAccount.ContractId),
+        //        new SqlParameter("@MemberId", updatedAccount.MemberId),
+        //        new SqlParameter("@AccountName", updatedAccount.AccountName),
+        //        new SqlParameter("@AccountType", updatedAccount.AccountType),
+        //        new SqlParameter("@Balance", updatedAccount.Balance),
+        //        new SqlParameter("@Rate", updatedAccount.Rate),
+        //        new SqlParameter("@DateDue", updatedAccount.DateDue),
+        //        new SqlParameter("@Status", updatedAccount.Status),
+        //        new SqlParameter("@IsActive", updatedAccount.IsActive)
+        //    };
 
-            _exQuery.ExecuteRawQuery(query, parameters);
+        //    _exQuery.ExecuteRawQuery(query, parameters);
 
-            return new JsonResult("Account updated successfully");
-        }
+        //    return new JsonResult("Account updated successfully");
+        //}
 
         
 
