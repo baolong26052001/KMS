@@ -71,8 +71,11 @@ namespace KMS.Controllers
                                      "SET email = @Email, phone = @Phone, isActive = 1 " +
                                      "WHERE id = @Id";
 
-                string insertQuery = "INSERT INTO LAccount (memberId, balance, dateCreated, dateModified, isActive, status) " +
-                                     "VALUES (@MemberId, 0, GETDATE(), GETDATE(), 1, 1)";
+                string insertQuery = @"IF NOT EXISTS (SELECT 1 FROM LAccount WHERE memberId = @MemberId)
+                                        BEGIN
+                                            INSERT INTO LAccount (memberId, balance, dateCreated, dateModified, isActive, status)
+                                            VALUES (@MemberId, 0, GETDATE(), GETDATE(), 1, 1)
+                                        END";
 
                 SqlParameter[] updateParameters =
                 {
@@ -89,7 +92,9 @@ namespace KMS.Controllers
                 _exQuery.ExecuteRawQuery(updateQuery, updateParameters);
                 _exQuery.ExecuteRawQuery(insertQuery, insertParameters);
 
-                return new JsonResult("Member updated successfully");
+                response.Code = 200;
+                response.Message = "Member updated successfully";
+                
             }
             catch (Exception ex)
             {
@@ -198,7 +203,11 @@ namespace KMS.Controllers
                         if (existingIdenNumbers.Count > 0)
                         {
                             // cardInfo.id already exists in the database
-                            return new JsonResult("IdenNumber already exists in the database");
+                            return new JsonResult(new ResponseDto
+                            {
+                                Code = 400,
+                                Message = "IdenNumber already exists in the database"
+                            });
                         }
 
                         Lmember member = new Lmember
@@ -246,16 +255,28 @@ namespace KMS.Controllers
 
                         _exQuery.ExecuteRawQuery(query, parameters);
 
-                        return new JsonResult("Member added successfully");
+                        return new JsonResult(new ResponseDto
+                        {
+                            Code = 200,
+                            Message = "Member added successfully"
+                        });
                     }
 
-                    return new JsonResult("Invalid JSON data");
+                    return new JsonResult(new ResponseDto
+                    {
+                        Code = 400,
+                        Message = "Invalid JSON data"
+                    });
                 }
             }
             catch (Exception ex)
             {
                 // Handle exceptions (e.g., file not found, invalid JSON format, etc.)
-                return new JsonResult($"Error: {ex.Message}");
+                return new JsonResult(new ResponseDto
+                {
+                    Code = 500,
+                    Message = $"Error: {ex.Message}"
+                });
             }
         }
 
@@ -302,7 +323,11 @@ namespace KMS.Controllers
 
             _exQuery.ExecuteRawQuery(query, parameters);
 
-            return new JsonResult("Member updated successfully");
+            return new JsonResult(new ResponseDto
+            {
+                Code = 200,
+                Message = "Member updated successfully"
+            });
         }
 
         
