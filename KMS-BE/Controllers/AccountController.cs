@@ -31,7 +31,7 @@ namespace KMS.Controllers
         [Route("ShowAccount")]
         public JsonResult GetAccount()
         {
-            string query = "select a.id, a.memberId, a.contractId, m.phone, m.bankName, m.department, m.companyName, m.address1, m.isActive, m.dateCreated " +
+            string query = "select a.id, a.memberId, m.fullname, a.contractId, m.phone, m.bankName, m.department, m.companyName, m.address1, m.isActive, m.dateCreated " +
                 "from LAccount a, LMember m " +
                 "where a.memberId = m.id";
             
@@ -43,7 +43,7 @@ namespace KMS.Controllers
         [Route("ShowAccount/{id}")]
         public JsonResult GetAccountById(int id)
         {
-            string query = "select a.id, a.memberId, a.contractId, m.phone, m.bankName, m.department, m.companyName, m.address1, m.isActive, m.dateCreated " +
+            string query = "select a.id, a.memberId, m.fullname, a.contractId, m.phone, m.bankName, m.department, m.companyName, m.address1, m.isActive, m.dateCreated " +
                 "from LAccount a, LMember m " +
                 "where a.memberId = m.id and a.id=@Id";
 
