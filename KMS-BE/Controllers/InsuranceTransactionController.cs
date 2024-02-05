@@ -27,29 +27,38 @@ namespace KMS.Controllers
         public JsonResult GetInsuranceTransaction()
         {
             string query = @"SELECT 
-                            itr.transactionDate,
-                            itr.id,
-                            itr.memberId,
-                            m.fullName,
-                            itr.contractId,
-                            ipd.id AS packageId,
-                            ipd.ageRangeId,
-                            ar.startAge,
-                            ar.endAge,
-                            N'Từ ' + CONVERT(VARCHAR(10), ar.startAge) + N' đến ' + CONVERT(VARCHAR(10), ar.endAge) + N' tuổi' AS description,
-                            itr.annualPay,
-                            ipd.fee,
-                            itr.registrationDate,
-                            itr.expireDate,
-                            itr.status 
+	                        itr.transactionDate,
+	                        itr.id,
+	                        itr.memberId,
+	                        m.fullName,
+	                        itr.contractId,
+	                        ipd.id AS packageId,
+	                        iph.packageName,
+	                        it.typeName,
+	                        inspvd.provider,
+	                        ipd.ageRangeId,
+	                        ar.startAge,
+	                        ar.endAge,
+	                        N'Từ ' + CONVERT(VARCHAR(10), ar.startAge) + N' đến ' + CONVERT(VARCHAR(10), ar.endAge) + N' tuổi' AS description,
+	                        itr.annualPay,
+	                        ipd.fee,
+	                        itr.registrationDate,
+	                        itr.expireDate,
+	                        itr.status 
                         FROM 
-                            InsuranceTransaction itr
+	                        InsuranceTransaction itr
                         LEFT JOIN 
-                            LMember m ON m.id = itr.memberId
+	                        LMember m ON m.id = itr.memberId
                         LEFT JOIN 
-                            InsurancePackageDetail ipd ON itr.packageId = ipd.id
+	                        InsurancePackageDetail ipd ON itr.packageId = ipd.id
                         LEFT JOIN 
-                            AgeRange ar ON ar.id = ipd.ageRangeId";
+	                        AgeRange ar ON ar.id = ipd.ageRangeId
+                        left join
+	                        InsurancePackageHeader iph on iph.id = ipd.packageHeaderId
+                        left join
+	                        InsuranceProvider inspvd on inspvd.id = iph.insuranceProviderId
+                        left join
+	                        InsuranceType it on it.id = iph.insuranceTypeId";
 
 
             DataTable table = _exQuery.ExecuteRawQuery(query);
@@ -61,29 +70,38 @@ namespace KMS.Controllers
         public JsonResult GetInsuranceTransactionByMemberId(int memberId)
         {
             string query = @"SELECT 
-                            itr.transactionDate,
-                            itr.id,
-                            itr.memberId,
-                            m.fullName,
-                            itr.contractId,
-                            ipd.id AS packageId,
-                            ipd.ageRangeId,
-                            ar.startAge,
-                            ar.endAge,
-                            N'Từ ' + CONVERT(VARCHAR(10), ar.startAge) + N' đến ' + CONVERT(VARCHAR(10), ar.endAge) + N' tuổi' AS description,
-                            itr.annualPay,
-                            ipd.fee,
-                            itr.registrationDate,
-                            itr.expireDate,
-                            itr.status 
+	                        itr.transactionDate,
+	                        itr.id,
+	                        itr.memberId,
+	                        m.fullName,
+	                        itr.contractId,
+	                        ipd.id AS packageId,
+	                        iph.packageName,
+	                        it.typeName,
+	                        inspvd.provider,
+	                        ipd.ageRangeId,
+	                        ar.startAge,
+	                        ar.endAge,
+	                        N'Từ ' + CONVERT(VARCHAR(10), ar.startAge) + N' đến ' + CONVERT(VARCHAR(10), ar.endAge) + N' tuổi' AS description,
+	                        itr.annualPay,
+	                        ipd.fee,
+	                        itr.registrationDate,
+	                        itr.expireDate,
+	                        itr.status 
                         FROM 
-                            InsuranceTransaction itr
+	                        InsuranceTransaction itr
                         LEFT JOIN 
-                            LMember m ON m.id = itr.memberId
+	                        LMember m ON m.id = itr.memberId
                         LEFT JOIN 
-                            InsurancePackageDetail ipd ON itr.packageId = ipd.id
+	                        InsurancePackageDetail ipd ON itr.packageId = ipd.id
                         LEFT JOIN 
-                            AgeRange ar ON ar.id = ipd.ageRangeId where itr.memberId = @MemberId";
+	                        AgeRange ar ON ar.id = ipd.ageRangeId
+                        left join
+	                        InsurancePackageHeader iph on iph.id = ipd.packageHeaderId
+                        left join
+	                        InsuranceProvider inspvd on inspvd.id = iph.insuranceProviderId
+                        left join
+	                        InsuranceType it on it.id = iph.insuranceTypeId where itr.memberId = @MemberId";
 
             SqlParameter parameter = new SqlParameter("@MemberId", memberId);
             DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
@@ -102,7 +120,39 @@ namespace KMS.Controllers
         [Route("ShowInsuranceTransaction/{id}")] // coi xem cái giao dịch này là người nào mua và người này đã mua gói nào cho người thụ hưởng nào
         public JsonResult GetInsuranceTransactionById(int id)
         {
-            string query = "SELECT itr.transactionDate, itr.id, \r\n\titr.memberId, m.fullName, \r\n\titr.contractId, \r\n\tipa.id as packageId, ipa.packageName, \r\n\tipa.termId, t.content, \r\n\tit.id as typeId, it.typeName, \r\n\tipd.ageRangeId, ar.startAge, ar.endAge,\r\n\tN'Từ ' + CONVERT(VARCHAR(10), ar.startAge) + N' đến ' + CONVERT(VARCHAR(10), ar.endAge) + N' tuổi' as description,\r\n\tipa.insuranceProviderId, p.provider, \r\n\tbf.beneficiaryId, bf.beneficiaryName,\r\n\titr.annualPay, itr.registrationDate, itr.expireDate, itr.status \r\nFROM InsuranceTransaction itr \r\nLEFT JOIN InsurancePackageHeader ipa ON ipa.id = itr.packageId \r\nLEFT JOIN InsuranceType it ON it.id = ipa.insuranceTypeId\r\nLEFT JOIN Term t ON t.id = ipa.termId\r\nLEFT JOIN LMember m on m.id = itr.memberId\r\nLEFT JOIN InsuranceProvider p on p.id = ipa.insuranceProviderId\r\nLEFT JOIN InsurancePackageDetail ipd on ipd.packageHeaderId = ipa.id\r\nLEFT JOIN AgeRange ar on ar.id = ipd.ageRangeId\r\nLEFT JOIN Beneficiary bf on bf.transactionId = itr.id\r\nwhere itr.id = @Id";
+            string query = @"SELECT 
+	                        itr.transactionDate,
+	                        itr.id,
+	                        itr.memberId,
+	                        m.fullName,
+	                        itr.contractId,
+	                        ipd.id AS packageId,
+	                        iph.packageName,
+	                        it.typeName,
+	                        inspvd.provider,
+	                        ipd.ageRangeId,
+	                        ar.startAge,
+	                        ar.endAge,
+	                        N'Từ ' + CONVERT(VARCHAR(10), ar.startAge) + N' đến ' + CONVERT(VARCHAR(10), ar.endAge) + N' tuổi' AS description,
+	                        itr.annualPay,
+	                        ipd.fee,
+	                        itr.registrationDate,
+	                        itr.expireDate,
+	                        itr.status 
+                        FROM 
+	                        InsuranceTransaction itr
+                        LEFT JOIN 
+	                        LMember m ON m.id = itr.memberId
+                        LEFT JOIN 
+	                        InsurancePackageDetail ipd ON itr.packageId = ipd.id
+                        LEFT JOIN 
+	                        AgeRange ar ON ar.id = ipd.ageRangeId
+                        left join
+	                        InsurancePackageHeader iph on iph.id = ipd.packageHeaderId
+                        left join
+	                        InsuranceProvider inspvd on inspvd.id = iph.insuranceProviderId
+                        left join
+	                        InsuranceType it on it.id = iph.insuranceTypeId where itr.id = @Id";
 
             SqlParameter parameter = new SqlParameter("@Id", id);
             DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
@@ -169,27 +219,48 @@ namespace KMS.Controllers
         [Route("SearchInsuranceTransaction")]
         public JsonResult SearchInsuranceTransaction(string searchQuery)
         {
-            string query = "SELECT itr.transactionDate, itr.id, " +
-                "\r\n\titr.memberId, m.fullName, " +
-                "\r\n\titr.contractId, " +
-                "\r\n\tipa.id as packageId, ipa.packageName, " +
-                "\r\n\tipa.termId, t.content, \r\n\tit.id as typeId, it.typeName, \r\n\tipd.ageRangeId, ar.startAge, ar.endAge," +
-                "\r\n\tN'Từ ' + CONVERT(VARCHAR(10), ar.startAge) + N' đến ' + CONVERT(VARCHAR(10), ar.endAge) + N' tuổi' as description," +
-                "\r\n\tipa.insuranceProviderId, p.provider, " +
+            string query = @"SELECT 
+	                        itr.transactionDate,
+	                        itr.id,
+	                        itr.memberId,
+	                        m.fullName,
+	                        itr.contractId,
+	                        ipd.id AS packageId,
+	                        iph.packageName,
+	                        it.typeName,
+	                        inspvd.provider,
+	                        ipd.ageRangeId,
+	                        ar.startAge,
+	                        ar.endAge,
+	                        N'Từ ' + CONVERT(VARCHAR(10), ar.startAge) + N' đến ' + CONVERT(VARCHAR(10), ar.endAge) + N' tuổi' AS description,
+	                        itr.annualPay,
+	                        ipd.fee,
+	                        itr.registrationDate,
+	                        itr.expireDate,
+	                        itr.status 
+                        FROM 
+	                        InsuranceTransaction itr
+                        LEFT JOIN 
+	                        LMember m ON m.id = itr.memberId
+                        LEFT JOIN 
+	                        InsurancePackageDetail ipd ON itr.packageId = ipd.id
+                        LEFT JOIN 
+	                        AgeRange ar ON ar.id = ipd.ageRangeId
+                        left join
+	                        InsurancePackageHeader iph on iph.id = ipd.packageHeaderId
+                        left join
+	                        InsuranceProvider inspvd on inspvd.id = iph.insuranceProviderId
+                        left join
+	                        InsuranceType it on it.id = iph.insuranceTypeId " +
                 
-                "\r\n\titr.annualPay, itr.registrationDate, itr.expireDate, itr.status " +
-                "\r\nFROM InsuranceTransaction itr " +
-                "\r\nLEFT JOIN InsurancePackageHeader ipa ON ipa.id = itr.packageId " +
-                "\r\nLEFT JOIN InsuranceType it ON it.id = ipa.insuranceTypeId " +
-                "\r\nLEFT JOIN Term t ON t.id = ipa.termId " +
-                "\r\nLEFT JOIN LMember m on m.id = itr.memberId " +
-                "\r\nLEFT JOIN InsuranceProvider p on p.id = ipa.insuranceProviderId " +
-                "\r\nLEFT JOIN InsurancePackageDetail ipd on ipd.packageHeaderId = ipa.id " +
-                "\r\nLEFT JOIN AgeRange ar on ar.id = ipd.ageRangeId " +
+                "where m.fullName LIKE @searchQuery " +
+                "or iph.packageName LIKE @searchQuery " +
                 
-                "\r\nwhere m.fullName LIKE @searchQuery or ipa.packageName LIKE @searchQuery or t.content LIKE @searchQuery or it.typeName LIKE @searchQuery " +
-                "\r\nor p.provider LIKE @searchQuery or itr.annualPay LIKE @searchQuery " +
-                "\r\nor ar.startAge LIKE @searchQuery or ar.endAge LIKE @searchQuery";
+                "or it.typeName LIKE @searchQuery " +
+                "or inspvd.provider LIKE @searchQuery " +
+                "or itr.annualPay LIKE @searchQuery " +
+                "or ar.startAge LIKE @searchQuery " +
+                "or ar.endAge LIKE @searchQuery";
 
             SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
             DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
@@ -201,19 +272,39 @@ namespace KMS.Controllers
         [Route("FilterInsuranceTransaction")]
         public JsonResult FilterInsuranceTransaction([FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
         {
-            string query = "SELECT itr.transactionDate, itr.id, \r\n\titr.memberId, m.fullName, \r\n\titr.contractId, " +
-                "\r\n\tipa.id as packageId, ipa.packageName, \r\n\tipa.termId, t.content, " +
-                "\r\n\tit.id as typeId, it.typeName, \r\n\tipd.ageRangeId, ar.startAge, ar.endAge, " +
-                "\r\n\tN'Từ ' + CONVERT(VARCHAR(10), ar.startAge) + N' đến ' + CONVERT(VARCHAR(10), ar.endAge) + N' tuổi' as description, " +
-                "\r\n\tipa.insuranceProviderId, p.provider, " +
-
-                "\r\n\titr.annualPay, itr.registrationDate, itr.expireDate, itr.status \r\nFROM InsuranceTransaction itr " +
-                "\r\nLEFT JOIN InsurancePackageHeader ipa ON ipa.id = itr.packageId " +
-                "\r\nLEFT JOIN InsuranceType it ON it.id = ipa.insuranceTypeId " +
-                "\r\nLEFT JOIN Term t ON t.id = ipa.termId\r\nLEFT JOIN LMember m on m.id = itr.memberId " +
-                "\r\nLEFT JOIN InsuranceProvider p on p.id = ipa.insuranceProviderId " +
-                "\r\nLEFT JOIN InsurancePackageDetail ipd on ipd.packageHeaderId = ipa.id " +
-                "\r\nLEFT JOIN AgeRange ar on ar.id = ipd.ageRangeId";
+            string query = @"SELECT 
+	                        itr.transactionDate,
+	                        itr.id,
+	                        itr.memberId,
+	                        m.fullName,
+	                        itr.contractId,
+	                        ipd.id AS packageId,
+	                        iph.packageName,
+	                        it.typeName,
+	                        inspvd.provider,
+	                        ipd.ageRangeId,
+	                        ar.startAge,
+	                        ar.endAge,
+	                        N'Từ ' + CONVERT(VARCHAR(10), ar.startAge) + N' đến ' + CONVERT(VARCHAR(10), ar.endAge) + N' tuổi' AS description,
+	                        itr.annualPay,
+	                        ipd.fee,
+	                        itr.registrationDate,
+	                        itr.expireDate,
+	                        itr.status 
+                        FROM 
+	                        InsuranceTransaction itr
+                        LEFT JOIN 
+	                        LMember m ON m.id = itr.memberId
+                        LEFT JOIN 
+	                        InsurancePackageDetail ipd ON itr.packageId = ipd.id
+                        LEFT JOIN 
+	                        AgeRange ar ON ar.id = ipd.ageRangeId
+                        left join
+	                        InsurancePackageHeader iph on iph.id = ipd.packageHeaderId
+                        left join
+	                        InsuranceProvider inspvd on inspvd.id = iph.insuranceProviderId
+                        left join
+	                        InsuranceType it on it.id = iph.insuranceTypeId ";
 
             List<SqlParameter> parameters = new List<SqlParameter>();
 
