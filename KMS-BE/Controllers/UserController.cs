@@ -38,53 +38,91 @@ namespace KMS.Controllers
         [Route("ShowUsers")]
         public JsonResult GetUsers()
         {
-            string query = "SELECT u.id, u.username, u.fullname, u.email, ug.groupName, u.lastLogin, u.isActive, DATEDIFF(DAY, u.lastLogin, GETDATE()) AS TotalDaysDormant " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "SELECT u.id, u.username, u.fullname, u.email, ug.groupName, u.lastLogin, u.isActive, DATEDIFF(DAY, u.lastLogin, GETDATE()) AS TotalDaysDormant " +
                 " FROM TUser u \r\nLEFT JOIN TUserGroup ug ON u.userGroupId = ug.id " +
                 " WHERE ug.id IS NOT NULL or ug.id IS NULL";
-            DataTable table = _exQuery.ExecuteRawQuery(query);
-            return new JsonResult(table);
+                DataTable table = _exQuery.ExecuteRawQuery(query);
+                response.Data = table;
+                return new JsonResult(table);
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
         }
 
         [HttpGet]
         [Route("ShowUsers/{id}")]
         public JsonResult GetUserById(int id)
         {
-            string query = "SELECT u.id, u.username, u.fullname, u.email, ug.groupName, u.lastLogin, u.isActive, DATEDIFF(DAY, u.lastLogin, GETDATE()) AS TotalDaysDormant " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "SELECT u.id, u.username, u.fullname, u.email, ug.groupName, u.lastLogin, u.isActive, DATEDIFF(DAY, u.lastLogin, GETDATE()) AS TotalDaysDormant " +
                 " FROM TUser u \r\nLEFT JOIN TUserGroup ug ON u.userGroupId = ug.id " +
                 " WHERE u.id = @UserId and (ug.id IS NOT NULL or ug.id IS NULL)";
 
-            SqlParameter parameter = new SqlParameter("@UserId", id);
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+                SqlParameter parameter = new SqlParameter("@UserId", id);
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+                response.Data = table;
 
-            if (table.Rows.Count > 0)
-            {
-                return new JsonResult(table);
+                if (table.Rows.Count > 0)
+                {
+                    return new JsonResult(table);
+                }
+                else
+                {
+                    return new JsonResult("User not found");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return new JsonResult("User not found");
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
             }
+            return new JsonResult(response);
         }
 
         [HttpGet]
         [Route("ShowUsersInEditPage/{id}")]
         public JsonResult GetUserByIdInEditPage(int id)
         {
-            string query = "SELECT u.id, u.username, u.fullname, u.password, u.email, u.userGroupId, u.isActive" +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "SELECT u.id, u.username, u.fullname, u.password, u.email, u.userGroupId, u.isActive" +
                 "\r\nFROM TUser u, TUserGroup ug" +
                 "\r\nWHERE u.userGroupId = ug.id AND u.id = @UserId";
 
-            SqlParameter parameter = new SqlParameter("@UserId", id);
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+                SqlParameter parameter = new SqlParameter("@UserId", id);
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
-            if (table.Rows.Count > 0)
-            {
-                return new JsonResult(table);
+                if (table.Rows.Count > 0)
+                {
+                    return new JsonResult(table);
+                }
+                else
+                {
+                    return new JsonResult("User not found");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return new JsonResult("User not found");
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
             }
+            return new JsonResult(response);
         }
 
         [HttpPost]
@@ -153,7 +191,7 @@ namespace KMS.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(new { message = e.Message });
+                return BadRequest(new { Code = -1, message = "Login failed" });
             }
         }
 
@@ -161,32 +199,44 @@ namespace KMS.Controllers
         [Route("AddUser")]
         public JsonResult AddUser([FromBody] Tuser newUser)
         {
-            string insertQuery = "INSERT INTO TUser (username, fullname, email, password, userGroupId, lastLogin, isActive, dateCreated, dateModified) " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string insertQuery = "INSERT INTO TUser (username, fullname, email, password, userGroupId, lastLogin, isActive, dateCreated, dateModified) " +
                                 "VALUES (@Username, @Fullname, @Email, @Password, @UserGroupId, GETDATE(), @IsActive, GETDATE(), GETDATE());";
 
-            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Add', 'TUser', GETDATE(), GETDATE(), 1)";
+                string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Add', 'TUser', GETDATE(), GETDATE(), 1)";
 
-            SqlParameter[] parameters =
+                SqlParameter[] parameters =
+                {
+                    new SqlParameter("@Username", newUser.Username),
+                    new SqlParameter("@Fullname", newUser.Fullname),
+                    new SqlParameter("@Email", newUser.Email),
+                    new SqlParameter("@Password", Password.hashPassword(newUser.Password)),
+                    new SqlParameter("@UserGroupId", newUser.UserGroupId),
+                    new SqlParameter("@IsActive", newUser.IsActive),
+                };
+
+                SqlParameter[] parameters2 =
+                {
+
+                };
+
+                _exQuery.ExecuteRawQuery(insertQuery, parameters);
+                _exQuery.ExecuteRawQuery(query2, parameters2);
+
+
+
+                return new JsonResult(new { Message = "User added successfully" });
+            }
+            catch (Exception ex)
             {
-                new SqlParameter("@Username", newUser.Username),
-                new SqlParameter("@Fullname", newUser.Fullname),
-                new SqlParameter("@Email", newUser.Email),
-                new SqlParameter("@Password", Password.hashPassword(newUser.Password)),
-                new SqlParameter("@UserGroupId", newUser.UserGroupId),
-                new SqlParameter("@IsActive", newUser.IsActive),
-            };
-
-            SqlParameter[] parameters2 =
-            {
-
-            };
-
-            _exQuery.ExecuteRawQuery(insertQuery, parameters);
-            _exQuery.ExecuteRawQuery(query2, parameters2);
-
-            
-
-            return new JsonResult(new { Message = "User added successfully" });
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
         }
 
         private List<int> GetGroupIdList()

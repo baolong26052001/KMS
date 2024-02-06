@@ -31,63 +31,104 @@ namespace KMS.Controllers
         [Route("ShowAccount")]
         public JsonResult GetAccount()
         {
-            string query = "select a.id, a.memberId, m.fullname, a.contractId, m.phone, m.bankName, m.department, m.companyName, m.address1, m.isActive, m.dateCreated " +
+            ResponseDto response = new ResponseDto();
+
+            try
+            {
+                string query = "select a.id, a.memberId, m.fullname, a.contractId, m.phone, m.bankName, m.department, m.companyName, m.address1, m.isActive, m.dateCreated " +
                 "from LAccount a, LMember m " +
                 "where a.memberId = m.id";
+
+                DataTable table = _exQuery.ExecuteRawQuery(query);
+                return new JsonResult(table);
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
             
-            DataTable table = _exQuery.ExecuteRawQuery(query);
-            return new JsonResult(table);
         }
 
         [HttpGet]
         [Route("ShowAccount/{id}")]
         public JsonResult GetAccountById(int id)
         {
-            string query = "select a.id, a.memberId, m.fullname, a.contractId, m.phone, m.bankName, m.department, m.companyName, m.address1, m.isActive, m.dateCreated " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "select a.id, a.memberId, m.fullname, a.contractId, m.phone, m.bankName, m.department, m.companyName, m.address1, m.isActive, m.dateCreated " +
                 "from LAccount a, LMember m " +
                 "where a.memberId = m.id and a.id=@Id";
 
-            SqlParameter parameter = new SqlParameter("@Id", id);
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+                SqlParameter parameter = new SqlParameter("@Id", id);
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
-            if (table.Rows.Count > 0)
-            {
-                return new JsonResult(table);
+                if (table.Rows.Count > 0)
+                {
+                    return new JsonResult(table);
+                }
+                else
+                {
+                    response.Code = 404;
+                    response.Message = "Account ID not found";
+                    response.Exception = "";
+                    response.Data = null;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return new JsonResult("Account not found");
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
             }
+            return new JsonResult(response);
         }
 
         [HttpGet]
         [Route("FilterAccount")]
         public JsonResult FilterAccount([FromQuery] int? status = null, [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
         {
-            string query = "SELECT a.id, a.memberId, m.fullname, a.contractId, m.phone, m.bankName, m.department, m.companyName, m.address1, a.status, a.dateCreated " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "SELECT a.id, a.memberId, m.fullname, a.contractId, m.phone, m.bankName, m.department, m.companyName, m.address1, a.status, a.dateCreated " +
                 "FROM LAccount a INNER JOIN LMember m ON a.memberId = m.id ";
 
-            List<SqlParameter> parameters = new List<SqlParameter>();
+                List<SqlParameter> parameters = new List<SqlParameter>();
 
-            if (status != null)
-            {
-                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "a.status = @status";
-                parameters.Add(new SqlParameter("@status", status));
+                if (status != null)
+                {
+                    query += (parameters.Count == 0 ? " WHERE " : " AND ") + "a.status = @status";
+                    parameters.Add(new SqlParameter("@status", status));
+                }
+
+                if (startDate.HasValue && endDate.HasValue)
+                {
+                    startDate = startDate.Value.Date.AddHours(0).AddMinutes(0).AddSeconds(0);
+                    endDate = endDate.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
+
+                    query += (parameters.Count == 0 ? " WHERE " : " AND ") + "a.dateCreated >= @startDate AND a.dateCreated <= @endDate";
+                    parameters.Add(new SqlParameter("@startDate", startDate.Value));
+                    parameters.Add(new SqlParameter("@endDate", endDate.Value));
+                }
+
+                DataTable table = _exQuery.ExecuteRawQuery(query, parameters.ToArray());
+
+                return new JsonResult(table);
             }
-
-            if (startDate.HasValue && endDate.HasValue)
+            catch (Exception ex)
             {
-                startDate = startDate.Value.Date.AddHours(0).AddMinutes(0).AddSeconds(0);
-                endDate = endDate.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
-
-                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "a.dateCreated >= @startDate AND a.dateCreated <= @endDate";
-                parameters.Add(new SqlParameter("@startDate", startDate.Value));
-                parameters.Add(new SqlParameter("@endDate", endDate.Value));
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
             }
-
-            DataTable table = _exQuery.ExecuteRawQuery(query, parameters.ToArray());
-
-            return new JsonResult(table);
+            return new JsonResult(response);
         }
 
 

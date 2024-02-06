@@ -28,7 +28,7 @@ namespace KMS.Controllers
 
 
         [HttpGet]
-        [Route("ShowBenefitById/{id}")] // hiện thông tin khi ở màn hình edit benefit
+        [Route("ShowBenefitById/{id}")] // (KMS) hiện thông tin khi ở màn hình edit benefit
         public JsonResult GetBenefitById(int id)
         {
             string query = "select * " +
@@ -49,7 +49,7 @@ namespace KMS.Controllers
         }
 
         [HttpGet]
-        [Route("ShowBenefitDetailById/{id}")] // hiện thông tin khi ở màn hình edit benefit detail
+        [Route("ShowBenefitDetailById/{id}")] // (KMS) hiện thông tin khi ở màn hình edit benefit detail
         public JsonResult GetBenefitDetailById(int id)
         {
             string query = "select * " +
@@ -70,7 +70,8 @@ namespace KMS.Controllers
         }
 
         [HttpGet]
-        [Route("ShowInsurancePackageDetail/{id}")] // khi ấn vào view package A, thì sẽ show ra "benefit" của package A
+        [Route("ShowInsurancePackageDetail/{id}")] // (KMS) khi ấn vào view package header A, thì sẽ show ra "benefit" của package header A
+                                                   // (Kiosk App) hiện ra benefit của package header A
         public JsonResult GetInsurancePackageDetail(int id)
         {
             string query = "select b.id, b.content, b.coverage, b.description, ipack.packageName, itype.typeName, " +
@@ -283,13 +284,6 @@ namespace KMS.Controllers
             _exQuery.ExecuteRawQuery(query2, parameters2);
             return new JsonResult("Benefit detail deleted successfully");
         }
-
-       
-
-        
-
-       
-
 
     }
 }

@@ -23,7 +23,7 @@ namespace KMS.Controllers
         }
 
         [HttpGet]
-        [Route("ShowInsurancePackageDetail")]
+        [Route("ShowInsurancePackageDetail")] // coi giá tiền của gói bảo hiểm
         public JsonResult GetInsurancePackageDetail()
         {
             string query = "SELECT a.id, b.packageName, a.ageRangeId, N'Từ ' + CAST(d.startAge AS NVARCHAR) + N' đến ' + CAST(d.endAge AS NVARCHAR) + N' tuổi' AS ageRange, a.fee, c.provider, c.email, e.content, a.dateModified, a.dateCreated " +
@@ -38,7 +38,7 @@ namespace KMS.Controllers
         }
 
         [HttpGet]
-        [Route("ShowInsurancePackageDetailByAgeRangeId/{id}")]
+        [Route("ShowInsurancePackageDetailByAgeRangeId/{id}")] // coi giá tiền dựa theo độ tuổi
         public JsonResult GetInsurancePackageDetailByAgeRangeId(int id)
         {
             string query = "SELECT\r\n    a.id,\r\n\tb.id as headerId,\r\n\te.id as termId,\r\n    b.packageName,\r\n    a.ageRangeId,\r\n    N'Từ ' + CAST(d.startAge AS NVARCHAR) + N' đến ' + CAST(d.endAge AS NVARCHAR) + N' tuổi' AS ageRange,\r\n    a.fee,\r\n    c.provider,\r\n    c.email,\r\n    e.content,\r\n    a.dateModified,\r\n    a.dateCreated\r\nFROM\r\n    InsurancePackageDetail a\r\nJOIN\r\n    AgeRange h ON h.id = a.ageRangeId\r\nJOIN\r\n    InsurancePackageHeader b ON a.packageHeaderId = b.id\r\nLEFT JOIN\r\n    InsuranceProvider c ON c.id = b.insuranceProviderId\r\nLEFT JOIN\r\n    AgeRange d ON d.id = a.ageRangeId\r\nLEFT JOIN\r\n    Term e ON e.id = b.termId\r\nwhere d.id = @Id";
@@ -57,7 +57,7 @@ namespace KMS.Controllers
         }
 
         [HttpGet]
-        [Route("ShowInsurancePackageDetailByAgeRangeIdAndTermId/{ageRangeId}/{termId}")]
+        [Route("ShowInsurancePackageDetailByAgeRangeIdAndTermId/{ageRangeId}/{termId}")] // coi giá tiền dựa theo độ tuổi và điều khoản
         public JsonResult GetInsurancePackageDetailByAgeRangeIdAndTermId(int ageRangeId, int termId)
         {
             string query = "SELECT\r\n    a.id,\r\n    b.id AS headerId,\r\n    e.id AS termId,\r\n    b.packageName,\r\n    a.ageRangeId,\r\n    N'Từ ' + CAST(d.startAge AS NVARCHAR) + N' đến ' + CAST(d.endAge AS NVARCHAR) + N' tuổi' AS ageRange,\r\n    a.fee,\r\n    c.provider,\r\n    c.email,\r\n    e.content,\r\n\tb.priority,\r\n    a.dateModified,\r\n    a.dateCreated\r\nFROM\r\n    InsurancePackageDetail a\r\nLEFT JOIN\r\n    AgeRange h ON h.id = a.ageRangeId\r\nLEFT JOIN\r\n    InsurancePackageHeader b ON a.packageHeaderId = b.id\r\nLEFT JOIN\r\n    InsuranceProvider c ON c.id = b.insuranceProviderId\r\nLEFT JOIN\r\n    AgeRange d ON d.id = a.ageRangeId\r\nLEFT JOIN\r\n    Term e ON e.id = b.termId\r\nWHERE\r\n    d.id = @AgeRangeId\r\n    AND e.id = @TermId\r\n\tORDER BY b.priority asc";
@@ -82,7 +82,7 @@ namespace KMS.Controllers
 
 
         [HttpGet]
-        [Route("ShowInsurancePackageDetailByTermId/{id}")]
+        [Route("ShowInsurancePackageDetailByTermId/{id}")] // coi giá tiền dựa theo điều khoản
         public JsonResult GetInsurancePackageDetailByTermId(int id)
         {
             string query = "SELECT\r\n    a.id,\r\n\tb.id as headerId,\r\n\te.id as termId,\r\n    b.packageName,\r\n    a.ageRangeId,\r\n    N'Từ ' + CAST(d.startAge AS NVARCHAR) + N' đến ' + CAST(d.endAge AS NVARCHAR) + N' tuổi' AS ageRange,\r\n    a.fee,\r\n    c.provider,\r\n    c.email,\r\n    e.content,\r\n    a.dateModified,\r\n    a.dateCreated\r\nFROM\r\n    InsurancePackageDetail a\r\nJOIN\r\n    AgeRange h ON h.id = a.ageRangeId\r\nJOIN\r\n    InsurancePackageHeader b ON a.packageHeaderId = b.id\r\nLEFT JOIN\r\n    InsuranceProvider c ON c.id = b.insuranceProviderId\r\nLEFT JOIN\r\n    AgeRange d ON d.id = a.ageRangeId\r\nLEFT JOIN\r\n    Term e ON e.id = b.termId\r\nwhere e.id = @Id";
@@ -101,7 +101,7 @@ namespace KMS.Controllers
         }
 
         [HttpGet]
-        [Route("ShowInsurancePackageDetailByHeaderId/{id}")]
+        [Route("ShowInsurancePackageDetailByHeaderId/{id}")] // coi giá tiền dựa theo id của package header
         public JsonResult GetInsurancePackageDetailByHeaderId(int id)
         {
             string query = "SELECT a.id, b.packageName, a.ageRangeId, N'Từ ' + CAST(d.startAge AS NVARCHAR) + N' đến ' + CAST(d.endAge AS NVARCHAR) + N' tuổi' AS ageRange, a.fee, c.provider, c.email, e.content, a.dateModified, a.dateCreated " +
@@ -125,7 +125,7 @@ namespace KMS.Controllers
         }
 
         [HttpGet]
-        [Route("ShowInsurancePackageDetail/{id}")]
+        [Route("ShowInsurancePackageDetail/{id}")] // (KMS) dùng để hiện dữ liệu khi edit insurance detail
         public JsonResult GetInsurancePackageDetailById(int id)
         {
             string query = "SELECT a.id, b.packageName, a.ageRangeId, N'Từ ' + CAST(d.startAge AS NVARCHAR) + N' đến ' + CAST(d.endAge AS NVARCHAR) + N' tuổi' AS ageRange, a.fee, c.provider, c.email, e.content, a.dateModified, a.dateCreated " +
