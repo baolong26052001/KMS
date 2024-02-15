@@ -23,50 +23,72 @@ namespace KMS.Controllers
             _exQuery = exQuery;
         }
 
-        
-
-
-
         [HttpGet]
         [Route("ShowBenefitById/{id}")] // (KMS) hiện thông tin khi ở màn hình edit benefit
         public JsonResult GetBenefitById(int id)
         {
-            string query = "select * " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "select * " +
                 "from Benefit " +
                 "where id=@id";
 
-            SqlParameter parameter = new SqlParameter("@id", id);
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+                SqlParameter parameter = new SqlParameter("@id", id);
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
-            if (table.Rows.Count > 0)
-            {
-                return new JsonResult(table);
+                if (table.Rows.Count > 0)
+                {
+                    return new JsonResult(table);
+                }
+                else
+                {
+                    return new JsonResult("Benefit not found");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return new JsonResult("Benefit not found");
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
             }
+            return new JsonResult(response);
+            
         }
 
         [HttpGet]
         [Route("ShowBenefitDetailById/{id}")] // (KMS) hiện thông tin khi ở màn hình edit benefit detail
         public JsonResult GetBenefitDetailById(int id)
         {
-            string query = "select * " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "select * " +
                 "from BenefitDetail " +
                 "where id=@id";
 
-            SqlParameter parameter = new SqlParameter("@id", id);
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+                SqlParameter parameter = new SqlParameter("@id", id);
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
-            if (table.Rows.Count > 0)
-            {
-                return new JsonResult(table);
+                if (table.Rows.Count > 0)
+                {
+                    return new JsonResult(table);
+                }
+                else
+                {
+                    return new JsonResult("Benefit Detail not found");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return new JsonResult("Benefit Detail not found");
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
             }
+            return new JsonResult(response);
+            
         }
 
         [HttpGet]
@@ -74,44 +96,70 @@ namespace KMS.Controllers
                                                    // (Kiosk App) hiện ra benefit của package header A
         public JsonResult GetInsurancePackageDetail(int id)
         {
-            string query = "select b.id, b.content, b.coverage, b.description, ipack.packageName, itype.typeName, " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "select b.id, b.content, b.coverage, b.description, ipack.packageName, itype.typeName, " +
                 "b.dateModified, b.dateCreated " +
                 "from Benefit b " +
                 "LEFT JOIN InsurancePackageHeader ipack ON b.packageId = ipack.id " +
                 "LEFT JOIN InsuranceType itype ON itype.id = ipack.insuranceTypeId " +
                 "where ipack.id=@id";
 
-            SqlParameter parameter = new SqlParameter("@id", id);
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+                SqlParameter parameter = new SqlParameter("@id", id);
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
-            if (table.Rows.Count > 0)
-            {
-                return new JsonResult(table);
+                if (table.Rows.Count > 0)
+                {
+                    return new JsonResult(table);
+                }
+                else
+                {
+                    return new JsonResult("Insurance Package Detail not found");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return new JsonResult("Insurance Package Detail not found");
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
             }
+            return new JsonResult(response);
+            
         }
 
         [HttpGet]
         [Route("ShowBenefit/{id}")] // ấn vào view benefit, sẽ ra benefit detail
         public JsonResult GetBenefitDetail(int id)
         {
-            string query = "select id,content,coverage,benefitId,dateCreated,dateModified\r\nfrom BenefitDetail " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "select id,content,coverage,benefitId,dateCreated,dateModified\r\nfrom BenefitDetail " +
                 "where benefitId=@id";
 
-            SqlParameter parameter = new SqlParameter("@id", id);
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+                SqlParameter parameter = new SqlParameter("@id", id);
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
-            if (table.Rows.Count > 0)
-            {
-                return new JsonResult(table);
+                if (table.Rows.Count > 0)
+                {
+                    return new JsonResult(table);
+                }
+                else
+                {
+                    return new JsonResult("Benefit Detail not found");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return new JsonResult("Benefit Detail not found");
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
             }
+            return new JsonResult(response);
+            
         }
 
       
@@ -120,169 +168,247 @@ namespace KMS.Controllers
         [Route("AddBenefit")]
         public JsonResult AddBenefit([FromBody] Benefit benefit)
         {
-            string query = "INSERT INTO Benefit (packageId, content, coverage, description, dateModified, dateCreated) " +
-                           "VALUES (@PackageId, @Content, @Coverage, @Description, GETDATE(), GETDATE())";
-            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Add', 'Benefit', GETDATE(), GETDATE(), 1)";
-
-            SqlParameter[] parameters =
+            ResponseDto response = new ResponseDto();
+            try
             {
-                new SqlParameter("@PackageId", benefit.PackageId),
-                new SqlParameter("@Content", benefit.Content),
-                new SqlParameter("@Coverage", benefit.Coverage),
-                new SqlParameter("@Description", benefit.Description),
- 
-                
-            };
-            SqlParameter[] parameters2 = { };
+                string query = "INSERT INTO Benefit (packageId, content, coverage, description, dateModified, dateCreated) " +
+                           "VALUES (@PackageId, @Content, @Coverage, @Description, GETDATE(), GETDATE())";
+                string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Add', 'Benefit', GETDATE(), GETDATE(), 1)";
 
-            _exQuery.ExecuteRawQuery(query, parameters);
-            _exQuery.ExecuteRawQuery(query2, parameters2);
+                SqlParameter[] parameters =
+                {
+                    new SqlParameter("@PackageId", benefit.PackageId),
+                    new SqlParameter("@Content", benefit.Content),
+                    new SqlParameter("@Coverage", benefit.Coverage),
+                    new SqlParameter("@Description", benefit.Description),
 
-            return new JsonResult("Benefit added successfully");
+
+                };
+                SqlParameter[] parameters2 = { };
+
+                _exQuery.ExecuteRawQuery(query, parameters);
+                _exQuery.ExecuteRawQuery(query2, parameters2);
+
+                return new JsonResult("Benefit added successfully");
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
         [HttpPost]
         [Route("AddBenefitDetail")]
         public JsonResult AddBenefitDetail([FromBody] BenefitDetail benefitDetail)
         {
-            string query = "INSERT INTO BenefitDetail (benefitId, content, coverage, dateModified, dateCreated) " +
-                           "VALUES (@BenefitId, @Content, @Coverage, GETDATE(), GETDATE())";
-            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Add', 'BenefitDetail', GETDATE(), GETDATE(), 1)";
-            SqlParameter[] parameters =
+            ResponseDto response = new ResponseDto();
+            try
             {
-                
-                new SqlParameter("@BenefitId", benefitDetail.BenefitId),
-                new SqlParameter("@Content", benefitDetail.Content),
-                new SqlParameter("@Coverage", benefitDetail.Coverage),
+                string query = "INSERT INTO BenefitDetail (benefitId, content, coverage, dateModified, dateCreated) " +
+                           "VALUES (@BenefitId, @Content, @Coverage, GETDATE(), GETDATE())";
+                string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Add', 'BenefitDetail', GETDATE(), GETDATE(), 1)";
+                SqlParameter[] parameters =
+                {
 
-            };
-            SqlParameter[] parameters2 = { };
+                    new SqlParameter("@BenefitId", benefitDetail.BenefitId),
+                    new SqlParameter("@Content", benefitDetail.Content),
+                    new SqlParameter("@Coverage", benefitDetail.Coverage),
 
-            _exQuery.ExecuteRawQuery(query, parameters);
-            _exQuery.ExecuteRawQuery(query2, parameters2);
+                };
+                SqlParameter[] parameters2 = { };
 
-            return new JsonResult("Benefit detail added successfully");
+                _exQuery.ExecuteRawQuery(query, parameters);
+                _exQuery.ExecuteRawQuery(query2, parameters2);
+
+                return new JsonResult("Benefit detail added successfully");
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
         [HttpPut]
         [Route("EditBenefit/{id}")]
         public JsonResult EditBenefit(int id, [FromBody] Benefit benefit)
         {
-            string query = "UPDATE Benefit " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "UPDATE Benefit " +
                            "SET content = @Content, coverage = @Coverage, description = @Description, " +
                            "dateModified = GETDATE() " +
                            "WHERE id = @id";
-            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Edit', 'Benefit', GETDATE(), GETDATE(), 1)";
+                string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Edit', 'Benefit', GETDATE(), GETDATE(), 1)";
 
-            SqlParameter[] parameters =
+                SqlParameter[] parameters =
+                {
+                    new SqlParameter("@id", id),
+                    new SqlParameter("@Content", benefit.Content),
+                    new SqlParameter("@Coverage", benefit.Coverage),
+                    new SqlParameter("@Description", benefit.Description),
+
+
+                };
+                SqlParameter[] parameters2 = { };
+
+                _exQuery.ExecuteRawQuery(query, parameters);
+                _exQuery.ExecuteRawQuery(query2, parameters2);
+
+                return new JsonResult("Benefit updated successfully");
+            }
+            catch (Exception ex)
             {
-                new SqlParameter("@id", id),
-                new SqlParameter("@Content", benefit.Content),
-                new SqlParameter("@Coverage", benefit.Coverage),
-                new SqlParameter("@Description", benefit.Description),
-                
-
-            };
-            SqlParameter[] parameters2 = { };
-
-            _exQuery.ExecuteRawQuery(query, parameters);
-            _exQuery.ExecuteRawQuery(query2, parameters2);
-
-            return new JsonResult("Benefit updated successfully");
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
         [HttpPut]
         [Route("EditBenefitDetail/{id}")]
         public JsonResult EditBenefitDetail(int id, [FromBody] BenefitDetail benefitDetail)
         {
-            string query = "UPDATE BenefitDetail " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "UPDATE BenefitDetail " +
                            "SET content = @Content, coverage = @Coverage, " +
                            "dateModified = GETDATE() " +
                            "WHERE id = @id";
-            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Edit', 'BenefitDetail', GETDATE(), GETDATE(), 1)";
+                string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Edit', 'BenefitDetail', GETDATE(), GETDATE(), 1)";
 
-            SqlParameter[] parameters =
+                SqlParameter[] parameters =
+                {
+                    new SqlParameter("@id", id),
+                    new SqlParameter("@Content", benefitDetail.Content),
+                    new SqlParameter("@Coverage", benefitDetail.Coverage),
+                };
+                SqlParameter[] parameters2 = { };
+
+                _exQuery.ExecuteRawQuery(query, parameters);
+                _exQuery.ExecuteRawQuery(query2, parameters2);
+
+                return new JsonResult("Benefit detail updated successfully");
+            }
+            catch (Exception ex)
             {
-                new SqlParameter("@id", id),
-                new SqlParameter("@Content", benefitDetail.Content),
-                new SqlParameter("@Coverage", benefitDetail.Coverage),
-            };
-            SqlParameter[] parameters2 = { };
-
-            _exQuery.ExecuteRawQuery(query, parameters);
-            _exQuery.ExecuteRawQuery(query2, parameters2);
-
-            return new JsonResult("Benefit detail updated successfully");
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
         [HttpDelete]
         [Route("DeleteBenefit")]
         public JsonResult DeleteBenefit([FromBody] List<int> benefitIds)
         {
-            if (benefitIds == null || benefitIds.Count == 0)
+            ResponseDto response = new ResponseDto();
+            try
             {
-                return new JsonResult("No benefit IDs provided for deletion");
-            }
-
-            StringBuilder deleteQuery = new StringBuilder("DELETE FROM Benefit WHERE id IN (");
-            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Delete', 'Benefit', GETDATE(), GETDATE(), 1)";
-
-            List<SqlParameter> parameters = new List<SqlParameter>();
-            SqlParameter[] parameters2 = { };
-            for (int i = 0; i < benefitIds.Count; i++)
-            {
-                string parameterName = "@BenefitId" + i;
-                deleteQuery.Append(parameterName);
-
-                if (i < benefitIds.Count - 1)
+                if (benefitIds == null || benefitIds.Count == 0)
                 {
-                    deleteQuery.Append(", ");
+                    return new JsonResult("No benefit IDs provided for deletion");
                 }
 
-                parameters.Add(new SqlParameter(parameterName, benefitIds[i]));
+                StringBuilder deleteQuery = new StringBuilder("DELETE FROM Benefit WHERE id IN (");
+                string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Delete', 'Benefit', GETDATE(), GETDATE(), 1)";
+
+                List<SqlParameter> parameters = new List<SqlParameter>();
+                SqlParameter[] parameters2 = { };
+                for (int i = 0; i < benefitIds.Count; i++)
+                {
+                    string parameterName = "@BenefitId" + i;
+                    deleteQuery.Append(parameterName);
+
+                    if (i < benefitIds.Count - 1)
+                    {
+                        deleteQuery.Append(", ");
+                    }
+
+                    parameters.Add(new SqlParameter(parameterName, benefitIds[i]));
+                }
+
+                deleteQuery.Append(");");
+
+                _exQuery.ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
+                _exQuery.ExecuteRawQuery(query2, parameters2);
+
+                return new JsonResult("Benefit deleted successfully");
             }
-
-            deleteQuery.Append(");");
-
-            _exQuery.ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
-            _exQuery.ExecuteRawQuery(query2, parameters2);
-
-            return new JsonResult("Benefit deleted successfully");
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
         [HttpDelete]
         [Route("DeleteBenefitDetail")]
         public JsonResult DeleteBenefitDetail([FromBody] List<int> benefitDetailIds)
         {
-            if (benefitDetailIds == null || benefitDetailIds.Count == 0)
+            ResponseDto response = new ResponseDto();
+            try
             {
-                return new JsonResult("No benefit detail IDs provided for deletion");
-            }
-
-            StringBuilder deleteQuery = new StringBuilder("DELETE FROM BenefitDetail WHERE id IN (");
-            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Delete', 'BenefitDetail', GETDATE(), GETDATE(), 1)";
-
-
-            List<SqlParameter> parameters = new List<SqlParameter>();
-            SqlParameter[] parameters2 = { };
-            for (int i = 0; i < benefitDetailIds.Count; i++)
-            {
-                string parameterName = "@BenefitDetailId" + i;
-                deleteQuery.Append(parameterName);
-
-                if (i < benefitDetailIds.Count - 1)
+                if (benefitDetailIds == null || benefitDetailIds.Count == 0)
                 {
-                    deleteQuery.Append(", ");
+                    return new JsonResult("No benefit detail IDs provided for deletion");
                 }
 
-                parameters.Add(new SqlParameter(parameterName, benefitDetailIds[i]));
+                StringBuilder deleteQuery = new StringBuilder("DELETE FROM BenefitDetail WHERE id IN (");
+                string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Delete', 'BenefitDetail', GETDATE(), GETDATE(), 1)";
+
+
+                List<SqlParameter> parameters = new List<SqlParameter>();
+                SqlParameter[] parameters2 = { };
+                for (int i = 0; i < benefitDetailIds.Count; i++)
+                {
+                    string parameterName = "@BenefitDetailId" + i;
+                    deleteQuery.Append(parameterName);
+
+                    if (i < benefitDetailIds.Count - 1)
+                    {
+                        deleteQuery.Append(", ");
+                    }
+
+                    parameters.Add(new SqlParameter(parameterName, benefitDetailIds[i]));
+                }
+
+                deleteQuery.Append(");");
+
+                _exQuery.ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
+                _exQuery.ExecuteRawQuery(query2, parameters2);
+                return new JsonResult("Benefit detail deleted successfully");
             }
-
-            deleteQuery.Append(");");
-
-            _exQuery.ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
-            _exQuery.ExecuteRawQuery(query2, parameters2);
-            return new JsonResult("Benefit detail deleted successfully");
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
     }

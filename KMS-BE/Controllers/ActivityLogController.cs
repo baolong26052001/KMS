@@ -27,91 +27,154 @@ namespace KMS.Controllers
         [Route("ShowActivityLog")]
         public JsonResult GetActivityLog()
         {
-            string query = "select ac.id, ac.kioskId, ac.hardwareName, ac.status, ac.stationId, ac.dateModified, ac.dateCreated, ac.isActive" +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "select ac.id, ac.kioskId, ac.hardwareName, ac.status, ac.stationId, ac.dateModified, ac.dateCreated, ac.isActive" +
                 "\r\nfrom TActivityLog ac";
-            DataTable table = _exQuery.ExecuteRawQuery(query);
-            return new JsonResult(table);
+                DataTable table = _exQuery.ExecuteRawQuery(query);
+                return new JsonResult(table);
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
         }
 
         [HttpGet]
         [Route("ShowActivityLog/{id}")]
         public JsonResult GetActivityLogById(int id)
         {
-            string query = $"select ac.id, ac.kioskId, ac.hardwareName, ac.status, ac.stationId, ac.dateModified, ac.dateCreated, ac.isActive" +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = $"select ac.id, ac.kioskId, ac.hardwareName, ac.status, ac.stationId, ac.dateModified, ac.dateCreated, ac.isActive" +
                            $"\r\nFROM TActivityLog ac" +
                            $"\r\nWHERE ac.id = {id}";
-            DataTable table = _exQuery.ExecuteRawQuery(query);
-            return new JsonResult(table);
+                DataTable table = _exQuery.ExecuteRawQuery(query);
+                return new JsonResult(table);
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
         [HttpGet]
         [Route("FilterActivityLog")]
         public JsonResult FilterActivityLog([FromQuery] bool? isActive = null, [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
         {
-            string query = "SELECT id, kioskId, hardwareName, status, stationId, dateModified, dateCreated, isActive " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "SELECT id, kioskId, hardwareName, status, stationId, dateModified, dateCreated, isActive " +
                            "FROM TActivityLog ";
 
-            List<SqlParameter> parameters = new List<SqlParameter>();
+                List<SqlParameter> parameters = new List<SqlParameter>();
 
-            if (isActive.HasValue)
-            {
-                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "isActive = @isActive";
-                parameters.Add(new SqlParameter("@isActive", isActive.Value));
+                if (isActive.HasValue)
+                {
+                    query += (parameters.Count == 0 ? " WHERE " : " AND ") + "isActive = @isActive";
+                    parameters.Add(new SqlParameter("@isActive", isActive.Value));
+                }
+
+                if (startDate.HasValue && endDate.HasValue)
+                {
+                    query += (parameters.Count == 0 ? " WHERE " : " AND ") + "dateCreated BETWEEN @startDate AND @endDate";
+                    parameters.Add(new SqlParameter("@startDate", startDate.Value));
+                    parameters.Add(new SqlParameter("@endDate", endDate.Value));
+                }
+
+                DataTable table = _exQuery.ExecuteRawQuery(query, parameters.ToArray());
+
+                return new JsonResult(table);
             }
-
-            if (startDate.HasValue && endDate.HasValue)
+            catch (Exception ex)
             {
-                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "dateCreated BETWEEN @startDate AND @endDate";
-                parameters.Add(new SqlParameter("@startDate", startDate.Value));
-                parameters.Add(new SqlParameter("@endDate", endDate.Value));
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
             }
+            return new JsonResult(response);
 
-            DataTable table = _exQuery.ExecuteRawQuery(query, parameters.ToArray());
-
-            return new JsonResult(table);
         }
 
         [HttpPost]
-        [Route("AddActivityLog")]
-        public JsonResult AddActivityLog([FromBody] TactivityLog activityLog)
+        [Route("SaveActivityLog")]
+        public JsonResult SaveActivityLog([FromBody] TactivityLog activityLog)
         {
-            
-            string query = "INSERT INTO TActivityLog (kioskId, hardwareName, status, stationId, dateModified, dateCreated, isActive) " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "INSERT INTO TActivityLog (kioskId, hardwareName, status, stationId, dateModified, dateCreated, isActive) " +
                            "VALUES (@KioskId, @HardwareName, @Status, @StationId, GETDATE(), GETDATE(), @IsActive)";
 
-            SqlParameter[] parameters =
-            {
-                new SqlParameter("@KioskId", activityLog.KioskId),
-                new SqlParameter("@HardwareName", activityLog.HardwareName),
-                new SqlParameter("@Status", activityLog.Status),
-                new SqlParameter("@StationId", activityLog.StationId),
-                new SqlParameter("@IsActive", activityLog.IsActive),
-            };
+                SqlParameter[] parameters =
+                {
+                    new SqlParameter("@KioskId", activityLog.KioskId),
+                    new SqlParameter("@HardwareName", activityLog.HardwareName),
+                    new SqlParameter("@Status", activityLog.Status),
+                    new SqlParameter("@StationId", activityLog.StationId),
+                    new SqlParameter("@IsActive", activityLog.IsActive),
+                };
 
-            _exQuery.ExecuteRawQuery(query, parameters);
-            return new JsonResult("ActivityLog added successfully");
+                _exQuery.ExecuteRawQuery(query, parameters);
+                return new JsonResult("ActivityLog saved successfully");
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+
         }
 
         [HttpPut]
         [Route("UpdateActivityLog")]
         public JsonResult UpdateActivityLog([FromBody] TactivityLog activityLog)
         {
-            string query = "UPDATE TActivityLog SET kioskId = @KioskId, hardwareName = @HardwareName, status = @Status, " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "UPDATE TActivityLog SET kioskId = @KioskId, hardwareName = @HardwareName, status = @Status, " +
                            "stationId = @StationId, dateModified = GETDATE(), dateCreated = GETDATE(), isActive = @IsActive " +
                            "WHERE id = @Id";
 
-            SqlParameter[] parameters =
-            {
-                new SqlParameter("@Id", activityLog.Id),
-                new SqlParameter("@KioskId", activityLog.KioskId),
-                new SqlParameter("@HardwareName", activityLog.HardwareName),
-                new SqlParameter("@Status", activityLog.Status),
-                new SqlParameter("@StationId", activityLog.StationId),
-                new SqlParameter("@IsActive", activityLog.IsActive),
-            };
+                SqlParameter[] parameters =
+                {
+                    new SqlParameter("@Id", activityLog.Id),
+                    new SqlParameter("@KioskId", activityLog.KioskId),
+                    new SqlParameter("@HardwareName", activityLog.HardwareName),
+                    new SqlParameter("@Status", activityLog.Status),
+                    new SqlParameter("@StationId", activityLog.StationId),
+                    new SqlParameter("@IsActive", activityLog.IsActive),
+                };
 
-            _exQuery.ExecuteRawQuery(query, parameters);
-            return new JsonResult("ActivityLog updated successfully");
+                _exQuery.ExecuteRawQuery(query, parameters);
+                return new JsonResult("ActivityLog updated successfully");
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+
         }
 
         
@@ -120,7 +183,10 @@ namespace KMS.Controllers
         [Route("SearchActivityLog")]
         public JsonResult SearchActivityLog(string searchQuery)
         {
-            string query = "SELECT id, kioskId, hardwareName, status, stationId, dateModified, dateCreated, isActive " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "SELECT id, kioskId, hardwareName, status, stationId, dateModified, dateCreated, isActive " +
                            "FROM TActivityLog " +
                            "WHERE id LIKE @searchQuery OR " +
                            "kioskId LIKE @searchQuery OR " +
@@ -128,10 +194,20 @@ namespace KMS.Controllers
                            "status LIKE @searchQuery OR " +
                            "stationId LIKE @searchQuery";
 
-            SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+                SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
-            return new JsonResult(table);
+                return new JsonResult(table);
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+
         }
 
     }

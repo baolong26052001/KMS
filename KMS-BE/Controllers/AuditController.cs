@@ -27,73 +27,125 @@ namespace KMS.Controllers
         [Route("ShowAudit")]
         public JsonResult GetAudit()
         {
-            string query = "select au.id, au.kioskId, au.userId,au.action,au.script,au.field, au.tableName, au.ipAddress, au.macAddress, au.dateCreated, au.isActive " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "select au.id, au.kioskId, au.userId,au.action,au.script,au.field, au.tableName, au.ipAddress, au.macAddress, au.dateCreated, au.isActive " +
                 "\r\nfrom TAudit au";
-            DataTable table = _exQuery.ExecuteRawQuery(query);
-            return new JsonResult(table);
+                DataTable table = _exQuery.ExecuteRawQuery(query);
+                return new JsonResult(table);
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
         [HttpGet]
         [Route("ShowAudit/{id}")]
         public JsonResult GetAuditById(int id)
         {
-            string query = "SELECT id, kioskId, userId, action, script, field, tableName, ipAddress, macAddress, dateCreated, isActive " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "SELECT id, kioskId, userId, action, script, field, tableName, ipAddress, macAddress, dateCreated, isActive " +
                            "FROM TAudit WHERE id = @id";
 
-            SqlParameter parameter = new SqlParameter("@id", id);
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
-            return new JsonResult(table);
+                SqlParameter parameter = new SqlParameter("@id", id);
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+                return new JsonResult(table);
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
         [HttpGet]
         [Route("FilterAudit")]
         public JsonResult FilterAudit([FromQuery] bool? isActive = null, [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
         {
-            string query = "SELECT id, kioskId, userId, action, script, field, tableName, ipAddress, macAddress, dateCreated, isActive " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "SELECT id, kioskId, userId, action, script, field, tableName, ipAddress, macAddress, dateCreated, isActive " +
                            "FROM TAudit";
 
-            List<SqlParameter> parameters = new List<SqlParameter>();
+                List<SqlParameter> parameters = new List<SqlParameter>();
 
-            if (isActive.HasValue)
-            {
-                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "isActive = @isActive";
-                parameters.Add(new SqlParameter("@isActive", isActive.Value));
+                if (isActive.HasValue)
+                {
+                    query += (parameters.Count == 0 ? " WHERE " : " AND ") + "isActive = @isActive";
+                    parameters.Add(new SqlParameter("@isActive", isActive.Value));
+                }
+
+                if (startDate.HasValue && endDate.HasValue)
+                {
+                    query += (parameters.Count == 0 ? " WHERE " : " AND ") + "dateCreated BETWEEN @startDate AND @endDate";
+                    parameters.Add(new SqlParameter("@startDate", startDate.Value));
+                    parameters.Add(new SqlParameter("@endDate", endDate.Value));
+                }
+
+                DataTable table = _exQuery.ExecuteRawQuery(query, parameters.ToArray());
+
+                return new JsonResult(table);
             }
-
-            if (startDate.HasValue && endDate.HasValue)
+            catch (Exception ex)
             {
-                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "dateCreated BETWEEN @startDate AND @endDate";
-                parameters.Add(new SqlParameter("@startDate", startDate.Value));
-                parameters.Add(new SqlParameter("@endDate", endDate.Value));
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
             }
-
-            DataTable table = _exQuery.ExecuteRawQuery(query, parameters.ToArray());
-
-            return new JsonResult(table);
+            return new JsonResult(response);
+            
         }
 
         [HttpPost]
         [Route("AddAudit")]
         public JsonResult AddAudit(Taudit audit)
         {
-            string query = "INSERT INTO TAudit (kioskId, userId, action, script, field, tableName, ipAddress, macAddress, dateCreated, isActive) " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "INSERT INTO TAudit (kioskId, userId, action, script, field, tableName, ipAddress, macAddress, dateCreated, isActive) " +
                            "VALUES (@kioskId, @userId, @action, @script, @field, @tableName, @ipAddress, @macAddress, DATEADD(HOUR, 7, GETDATE()), @isActive)";
 
-            SqlParameter[] parameters =
-            {
-                new SqlParameter("@kioskId", audit.KioskId),
-                new SqlParameter("@userId", audit.UserId),
-                new SqlParameter("@action", audit.Action),
-                new SqlParameter("@script", audit.Script),
-                new SqlParameter("@field", audit.Field),
-                new SqlParameter("@tableName", audit.TableName),
-                new SqlParameter("@ipAddress", audit.IpAddress),
-                new SqlParameter("@macAddress", audit.MacAddress),
-                new SqlParameter("@isActive", audit.IsActive)
-            };
+                SqlParameter[] parameters =
+                {
+                    new SqlParameter("@kioskId", audit.KioskId),
+                    new SqlParameter("@userId", audit.UserId),
+                    new SqlParameter("@action", audit.Action),
+                    new SqlParameter("@script", audit.Script),
+                    new SqlParameter("@field", audit.Field),
+                    new SqlParameter("@tableName", audit.TableName),
+                    new SqlParameter("@ipAddress", audit.IpAddress),
+                    new SqlParameter("@macAddress", audit.MacAddress),
+                    new SqlParameter("@isActive", audit.IsActive)
+                };
 
-            _exQuery.ExecuteRawQuery(query, parameters);
-            return new JsonResult("Audit record added successfully");
+                _exQuery.ExecuteRawQuery(query, parameters);
+                return new JsonResult("Audit record added successfully");
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
         [HttpPut]
@@ -128,7 +180,10 @@ namespace KMS.Controllers
         [Route("SearchAudit")]
         public JsonResult SearchAudit(string searchQuery)
         {
-            string query = "SELECT id, kioskId, userId, action, script, field, tableName, ipAddress, macAddress, dateCreated, isActive " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "SELECT id, kioskId, userId, action, script, field, tableName, ipAddress, macAddress, dateCreated, isActive " +
                            "FROM TAudit " +
                            "WHERE id LIKE @searchQuery OR " +
                            "kioskId LIKE @searchQuery OR " +
@@ -140,10 +195,20 @@ namespace KMS.Controllers
                            "ipAddress LIKE @searchQuery OR " +
                            "macAddress LIKE @searchQuery";
 
-            SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+                SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
-            return new JsonResult(table);
+                return new JsonResult(table);
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
     }
