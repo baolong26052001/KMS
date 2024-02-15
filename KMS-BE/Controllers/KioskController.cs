@@ -27,14 +27,27 @@ namespace KMS.Controllers
         [Route("ShowKiosk")] // show all kiosk setup
         public JsonResult GetKiosk()
         {
-            string query = "SELECT k.id, k.kioskName, k.location, st.stationName, ss.description as packageName, k.kioskStatus, k.cameraStatus, k.cashDepositStatus, k.scannerStatus, k.printerStatus " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "SELECT k.id, k.kioskName, k.location, st.stationName, ss.description as packageName, k.kioskStatus, k.cameraStatus, k.cashDepositStatus, k.scannerStatus, k.printerStatus " +
                            "FROM TKiosk k " +
                            "LEFT JOIN TStation st ON k.stationCode = st.id " +
                            "LEFT JOIN TSlideHeader ss ON ss.id = k.slidePackage";
-            
 
-            DataTable table = _exQuery.ExecuteRawQuery(query);
-            return new JsonResult(table);
+
+                DataTable table = _exQuery.ExecuteRawQuery(query);
+                return new JsonResult(table);
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
 
@@ -44,57 +57,83 @@ namespace KMS.Controllers
         [Route("ShowKioskSetup/{id}")]
         public JsonResult GetKioskById(int id)
         {
-            string query = "SELECT k.id, k.kioskName, k.location, st.id as stationCode, st.stationName, ss.id as slidePackage, ss.description as packageName, k.webServices, k.kioskStatus, k.cameraStatus, k.cashDepositStatus, k.scannerStatus, k.printerStatus " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "SELECT k.id, k.kioskName, k.location, st.id as stationCode, st.stationName, ss.id as slidePackage, ss.description as packageName, k.webServices, k.kioskStatus, k.cameraStatus, k.cashDepositStatus, k.scannerStatus, k.printerStatus " +
                            "FROM TKiosk k " +
                            "LEFT JOIN TStation st ON k.stationCode = st.id " +
                            "LEFT JOIN TSlideHeader ss ON ss.id = k.slidePackage " +
                            "WHERE k.id = @id";
 
-            SqlParameter parameter = new SqlParameter("@id", id);
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+                SqlParameter parameter = new SqlParameter("@id", id);
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
-            if (table.Rows.Count > 0)
-            {
-                return new JsonResult(table);
+                if (table.Rows.Count > 0)
+                {
+                    return new JsonResult(table);
+                }
+                else
+                {
+                    return new JsonResult("Kiosk not found");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return new JsonResult("Kiosk not found");
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
             }
+            return new JsonResult(response);
+            
         }
 
         [HttpGet]
         [Route("FilterKioskSetup")] // filter by package name, station name, country
         public JsonResult FilterKioskSetup([FromQuery] string? packageName = null, [FromQuery] string? location = null, [FromQuery] string? stationName = null)
         {
-            string query = "SELECT k.id, k.kioskName, k.location, st.stationName, ss.description as packageName, k.kioskStatus, k.cameraStatus, k.cashDepositStatus, k.scannerStatus, k.printerStatus " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "SELECT k.id, k.kioskName, k.location, st.stationName, ss.description as packageName, k.kioskStatus, k.cameraStatus, k.cashDepositStatus, k.scannerStatus, k.printerStatus " +
                            "FROM TKiosk k " +
                            "LEFT JOIN TStation st ON k.stationCode = st.id " +
                            "LEFT JOIN TSlideHeader ss ON ss.id = k.slidePackage ";
 
-            List<SqlParameter> parameters = new List<SqlParameter>();
+                List<SqlParameter> parameters = new List<SqlParameter>();
 
-            if (!string.IsNullOrEmpty(stationName))
-            {
-                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "st.stationName = @stationName";
-                parameters.Add(new SqlParameter("@stationName", stationName));
+                if (!string.IsNullOrEmpty(stationName))
+                {
+                    query += (parameters.Count == 0 ? " WHERE " : " AND ") + "st.stationName = @stationName";
+                    parameters.Add(new SqlParameter("@stationName", stationName));
+                }
+
+                if (!string.IsNullOrEmpty(location))
+                {
+                    query += (parameters.Count == 0 ? " WHERE " : " AND ") + "k.location = @location";
+                    parameters.Add(new SqlParameter("@location", location));
+                }
+
+                if (!string.IsNullOrEmpty(packageName))
+                {
+                    query += (parameters.Count == 0 ? " WHERE " : " AND ") + "ss.description = @packageName";
+                    parameters.Add(new SqlParameter("@packageName", packageName));
+                }
+
+                DataTable table = _exQuery.ExecuteRawQuery(query, parameters.ToArray());
+
+                return new JsonResult(table);
             }
-
-            if (!string.IsNullOrEmpty(location))
+            catch (Exception ex)
             {
-                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "k.location = @location";
-                parameters.Add(new SqlParameter("@location", location));
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
             }
-
-            if (!string.IsNullOrEmpty(packageName))
-            {
-                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "ss.description = @packageName";
-                parameters.Add(new SqlParameter("@packageName", packageName));
-            }
-
-            DataTable table = _exQuery.ExecuteRawQuery(query, parameters.ToArray());
-
-            return new JsonResult(table);
+            return new JsonResult(response);
+            
         }
 
 
@@ -104,59 +143,97 @@ namespace KMS.Controllers
         [Route("ShowKioskHardware")]
         public JsonResult GetKioskHardware()
         {
-            string query = "select k.id, k.availableMemory, k.ipAddress, k.OSName, k.OSPlatform, k.OSVersion" +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "select k.id, k.availableMemory, k.ipAddress, k.OSName, k.OSPlatform, k.OSVersion" +
                 "\r\nfrom TKiosk k";
-            DataTable table = _exQuery.ExecuteRawQuery(query);
-            return new JsonResult(table);
+                DataTable table = _exQuery.ExecuteRawQuery(query);
+                return new JsonResult(table);
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
         [HttpGet]
         [Route("ShowKioskHardware/{id}")]
         public JsonResult GetKioskHardwareById(int id)
         {
-            string query = "select k.id, k.availableMemory, k.ipAddress, k.OSName, k.OSPlatform, k.OSVersion, k.processor, k.totalMemory, k.diskSizeC, k.freeSpaceC, k.diskSizeD, k.freeSpaceD " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "select k.id, k.availableMemory, k.ipAddress, k.OSName, k.OSPlatform, k.OSVersion, k.processor, k.totalMemory, k.diskSizeC, k.freeSpaceC, k.diskSizeD, k.freeSpaceD " +
                            "FROM TKiosk k " +
                            "WHERE k.id = @id";
 
-            SqlParameter parameter = new SqlParameter("@id", id);
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+                SqlParameter parameter = new SqlParameter("@id", id);
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
-            if (table.Rows.Count > 0)
-            {
-                return new JsonResult(table);
+                if (table.Rows.Count > 0)
+                {
+                    return new JsonResult(table);
+                }
+                else
+                {
+                    return new JsonResult("Kiosk hardware not found");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return new JsonResult("Kiosk hardware not found");
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
             }
+            return new JsonResult(response);
+            
         }
 
         [HttpPost]
         [Route("AddKiosk")]
         public JsonResult AddKiosk([FromBody] Tkiosk kiosk)
         {
-            string query = "INSERT INTO TKiosk (kioskName, location, stationCode, slidePackage, webServices) " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "INSERT INTO TKiosk (kioskName, location, stationCode, slidePackage, webServices) " +
                            "VALUES (@kioskName, @location, @stationCode, @slidePackage, @webServices)";
-            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Add', 'TKiosk', GETDATE(), GETDATE(), 1)";
-            SqlParameter[] parameters =
+                string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Add', 'TKiosk', GETDATE(), GETDATE(), 1)";
+                SqlParameter[] parameters =
+                {
+                    new SqlParameter("@kioskName", kiosk.KioskName),
+                    new SqlParameter("@location", kiosk.Location),
+                    new SqlParameter("@stationCode", kiosk.StationCode),
+                    new SqlParameter("@slidePackage", kiosk.SlidePackage),
+                    new SqlParameter("@webServices", kiosk.WebServices),
+                };
+
+
+                SqlParameter[] parameters2 =
+                {
+
+                };
+
+                _exQuery.ExecuteRawQuery(query, parameters);
+                _exQuery.ExecuteRawQuery(query2, parameters2);
+
+                return new JsonResult("Kiosk added successfully");
+            }
+            catch (Exception ex)
             {
-                new SqlParameter("@kioskName", kiosk.KioskName),
-                new SqlParameter("@location", kiosk.Location),
-                new SqlParameter("@stationCode", kiosk.StationCode),
-                new SqlParameter("@slidePackage", kiosk.SlidePackage),
-                new SqlParameter("@webServices", kiosk.WebServices),
-            };
-
-            
-            SqlParameter[] parameters2 =
-            {
-                
-            };
-
-            _exQuery.ExecuteRawQuery(query, parameters);
-            _exQuery.ExecuteRawQuery(query2, parameters2);
-
-            return new JsonResult("Kiosk added successfully");
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
         }
 
         
@@ -165,23 +242,36 @@ namespace KMS.Controllers
         [Route("UpdateKiosk/{id}")]
         public JsonResult UpdateKiosk(int id, [FromBody] Tkiosk kiosk)
         {
-            string query = "UPDATE TKiosk SET kioskName = @kioskName, location = @location, stationCode = @stationCode, " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "UPDATE TKiosk SET kioskName = @kioskName, location = @location, stationCode = @stationCode, " +
                            "slidePackage = @slidePackage, webServices = @webServices " +
                            "WHERE id = @id";
-            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Update', 'TKiosk', GETDATE(), GETDATE(), 1)";
-            SqlParameter[] parameters =
+                string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Update', 'TKiosk', GETDATE(), GETDATE(), 1)";
+                SqlParameter[] parameters =
+                {
+                    new SqlParameter("@id", id),
+                    new SqlParameter("@kioskName", kiosk.KioskName),
+                    new SqlParameter("@location", kiosk.Location),
+                    new SqlParameter("@stationCode", kiosk.StationCode),
+                    new SqlParameter("@slidePackage", kiosk.SlidePackage),
+                    new SqlParameter("@webServices", kiosk.WebServices),
+                };
+                SqlParameter[] parameters2 = { };
+                _exQuery.ExecuteRawQuery(query, parameters);
+                _exQuery.ExecuteRawQuery(query2, parameters2);
+                return new JsonResult("Kiosk updated successfully");
+            }
+            catch (Exception ex)
             {
-                new SqlParameter("@id", id),
-                new SqlParameter("@kioskName", kiosk.KioskName),
-                new SqlParameter("@location", kiosk.Location),
-                new SqlParameter("@stationCode", kiosk.StationCode),
-                new SqlParameter("@slidePackage", kiosk.SlidePackage),
-                new SqlParameter("@webServices", kiosk.WebServices),
-            };
-            SqlParameter[] parameters2 = { };
-            _exQuery.ExecuteRawQuery(query, parameters);
-            _exQuery.ExecuteRawQuery(query2, parameters2);
-            return new JsonResult("Kiosk updated successfully");
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
         [HttpDelete]
@@ -223,7 +313,10 @@ namespace KMS.Controllers
         [Route("SearchKioskSetup")]
         public JsonResult SearchKioskSetup(string searchQuery)
         {
-            string query = "SELECT k.id, k.kioskName, k.location, st.stationName, ss.description as packageName, k.kioskStatus, k.cameraStatus, k.cashDepositStatus, k.scannerStatus, k.printerStatus " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "SELECT k.id, k.kioskName, k.location, st.stationName, ss.description as packageName, k.kioskStatus, k.cameraStatus, k.cashDepositStatus, k.scannerStatus, k.printerStatus " +
                            "FROM TKiosk k " +
                            "LEFT JOIN TStation st ON k.stationCode = st.id " +
                            "LEFT JOIN TSlideHeader ss ON ss.id = k.slidePackage " +
@@ -233,17 +326,29 @@ namespace KMS.Controllers
                            "st.stationName LIKE @searchQuery OR " +
                            "ss.description LIKE @searchQuery";
 
-            SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+                SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
-            return new JsonResult(table);
+                return new JsonResult(table);
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
         }
 
         [HttpGet]
         [Route("SearchKioskHardware")]
         public JsonResult SearchKioskHardware(string searchQuery)
         {
-            string query = "select k.id, k.availableMemory, k.ipAddress, k.OSName, k.OSPlatform, k.OSVersion " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "select k.id, k.availableMemory, k.ipAddress, k.OSName, k.OSPlatform, k.OSVersion " +
                            "FROM TKiosk k " +
                            "WHERE k.id LIKE @searchQuery OR " +
                            "k.availableMemory LIKE @searchQuery OR " +
@@ -252,89 +357,146 @@ namespace KMS.Controllers
                            "k.OSPlatform LIKE @searchQuery OR " +
                            "k.OSVersion LIKE @searchQuery";
 
-            SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+                SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
-            return new JsonResult(table);
+                return new JsonResult(table);
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
         }
 
         [HttpGet]
         [Route("ShowKioskHealth")]
         public JsonResult GetKioskHealth()
         {
-            string query = "select k.dateCreated,  k.stationCode,  k.id,  DATEDIFF(MINUTE, k.onlineTime, GETDATE()) AS durationUptime,  DATEDIFF(MINUTE, k.offlineTime, GETDATE()) AS durationDowntime, k.dateModified as lastUpdated " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "select k.dateCreated,  k.stationCode,  k.id,  DATEDIFF(MINUTE, k.onlineTime, GETDATE()) AS durationUptime,  DATEDIFF(MINUTE, k.offlineTime, GETDATE()) AS durationDowntime, k.dateModified as lastUpdated " +
                 "from TKiosk k";
-            DataTable table = _exQuery.ExecuteRawQuery(query);
-            return new JsonResult(table);
+                DataTable table = _exQuery.ExecuteRawQuery(query);
+                return new JsonResult(table);
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
         }
 
         [HttpGet]
         [Route("FilterKioskHealth")]
         public JsonResult FilterKioskHealth([FromQuery] int? stationCode = null, [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
         {
-            string query = "select k.dateCreated,  k.stationCode,  k.id,  DATEDIFF(MINUTE, k.onlineTime, GETDATE()) AS durationUptime,  DATEDIFF(MINUTE, k.offlineTime, GETDATE()) AS durationDowntime, k.dateModified as lastUpdated " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "select k.dateCreated,  k.stationCode,  k.id,  DATEDIFF(MINUTE, k.onlineTime, GETDATE()) AS durationUptime,  DATEDIFF(MINUTE, k.offlineTime, GETDATE()) AS durationDowntime, k.dateModified as lastUpdated " +
                 "from TKiosk k";
 
-            List<SqlParameter> parameters = new List<SqlParameter>();
+                List<SqlParameter> parameters = new List<SqlParameter>();
 
 
 
-            if (stationCode != null)
-            {
-                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "k.stationCode LIKE @stationCode";
-                parameters.Add(new SqlParameter("@stationCode", "%" + stationCode + "%"));
+                if (stationCode != null)
+                {
+                    query += (parameters.Count == 0 ? " WHERE " : " AND ") + "k.stationCode LIKE @stationCode";
+                    parameters.Add(new SqlParameter("@stationCode", "%" + stationCode + "%"));
+                }
+
+                if (startDate.HasValue && endDate.HasValue)
+                {
+
+                    startDate = startDate.Value.Date.AddHours(0).AddMinutes(0).AddSeconds(0);
+                    endDate = endDate.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
+
+                    query += (parameters.Count == 0 ? " WHERE " : " AND ") + "k.dateCreated >= @startDate AND k.dateCreated <= @endDate";
+                    parameters.Add(new SqlParameter("@startDate", startDate.Value));
+                    parameters.Add(new SqlParameter("@endDate", endDate.Value));
+                }
+
+                DataTable table = _exQuery.ExecuteRawQuery(query, parameters.ToArray());
+
+                return new JsonResult(table);
             }
-
-            if (startDate.HasValue && endDate.HasValue)
+            catch (Exception ex)
             {
-
-                startDate = startDate.Value.Date.AddHours(0).AddMinutes(0).AddSeconds(0);
-                endDate = endDate.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
-
-                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "k.dateCreated >= @startDate AND k.dateCreated <= @endDate";
-                parameters.Add(new SqlParameter("@startDate", startDate.Value));
-                parameters.Add(new SqlParameter("@endDate", endDate.Value));
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
             }
-
-            DataTable table = _exQuery.ExecuteRawQuery(query, parameters.ToArray());
-
-            return new JsonResult(table);
+            return new JsonResult(response);
         }
 
         [HttpGet]
         [Route("SearchKioskHealth")]
         public JsonResult SearchKioskHealth(string searchQuery)
         {
-            string query = "select k.dateCreated,  k.stationCode,  k.id,  DATEDIFF(MINUTE, k.onlineTime, GETDATE()) AS durationUptime,  DATEDIFF(MINUTE, k.offlineTime, GETDATE()) AS durationDowntime, k.dateModified as lastUpdated " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "select k.dateCreated,  k.stationCode,  k.id,  DATEDIFF(MINUTE, k.onlineTime, GETDATE()) AS durationUptime,  DATEDIFF(MINUTE, k.offlineTime, GETDATE()) AS durationDowntime, k.dateModified as lastUpdated " +
                            "from TKiosk k " +
                            "WHERE k.id LIKE @searchQuery OR " +
                            "k.stationCode LIKE @searchQuery";
 
-            SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+                SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
-            return new JsonResult(table);
+                return new JsonResult(table);
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
         }
 
         [HttpGet]
         [Route("ShowKioskHealth/{id}")]
         public JsonResult GetKioskHealthById(int id)
         {
-            string query = "select k.dateCreated,  k.stationCode,  k.id,  DATEDIFF(MINUTE, k.onlineTime, GETDATE()) AS durationUptime,  DATEDIFF(MINUTE, k.offlineTime, GETDATE()) AS durationDowntime, k.dateModified as lastUpdated " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "select k.dateCreated,  k.stationCode,  k.id,  DATEDIFF(MINUTE, k.onlineTime, GETDATE()) AS durationUptime,  DATEDIFF(MINUTE, k.offlineTime, GETDATE()) AS durationDowntime, k.dateModified as lastUpdated " +
                            "FROM TKiosk k " +
                            "WHERE k.id = @id";
 
-            SqlParameter parameter = new SqlParameter("@id", id);
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+                SqlParameter parameter = new SqlParameter("@id", id);
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
-            if (table.Rows.Count > 0)
-            {
-                return new JsonResult(table);
+                if (table.Rows.Count > 0)
+                {
+                    return new JsonResult(table);
+                }
+                else
+                {
+                    return new JsonResult("Kiosk hardware not found");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return new JsonResult("Kiosk hardware not found");
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
             }
+            return new JsonResult(response);
         }
 
 
@@ -343,9 +505,21 @@ namespace KMS.Controllers
         [Route("ShowKioskHealthDetail")]
         public JsonResult GetKioskHealthDetail()
         {
-            string query = "select k.dateCreated,  k.stationCode,  k.id,  k.component, k.onlineTime, k.offlineTime,   \r\nDATEDIFF(MINUTE, k.onlineTime, GETDATE()) AS durationUptime, \r\nDATEDIFF(MINUTE, k.offlineTime, GETDATE()) AS durationDowntime, k.dateModified as lastUpdated  \r\nfrom TKiosk k";
-            DataTable table = _exQuery.ExecuteRawQuery(query);
-            return new JsonResult(table);
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "select k.dateCreated,  k.stationCode,  k.id,  k.component, k.onlineTime, k.offlineTime,   \r\nDATEDIFF(MINUTE, k.onlineTime, GETDATE()) AS durationUptime, \r\nDATEDIFF(MINUTE, k.offlineTime, GETDATE()) AS durationDowntime, k.dateModified as lastUpdated  \r\nfrom TKiosk k";
+                DataTable table = _exQuery.ExecuteRawQuery(query);
+                return new JsonResult(table);
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
         }
 
     }

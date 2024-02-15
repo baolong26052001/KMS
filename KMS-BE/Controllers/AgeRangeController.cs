@@ -26,127 +26,202 @@ namespace KMS.Controllers
         [Route("CheckAgeRange/{id}")] // id của member
         public JsonResult CheckAgeRange(int id)
         {
-            string query = "SELECT lm.id, lm.fullName, DATEDIFF(DAY, lm.birthday, GETDATE()) / 365.25 AS age, " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "SELECT lm.id, lm.fullName, DATEDIFF(DAY, lm.birthday, GETDATE()) / 365.25 AS age, " +
                 "ar.id AS ageRangeId, N'Từ ' + CAST(ar.startAge AS NVARCHAR) + N' đến ' + CAST(ar.endAge AS NVARCHAR) + N' tuổi' AS description " +
                 "FROM LMember lm " +
                 "JOIN AgeRange ar ON ar.startAge <= (DATEDIFF(DAY, lm.birthday, GETDATE()) / 365.25) " +
                 "and DATEDIFF(DAY, lm.birthday, GETDATE()) / 365.25 < ar.endAge + 1 and lm.id=@Id";
 
-            SqlParameter parameter = new SqlParameter("@Id", id);
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+                SqlParameter parameter = new SqlParameter("@Id", id);
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
-            if (table.Rows.Count > 0)
-            {
-                return new JsonResult(table);
+                if (table.Rows.Count > 0)
+                {
+                    return new JsonResult(table);
+                }
+                else
+                {
+                    response.Code = 404;
+                    response.Message = "Member ID not found, cannot check age range";
+                    response.Exception = "";
+                    response.Data = null;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return new JsonResult("Member not found, cannot check age range");
+                response.Code = 404;
+                response.Message = ex.Message;
+                response.Exception = "";
+                response.Data = null;
             }
+            return new JsonResult(response);
         }
 
         [HttpGet]
         [Route("ShowAgeRange")]
         public JsonResult GetAgeRange()
         {
-            string query = "SELECT a.*, N'Từ ' + CAST(a.startAge AS NVARCHAR) + N' đến ' + CAST(a.endAge AS NVARCHAR) + N' tuổi' AS description FROM AgeRange a";
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "SELECT a.*, N'Từ ' + CAST(a.startAge AS NVARCHAR) + N' đến ' + CAST(a.endAge AS NVARCHAR) + N' tuổi' AS description FROM AgeRange a";
 
-            DataTable table = _exQuery.ExecuteRawQuery(query);
-            return new JsonResult(table);
+                DataTable table = _exQuery.ExecuteRawQuery(query);
+                return new JsonResult(table);
+            }
+            catch (Exception ex)
+            {
+                response.Code = 404;
+                response.Message = ex.Message;
+                response.Exception = "";
+                response.Data = null;
+            }
+            return new JsonResult(response);
         }
 
         [HttpGet]
         [Route("ShowAgeRange/{id}")]
         public JsonResult GetAgeRangeById(int id)
         {
-            string query = "SELECT a.*,N'Từ ' + CAST(a.startAge AS NVARCHAR) + N' đến ' + CAST(a.endAge AS NVARCHAR) + N' tuổi' AS description FROM AgeRange a where a.id=@Id";
-
-            SqlParameter parameter = new SqlParameter("@Id", id);
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
-
-            if (table.Rows.Count > 0)
+            ResponseDto response = new ResponseDto();
+            try
             {
-                return new JsonResult(table);
+                string query = "SELECT a.*,N'Từ ' + CAST(a.startAge AS NVARCHAR) + N' đến ' + CAST(a.endAge AS NVARCHAR) + N' tuổi' AS description FROM AgeRange a where a.id=@Id";
+
+                SqlParameter parameter = new SqlParameter("@Id", id);
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+
+                if (table.Rows.Count > 0)
+                {
+                    return new JsonResult(table);
+                }
+                else
+                {
+                    return new JsonResult("Age Range ID not found");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return new JsonResult("Age Range ID not found");
+                response.Code = 404;
+                response.Message = ex.Message;
+                response.Exception = "";
+                response.Data = null;
             }
+            return new JsonResult(response);
         }
 
         [HttpPost]
         [Route("AddAgeRange")]
         public JsonResult AddAgeRange([FromBody] AgeRange ageRange)
         {
-            string query = "INSERT INTO AgeRange (startAge, endAge, dateCreated, dateModified) " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "INSERT INTO AgeRange (startAge, endAge, dateCreated, dateModified) " +
                            "VALUES (@StartAge, @EndAge, GETDATE(), GETDATE())";
 
-            SqlParameter[] parameters =
+                SqlParameter[] parameters =
+                {
+                    new SqlParameter("@StartAge", ageRange.StartAge),
+                    new SqlParameter("@EndAge", ageRange.EndAge),
+                };
+
+                _exQuery.ExecuteRawQuery(query, parameters);
+
+                return new JsonResult("Age Range added successfully");
+            }
+            catch (Exception ex)
             {
-                new SqlParameter("@StartAge", ageRange.StartAge),
-                new SqlParameter("@EndAge", ageRange.EndAge),
-            };
-
-            _exQuery.ExecuteRawQuery(query, parameters);
-
-            return new JsonResult("Age Range added successfully");
+                response.Code = 404;
+                response.Message = ex.Message;
+                response.Exception = "";
+                response.Data = null;
+            }
+            return new JsonResult(response);
         }
 
         [HttpPut]
         [Route("EditAgeRange/{id}")]
         public JsonResult EditAgeRange(int id, [FromBody] AgeRange ageRange)
         {
-            string query = "UPDATE AgeRange " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "UPDATE AgeRange " +
                            "SET startAge = @StartAge, endAge = @EndAge, dateModified = GETDATE() " +
                            "WHERE id = @Id";
-            
-            SqlParameter[] parameters =
+
+                SqlParameter[] parameters =
+                {
+                    new SqlParameter("@Id", id),
+                    new SqlParameter("@StartAge", ageRange.StartAge),
+                    new SqlParameter("@EndAge", ageRange.EndAge),
+                };
+
+
+                _exQuery.ExecuteRawQuery(query, parameters);
+
+
+                return new JsonResult("Age Range updated successfully");
+            }
+            catch (Exception ex)
             {
-                new SqlParameter("@Id", id),
-                new SqlParameter("@StartAge", ageRange.StartAge),
-                new SqlParameter("@EndAge", ageRange.EndAge),
-            };
-            
-
-            _exQuery.ExecuteRawQuery(query, parameters);
-            
-
-            return new JsonResult("Age Range updated successfully");
+                response.Code = 404;
+                response.Message = ex.Message;
+                response.Exception = "";
+                response.Data = null;
+            }
+            return new JsonResult(response);
         }
 
         [HttpDelete]
         [Route("DeleteAgeRange")]
         public JsonResult DeleteAgeRange([FromBody] List<int> ageRangeIds)
         {
-            if (ageRangeIds == null || ageRangeIds.Count == 0)
+            ResponseDto response = new ResponseDto();
+            try
             {
-                return new JsonResult("No age range IDs provided for deletion");
-            }
-
-            StringBuilder deleteQuery = new StringBuilder("DELETE FROM AgeRange WHERE id IN (");
-            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Delete', 'AgeRange', GETDATE(), GETDATE(), 1)";
-
-            List<SqlParameter> parameters = new List<SqlParameter>();
-            SqlParameter[] parameters2 = { };
-            for (int i = 0; i < ageRangeIds.Count; i++)
-            {
-                string parameterName = "@AgeRangeId" + i;
-                deleteQuery.Append(parameterName);
-
-                if (i < ageRangeIds.Count - 1)
+                if (ageRangeIds == null || ageRangeIds.Count == 0)
                 {
-                    deleteQuery.Append(", ");
+                    return new JsonResult("No age range IDs provided for deletion");
                 }
 
-                parameters.Add(new SqlParameter(parameterName, ageRangeIds[i]));
+                StringBuilder deleteQuery = new StringBuilder("DELETE FROM AgeRange WHERE id IN (");
+                string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Delete', 'AgeRange', GETDATE(), GETDATE(), 1)";
+
+                List<SqlParameter> parameters = new List<SqlParameter>();
+                SqlParameter[] parameters2 = { };
+                for (int i = 0; i < ageRangeIds.Count; i++)
+                {
+                    string parameterName = "@AgeRangeId" + i;
+                    deleteQuery.Append(parameterName);
+
+                    if (i < ageRangeIds.Count - 1)
+                    {
+                        deleteQuery.Append(", ");
+                    }
+
+                    parameters.Add(new SqlParameter(parameterName, ageRangeIds[i]));
+                }
+
+                deleteQuery.Append(");");
+
+                _exQuery.ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
+                _exQuery.ExecuteRawQuery(query2, parameters2);
+
+                return new JsonResult("Age Range deleted successfully");
             }
-
-            deleteQuery.Append(");");
-
-            _exQuery.ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
-            _exQuery.ExecuteRawQuery(query2, parameters2);
-
-            return new JsonResult("Age Range deleted successfully");
+            catch (Exception ex)
+            {
+                response.Code = 404;
+                response.Message = ex.Message;
+                response.Exception = "";
+                response.Data = null;
+            }
+            return new JsonResult(response);
         }
 
     }
