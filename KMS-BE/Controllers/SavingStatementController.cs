@@ -25,36 +25,65 @@ namespace KMS.Controllers
         [Route("ShowSavingStatement")]
         public JsonResult GetSavingStatement()
         {
-            string query = "select * from SavingStatement";
-            DataTable table = _exQuery.ExecuteRawQuery(query);
-            return new JsonResult(table);
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "select * from SavingStatement";
+                DataTable table = _exQuery.ExecuteRawQuery(query);
+                return new JsonResult(table);
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
         [HttpGet]
         [Route("ShowSavingStatement/{id}")]
         public JsonResult GetSavingStatementById(int id)
         {
-            string query = "SELECT * " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "SELECT * " +
                            "FROM SavingStatement " +
                            "WHERE id = @Id";
-            SqlParameter parameter = new SqlParameter("@Id", id);
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+                SqlParameter parameter = new SqlParameter("@Id", id);
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
-            if (table.Rows.Count > 0)
-            {
-                return new JsonResult(table);
+                if (table.Rows.Count > 0)
+                {
+                    return new JsonResult(table);
+                }
+                else
+                {
+                    return new JsonResult("Saving Statement not found");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return new JsonResult("Saving Statement not found");
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
             }
+            return new JsonResult(response);
+            
         }
 
         [HttpGet]
         [Route("SearchSavingStatement")]
         public JsonResult SearchSavingStatement(string searchQuery)
         {
-            string query = "SELECT * " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "SELECT * " +
                            "FROM SavingStatement " +
                            "WHERE memberId LIKE @searchQuery OR " +
                            "accountId LIKE @searchQuery OR " +
@@ -65,41 +94,64 @@ namespace KMS.Controllers
                            "status LIKE @searchQuery OR " +
                            "balance LIKE @searchQuery";
 
-            SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+                SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
-            return new JsonResult(table);
+                return new JsonResult(table);
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
         [HttpGet]
         [Route("FilterSavingStatement")]
         public JsonResult FilterSavingStatement([FromQuery] bool? isActive = null, [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
         {
-            string query = "SELECT * " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "SELECT * " +
                            "FROM SavingStatement ";
 
-            List<SqlParameter> parameters = new List<SqlParameter>();
+                List<SqlParameter> parameters = new List<SqlParameter>();
 
-            if (isActive.HasValue)
-            {
-                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "isActive = @isActive";
-                parameters.Add(new SqlParameter("@isActive", isActive.Value));
+                if (isActive.HasValue)
+                {
+                    query += (parameters.Count == 0 ? " WHERE " : " AND ") + "isActive = @isActive";
+                    parameters.Add(new SqlParameter("@isActive", isActive.Value));
+                }
+
+                if (startDate.HasValue && endDate.HasValue)
+                {
+
+                    startDate = startDate.Value.Date.AddHours(0).AddMinutes(0).AddSeconds(0);
+                    endDate = endDate.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
+
+                    query += (parameters.Count == 0 ? " WHERE " : " AND ") + "dateSaving >= @startDate AND dateSaving <= @endDate";
+                    parameters.Add(new SqlParameter("@startDate", startDate.Value));
+                    parameters.Add(new SqlParameter("@endDate", endDate.Value));
+                }
+
+                DataTable table = _exQuery.ExecuteRawQuery(query, parameters.ToArray());
+
+                return new JsonResult(table);
             }
-
-            if (startDate.HasValue && endDate.HasValue)
+            catch (Exception ex)
             {
-
-                startDate = startDate.Value.Date.AddHours(0).AddMinutes(0).AddSeconds(0);
-                endDate = endDate.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
-
-                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "dateSaving >= @startDate AND dateSaving <= @endDate";
-                parameters.Add(new SqlParameter("@startDate", startDate.Value));
-                parameters.Add(new SqlParameter("@endDate", endDate.Value));
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
             }
-
-            DataTable table = _exQuery.ExecuteRawQuery(query, parameters.ToArray());
-
-            return new JsonResult(table);
+            return new JsonResult(response);
+            
         }
 
     }

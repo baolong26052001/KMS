@@ -29,59 +29,98 @@ namespace KMS.Controllers
         [Route("ShowUsergroup")]
         public JsonResult GetUsergroup()
         {
-            string query = "select ug.id, ug.groupName, ug.accessRuleId, ug.dateModified, ug.dateCreated, ug.isActive" +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "select ug.id, ug.groupName, ug.accessRuleId, ug.dateModified, ug.dateCreated, ug.isActive" +
                 "\r\nfrom TUserGroup ug";
-            DataTable table = _exQuery.ExecuteRawQuery(query);
-            return new JsonResult(table);
+                DataTable table = _exQuery.ExecuteRawQuery(query);
+                return new JsonResult(table);
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
         [HttpGet]
         [Route("ShowUsergroup/{id}")]
         public JsonResult GetUsergroupById(int id)
         {
-            string query = "SELECT id, groupName, accessRuleId, dateModified, dateCreated, isActive " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "SELECT id, groupName, accessRuleId, dateModified, dateCreated, isActive " +
                            "FROM TUserGroup " +
                            "WHERE id = @Id";
 
-            SqlParameter parameter = new SqlParameter("@Id", id);
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+                SqlParameter parameter = new SqlParameter("@Id", id);
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
-            if (table.Rows.Count > 0)
-            {
-                return new JsonResult(table);
+                if (table.Rows.Count > 0)
+                {
+                    return new JsonResult(table);
+                }
+                else
+                {
+                    return new JsonResult("Usergroup not found");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return new JsonResult("Usergroup not found");
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
             }
+            return new JsonResult(response);
+            
         }
 
         [HttpGet]
         [Route("FilterUsergroup")] // filter user group by group name and by active
         public JsonResult FilterUsergroup([FromQuery] string? groupName = null, [FromQuery] bool? isActive = null)
         {
-            string query = "SELECT id, groupName, accessRuleId, dateModified, dateCreated, isActive " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "SELECT id, groupName, accessRuleId, dateModified, dateCreated, isActive " +
                            "FROM TUserGroup ";
 
-            List<SqlParameter> parameters = new List<SqlParameter>();
+                List<SqlParameter> parameters = new List<SqlParameter>();
 
-            if (!string.IsNullOrEmpty(groupName))
-            {
-                query += "WHERE groupName LIKE @groupName ";
-                parameters.Add(new SqlParameter("@groupName", "%" + groupName + "%"));
+                if (!string.IsNullOrEmpty(groupName))
+                {
+                    query += "WHERE groupName LIKE @groupName ";
+                    parameters.Add(new SqlParameter("@groupName", "%" + groupName + "%"));
+                }
+
+
+
+                if (isActive.HasValue)
+                {
+                    query += (parameters.Count == 0 ? "WHERE" : "AND") + " isActive = @isActive ";
+                    parameters.Add(new SqlParameter("@isActive", isActive.Value));
+                }
+
+                DataTable table = _exQuery.ExecuteRawQuery(query, parameters.ToArray());
+
+                return new JsonResult(table);
             }
-
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
             
-
-            if (isActive.HasValue)
-            {
-                query += (parameters.Count == 0 ? "WHERE" : "AND") + " isActive = @isActive ";
-                parameters.Add(new SqlParameter("@isActive", isActive.Value));
-            }
-
-            DataTable table = _exQuery.ExecuteRawQuery(query, parameters.ToArray());
-
-            return new JsonResult(table);
         }
 
 
@@ -90,97 +129,149 @@ namespace KMS.Controllers
         [Route("AddUsergroup")]
         public JsonResult AddUsergroup([FromBody] TuserGroup usergroup)
         {
-            string query = "INSERT INTO TUserGroup (groupName, accessRuleId, dateModified, dateCreated, isActive) " +
-                           "VALUES (@GroupName, @AccessRuleId, GETDATE(), GETDATE(), @IsActive)";
-            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Add', 'TUsergroup', GETDATE(), GETDATE(), 1)";
-
-            SqlParameter[] parameters =
+            ResponseDto response = new ResponseDto();
+            try
             {
-                new SqlParameter("@GroupName", usergroup.GroupName),
-                new SqlParameter("@AccessRuleId", usergroup.AccessRuleId),
-                new SqlParameter("@IsActive", usergroup.IsActive)
-            };
-            SqlParameter[] parameters2 = { };
+                string query = "INSERT INTO TUserGroup (groupName, accessRuleId, dateModified, dateCreated, isActive) " +
+                           "VALUES (@GroupName, @AccessRuleId, GETDATE(), GETDATE(), @IsActive)";
+                string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Add', 'TUsergroup', GETDATE(), GETDATE(), 1)";
 
-            _exQuery.ExecuteRawQuery(query, parameters);
-            _exQuery.ExecuteRawQuery(query2, parameters2);
+                SqlParameter[] parameters =
+                {
+                    new SqlParameter("@GroupName", usergroup.GroupName),
+                    new SqlParameter("@AccessRuleId", usergroup.AccessRuleId),
+                    new SqlParameter("@IsActive", usergroup.IsActive)
+                };
+                SqlParameter[] parameters2 = { };
 
-            return new JsonResult("Usergroup added successfully");
+                _exQuery.ExecuteRawQuery(query, parameters);
+                _exQuery.ExecuteRawQuery(query2, parameters2);
+
+                return new JsonResult("Usergroup added successfully");
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
         [HttpPut]
         [Route("UpdateUsergroup/{id}")]
         public JsonResult UpdateUsergroup(int id, [FromBody] Tusergroup usergroup)
         {
-            string query = "UPDATE TUserGroup " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "UPDATE TUserGroup " +
                            "SET groupName = @GroupName, dateModified = GETDATE(), isActive = @IsActive " +
                            "WHERE id = @Id";
-            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Update', 'TUsergroup', GETDATE(), GETDATE(), 1)";
+                string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Update', 'TUsergroup', GETDATE(), GETDATE(), 1)";
 
-            SqlParameter[] parameters =
+                SqlParameter[] parameters =
+                {
+                    new SqlParameter("@Id", id),
+                    new SqlParameter("@GroupName", usergroup.GroupName),
+
+                    new SqlParameter("@IsActive", usergroup.IsActive)
+                };
+                SqlParameter[] parameters2 = { };
+
+                _exQuery.ExecuteRawQuery(query, parameters);
+                _exQuery.ExecuteRawQuery(query2, parameters2);
+
+                return new JsonResult("Usergroup updated successfully");
+            }
+            catch (Exception ex)
             {
-                new SqlParameter("@Id", id),
-                new SqlParameter("@GroupName", usergroup.GroupName),
-                
-                new SqlParameter("@IsActive", usergroup.IsActive)
-            };
-            SqlParameter[] parameters2 = { };
-
-            _exQuery.ExecuteRawQuery(query, parameters);
-            _exQuery.ExecuteRawQuery(query2, parameters2);
-
-            return new JsonResult("Usergroup updated successfully");
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
         [HttpDelete]
         [Route("DeleteUsergroup")]
         public JsonResult DeleteUsergroup([FromBody] List<int> usergroupIds)
         {
-            if (usergroupIds == null || usergroupIds.Count == 0)
+            ResponseDto response = new ResponseDto();
+            try
             {
-                return new JsonResult("No user group IDs provided for deletion");
-            }
-
-            StringBuilder deleteQuery = new StringBuilder("DELETE FROM TUsergroup WHERE id IN (");
-            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Delete', 'TUsergroup', GETDATE(), GETDATE(), 1)";
-
-
-            List<SqlParameter> parameters = new List<SqlParameter>();
-            SqlParameter[] parameters2 = { };
-            for (int i = 0; i < usergroupIds.Count; i++)
-            {
-                string parameterName = "@UsergroupId" + i;
-                deleteQuery.Append(parameterName);
-
-                if (i < usergroupIds.Count - 1)
+                if (usergroupIds == null || usergroupIds.Count == 0)
                 {
-                    deleteQuery.Append(", ");
+                    return new JsonResult("No user group IDs provided for deletion");
                 }
 
-                parameters.Add(new SqlParameter(parameterName, usergroupIds[i]));
+                StringBuilder deleteQuery = new StringBuilder("DELETE FROM TUsergroup WHERE id IN (");
+                string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Delete', 'TUsergroup', GETDATE(), GETDATE(), 1)";
+
+
+                List<SqlParameter> parameters = new List<SqlParameter>();
+                SqlParameter[] parameters2 = { };
+                for (int i = 0; i < usergroupIds.Count; i++)
+                {
+                    string parameterName = "@UsergroupId" + i;
+                    deleteQuery.Append(parameterName);
+
+                    if (i < usergroupIds.Count - 1)
+                    {
+                        deleteQuery.Append(", ");
+                    }
+
+                    parameters.Add(new SqlParameter(parameterName, usergroupIds[i]));
+                }
+
+                deleteQuery.Append(");");
+
+                _exQuery.ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
+                _exQuery.ExecuteRawQuery(query2, parameters2);
+
+                return new JsonResult("User group deleted successfully");
             }
-
-            deleteQuery.Append(");");
-
-            _exQuery.ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
-            _exQuery.ExecuteRawQuery(query2, parameters2);
-
-            return new JsonResult("User group deleted successfully");
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
         [HttpGet]
         [Route("SearchUsergroup")]
         public JsonResult SearchUsergroup(string searchQuery)
         {
-            string query = "SELECT id, groupName, accessRuleId, dateModified, dateCreated, isActive " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "SELECT id, groupName, accessRuleId, dateModified, dateCreated, isActive " +
                            "FROM TUserGroup " +
                            "WHERE id LIKE @searchQuery OR " +
                            "groupName LIKE @searchQuery";
 
-            SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+                SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
-            return new JsonResult(table);
+                return new JsonResult(table);
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
     }

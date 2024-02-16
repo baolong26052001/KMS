@@ -28,56 +28,95 @@ namespace KMS.Controllers
         [Route("ShowSlideHeader")]
         public JsonResult GetSlideshow()
         {
-            string query = "select sh.id, sh.description, sh.startDate, sh.endDate, sh.IsActive, sh.timeNext, sh.dateModified, sh.dateCreated" +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "select sh.id, sh.description, sh.startDate, sh.endDate, sh.IsActive, sh.timeNext, sh.dateModified, sh.dateCreated" +
                 "\r\nfrom TSlideHeader sh";
-            DataTable table = _exQuery.ExecuteRawQuery(query);
-            return new JsonResult(table);
+                DataTable table = _exQuery.ExecuteRawQuery(query);
+                return new JsonResult(table);
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
         [HttpGet]
         [Route("ShowSlideHeader/{id}")]
         public JsonResult GetSlideshowById(int id)
         {
-            string query = "SELECT * " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "SELECT * " +
                            "FROM TSlideHeader " +
                            "WHERE id = @Id";
-            SqlParameter parameter = new SqlParameter("@Id", id);
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+                SqlParameter parameter = new SqlParameter("@Id", id);
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
-            if (table.Rows.Count > 0)
-            {
-                return new JsonResult(table);
+                if (table.Rows.Count > 0)
+                {
+                    return new JsonResult(table);
+                }
+                else
+                {
+                    return new JsonResult("Slideshow not found");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return new JsonResult("Slideshow not found");
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
             }
+            return new JsonResult(response);
+            
         }
 
         [HttpGet]
         [Route("FilterSlideshow")]
         public JsonResult FilterSlideshow([FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
         {
-            string query = "SELECT sh.id, sh.description, sh.startDate, sh.endDate, sh.IsActive, sh.timeNext, sh.dateModified, sh.dateCreated " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "SELECT sh.id, sh.description, sh.startDate, sh.endDate, sh.IsActive, sh.timeNext, sh.dateModified, sh.dateCreated " +
                            "FROM TSlideHeader sh ";
 
-            List<SqlParameter> parameters = new List<SqlParameter>();
+                List<SqlParameter> parameters = new List<SqlParameter>();
 
 
-            if (startDate.HasValue && endDate.HasValue)
-            {
+                if (startDate.HasValue && endDate.HasValue)
+                {
 
-                startDate = startDate.Value.Date.AddHours(0).AddMinutes(0).AddSeconds(0);
-                endDate = endDate.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
+                    startDate = startDate.Value.Date.AddHours(0).AddMinutes(0).AddSeconds(0);
+                    endDate = endDate.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
 
-                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "startDate >= @startDate AND endDate <= @endDate";
-                parameters.Add(new SqlParameter("@startDate", startDate.Value));
-                parameters.Add(new SqlParameter("@endDate", endDate.Value));
+                    query += (parameters.Count == 0 ? " WHERE " : " AND ") + "startDate >= @startDate AND endDate <= @endDate";
+                    parameters.Add(new SqlParameter("@startDate", startDate.Value));
+                    parameters.Add(new SqlParameter("@endDate", endDate.Value));
+                }
+
+                DataTable table = _exQuery.ExecuteRawQuery(query, parameters.ToArray());
+
+                return new JsonResult(table);
             }
-
-            DataTable table = _exQuery.ExecuteRawQuery(query, parameters.ToArray());
-
-            return new JsonResult(table);
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
 
@@ -85,114 +124,165 @@ namespace KMS.Controllers
         [Route("AddSlideshow")]
         public JsonResult AddSlideshow([FromBody] TslideHeader slideshow)
         {
-            
-            
-
-            string query = "INSERT INTO TSlideHeader (description, startDate, endDate, IsActive, timeNext, dateModified, dateCreated) " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "INSERT INTO TSlideHeader (description, startDate, endDate, IsActive, timeNext, dateModified, dateCreated) " +
                            "VALUES (@Description, @StartDate, @EndDate, @IsActive, @TimeNext, GETDATE(), GETDATE())";
 
-            DateTime startDate = (DateTime)slideshow.StartDate;
-            DateTime endDate = (DateTime)slideshow.EndDate;
+                DateTime startDate = (DateTime)slideshow.StartDate;
+                DateTime endDate = (DateTime)slideshow.EndDate;
 
 
-            if (slideshow.StartDate != null && slideshow.EndDate != null)
-            {
-                startDate = slideshow.StartDate.Value.Date.AddHours(0).AddMinutes(0).AddSeconds(0);
-                endDate = slideshow.EndDate.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
-            }
+                if (slideshow.StartDate != null && slideshow.EndDate != null)
+                {
+                    startDate = slideshow.StartDate.Value.Date.AddHours(0).AddMinutes(0).AddSeconds(0);
+                    endDate = slideshow.EndDate.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
+                }
 
-            SqlParameter[] parameters =
-            {
+                SqlParameter[] parameters =
+                {
                 new SqlParameter("@Description", slideshow.Description),
                 new SqlParameter("@StartDate", startDate),
                 new SqlParameter("@EndDate", endDate),
                 new SqlParameter("@IsActive", slideshow.IsActive),
                 new SqlParameter("@TimeNext", slideshow.TimeNext),
             };
-            _exQuery.ExecuteRawQuery(query, parameters);
-            return new JsonResult("Slideshow added successfully");
+                _exQuery.ExecuteRawQuery(query, parameters);
+                return new JsonResult("Slideshow added successfully");
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+
+
+            
         }
 
         [HttpPut]
         [Route("UpdateSlideshow/{id}")]
         public JsonResult UpdateSlideshow(int id, [FromBody] TslideHeader slideshow)
         {
-            
-
-            string query = "UPDATE TslideHeader SET description = @Description, dateModified = GETDATE(), IsActive = @IsActive, timeNext = @TimeNext, " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "UPDATE TslideHeader SET description = @Description, dateModified = GETDATE(), IsActive = @IsActive, timeNext = @TimeNext, " +
                            "startDate = @StartDate, endDate = @EndDate " +
                            "WHERE id = @Id";
 
-            DateTime startDate = (DateTime)slideshow.StartDate;
-            DateTime endDate = (DateTime)slideshow.EndDate;
+                DateTime startDate = (DateTime)slideshow.StartDate;
+                DateTime endDate = (DateTime)slideshow.EndDate;
 
 
-            if (slideshow.StartDate != null && slideshow.EndDate != null)
-            {
-                startDate = slideshow.StartDate.Value.Date.AddHours(0).AddMinutes(0).AddSeconds(0);
-                endDate = slideshow.EndDate.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
+                if (slideshow.StartDate != null && slideshow.EndDate != null)
+                {
+                    startDate = slideshow.StartDate.Value.Date.AddHours(0).AddMinutes(0).AddSeconds(0);
+                    endDate = slideshow.EndDate.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
+                }
+
+                SqlParameter[] parameters =
+                {
+                    new SqlParameter("@Id", id),
+                    new SqlParameter("@Description", slideshow.Description),
+                    new SqlParameter("@StartDate", startDate),
+                    new SqlParameter("@EndDate", endDate),
+                    new SqlParameter("@IsActive", slideshow.IsActive),
+                    new SqlParameter("@TimeNext", slideshow.TimeNext),
+                };
+
+                _exQuery.ExecuteRawQuery(query, parameters);
+                return new JsonResult("Slideshow updated successfully");
             }
-
-            SqlParameter[] parameters =
+            catch (Exception ex)
             {
-                new SqlParameter("@Id", id),
-                new SqlParameter("@Description", slideshow.Description),
-                new SqlParameter("@StartDate", startDate),
-                new SqlParameter("@EndDate", endDate),
-                new SqlParameter("@IsActive", slideshow.IsActive),
-                new SqlParameter("@TimeNext", slideshow.TimeNext),
-            };
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
 
-            _exQuery.ExecuteRawQuery(query, parameters);
-            return new JsonResult("Slideshow updated successfully");
+            
         }
 
         [HttpDelete]
         [Route("DeleteSlideshow")]
         public JsonResult DeleteSlideshow([FromBody] List<int> slideshowIds)
         {
-            if (slideshowIds == null || slideshowIds.Count == 0)
+            ResponseDto response = new ResponseDto();
+            try
             {
-                return new JsonResult("No slideshow IDs provided for deletion");
-            }
-
-            StringBuilder deleteQuery = new StringBuilder("DELETE FROM TslideHeader WHERE id IN (");
-
-            List<SqlParameter> parameters = new List<SqlParameter>();
-
-            for (int i = 0; i < slideshowIds.Count; i++)
-            {
-                string parameterName = "@SlideshowId" + i;
-                deleteQuery.Append(parameterName);
-
-                if (i < slideshowIds.Count - 1)
+                if (slideshowIds == null || slideshowIds.Count == 0)
                 {
-                    deleteQuery.Append(", ");
+                    return new JsonResult("No slideshow IDs provided for deletion");
                 }
 
-                parameters.Add(new SqlParameter(parameterName, slideshowIds[i]));
+                StringBuilder deleteQuery = new StringBuilder("DELETE FROM TslideHeader WHERE id IN (");
+
+                List<SqlParameter> parameters = new List<SqlParameter>();
+
+                for (int i = 0; i < slideshowIds.Count; i++)
+                {
+                    string parameterName = "@SlideshowId" + i;
+                    deleteQuery.Append(parameterName);
+
+                    if (i < slideshowIds.Count - 1)
+                    {
+                        deleteQuery.Append(", ");
+                    }
+
+                    parameters.Add(new SqlParameter(parameterName, slideshowIds[i]));
+                }
+
+                deleteQuery.Append(");");
+
+                _exQuery.ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
+
+                return new JsonResult("Slideshow deleted successfully");
             }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
 
-            deleteQuery.Append(");");
-
-            _exQuery.ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
-
-            return new JsonResult("Slideshow deleted successfully");
+            
         }
 
         [HttpGet]
         [Route("SearchSlideshow")]
         public JsonResult SearchSlideshow(string searchQuery)
         {
-            string query = "SELECT sh.id, sh.description, sh.startDate, sh.endDate, sh.IsActive, sh.timeNext, sh.dateModified, sh.dateCreated " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "SELECT sh.id, sh.description, sh.startDate, sh.endDate, sh.IsActive, sh.timeNext, sh.dateModified, sh.dateCreated " +
                            "FROM TSlideHeader sh " +
                            "WHERE sh.id LIKE @searchQuery OR " +
                            "sh.description LIKE @searchQuery ";
 
-            SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+                SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
-            return new JsonResult(table);
+                return new JsonResult(table);
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
 

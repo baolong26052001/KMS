@@ -28,56 +28,98 @@ namespace KMS.Controllers
         [Route("ShowLoanTransaction")]
         public JsonResult GetLoanTransaction()
         {
-            string query = "select * from LoanTransaction";
-            DataTable table = _exQuery.ExecuteRawQuery(query);
-            return new JsonResult(table);
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "select * from LoanTransaction";
+                DataTable table = _exQuery.ExecuteRawQuery(query);
+                return new JsonResult(table);
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
         [HttpGet]
         [Route("ShowLoanTransaction/{id}")]
         public JsonResult GetLoanTransactionById(int id)
         {
-            string query = "select * from LoanTransaction where id=@id";
-
-            SqlParameter parameter = new SqlParameter("@id", id);
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
-
-            if (table.Rows.Count > 0)
+            ResponseDto response = new ResponseDto();
+            try
             {
-                return new JsonResult(table);
+                string query = "select * from LoanTransaction where id=@id";
+
+                SqlParameter parameter = new SqlParameter("@id", id);
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+
+                if (table.Rows.Count > 0)
+                {
+                    return new JsonResult(table);
+                }
+                else
+                {
+                    return new JsonResult("Loan transaction not found");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return new JsonResult("Loan transaction not found");
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
             }
+            return new JsonResult(response);
+            
         }
 
         [HttpGet]
         [Route("ShowLoanTransactionDetail/{id}")]
         public JsonResult GetLoanTransactionDetail(int id)
         {
-            string query = "select ltd.*, lt.loanDate, lt.dueDate, lt.debt " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "select ltd.*, lt.loanDate, lt.dueDate, lt.debt " +
                 "from LoanTransactionDetail ltd, LoanTransaction lt " +
                 "where ltd.loanTransactionId = lt.id and lt.id=@id";
 
-            SqlParameter parameter = new SqlParameter("@id", id);
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+                SqlParameter parameter = new SqlParameter("@id", id);
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
-            if (table.Rows.Count > 0)
-            {
-                return new JsonResult(table);
+                if (table.Rows.Count > 0)
+                {
+                    return new JsonResult(table);
+                }
+                else
+                {
+                    return new JsonResult("Loan transaction detail not found");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return new JsonResult("Loan transaction detail not found");
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
             }
+            return new JsonResult(response);
+            
         }
 
         [HttpGet]
         [Route("SearchLoanTransaction")]
         public JsonResult SearchLoanTransaction(string searchQuery)
         {
-            string query = "SELECT * " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "SELECT * " +
                            "FROM LoanTransaction " +
                            "WHERE memberId LIKE @searchQuery OR " +
                            "accountId LIKE @searchQuery OR " +
@@ -85,41 +127,64 @@ namespace KMS.Controllers
                            "transactionType LIKE @searchQuery OR " +
                            "interestRate LIKE @searchQuery";
 
-            SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+                SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
-            return new JsonResult(table);
+                return new JsonResult(table);
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
         [HttpGet]
         [Route("FilterLoanTransaction")]
         public JsonResult FilterLoanTransaction([FromQuery] bool? isActive = null, [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
         {
-            string query = "SELECT * " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "SELECT * " +
                            "FROM LoanTransaction ";
 
-            List<SqlParameter> parameters = new List<SqlParameter>();
+                List<SqlParameter> parameters = new List<SqlParameter>();
 
-            if (isActive.HasValue)
-            {
-                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "isActive = @isActive";
-                parameters.Add(new SqlParameter("@isActive", isActive.Value));
+                if (isActive.HasValue)
+                {
+                    query += (parameters.Count == 0 ? " WHERE " : " AND ") + "isActive = @isActive";
+                    parameters.Add(new SqlParameter("@isActive", isActive.Value));
+                }
+
+                if (startDate.HasValue && endDate.HasValue)
+                {
+
+                    startDate = startDate.Value.Date.AddHours(0).AddMinutes(0).AddSeconds(0);
+                    endDate = endDate.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
+
+                    query += (parameters.Count == 0 ? " WHERE " : " AND ") + "loanDate >= @startDate AND loanDate <= @endDate";
+                    parameters.Add(new SqlParameter("@startDate", startDate.Value));
+                    parameters.Add(new SqlParameter("@endDate", endDate.Value));
+                }
+
+                DataTable table = _exQuery.ExecuteRawQuery(query, parameters.ToArray());
+
+                return new JsonResult(table);
             }
-
-            if (startDate.HasValue && endDate.HasValue)
+            catch (Exception ex)
             {
-
-                startDate = startDate.Value.Date.AddHours(0).AddMinutes(0).AddSeconds(0);
-                endDate = endDate.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
-
-                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "loanDate >= @startDate AND loanDate <= @endDate";
-                parameters.Add(new SqlParameter("@startDate", startDate.Value));
-                parameters.Add(new SqlParameter("@endDate", endDate.Value));
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
             }
-
-            DataTable table = _exQuery.ExecuteRawQuery(query, parameters.ToArray());
-
-            return new JsonResult(table);
+            return new JsonResult(response);
+            
         }
 
     }

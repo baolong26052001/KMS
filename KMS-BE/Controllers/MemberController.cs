@@ -36,28 +36,54 @@ namespace KMS.Controllers
         [Route("ShowMember")]
         public JsonResult GetMember()
         {
-            string query = "select * from LMember";
-            DataTable table = _exQuery.ExecuteRawQuery(query);
-            return new JsonResult(table);
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "select * from LMember";
+                DataTable table = _exQuery.ExecuteRawQuery(query);
+                return new JsonResult(table);
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
         [HttpGet]
         [Route("ShowMember/{id}")]
         public JsonResult GetMemberById(int id)
         {
-            string query = "select * from LMember where id=@Id";
-
-            SqlParameter parameter = new SqlParameter("@Id", id);
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
-
-            if (table.Rows.Count > 0)
+            ResponseDto response = new ResponseDto();
+            try
             {
-                return new JsonResult(table);
+                string query = "select * from LMember where id=@Id";
+
+                SqlParameter parameter = new SqlParameter("@Id", id);
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+
+                if (table.Rows.Count > 0)
+                {
+                    return new JsonResult(table);
+                }
+                else
+                {
+                    return new JsonResult("Member not found");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return new JsonResult("Member not found");
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
             }
+            return new JsonResult(response);
+            
         }
 
         [HttpPut]
@@ -306,28 +332,37 @@ namespace KMS.Controllers
         [Route("UpdateMember/{id}")]
         public JsonResult UpdateMember(int id, [FromBody] Lmember member)
         {
-            string query = "UPDATE LMember SET phone=@Phone, department=@Department, companyName=@CompanyName, " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "UPDATE LMember SET phone=@Phone, department=@Department, companyName=@CompanyName, " +
                            "bankName=@BankName, address1=@Address1, dateModified = GETDATE(), isActive=@IsActive " +
                            "WHERE id=@Id";
 
-            SqlParameter[] parameters =
-            {
-                new SqlParameter("@Id", id),
-                new SqlParameter("@Phone", member.Phone),
-                new SqlParameter("@Department", member.Department),
-                new SqlParameter("@CompanyName", member.CompanyName),
-                new SqlParameter("@BankName", member.BankName),
-                new SqlParameter("@Address1", member.Address1),
-                new SqlParameter("@IsActive", member.IsActive)
-            };
+                SqlParameter[] parameters =
+                {
+                    new SqlParameter("@Id", id),
+                    new SqlParameter("@Phone", member.Phone),
+                    new SqlParameter("@Department", member.Department),
+                    new SqlParameter("@CompanyName", member.CompanyName),
+                    new SqlParameter("@BankName", member.BankName),
+                    new SqlParameter("@Address1", member.Address1),
+                    new SqlParameter("@IsActive", member.IsActive)
+                };
 
-            _exQuery.ExecuteRawQuery(query, parameters);
+                _exQuery.ExecuteRawQuery(query, parameters);
 
-            return new JsonResult(new ResponseDto
+                return new JsonResult("Member updated successfully");
+            }
+            catch (Exception ex)
             {
-                Code = 200,
-                Message = "Member updated successfully"
-            });
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
         
@@ -336,7 +371,10 @@ namespace KMS.Controllers
         [Route("SearchMember")]
         public JsonResult SearchMember(string searchQuery)
         {
-            string query = "SELECT id, phone, department, companyName, bankName, address1, isActive, dateCreated " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "SELECT id, phone, department, companyName, bankName, address1, isActive, dateCreated " +
                            "FROM LMember " +
                            "WHERE id LIKE @searchQuery OR " +
                            "phone LIKE @searchQuery OR " +
@@ -345,10 +383,20 @@ namespace KMS.Controllers
                            "bankName LIKE @searchQuery OR " +
                            "address1 LIKE @searchQuery";
 
-            SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+                SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
-            return new JsonResult(table);
+                return new JsonResult(table);
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
     }

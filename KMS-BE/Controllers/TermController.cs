@@ -26,103 +26,168 @@ namespace KMS.Controllers
         [Route("ShowTerm")]
         public JsonResult GetTerm()
         {
-            string query = "SELECT * FROM Term";
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "SELECT * FROM Term";
 
-            DataTable table = _exQuery.ExecuteRawQuery(query);
-            return new JsonResult(table);
+                DataTable table = _exQuery.ExecuteRawQuery(query);
+                return new JsonResult(table);
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
         [HttpGet]
         [Route("ShowTerm/{id}")]
         public JsonResult GetTermById(int id)
         {
-            string query = "SELECT * FROM Term where id=@Id";
-
-            SqlParameter parameter = new SqlParameter("@Id", id);
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
-
-            if (table.Rows.Count > 0)
+            ResponseDto response = new ResponseDto();
+            try
             {
-                return new JsonResult(table);
+                string query = "SELECT * FROM Term where id=@Id";
+
+                SqlParameter parameter = new SqlParameter("@Id", id);
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+
+                if (table.Rows.Count > 0)
+                {
+                    return new JsonResult(table);
+                }
+                else
+                {
+                    return new JsonResult("Term ID not found");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return new JsonResult("Term ID not found");
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
             }
+            return new JsonResult(response);
+            
         }
 
         [HttpPost]
         [Route("AddTerm")]
         public JsonResult AddTerm([FromBody] Term term)
         {
-            string query = "INSERT INTO Term (content, dateCreated, dateModified) " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "INSERT INTO Term (content, dateCreated, dateModified) " +
                            "VALUES (@Content, GETDATE(), GETDATE())";
 
-            SqlParameter[] parameters =
+                SqlParameter[] parameters =
+                {
+                    new SqlParameter("@Content", term.Content),
+                };
+
+                _exQuery.ExecuteRawQuery(query, parameters);
+
+                return new JsonResult("Term added successfully");
+            }
+            catch (Exception ex)
             {
-                new SqlParameter("@Content", term.Content),
-            };
-
-            _exQuery.ExecuteRawQuery(query, parameters);
-
-            return new JsonResult("Term added successfully");
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
         [HttpPut]
         [Route("EditTerm/{id}")]
         public JsonResult EditTerm(int id, [FromBody] Term term)
         {
-            string query = "UPDATE Term " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "UPDATE Term " +
                            "SET content = @Content, dateModified = GETDATE() " +
                            "WHERE id = @Id";
 
-            SqlParameter[] parameters =
+                SqlParameter[] parameters =
+                {
+                    new SqlParameter("@Id", id),
+                    new SqlParameter("@Content", term.Content),
+
+                };
+
+
+                _exQuery.ExecuteRawQuery(query, parameters);
+
+
+                return new JsonResult("Term updated successfully");
+            }
+            catch (Exception ex)
             {
-                new SqlParameter("@Id", id),
-                new SqlParameter("@Content", term.Content),
-
-            };
-
-
-            _exQuery.ExecuteRawQuery(query, parameters);
-
-
-            return new JsonResult("Term updated successfully");
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
         [HttpDelete]
         [Route("DeleteTerm")]
         public JsonResult DeleteTerm([FromBody] List<int> termIds)
         {
-            if (termIds == null || termIds.Count == 0)
+            ResponseDto response = new ResponseDto();
+            try
             {
-                return new JsonResult("No term IDs provided for deletion");
-            }
-
-            StringBuilder deleteQuery = new StringBuilder("DELETE FROM Term WHERE id IN (");
-            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Delete', 'Term', GETDATE(), GETDATE(), 1)";
-
-            List<SqlParameter> parameters = new List<SqlParameter>();
-            SqlParameter[] parameters2 = { };
-            for (int i = 0; i < termIds.Count; i++)
-            {
-                string parameterName = "@TermId" + i;
-                deleteQuery.Append(parameterName);
-
-                if (i < termIds.Count - 1)
+                if (termIds == null || termIds.Count == 0)
                 {
-                    deleteQuery.Append(", ");
+                    return new JsonResult("No term IDs provided for deletion");
                 }
 
-                parameters.Add(new SqlParameter(parameterName, termIds[i]));
+                StringBuilder deleteQuery = new StringBuilder("DELETE FROM Term WHERE id IN (");
+                string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Delete', 'Term', GETDATE(), GETDATE(), 1)";
+
+                List<SqlParameter> parameters = new List<SqlParameter>();
+                SqlParameter[] parameters2 = { };
+                for (int i = 0; i < termIds.Count; i++)
+                {
+                    string parameterName = "@TermId" + i;
+                    deleteQuery.Append(parameterName);
+
+                    if (i < termIds.Count - 1)
+                    {
+                        deleteQuery.Append(", ");
+                    }
+
+                    parameters.Add(new SqlParameter(parameterName, termIds[i]));
+                }
+
+                deleteQuery.Append(");");
+
+                _exQuery.ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
+                _exQuery.ExecuteRawQuery(query2, parameters2);
+
+                return new JsonResult("Term deleted successfully");
             }
-
-            deleteQuery.Append(");");
-
-            _exQuery.ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
-            _exQuery.ExecuteRawQuery(query2, parameters2);
-
-            return new JsonResult("Term deleted successfully");
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
 

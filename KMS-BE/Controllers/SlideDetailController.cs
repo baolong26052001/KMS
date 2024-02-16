@@ -33,41 +33,67 @@ namespace KMS.Controllers
         [Route("ShowSlideDetail/{id}")]
         public JsonResult GetSlideDetailById(int id) // show by header id
         {
-            string query = "select sd.id, sd.description, sd.typeContent, sd.sequence, sd.contentUrl, sd.slideHeaderId, sd.isActive, sd.dateModified, sd.dateCreated " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "select sd.id, sd.description, sd.typeContent, sd.sequence, sd.contentUrl, sd.slideHeaderId, sd.isActive, sd.dateModified, sd.dateCreated " +
                 "from TSlideDetail sd " +
                 "WHERE sd.slideHeaderId = @Id ORDER BY sd.sequence ASC";
 
-            SqlParameter parameter = new SqlParameter("@Id", id);
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+                SqlParameter parameter = new SqlParameter("@Id", id);
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
-            if (table.Rows.Count > 0)
-            {
-                return new JsonResult(table);
+                if (table.Rows.Count > 0)
+                {
+                    return new JsonResult(table);
+                }
+                else
+                {
+                    return new JsonResult("SlideDetail not found");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return new JsonResult("SlideDetail not found");
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
             }
+            return new JsonResult(response);
+            
         }
 
         [HttpGet]
         [Route("ShowSlideDetailInEditPage/{id}")]
         public JsonResult GetSlideDetailInEditPage(int id) // show data in edit page
         {
-            string query = "select sd.id, sd.description, sd.typeContent, sd.sequence, sd.contentUrl, sd.slideHeaderId, sd.isActive, sd.dateModified, sd.dateCreated " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "select sd.id, sd.description, sd.typeContent, sd.sequence, sd.contentUrl, sd.slideHeaderId, sd.isActive, sd.dateModified, sd.dateCreated " +
                 "\r\nfrom TSlideDetail sd " +
                 "WHERE sd.id = @Id";
-            SqlParameter parameter = new SqlParameter("@Id", id);
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+                SqlParameter parameter = new SqlParameter("@Id", id);
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
-            if (table.Rows.Count > 0)
-            {
-                return new JsonResult(table);
+                if (table.Rows.Count > 0)
+                {
+                    return new JsonResult(table);
+                }
+                else
+                {
+                    return new JsonResult("SlideDetail not found");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return new JsonResult("SlideDetail not found");
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
             }
+            return new JsonResult(response);
+            
         }
 
         [HttpPost]
@@ -232,95 +258,134 @@ namespace KMS.Controllers
         [Route("FilterSlideDetail/{id}")]
         public JsonResult FilterSlideDetail(int id, [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
         {
-            string query = "select sd.id, sd.description, sd.typeContent, sd.sequence, sd.contentUrl, sd.slideHeaderId, sd.isActive, sd.dateModified, sd.dateCreated " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "select sd.id, sd.description, sd.typeContent, sd.sequence, sd.contentUrl, sd.slideHeaderId, sd.isActive, sd.dateModified, sd.dateCreated " +
                            "FROM TSlideDetail sd " +
                            "WHERE slideHeaderId = @Id";
 
-            List<SqlParameter> parameters = new List<SqlParameter>();
-            parameters.Add(new SqlParameter("@Id", id));
+                List<SqlParameter> parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter("@Id", id));
 
 
-            if (startDate.HasValue && endDate.HasValue)
-            {
+                if (startDate.HasValue && endDate.HasValue)
+                {
 
-                startDate = startDate.Value.Date.AddHours(0).AddMinutes(0).AddSeconds(0);
-                endDate = endDate.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
+                    startDate = startDate.Value.Date.AddHours(0).AddMinutes(0).AddSeconds(0);
+                    endDate = endDate.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
 
-                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "dateCreated >= @startDate AND dateCreated <= @endDate";
-                parameters.Add(new SqlParameter("@startDate", startDate.Value));
-                parameters.Add(new SqlParameter("@endDate", endDate.Value));
+                    query += (parameters.Count == 0 ? " WHERE " : " AND ") + "dateCreated >= @startDate AND dateCreated <= @endDate";
+                    parameters.Add(new SqlParameter("@startDate", startDate.Value));
+                    parameters.Add(new SqlParameter("@endDate", endDate.Value));
+                }
+
+                DataTable table = _exQuery.ExecuteRawQuery(query, parameters.ToArray());
+
+                return new JsonResult(table);
             }
-
-            DataTable table = _exQuery.ExecuteRawQuery(query, parameters.ToArray());
-
-            return new JsonResult(table);
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
         [HttpDelete]
         [Route("DeleteSlideDetail")]
         public JsonResult DeleteSlideDetail([FromBody] List<int> slideDetailIds)
         {
-            if (slideDetailIds == null || slideDetailIds.Count == 0)
+            ResponseDto response = new ResponseDto();
+            try
             {
-                return new JsonResult("No slideshow IDs provided for deletion");
-            }
-
-            
-            List<string> oldContentUrls = new List<string>();
-            foreach (int id in slideDetailIds)
-            {
-                string oldContentUrl = GetOldContentUrl(id);
-                if (!string.IsNullOrEmpty(oldContentUrl))
+                if (slideDetailIds == null || slideDetailIds.Count == 0)
                 {
-                    oldContentUrls.Add(oldContentUrl);
-                }
-            }
-
-            
-            StringBuilder deleteQuery = new StringBuilder("DELETE FROM TSlideDetail WHERE id IN (");
-            List<SqlParameter> parameters = new List<SqlParameter>();
-
-            for (int i = 0; i < slideDetailIds.Count; i++)
-            {
-                string parameterName = "@SlideDetailId" + i;
-                deleteQuery.Append(parameterName);
-
-                if (i < slideDetailIds.Count - 1)
-                {
-                    deleteQuery.Append(", ");
+                    return new JsonResult("No slideshow IDs provided for deletion");
                 }
 
-                parameters.Add(new SqlParameter(parameterName, slideDetailIds[i]));
+
+                List<string> oldContentUrls = new List<string>();
+                foreach (int id in slideDetailIds)
+                {
+                    string oldContentUrl = GetOldContentUrl(id);
+                    if (!string.IsNullOrEmpty(oldContentUrl))
+                    {
+                        oldContentUrls.Add(oldContentUrl);
+                    }
+                }
+
+
+                StringBuilder deleteQuery = new StringBuilder("DELETE FROM TSlideDetail WHERE id IN (");
+                List<SqlParameter> parameters = new List<SqlParameter>();
+
+                for (int i = 0; i < slideDetailIds.Count; i++)
+                {
+                    string parameterName = "@SlideDetailId" + i;
+                    deleteQuery.Append(parameterName);
+
+                    if (i < slideDetailIds.Count - 1)
+                    {
+                        deleteQuery.Append(", ");
+                    }
+
+                    parameters.Add(new SqlParameter(parameterName, slideDetailIds[i]));
+                }
+
+                deleteQuery.Append(");");
+
+                _exQuery.ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
+
+
+                foreach (string contentUrl in oldContentUrls)
+                {
+                    System.IO.File.Delete("../KioskApp/Insurance/bin/Debug/net6.0-windows/images/" + contentUrl);
+                }
+
+                return new JsonResult("Slide detail and associated image files deleted successfully");
             }
-
-            deleteQuery.Append(");");
-
-            _exQuery.ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
-
-            
-            foreach (string contentUrl in oldContentUrls)
+            catch (Exception ex)
             {
-                System.IO.File.Delete("../KioskApp/Insurance/bin/Debug/net6.0-windows/images/" + contentUrl);
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
             }
-
-            return new JsonResult("Slide detail and associated image files deleted successfully");
+            return new JsonResult(response);
+            
         }
 
         [HttpGet]
         [Route("SearchSlideDetail")]
         public JsonResult SearchSlideDetail(string searchQuery)
         {
-            string query = "SELECT  sd.id, sd.description, sd.typeContent, sd.sequence, sd.contentUrl, sd.slideHeaderId, sd.isActive, sd.dateModified, sd.dateCreated " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "SELECT  sd.id, sd.description, sd.typeContent, sd.sequence, sd.contentUrl, sd.slideHeaderId, sd.isActive, sd.dateModified, sd.dateCreated " +
                            "FROM TSlideDetail sd " +
                            "WHERE sd.id LIKE @searchQuery OR " +
                            "sd.description LIKE @searchQuery OR " +
                            "sd.typeContent LIKE @searchQuery OR " +
                            "sd.slideHeaderId LIKE @searchQuery";
 
-            SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+                SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
-            return new JsonResult(table);
+                return new JsonResult(table);
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
     }

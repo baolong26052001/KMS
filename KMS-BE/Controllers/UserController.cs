@@ -316,78 +316,107 @@ namespace KMS.Controllers
         [Route("UpdateUser/{id}")]
         public JsonResult UpdateUser(int id, [FromBody] Tuser updatedUser)
         {
-            string updateQuery = "UPDATE TUser SET username = @Username, fullname = @Fullname, email = @Email, " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string updateQuery = "UPDATE TUser SET username = @Username, fullname = @Fullname, email = @Email, " +
                                  "password = @Password, userGroupId = @UserGroupId, isActive = @IsActive, " +
                                  "dateModified = GETDATE() WHERE id = @Id;";
 
-            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Update', 'TUser', GETDATE(), GETDATE(), 1)";
+                string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Update', 'TUser', GETDATE(), GETDATE(), 1)";
 
-            SqlParameter[] parameters =
-            {
-                new SqlParameter("@Id", id),
-                new SqlParameter("@Username", updatedUser.Username),
-                new SqlParameter("@Fullname", updatedUser.Fullname),
-                new SqlParameter("@Email", updatedUser.Email),
-                new SqlParameter("@Password", Password.hashPassword(updatedUser.Password)),
-                new SqlParameter("@UserGroupId", updatedUser.UserGroupId),
-                new SqlParameter("@IsActive", updatedUser.IsActive),
+                SqlParameter[] parameters =
+                {
+                    new SqlParameter("@Id", id),
+                    new SqlParameter("@Username", updatedUser.Username),
+                    new SqlParameter("@Fullname", updatedUser.Fullname),
+                    new SqlParameter("@Email", updatedUser.Email),
+                    new SqlParameter("@Password", Password.hashPassword(updatedUser.Password)),
+                    new SqlParameter("@UserGroupId", updatedUser.UserGroupId),
+                    new SqlParameter("@IsActive", updatedUser.IsActive),
+                };
+
+                SqlParameter[] parameters2 =
+                {
+
             };
 
-            SqlParameter[] parameters2 =
+                _exQuery.ExecuteRawQuery(updateQuery, parameters);
+                _exQuery.ExecuteRawQuery(query2, parameters2);
+
+                return new JsonResult("User updated successfully");
+            }
+            catch (Exception ex)
             {
-
-            };
-
-            _exQuery.ExecuteRawQuery(updateQuery, parameters);
-            _exQuery.ExecuteRawQuery(query2, parameters2);
-
-            return new JsonResult("User updated successfully");
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
         [HttpDelete]
         [Route("DeleteUsers")]
         public JsonResult DeleteUsers([FromBody] List<int> userIds)
         {
-            if (userIds == null || userIds.Count == 0)
+            ResponseDto response = new ResponseDto();
+            try
             {
-                return new JsonResult("No user IDs provided for deletion");
-            }
-
-            StringBuilder deleteQuery = new StringBuilder("DELETE FROM TUser WHERE id IN (");
-            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Delete', 'TUser', GETDATE(), GETDATE(), 1)";
-
-            List<SqlParameter> parameters = new List<SqlParameter>();
-            SqlParameter[] parameters2 =
-            {
-
-            };
-
-            for (int i = 0; i < userIds.Count; i++)
-            {
-                string parameterName = "@UserId" + i;
-                deleteQuery.Append(parameterName);
-
-                if (i < userIds.Count - 1)
+                if (userIds == null || userIds.Count == 0)
                 {
-                    deleteQuery.Append(", ");
+                    return new JsonResult("No user IDs provided for deletion");
                 }
 
-                parameters.Add(new SqlParameter(parameterName, userIds[i]));
+                StringBuilder deleteQuery = new StringBuilder("DELETE FROM TUser WHERE id IN (");
+                string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Delete', 'TUser', GETDATE(), GETDATE(), 1)";
+
+                List<SqlParameter> parameters = new List<SqlParameter>();
+                SqlParameter[] parameters2 =
+                {
+
+                };
+
+                for (int i = 0; i < userIds.Count; i++)
+                {
+                    string parameterName = "@UserId" + i;
+                    deleteQuery.Append(parameterName);
+
+                    if (i < userIds.Count - 1)
+                    {
+                        deleteQuery.Append(", ");
+                    }
+
+                    parameters.Add(new SqlParameter(parameterName, userIds[i]));
+                }
+
+                deleteQuery.Append(");");
+
+                _exQuery.ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
+                _exQuery.ExecuteRawQuery(query2, parameters2);
+
+                return new JsonResult("Users deleted successfully");
             }
-
-            deleteQuery.Append(");");
-
-            _exQuery.ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
-            _exQuery.ExecuteRawQuery(query2, parameters2);
-
-            return new JsonResult("Users deleted successfully");
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
         [HttpGet]
         [Route("SearchUsers")]
         public JsonResult SearchUsers(string searchQuery)
         {
-            string query = "SELECT u.id, u.username, u.fullname, u.email, ug.groupName, u.lastLogin, u.isActive, DATEDIFF(DAY, u.lastLogin, GETDATE()) AS TotalDaysDormant " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "SELECT u.id, u.username, u.fullname, u.email, ug.groupName, u.lastLogin, u.isActive, DATEDIFF(DAY, u.lastLogin, GETDATE()) AS TotalDaysDormant " +
                            "FROM TUser u " +
                            "LEFT JOIN TUserGroup ug ON u.userGroupId = ug.id " +
                            "WHERE (u.id LIKE @searchQuery OR " +
@@ -397,10 +426,20 @@ namespace KMS.Controllers
                            "ug.groupName LIKE @searchQuery) AND " +
                            "(ug.id IS NOT NULL or ug.id IS NULL)";
 
-            SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+                SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
-            return new JsonResult(table);
+                return new JsonResult(table);
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
 

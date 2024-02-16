@@ -26,7 +26,10 @@ namespace KMS.Controllers
         [Route("ShowInsuranceTransaction")]
         public JsonResult GetInsuranceTransaction()
         {
-            string query = @"SELECT 
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = @"SELECT 
 	                        itr.transactionDate,
 	                        itr.id,
 	                        itr.memberId,
@@ -61,15 +64,28 @@ namespace KMS.Controllers
 	                        InsuranceType it on it.id = iph.insuranceTypeId";
 
 
-            DataTable table = _exQuery.ExecuteRawQuery(query);
-            return new JsonResult(table);
+                DataTable table = _exQuery.ExecuteRawQuery(query);
+                return new JsonResult(table);
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
         [HttpGet]
         [Route("ShowInsuranceTransactionByMemberId/{memberId}")] // coi xem người này đã mua những gói nào và "lịch sử" mua bảo hiểm của người này
         public JsonResult GetInsuranceTransactionByMemberId(int memberId)
         {
-            string query = @"SELECT 
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = @"SELECT 
 	                        itr.transactionDate,
 	                        itr.id,
 	                        itr.memberId,
@@ -103,24 +119,37 @@ namespace KMS.Controllers
                         left join
 	                        InsuranceType it on it.id = iph.insuranceTypeId where itr.memberId = @MemberId";
 
-            SqlParameter parameter = new SqlParameter("@MemberId", memberId);
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+                SqlParameter parameter = new SqlParameter("@MemberId", memberId);
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
-            if (table.Rows.Count > 0)
-            {
-                return new JsonResult(table);
+                if (table.Rows.Count > 0)
+                {
+                    return new JsonResult(table);
+                }
+                else
+                {
+                    return new JsonResult("Insurance Transaction not found");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return new JsonResult("Insurance Transaction not found");
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
             }
+            return new JsonResult(response);
+            
         }
 
         [HttpGet]
         [Route("ShowInsuranceTransaction/{id}")] // coi xem cái giao dịch này là người nào mua và người này đã mua gói nào cho người thụ hưởng nào
         public JsonResult GetInsuranceTransactionById(int id)
         {
-            string query = @"SELECT 
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = @"SELECT 
 	                        itr.transactionDate,
 	                        itr.id,
 	                        itr.memberId,
@@ -154,17 +183,27 @@ namespace KMS.Controllers
                         left join
 	                        InsuranceType it on it.id = iph.insuranceTypeId where itr.id = @Id";
 
-            SqlParameter parameter = new SqlParameter("@Id", id);
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+                SqlParameter parameter = new SqlParameter("@Id", id);
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
-            if (table.Rows.Count > 0)
-            {
-                return new JsonResult(table);
+                if (table.Rows.Count > 0)
+                {
+                    return new JsonResult(table);
+                }
+                else
+                {
+                    return new JsonResult("Insurance Transaction not found");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return new JsonResult("Insurance Transaction not found");
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
             }
+            return new JsonResult(response);
+            
         }
 
         
@@ -174,52 +213,81 @@ namespace KMS.Controllers
         [Route("SaveInsuranceTransaction")]
         public JsonResult SaveInsuranceTransaction([FromBody] InsuranceTransaction insuranceTransaction)
         {
-            string query = "INSERT INTO InsuranceTransaction (memberId, contractId, packageId, registrationDate, expireDate, annualPay, status, transactionDate) " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "INSERT INTO InsuranceTransaction (memberId, contractId, packageId, registrationDate, expireDate, annualPay, status, transactionDate) " +
                            "VALUES (@MemberId, @ContractId, @PackageId, GETDATE(), DATEADD(YEAR, 1, GETDATE()), @AnnualPay, @Status, GETDATE()) ";
 
-            SqlParameter[] parameters =
+                SqlParameter[] parameters =
+                {
+                    new SqlParameter("@MemberId", insuranceTransaction.MemberId),
+                    new SqlParameter("@ContractId", insuranceTransaction.ContractId),
+                    new SqlParameter("@PackageId", insuranceTransaction.PackageId),
+                    new SqlParameter("@AnnualPay", insuranceTransaction.AnnualPay),
+                    new SqlParameter("@Status", insuranceTransaction.Status),
+
+
+                };
+
+                _exQuery.ExecuteRawQuery(query, parameters);
+
+                return new JsonResult("Insurance Transaction saved successfully");
+            }
+            catch (Exception ex)
             {
-                new SqlParameter("@MemberId", insuranceTransaction.MemberId),
-                new SqlParameter("@ContractId", insuranceTransaction.ContractId),
-                new SqlParameter("@PackageId", insuranceTransaction.PackageId),
-                new SqlParameter("@AnnualPay", insuranceTransaction.AnnualPay),
-                new SqlParameter("@Status", insuranceTransaction.Status),
-
-                
-            };
-
-            _exQuery.ExecuteRawQuery(query, parameters);
-
-            return new JsonResult("Insurance Transaction saved successfully");
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
         [HttpPost]
         [Route("SaveBeneficiary")]
         public JsonResult SaveBeneficiary([FromBody] Beneficiary beneficiary)
         {
-            string query = "INSERT INTO Beneficiary (memberId, beneficiaryName, beneficiaryId, relationship, packageId, transactionId) " +
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "INSERT INTO Beneficiary (memberId, beneficiaryName, beneficiaryId, relationship, packageId, transactionId) " +
                    "VALUES (@MemberId, @BeneficiaryName, @BeneficiaryId, @Relationship, @PackageId, @TransactionId)";
 
-            SqlParameter[] parameters =
+                SqlParameter[] parameters =
+                {
+                    new SqlParameter("@MemberId", beneficiary.MemberId),
+                    new SqlParameter("@BeneficiaryName", beneficiary.BeneficiaryName),
+                    new SqlParameter("@BeneficiaryId", beneficiary.BeneficiaryId),
+                    new SqlParameter("@Relationship", beneficiary.Relationship),
+                    new SqlParameter("@PackageId", beneficiary.PackageId),
+                    new SqlParameter("@TransactionId", beneficiary.TransactionId),
+                };
+
+                _exQuery.ExecuteRawQuery(query, parameters);
+
+                return new JsonResult("Beneficiary saved successfully");
+            }
+            catch (Exception ex)
             {
-                new SqlParameter("@MemberId", beneficiary.MemberId),
-                new SqlParameter("@BeneficiaryName", beneficiary.BeneficiaryName),
-                new SqlParameter("@BeneficiaryId", beneficiary.BeneficiaryId),
-                new SqlParameter("@Relationship", beneficiary.Relationship),
-                new SqlParameter("@PackageId", beneficiary.PackageId),
-                new SqlParameter("@TransactionId", beneficiary.TransactionId),
-            };
-
-            _exQuery.ExecuteRawQuery(query, parameters);
-
-            return new JsonResult("Beneficiary saved successfully");
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
         [HttpGet]
         [Route("SearchInsuranceTransaction")]
         public JsonResult SearchInsuranceTransaction(string searchQuery)
         {
-            string query = @"SELECT 
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = @"SELECT 
 	                        itr.transactionDate,
 	                        itr.id,
 	                        itr.memberId,
@@ -252,27 +320,40 @@ namespace KMS.Controllers
 	                        InsuranceProvider inspvd on inspvd.id = iph.insuranceProviderId
                         left join
 	                        InsuranceType it on it.id = iph.insuranceTypeId " +
-                
+
                 "where m.fullName LIKE @searchQuery " +
                 "or iph.packageName LIKE @searchQuery " +
-                
+
                 "or it.typeName LIKE @searchQuery " +
                 "or inspvd.provider LIKE @searchQuery " +
                 "or itr.annualPay LIKE @searchQuery " +
                 "or ar.startAge LIKE @searchQuery " +
                 "or ar.endAge LIKE @searchQuery";
 
-            SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
-            DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+                SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
-            return new JsonResult(table);
+                return new JsonResult(table);
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
         [HttpGet]
         [Route("FilterInsuranceTransaction")]
         public JsonResult FilterInsuranceTransaction([FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
         {
-            string query = @"SELECT 
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = @"SELECT 
 	                        itr.transactionDate,
 	                        itr.id,
 	                        itr.memberId,
@@ -306,22 +387,32 @@ namespace KMS.Controllers
                         left join
 	                        InsuranceType it on it.id = iph.insuranceTypeId ";
 
-            List<SqlParameter> parameters = new List<SqlParameter>();
+                List<SqlParameter> parameters = new List<SqlParameter>();
 
-            if (startDate.HasValue && endDate.HasValue)
-            {
+                if (startDate.HasValue && endDate.HasValue)
+                {
 
-                startDate = startDate.Value.Date.AddHours(0).AddMinutes(0).AddSeconds(0);
-                endDate = endDate.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
+                    startDate = startDate.Value.Date.AddHours(0).AddMinutes(0).AddSeconds(0);
+                    endDate = endDate.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
 
-                query += (parameters.Count == 0 ? " WHERE " : " AND ") + "itr.transactionDate >= @startDate AND itr.transactionDate <= @endDate";
-                parameters.Add(new SqlParameter("@startDate", startDate.Value));
-                parameters.Add(new SqlParameter("@endDate", endDate.Value));
+                    query += (parameters.Count == 0 ? " WHERE " : " AND ") + "itr.transactionDate >= @startDate AND itr.transactionDate <= @endDate";
+                    parameters.Add(new SqlParameter("@startDate", startDate.Value));
+                    parameters.Add(new SqlParameter("@endDate", endDate.Value));
+                }
+
+                DataTable table = _exQuery.ExecuteRawQuery(query, parameters.ToArray());
+
+                return new JsonResult(table);
             }
-
-            DataTable table = _exQuery.ExecuteRawQuery(query, parameters.ToArray());
-
-            return new JsonResult(table);
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+            
         }
 
 
