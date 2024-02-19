@@ -123,8 +123,8 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = "INSERT INTO TAccessRule (groupId, isActive, canView, canAdd, canUpdate, canDelete, site) " +
-                           "VALUES (@GroupId, @IsActive, 0, 0, 0, 0, @Site)";
+                string query = "INSERT INTO TAccessRule (groupId, isActive, canView, canAdd, canUpdate, canDelete, site, dateModified, dateCreated) " +
+                           "VALUES (@GroupId, @IsActive, 0, 0, 0, 0, @Site, GETDATE(), GETDATE())";
 
                 SqlParameter[] parameters =
                 {

@@ -123,8 +123,6 @@ namespace KMS.Controllers
             
         }
 
-
-
         [HttpPost]
         [Route("AddUsergroup")]
         public JsonResult AddUsergroup([FromBody] TuserGroup usergroup)
@@ -132,8 +130,12 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = "INSERT INTO TUserGroup (groupName, accessRuleId, dateModified, dateCreated, isActive) " +
-                           "VALUES (@GroupName, @AccessRuleId, GETDATE(), GETDATE(), @IsActive)";
+                string insertQuery = "DECLARE @InsertedIds TABLE (Id INT); " +
+                                     "INSERT INTO TUserGroup (groupName, accessRuleId, dateModified, dateCreated, isActive) " +
+                                     "OUTPUT inserted.Id INTO @InsertedIds(Id) " +
+                                     "VALUES (@GroupName, @AccessRuleId, GETDATE(), GETDATE(), @IsActive); " +
+                                     "SELECT Id FROM @InsertedIds;";
+
                 string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Add', 'TUsergroup', GETDATE(), GETDATE(), 1)";
 
                 SqlParameter[] parameters =
@@ -144,21 +146,27 @@ namespace KMS.Controllers
                 };
                 SqlParameter[] parameters2 = { };
 
-                _exQuery.ExecuteRawQuery(query, parameters);
+                var result = _exQuery.ExecuteRawQuery(insertQuery, parameters);
+
+                // Fetch the inserted ID from the result
+                int insertedId = Convert.ToInt32(result.Rows[0]["Id"]);
+
+                // Execute the audit query
                 _exQuery.ExecuteRawQuery(query2, parameters2);
 
-                return new JsonResult("Usergroup added successfully");
+                return new JsonResult(insertedId);
             }
             catch (Exception ex)
             {
+                // Handle exceptions
                 response.Code = -1;
                 response.Message = ex.Message;
                 response.Exception = ex.ToString();
                 response.Data = null;
             }
             return new JsonResult(response);
-            
         }
+
 
         [HttpPut]
         [Route("UpdateUsergroup/{id}")]
@@ -209,31 +217,39 @@ namespace KMS.Controllers
                     return new JsonResult("No user group IDs provided for deletion");
                 }
 
-                StringBuilder deleteQuery = new StringBuilder("DELETE FROM TUsergroup WHERE id IN (");
-                string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Delete', 'TUsergroup', GETDATE(), GETDATE(), 1)";
+                StringBuilder deleteQueryUsergroup = new StringBuilder("DELETE FROM TUsergroup WHERE id IN (");
+                StringBuilder deleteQueryAccessRule = new StringBuilder("DELETE FROM TAccessRule WHERE groupId IN (");
+                string auditQuery = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Delete', 'TUsergroup', GETDATE(), GETDATE(), 1)";
 
+                List<SqlParameter> parametersUsergroup = new List<SqlParameter>();
+                List<SqlParameter> parametersAccessRule = new List<SqlParameter>();
 
-                List<SqlParameter> parameters = new List<SqlParameter>();
-                SqlParameter[] parameters2 = { };
                 for (int i = 0; i < usergroupIds.Count; i++)
                 {
-                    string parameterName = "@UsergroupId" + i;
-                    deleteQuery.Append(parameterName);
+                    string parameterNameUsergroup = "@UsergroupId" + i;
+                    deleteQueryUsergroup.Append(parameterNameUsergroup);
+
+                    string parameterNameAccessRule = "@GroupId" + i;
+                    deleteQueryAccessRule.Append(parameterNameAccessRule);
 
                     if (i < usergroupIds.Count - 1)
                     {
-                        deleteQuery.Append(", ");
+                        deleteQueryUsergroup.Append(", ");
+                        deleteQueryAccessRule.Append(", ");
                     }
 
-                    parameters.Add(new SqlParameter(parameterName, usergroupIds[i]));
+                    parametersUsergroup.Add(new SqlParameter(parameterNameUsergroup, usergroupIds[i]));
+                    parametersAccessRule.Add(new SqlParameter(parameterNameAccessRule, usergroupIds[i]));
                 }
 
-                deleteQuery.Append(");");
+                deleteQueryUsergroup.Append(");");
+                deleteQueryAccessRule.Append(");");
 
-                _exQuery.ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
-                _exQuery.ExecuteRawQuery(query2, parameters2);
+                _exQuery.ExecuteRawQuery(deleteQueryUsergroup.ToString(), parametersUsergroup.ToArray());
+                _exQuery.ExecuteRawQuery(deleteQueryAccessRule.ToString(), parametersAccessRule.ToArray());
+                _exQuery.ExecuteRawQuery(auditQuery);
 
-                return new JsonResult("User group deleted successfully");
+                return new JsonResult("User groups and associated access rules deleted successfully");
             }
             catch (Exception ex)
             {
@@ -243,8 +259,8 @@ namespace KMS.Controllers
                 response.Data = null;
             }
             return new JsonResult(response);
-            
         }
+
 
         [HttpGet]
         [Route("SearchUsergroup")]
