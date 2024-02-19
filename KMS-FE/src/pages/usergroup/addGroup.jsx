@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 const AddGroup = () => {
   const navigate = useNavigate();
   const API_URL = "https://localhost:7017/";
-  // State to store user information
   const [newGroup, setnewGroup] = useState({
     groupName: '',
     accessRuleId: '',
