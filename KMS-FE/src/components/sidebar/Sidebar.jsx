@@ -124,7 +124,7 @@ const Sidebar = () => {
       }
     });
 
-    sessionStorage.setItem('childrenKeys', JSON.stringify(extractedKeys));
+    localStorage.setItem('childrenKeys', JSON.stringify(extractedKeys));
 
     return extractedKeys;
   };

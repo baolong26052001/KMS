@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 const AddGroup = () => {
   const navigate = useNavigate();
   const API_URL = "https://localhost:7017/";
-
   // State to store user information
   const [newGroup, setnewGroup] = useState({
     groupName: '',
@@ -22,9 +21,41 @@ const AddGroup = () => {
     }));
   };
 
+  const addDefaultSite = async (id) => {
+    try {
+      const sites = JSON.parse(localStorage.childrenKeys || '[]');
+  
+      for (const site of sites) {
+        try {
+          const response = await fetch(`${API_URL}api/AccessRule/AddPermission`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              groupId: id,
+              isActive: true,
+              site,
+            }),
+          });
+  
+          if (!response.ok) {
+            console.error(`Error adding permission for site ${site}: ${response.statusText}`);
+          } else {
+            console.log(`Successfully added permission for site ${site}`);
+          }
+        } catch (error) {
+          console.error(`Error adding permission for site ${site}:`, error);
+        }
+      }
+
+    } catch (error) {
+      console.error('Error parsing session storage keys:', error);
+    }
+  };  
+
   const handleSave = async () => {
     try {
-      // Assuming your API URL is correct
       const response = await fetch(`${API_URL}api/Usergroup/AddUsergroup`, {
         method: 'POST',
         headers: {
@@ -32,13 +63,14 @@ const AddGroup = () => {
         },
         body: JSON.stringify(newGroup),
       });
-
+  
       console.log('Response Status:', response.status);
-      console.log('Response Content:', await response.text());
-
+      const responseData = await response.json();
+  
       if (response.ok) {
+        const groupId = responseData;
+        addDefaultSite(groupId);
         navigate(`/usersgroup`);
-        // Provide user feedback on successful save
         console.log('Group added successfully');
       } else {
         console.log('Group add failed');
@@ -47,6 +79,7 @@ const AddGroup = () => {
       console.error('Error adding Group:', error);
     }
   };
+  
 
   const handleCancel = () => {
     navigate(`/usersgroup`);
