@@ -345,8 +345,8 @@ namespace KMS.Controllers
                            "SET content = @Content, coverage = @Coverage, description = @Description, " +
                            "dateModified = GETDATE() " +
                            "WHERE id = @id";
-                string query2 = "INSERT INTO TAudit (ipAddress, macAddress, userId, action, tableName, dateModified, isActive) " +
-                           "VALUES (@IpAddress, @Ipv6, @UserId, 'Update', 'Benefit', GETDATE(), 1)";
+                string query2 = "INSERT INTO TAudit (ipAddress, macAddress, userId, action, tableName, dateModified, dateCreated, isActive) " +
+                           "VALUES (@IpAddress, @Ipv6, @UserId, 'Update', 'Benefit', GETDATE(), GETDATE(), 1)";
 
                 SqlParameter[] parameters =
                 {
