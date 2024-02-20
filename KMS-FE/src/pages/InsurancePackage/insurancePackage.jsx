@@ -242,7 +242,6 @@ const InsurancePackageHeader = () => {
           } else if (searchTerm) {
             apiUrl = `${API_URL}api/InsurancePackageHeader/SearchInsurancePackageHeader?searchQuery=${encodeURIComponent(searchTerm)}`;
           }
-          console.log(apiUrl);
           const [apiResponse, searchApiResponse] = await Promise.all([
             fetch(apiUrl),
             searchApi ? fetch(searchApi) : Promise.resolve(null),
@@ -254,8 +253,6 @@ const InsurancePackageHeader = () => {
     
           const apiResponseData = await apiResponse.json();
           const searchApiResponseData = searchApiResponse ? await searchApiResponse.json() : null;
-          
-          console.log(searchApiResponseData);
     
           if (Array.isArray(apiResponseData)) {
             let filteredRows = apiResponseData;
