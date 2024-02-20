@@ -88,7 +88,7 @@ const Sidebar = () => {
   const location = useLocation();
   const currentPath = location.pathname.split('/').filter(Boolean).pop();
   const [permissions, setPermissions] = useState([]);
-  const role = getCookie('role');
+  const userRole = getCookie('role');
   const groupId = getCookie('groupId');
 
   const parentName = items.find(item => item.children && item.children.some(subItem => subItem.key === currentPath))?.key;
@@ -139,8 +139,6 @@ const Sidebar = () => {
     }
     extractAndStoreChildrenKeys();
   };
-
-  const userRole = role;
 
   useEffect(() => {
     fetch('https://localhost:7017/api/AccessRule/ShowPermission')
