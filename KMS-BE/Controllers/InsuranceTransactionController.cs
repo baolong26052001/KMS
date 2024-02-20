@@ -173,7 +173,7 @@ namespace KMS.Controllers
                         LEFT JOIN 
 	                        LMember m ON m.id = itr.memberId
                         LEFT JOIN 
-	                        InsurancePackageDetail ipd ON itr.packageId = ipd.id
+	                        InsurancePackageDetail ipd ON itr.packageDetailId = ipd.id
                         LEFT JOIN 
 	                        AgeRange ar ON ar.id = ipd.ageRangeId
                         left join
@@ -216,14 +216,14 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = "INSERT INTO InsuranceTransaction (memberId, contractId, packageId, registrationDate, expireDate, annualPay, status, transactionDate) " +
-                           "VALUES (@MemberId, @ContractId, @PackageId, GETDATE(), DATEADD(YEAR, 1, GETDATE()), @AnnualPay, @Status, GETDATE()) ";
+                string query = "INSERT INTO InsuranceTransaction (memberId, contractId, packageDetailId, registrationDate, expireDate, annualPay, status, transactionDate) " +
+                           "VALUES (@MemberId, @ContractId, @PackageDetailId, GETDATE(), DATEADD(YEAR, 1, GETDATE()), @AnnualPay, @Status, GETDATE()) ";
 
                 SqlParameter[] parameters =
                 {
                     new SqlParameter("@MemberId", insuranceTransaction.MemberId),
                     new SqlParameter("@ContractId", insuranceTransaction.ContractId),
-                    new SqlParameter("@PackageId", insuranceTransaction.PackageId),
+                    new SqlParameter("@PackageDetailId", insuranceTransaction.PackageDetailId),
                     new SqlParameter("@AnnualPay", insuranceTransaction.AnnualPay),
                     new SqlParameter("@Status", insuranceTransaction.Status),
 
@@ -311,7 +311,7 @@ namespace KMS.Controllers
                         LEFT JOIN 
 	                        LMember m ON m.id = itr.memberId
                         LEFT JOIN 
-	                        InsurancePackageDetail ipd ON itr.packageId = ipd.id
+	                        InsurancePackageDetail ipd ON itr.packageDetailId = ipd.id
                         LEFT JOIN 
 	                        AgeRange ar ON ar.id = ipd.ageRangeId
                         left join
@@ -377,7 +377,7 @@ namespace KMS.Controllers
                         LEFT JOIN 
 	                        LMember m ON m.id = itr.memberId
                         LEFT JOIN 
-	                        InsurancePackageDetail ipd ON itr.packageId = ipd.id
+	                        InsurancePackageDetail ipd ON itr.packageDetailId = ipd.id
                         LEFT JOIN 
 	                        AgeRange ar ON ar.id = ipd.ageRangeId
                         left join
