@@ -100,8 +100,10 @@ namespace KMS.Controllers
             try
             {
                 string query = "SELECT u.id, u.username, u.fullname, u.password, u.email, u.userGroupId, u.isActive" +
-                "\r\nFROM TUser u, TUserGroup ug" +
-                "\r\nWHERE u.userGroupId = ug.id AND u.id = @UserId";
+                "\r\nFROM TUser u" +
+                "\r\nLEFT JOIN TUserGroup ug ON u.userGroupId = ug.id" +
+                "\r\nWHERE u.id = @UserId";
+
 
                 SqlParameter parameter = new SqlParameter("@UserId", id);
                 DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
@@ -158,18 +160,18 @@ namespace KMS.Controllers
                 await _dbcontext.SaveChangesAsync();
 
 
-                string query = "INSERT INTO TAudit (userId, action, ipAddress, macAddress, dateCreated) VALUES (@UserId, 'Login', @IpAddress, @Ipv6, GETDATE())";
+                string query = "INSERT INTO TAudit (userId, action, ipAddress, macAddress, dateCreated, isActive) VALUES (@UserId, 'Login', @IpAddress, @Ipv6, GETDATE(), 1)";
 
                 IPAddress ipv4 = null;
                 IPAddress ipv6 = null;
 
                 foreach (var address in ip.AddressList)
                 {
-                    if (address.AddressFamily == AddressFamily.InterNetwork) 
+                    if (address.AddressFamily == AddressFamily.InterNetwork)
                     {
                         ipv4 = address;
                     }
-                    else if (address.AddressFamily == AddressFamily.InterNetworkV6)  
+                    else if (address.AddressFamily == AddressFamily.InterNetworkV6)
                     {
                         ipv6 = address;
                     }
