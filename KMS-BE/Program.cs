@@ -30,6 +30,8 @@ builder.Services.AddSwaggerGen(options =>
 
 });
 builder.Services.AddScoped<ExecuteQuery>();
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -66,6 +68,9 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
+
+app.UseRouting();
+app.UseCookiePolicy();
 
 app.UseAuthorization();
 

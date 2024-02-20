@@ -4,6 +4,8 @@ using KMS.Tools;
 using System.Data;
 using Microsoft.Data.SqlClient;
 using System.Text;
+using System.Net;
+using System.Net.Sockets;
 
 namespace KMS.Controllers
 {
@@ -15,12 +17,15 @@ namespace KMS.Controllers
         private readonly KioskManagementSystemContext _dbcontext;
         private IConfiguration _configuration;
         private readonly ExecuteQuery _exQuery;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public InsurancePackageController(IConfiguration configuration, KioskManagementSystemContext _context, ExecuteQuery exQuery)
+
+        public InsurancePackageController(IConfiguration configuration, KioskManagementSystemContext _context, ExecuteQuery exQuery, IHttpContextAccessor httpContextAccessor)
         {
             _dbcontext = _context;
             _configuration = configuration;
             _exQuery = exQuery;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         [HttpGet]
@@ -171,9 +176,28 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
+                var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault() ?? HttpContext.Connection.RemoteIpAddress.ToString();
+                string host = Dns.GetHostName();
+                IPHostEntry ip = Dns.GetHostEntry(host);
+                IPAddress ipv4 = null;
+                IPAddress ipv6 = null;
+
+                foreach (var address in ip.AddressList)
+                {
+                    if (address.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        ipv4 = address;
+                    }
+                    else if (address.AddressFamily == AddressFamily.InterNetworkV6)
+                    {
+                        ipv6 = address;
+                    }
+                }
+
                 string query = "INSERT INTO Benefit (packageId, content, coverage, description, dateModified, dateCreated) " +
                            "VALUES (@PackageId, @Content, @Coverage, @Description, GETDATE(), GETDATE())";
-                string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Add', 'Benefit', GETDATE(), GETDATE(), 1)";
+                string query2 = "INSERT INTO TAudit (ipAddress, macAddress, action, tableName, dateModified, dateCreated, isActive) " +
+                           "VALUES (@IpAddress, @Ipv6, 'Add', 'Benefit', GETDATE(), GETDATE(), 1)";
 
                 SqlParameter[] parameters =
                 {
@@ -184,7 +208,11 @@ namespace KMS.Controllers
 
 
                 };
-                SqlParameter[] parameters2 = { };
+                SqlParameter[] parameters2 = 
+                {
+                    new SqlParameter("@IpAddress", ipv4?.ToString()),
+                    new SqlParameter("@Ipv6", ipv6?.ToString()),
+                };
 
                 _exQuery.ExecuteRawQuery(query, parameters);
                 _exQuery.ExecuteRawQuery(query2, parameters2);
@@ -209,9 +237,28 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
+                var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault() ?? HttpContext.Connection.RemoteIpAddress.ToString();
+                string host = Dns.GetHostName();
+                IPHostEntry ip = Dns.GetHostEntry(host);
+                IPAddress ipv4 = null;
+                IPAddress ipv6 = null;
+
+                foreach (var address in ip.AddressList)
+                {
+                    if (address.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        ipv4 = address;
+                    }
+                    else if (address.AddressFamily == AddressFamily.InterNetworkV6)
+                    {
+                        ipv6 = address;
+                    }
+                }
+
                 string query = "INSERT INTO BenefitDetail (benefitId, content, coverage, dateModified, dateCreated) " +
                            "VALUES (@BenefitId, @Content, @Coverage, GETDATE(), GETDATE())";
-                string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Add', 'BenefitDetail', GETDATE(), GETDATE(), 1)";
+                string query2 = "INSERT INTO TAudit (ipAddress, macAddress, action, tableName, dateModified, dateCreated, isActive) " +
+                           "VALUES (@IpAddress, @Ipv6, 'Add', 'BenefitDetail', GETDATE(), GETDATE(), 1)";
                 SqlParameter[] parameters =
                 {
 
@@ -220,7 +267,11 @@ namespace KMS.Controllers
                     new SqlParameter("@Coverage", benefitDetail.Coverage),
 
                 };
-                SqlParameter[] parameters2 = { };
+                SqlParameter[] parameters2 =
+                {
+                    new SqlParameter("@IpAddress", ipv4?.ToString()),
+                    new SqlParameter("@Ipv6", ipv6?.ToString()),
+                };
 
                 _exQuery.ExecuteRawQuery(query, parameters);
                 _exQuery.ExecuteRawQuery(query2, parameters2);
@@ -238,18 +289,64 @@ namespace KMS.Controllers
             
         }
 
+        
+        private int ShowValueCookie()
+        {
+            if (HttpContext.Request.Cookies.ContainsKey("userId"))
+            {
+                var userIdCookieValue = HttpContext.Request.Cookies["userId"];
+                int number = Int32.Parse(userIdCookieValue);
+
+                if (!string.IsNullOrEmpty(userIdCookieValue))
+                {
+                    return number;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
         [HttpPut]
         [Route("EditBenefit/{id}")]
-        public JsonResult EditBenefit(int id, [FromBody] Benefit benefit)
+        public JsonResult EditBenefit(int id, [FromBody] EditBenefit benefit)
         {
             ResponseDto response = new ResponseDto();
             try
             {
+
+                int userId = ShowValueCookie();
+                var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault() ?? HttpContext.Connection.RemoteIpAddress.ToString();
+                string host = Dns.GetHostName();
+                IPHostEntry ip = Dns.GetHostEntry(host);
+                IPAddress ipv4 = null;
+                IPAddress ipv6 = null;
+
+                foreach (var address in ip.AddressList)
+                {
+                    if (address.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        ipv4 = address;
+                    }
+                    else if (address.AddressFamily == AddressFamily.InterNetworkV6)
+                    {
+                        ipv6 = address;
+                    }
+                }
+                
+
+
                 string query = "UPDATE Benefit " +
                            "SET content = @Content, coverage = @Coverage, description = @Description, " +
                            "dateModified = GETDATE() " +
                            "WHERE id = @id";
-                string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Edit', 'Benefit', GETDATE(), GETDATE(), 1)";
+                string query2 = "INSERT INTO TAudit (ipAddress, macAddress, userId, action, tableName, dateModified, isActive) " +
+                           "VALUES (@IpAddress, @Ipv6, @UserId, 'Update', 'Benefit', GETDATE(), 1)";
 
                 SqlParameter[] parameters =
                 {
@@ -260,7 +357,12 @@ namespace KMS.Controllers
 
 
                 };
-                SqlParameter[] parameters2 = { };
+                SqlParameter[] parameters2 =
+                {
+                    new SqlParameter("@IpAddress", ipv4?.ToString()),
+                    new SqlParameter("@Ipv6", ipv6?.ToString()),
+                    new SqlParameter("@UserId", benefit.UserId),
+                };
 
                 _exQuery.ExecuteRawQuery(query, parameters);
                 _exQuery.ExecuteRawQuery(query2, parameters2);
