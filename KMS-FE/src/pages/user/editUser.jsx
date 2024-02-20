@@ -17,7 +17,7 @@ const EditUser = () => {
     email: '',
     password: '',
     userGroupId: '',
-    isActive: '', // Assuming isActive is a boolean
+    isActive: '',
   });
 
   const [userGroups, setUserGroups] = useState([]);
@@ -31,12 +31,11 @@ const EditUser = () => {
         if (response.ok) {
           const userData = await response.json();
           
-          // Populate the state with fetched user details
           setEditedUser({
             username: userData[0].username,
             fullname: userData[0].fullname,
             email: userData[0].email,
-            password: '', // You may choose not to load the password for security reasons
+            password: userData[0].password,
             userGroupId: userData[0].userGroupId,
             isActive: userData[0].isActive,
           });
@@ -76,7 +75,6 @@ const EditUser = () => {
 
   const handleSave = async () => {
     try {
-      // Assuming your API URL is correct
       const response = await fetch(`${API_URL}api/User/UpdateUser/${id}`, {
         method: 'PUT',
         headers: {
@@ -90,7 +88,6 @@ const EditUser = () => {
 
       if (response.ok) {
         navigate(`/users`);
-        // Provide user feedback on successful save
         console.log('User updated successfully');
       } else {
         console.log('User update failed');

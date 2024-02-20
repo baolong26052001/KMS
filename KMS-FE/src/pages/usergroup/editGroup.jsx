@@ -10,10 +10,9 @@ const EditGroup = () => {
   const { id } = useParams();
   const API_URL = "https://localhost:7017/";
 
-  // State to store user information
+  // State to store group information
   const [editedGroup, setEditedGroup] = useState({
     groupName: '',
-    // accessRuleId: '',
     isActive: '', 
   });
 
@@ -27,7 +26,6 @@ const EditGroup = () => {
           
           setEditedGroup({
             groupName: groupData[0].groupName,
-            // accessRuleId: groupData[0].accessRuleId,
             isActive: groupData[0].isActive,
           });
         } else {
@@ -102,6 +100,7 @@ const EditGroup = () => {
                 variant="outlined"
                 value={editedGroup.groupName}
                 onChange={(e) => handleInputChange('groupName', e.target.value)}
+                disabled={editedGroup.groupName === 'Admin'}
               />
               <TextField
                 id="isActive"

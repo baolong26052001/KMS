@@ -13,7 +13,6 @@ import Alert from '@mui/material/Alert';
 // import Delete Hook
 import useDeleteHook from '../../components/deleteHook/deleteHook';
 
-const API_URL = "https://localhost:7017/";
 
 const CustomToolbar = ({ onButtonClick, selectedRows }) => {
   const navigate = useNavigate();
@@ -83,67 +82,12 @@ const ViewButton = ({ rowId, label, onClick }) => {
 
 const EditButton = ({ rowId, label, onClick }) => {
   const navigate = useNavigate();
-  const [permissions, setPermissions] = useState([]);
-  useEffect(() => {
-    async function fetchPermissions() {
-      try {
-        const siteVariable = (new URL(window.location.href)).pathname.split('/').find(Boolean) || '';
-        const groupIdVariable = getGroupIdFromCookie();
 
-        function getGroupIdFromCookie() {
-          // Retrieve the value of groupId from the cookie
-          const cookies = document.cookie.split('; ');
-          for (const cookie of cookies) {
-            const [name, value] = cookie.split('=');
-            if (name === 'groupId') {
-              return value;
-            }
-          }
-          
-          return null;
-        }
-
-        const permissionResponse = await fetch(`${API_URL}api/AccessRule/ShowPermissionBySiteAndGroupId/${groupIdVariable}/${siteVariable}`);
-        if (!permissionResponse.ok) {
-          throw new Error(`HTTP error! Status: ${permissionResponse.status}`);
-        }
-
-        const permissionData = await permissionResponse.json();
-        setPermissions(permissionData);
-      } catch (error) {
-        console.error('Error fetching permissions:', error);
-      }
-    }
-
-    fetchPermissions();
-  }, []);
   const handleClick = (event) => {
     event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
     onClick(rowId);
     navigate(`/editUser/${rowId}`);
   };
-
-  // Check if "canUpdate" is false and "site" is "users"
-  const currentSite = (new URL(window.location.href)).pathname.split('/').find(Boolean) || '';
-  const canUpdate = Array.isArray(permissions) ? permissions.find(permission => permission.site === currentSite)?.canUpdate : undefined;
-  const roleNameVariable = getRoleNameFromCookie();
-  function getRoleNameFromCookie() {
-    // Retrieve the value of groupId from the cookie
-    const cookies = document.cookie.split('; ');
-    for (const cookie of cookies) {
-      const [name, value] = cookie.split('=');
-      if (name === 'role') {
-        return value;
-      }
-    }
-
-    return null;
-  }
-  
-
-  if (!canUpdate && roleNameVariable != 'Admin') {
-    return null; // Return null to hide the Edit button
-  }
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0 }}>
@@ -221,8 +165,6 @@ const columns = [
     flex: 1,
   },
 ];
-
-const rows = [];
 
 
 const handleButtonClick = (id) => {
