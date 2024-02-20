@@ -53,7 +53,7 @@ namespace KMS.Controllers
                         LEFT JOIN 
 	                        LMember m ON m.id = itr.memberId
                         LEFT JOIN 
-	                        InsurancePackageDetail ipd ON itr.packageId = ipd.id
+	                        InsurancePackageDetail ipd ON itr.packageDetailId = ipd.id
                         LEFT JOIN 
 	                        AgeRange ar ON ar.id = ipd.ageRangeId
                         left join
@@ -109,7 +109,7 @@ namespace KMS.Controllers
                         LEFT JOIN 
 	                        LMember m ON m.id = itr.memberId
                         LEFT JOIN 
-	                        InsurancePackageDetail ipd ON itr.packageId = ipd.id
+	                        InsurancePackageDetail ipd ON itr.packageDetailId = ipd.id
                         LEFT JOIN 
 	                        AgeRange ar ON ar.id = ipd.ageRangeId
                         left join
