@@ -295,7 +295,7 @@ namespace KMS.Models
 
                 entity.Property(e => e.MemberId).HasColumnName("memberId");
 
-                entity.Property(e => e.PackageId).HasColumnName("packageId");
+                entity.Property(e => e.PackageDetailId).HasColumnName("packageDetailId");
 
                 entity.Property(e => e.RegistrationDate)
                     .HasColumnType("datetime")
