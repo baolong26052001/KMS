@@ -92,7 +92,7 @@ import RouteEditInsuranceAgeRange from './pages/insuranceAgeRange/editAgeRange';
 
 import RouteLogout from './components/logout/logout';
 
-function hasPermission(permissionData, path, isEdit = false) {
+function hasPermission(permissionData, path, isEdit = false, isAdd = false) {
   if (!getCookie('groupId')) {
     return false;
   }
@@ -110,6 +110,8 @@ function hasPermission(permissionData, path, isEdit = false) {
     if (permission) {
       if (isEdit) {
         return permission.canUpdate;
+      } else if (isAdd) {
+        return permission.canAdd;
       } else {
         return permission.canView;
       }
@@ -118,6 +120,9 @@ function hasPermission(permissionData, path, isEdit = false) {
   
   return false;
 }
+
+
+
 
 function fetchPermissionInfo(groupId) {
   const apiUrl = `https://localhost:7017/api/AccessRule/ShowPermissionInfoInEditPage/${groupId}`;
@@ -133,7 +138,8 @@ const App = () => {
   const [showHeaderbar, setShowHeaderbar] = useState(isAuthenticated);
   const groupId = getCookie('groupId');
   const [permissionData, setPermissionData] = useState([]);
-
+  const editPermission = true;
+  const addPermission = true;
   // Fetch permission info on component mount
   useEffect(() => {
     setShowHeaderbar(isAuthenticated);
@@ -176,11 +182,16 @@ const App = () => {
                         />
                         <Route 
                           path="/editUser/:id" 
-                          element={hasPermission(permissionData, "/users", true) ? <RouteEditUser /> : <NoPermission/>} 
+                          // Check if the user has permission to edit a user.
+                          // If `editPermission` is true, allow access to the edit user page, otherwise redirect to NoPermission page.
+                          element={hasPermission(permissionData, "/users", editPermission) ? <RouteEditUser /> : <NoPermission/>} 
                         />
                         <Route 
                           path="/addUser" 
-                          element={hasPermission(permissionData, "/users") ? <RouteAddUser /> : <Navigate to="/dashboard" />} 
+                          // Check if the user has permission to add a user.
+                          // editPermission should set to false to only check addPermission
+                          // If `addPermission` is true, allow access to the edit user page, otherwise redirect to NoPermission page.
+                          element={hasPermission(permissionData, "/users", !editPermission, addPermission) ? <RouteAddUser /> : <NoPermission />} 
                         />
 
                         {/* Routes for UserGroup */}
@@ -190,15 +201,15 @@ const App = () => {
                         />
                         <Route 
                           path="/addGroup" 
-                          element={hasPermission(permissionData, "/usersGroup") ? <RouteAddGroup /> : <NoPermission/>} 
+                          element={hasPermission(permissionData, "/usersGroup", !editPermission, addPermission) ? <RouteAddGroup /> : <NoPermission/>} 
                         />
                         <Route 
                           path="/editGroup/:id" 
-                          element={hasPermission(permissionData, "/usersGroup", true) ? <RouteEditGroup /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/usersGroup", editPermission) ? <RouteEditGroup /> : <NoPermission />} 
                         />
                         <Route 
                           path="/permission/:id" 
-                          element={hasPermission(permissionData, "/usersGroup") ? <RoutePermission /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/usersGroup") ? <RoutePermission /> : <NoPermission />} 
                         />
 
                         {/* Routes for Kiosk Setup */}
@@ -212,11 +223,11 @@ const App = () => {
                         />
                         <Route 
                           path="/editKiosk/:id" 
-                          element={hasPermission(permissionData, "/kioskSetup", true) ? <RouteEditKiosk /> : <NoPermission/>} 
+                          element={hasPermission(permissionData, "/kioskSetup", editPermission) ? <RouteEditKiosk /> : <NoPermission/>} 
                         />
                         <Route 
                           path="/addKiosk" 
-                          element={hasPermission(permissionData, "/kioskSetup") ? <RouteAddKiosk /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/kioskSetup", !editPermission, addPermission) ? <RouteAddKiosk /> : <NoPermission />} 
                         />
 
                         {/* Routes for Kiosk Hardware */}
@@ -240,11 +251,11 @@ const App = () => {
                         />
                         <Route 
                           path="/editStation/:id" 
-                          element={hasPermission(permissionData, "/station", true) ? <RouteEditStation /> : <NoPermission/>} 
+                          element={hasPermission(permissionData, "/station", editPermission) ? <RouteEditStation /> : <NoPermission/>} 
                         />
                         <Route 
                           path="/addStation" 
-                          element={hasPermission(permissionData, "/station") ? <RouteAddStation /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/station", !editPermission, addPermission) ? <RouteAddStation /> : <NoPermission />} 
                         />
 
                         {/* Routes for Slideshow */}
@@ -258,11 +269,11 @@ const App = () => {
                         />
                         <Route 
                           path="/editSlideShow/:id" 
-                          element={hasPermission(permissionData, "/slideshow", true) ? <RouteEditSlideShow /> : <NoPermission/>} 
+                          element={hasPermission(permissionData, "/slideshow", editPermission) ? <RouteEditSlideShow /> : <NoPermission/>} 
                         />
                         <Route 
                           path="/addSlideShow" 
-                          element={hasPermission(permissionData, "/slideshow") ? <RouteAddSlideShow /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/slideshow", !editPermission, addPermission) ? <RouteAddSlideShow /> : <NoPermission />} 
                         />
 
                         {/* Routes for Slide Detail */}
@@ -272,11 +283,11 @@ const App = () => {
                         />
                         <Route 
                           path="/addSlideDetail/:id/:packageName" 
-                          element={hasPermission(permissionData, "/slideshow") ? <RouteAddSlideDetail /> : <NoPermission/>} 
+                          element={hasPermission(permissionData, "/slideshow", editPermission) ? <RouteAddSlideDetail /> : <NoPermission/>} 
                         />
                         <Route 
                           path="/editSlideDetail/:id/:packageName" 
-                          element={hasPermission(permissionData, "/slideshow") ? <RouteEditSlideDetail /> : <NoPermission/>} 
+                          element={hasPermission(permissionData, "/slideshow", !editPermission, addPermission) ? <RouteEditSlideDetail /> : <NoPermission/>} 
                         />
 
                         {/* Routes for Account */}
@@ -324,11 +335,11 @@ const App = () => {
                         />
                         <Route 
                           path="/addInsurancePackage" 
-                          element={hasPermission(permissionData, "/insurancePackage") ? <RouteAddInsurancePackage /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/insurancePackage", !editPermission, addPermission) ? <RouteAddInsurancePackage /> : <NoPermission />} 
                         />
                         <Route 
                           path="/editInsurancePackage/:id" 
-                          element={hasPermission(permissionData, "/insurancePackage", true) ? <RouteEditInsurancePackage /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/insurancePackage", editPermission) ? <RouteEditInsurancePackage /> : <NoPermission />} 
                         />
 
                         {/* Routes for Insurance Package Detail */}
@@ -338,11 +349,11 @@ const App = () => {
                         />
                         <Route 
                           path="/addInsurancePackageDetail/:id" 
-                          element={hasPermission(permissionData, "/insurancePackage") ? <RouteAddInsurancePackageDetail /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/insurancePackage", !editPermission, addPermission) ? <RouteAddInsurancePackageDetail /> : <NoPermission />} 
                         />
                         <Route 
                           path="/editInsurancePackageDetail/:id/:packageHeaderId" 
-                          element={hasPermission(permissionData, "/insurancePackage") ? <RouteEditInsurancePackageDetail /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/insurancePackage", editPermission) ? <RouteEditInsurancePackageDetail /> : <NoPermission />} 
                         />
 
                         {/* Routes for Insurance Benefit */}
@@ -352,21 +363,21 @@ const App = () => {
                         />
                         <Route 
                           path="/addBenefit/:id/:packageName" 
-                          element={hasPermission(permissionData, "/insurancePackage") ? <RouteAddBenefit /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/insurancePackage", !editPermission, addPermission) ? <RouteAddBenefit /> : <NoPermission />} 
                         />
                         <Route 
                           path="/editBenefit/:id" 
-                          element={hasPermission(permissionData, "/insurancePackage", true) ? <RouteEditBenefit /> : <NoPermission/>} 
+                          element={hasPermission(permissionData, "/insurancePackage", editPermission) ? <RouteEditBenefit /> : <NoPermission/>} 
                         />
 
                         {/* Routes for Insurance Benefit Detail */}
                         <Route 
                           path="/addBenefitDetail/:id" 
-                          element={hasPermission(permissionData, "/insurancePackage") ? <RouteAddBenefitDetail /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/insurancePackage") ? <RouteAddBenefitDetail /> : <NoPermission />} 
                         />
                         <Route 
                           path="/editBenefitDetail/:id" 
-                          element={hasPermission(permissionData, "/insurancePackage", true) ? <RouteEditBenefitDetail /> : <NoPermission/>} 
+                          element={hasPermission(permissionData, "/insurancePackage", editPermission) ? <RouteEditBenefitDetail /> : <NoPermission/>} 
                         />
 
                         {/* Routes for Insurance Provider */}
@@ -376,11 +387,11 @@ const App = () => {
                         />
                         <Route 
                           path="/addInsuranceProvider" 
-                          element={hasPermission(permissionData, "/insuranceProvider") ? <RouteAddInsuranceProvider /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/insuranceProvider", !editPermission, addPermission) ? <RouteAddInsuranceProvider /> : <NoPermission />} 
                         />
                         <Route 
                           path="/editInsuranceProvider/:id" 
-                          element={hasPermission(permissionData, "/insuranceProvider", true) ? <RouteEditInsuranceProvider /> : <NoPermission/>} 
+                          element={hasPermission(permissionData, "/insuranceProvider", editPermission) ? <RouteEditInsuranceProvider /> : <NoPermission/>} 
                         />
 
                         {/* Routes for Insurance Type */}
@@ -390,11 +401,11 @@ const App = () => {
                         />
                         <Route 
                           path="/addInsuranceType" 
-                          element={hasPermission(permissionData, "/insuranceType") ? <RouteAddInsuranceType /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/insuranceType", !editPermission, addPermission) ? <RouteAddInsuranceType /> : <NoPermission />} 
                         />
                         <Route 
                           path="/editInsuranceType/:id" 
-                          element={hasPermission(permissionData, "/insuranceType", true) ? <RouteEditInsuranceType /> : <NoPermission/>} 
+                          element={hasPermission(permissionData, "/insuranceType", editPermission) ? <RouteEditInsuranceType /> : <NoPermission/>} 
                         />
 
                         {/* Routes for Insurance Term */}
@@ -404,11 +415,11 @@ const App = () => {
                         />
                         <Route 
                           path="/addInsuranceTerm" 
-                          element={hasPermission(permissionData, "/insuranceTerm") ? <RouteAddInsuranceTerm /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/insuranceTerm", !editPermission, addPermission) ? <RouteAddInsuranceTerm /> : <NoPermission />} 
                         />
                         <Route 
                           path="/editInsuranceTerm/:id" 
-                          element={hasPermission(permissionData, "/insuranceTerm", true) ? <RouteEditInsuranceTerm /> : <NoPermission/>} 
+                          element={hasPermission(permissionData, "/insuranceTerm", editPermission) ? <RouteEditInsuranceTerm /> : <NoPermission/>} 
                         />
 
                         {/* Routes for Insurance Age Range */}
@@ -418,11 +429,11 @@ const App = () => {
                         />
                         <Route 
                           path="/addAgeRange" 
-                          element={hasPermission(permissionData, "/insuranceAgeRange") ? <RouteAddInsuranceAgeRange /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/insuranceAgeRange", !editPermission, addPermission) ? <RouteAddInsuranceAgeRange /> : <NoPermission />} 
                         />
                         <Route 
                           path="/editAgeRange/:id" 
-                          element={hasPermission(permissionData, "/insuranceAgeRange", true) ? <RouteEditInsuranceAgeRange /> : <NoPermission/>} 
+                          element={hasPermission(permissionData, "/insuranceAgeRange", editPermission) ? <RouteEditInsuranceAgeRange /> : <NoPermission/>} 
                         />
 
                         {/* Routes for Logs */}

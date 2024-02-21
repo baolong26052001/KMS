@@ -3,6 +3,10 @@ import { Box, Container, Typography, Button } from '@mui/material';
 import Grid from '@mui/material/Grid';
 
 export default function NoPermission() {
+  const goBack = () => {
+    window.history.back();
+  };
+
   return (
     <Box
       sx={{
@@ -22,8 +26,8 @@ export default function NoPermission() {
               Sorry, you don't have permission to view this page. 
               Please contact your administrator for assistance.
             </Typography>
-            <Button variant="contained" color="primary" href="/">
-              Go Home
+            <Button variant="contained" color="primary" onClick={goBack}>
+              Go Back
             </Button>
           </Grid>
           <Grid item xs={12} md={6}>
