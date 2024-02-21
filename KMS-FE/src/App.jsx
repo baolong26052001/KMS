@@ -9,7 +9,6 @@ import Box from '@mui/material/Box';
 import { useAuth } from './components/AuthContext/AuthContext';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-// Import all your route components here
 import RouteDashboard from './pages/dashboard/dashboard';
 import RouteUser from './pages/user/User';
 import RouteViewUser from './pages/user/viewUser';
@@ -91,7 +90,11 @@ import RouteLogout from './components/logout/logout';
 
 // Function to check permission for a specific route
 function hasPermission(permissionData, path) {
-  // Check if groupId is 1
+
+  if (!getCookie('groupId')) {
+    return false;
+  }
+  // Check if groupId is 1 - Admin
   if (getCookie('groupId') === '1') {
     return true; // Allow permission to all routes
   }
