@@ -102,9 +102,11 @@ function hasPermission(permissionData, path) {
   const formattedPath = path.startsWith("/") ? path.substring(1) : path;
   
   // Check if there is permission data for the given path
-  const permission = permissionData.find(permission => permission.site === formattedPath);
-  if (permission) {
-    return permission.canView; // Return the permission status
+  if (Array.isArray(permissionData) && permissionData.length > 0) {
+    const permission = permissionData.find(permission => permission.site === formattedPath);
+    if (permission) {
+      return permission.canView; // Return the permission status
+    }
   }
   
   return false; // Deny permission if no permission data is found
@@ -128,7 +130,7 @@ const App = () => {
   // Fetch permission info on component mount
   useEffect(() => {
     setShowHeaderbar(isAuthenticated);
-    
+    console.log(groupId);
     fetchPermissionInfo(groupId)
       .then(data => {
         setPermissionData(data);
