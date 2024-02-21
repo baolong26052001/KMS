@@ -22,6 +22,9 @@ import RoutePermission from './pages/usergroup/permission';
 
 import RouteKioskSetup from './pages/kiosk-setup/kiosk-setup';
 import RouteViewKioskDetails from './pages/kiosk-setup/viewKioskDetails';
+import RouteEditKiosk from './pages/kiosk-setup/editKiosk';
+import RouteAddKiosk from './pages/kiosk-setup/addKiosk';
+
 import RouteKioskHardware from './pages/kiosk-hardware/kioskHardware';
 import RouteViewKioskHardware from './pages/kiosk-hardware/viewKioskHardware';
 
@@ -130,7 +133,6 @@ const App = () => {
   // Fetch permission info on component mount
   useEffect(() => {
     setShowHeaderbar(isAuthenticated);
-    console.log(groupId);
     fetchPermissionInfo(groupId)
       .then(data => {
         setPermissionData(data);
@@ -204,6 +206,14 @@ const App = () => {
                           path="/viewKioskDetails/:id" 
                           element={hasPermission(permissionData, "/kioskSetup") ? <RouteViewKioskDetails /> : <Navigate to="/dashboard" />} 
                         />
+                        <Route 
+                          path="/editKiosk/:id" 
+                          element={hasPermission(permissionData, "/kioskSetup") ? <RouteEditKiosk /> : <Navigate to="/dashboard" />} 
+                        />
+                        <Route 
+                          path="/addKiosk" 
+                          element={hasPermission(permissionData, "/kioskSetup") ? <RouteAddKiosk /> : <Navigate to="/dashboard" />} 
+                        />
 
                         {/* Routes for Kiosk Hardware */}
                         <Route 
@@ -253,15 +263,15 @@ const App = () => {
 
                         {/* Routes for Slide Detail */}
                         <Route 
-                          path="/slideDetail/:id" 
+                          path="/slideDetail/:id/:packageName" 
                           element={hasPermission(permissionData, "/slideDetail") ? <RouteSlideDetail /> : <Navigate to="/dashboard" />} 
                         />
                         <Route 
-                          path="/addSlideDetail/:id" 
+                          path="/addSlideDetail/:id/:packageName" 
                           element={hasPermission(permissionData, "/slideDetail") ? <RouteAddSlideDetail /> : <Navigate to="/dashboard" />} 
                         />
                         <Route 
-                          path="/editSlideDetail/:id" 
+                          path="/editSlideDetail/:id/:packageName" 
                           element={hasPermission(permissionData, "/slideDetail") ? <RouteEditSlideDetail /> : <Navigate to="/dashboard" />} 
                         />
 
