@@ -8,6 +8,7 @@ import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 import Box from '@mui/material/Box';
 import { useAuth } from './components/AuthContext/AuthContext';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import NoPermission from './components/redirect/noPermission';
 
 import RouteDashboard from './pages/dashboard/dashboard';
 import RouteUser from './pages/user/User';
@@ -111,8 +112,7 @@ function hasPermission(permissionData, path) {
       return permission.canView; // Return the permission status
     }
   }
-  
-  return false; // Deny permission if no permission data is found
+  return false;
 }
 
 function fetchPermissionInfo(groupId) {
@@ -164,11 +164,11 @@ const App = () => {
                         {/* Routes for User */}
                         <Route 
                           path="/users" 
-                          element={hasPermission(permissionData, "/users") ? <RouteUser /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/users") ? <RouteUser /> : <NoPermission/>} 
                         />
                         <Route 
                           path="/viewUser/:id" 
-                          element={hasPermission(permissionData, "/users") ? <RouteViewUser /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/users") ? <RouteViewUser /> : <NoPermission/>} 
                         />
                         <Route 
                           path="/editUser/:id" 
@@ -182,11 +182,11 @@ const App = () => {
                         {/* Routes for UserGroup */}
                         <Route 
                           path="/usersgroup" 
-                          element={hasPermission(permissionData, "/usersGroup") ? <RouteUsergroup /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/usersGroup") ? <RouteUsergroup /> : <NoPermission/>} 
                         />
                         <Route 
                           path="/addGroup" 
-                          element={hasPermission(permissionData, "/usersGroup") ? <RouteAddGroup /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/usersGroup") ? <RouteAddGroup /> : <NoPermission/>} 
                         />
                         <Route 
                           path="/editGroup/:id" 
@@ -200,11 +200,11 @@ const App = () => {
                         {/* Routes for Kiosk Setup */}
                         <Route 
                           path="/kiosksetup" 
-                          element={hasPermission(permissionData, "/kioskSetup") ? <RouteKioskSetup /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/kioskSetup") ? <RouteKioskSetup /> : <NoPermission/>} 
                         />
                         <Route 
                           path="/viewKioskDetails/:id" 
-                          element={hasPermission(permissionData, "/kioskSetup") ? <RouteViewKioskDetails /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/kioskSetup") ? <RouteViewKioskDetails /> : <NoPermission/>} 
                         />
                         <Route 
                           path="/editKiosk/:id" 
@@ -218,21 +218,21 @@ const App = () => {
                         {/* Routes for Kiosk Hardware */}
                         <Route 
                           path="/kioskhardware" 
-                          element={hasPermission(permissionData, "/kioskHardware") ? <RouteKioskHardware /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/kioskHardware") ? <RouteKioskHardware /> : <NoPermission/>} 
                         />
                         <Route 
                           path="/viewKioskHardware/:id" 
-                          element={hasPermission(permissionData, "/kioskHardware") ? <RouteViewKioskHardware /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/kioskHardware") ? <RouteViewKioskHardware /> : <NoPermission/>} 
                         />
 
                         {/* Routes for Station */}
                         <Route 
                           path="/station" 
-                          element={hasPermission(permissionData, "/station") ? <RouteStation /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/station") ? <RouteStation /> : <NoPermission/>} 
                         />
                         <Route 
                           path="/viewStation/:id" 
-                          element={hasPermission(permissionData, "/station") ? <RouteViewStation /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/station") ? <RouteViewStation /> : <NoPermission/>} 
                         />
                         <Route 
                           path="/editStation/:id" 
@@ -246,11 +246,11 @@ const App = () => {
                         {/* Routes for Slideshow */}
                         <Route 
                           path="/slideshow" 
-                          element={hasPermission(permissionData, "/slideshow") ? <RouteSlideshow /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/slideshow") ? <RouteSlideshow /> : <NoPermission/>} 
                         />
                         <Route 
                           path="/viewSlideShow/:id" 
-                          element={hasPermission(permissionData, "/slideshow") ? <RouteViewSlideShow /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/slideshow") ? <RouteViewSlideShow /> : <NoPermission/>} 
                         />
                         <Route 
                           path="/editSlideShow/:id" 
@@ -264,59 +264,59 @@ const App = () => {
                         {/* Routes for Slide Detail */}
                         <Route 
                           path="/slideDetail/:id/:packageName" 
-                          element={hasPermission(permissionData, "/slideDetail") ? <RouteSlideDetail /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/slideDetail") ? <RouteSlideDetail /> : <NoPermission/>} 
                         />
                         <Route 
                           path="/addSlideDetail/:id/:packageName" 
-                          element={hasPermission(permissionData, "/slideDetail") ? <RouteAddSlideDetail /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/slideDetail") ? <RouteAddSlideDetail /> : <NoPermission/>} 
                         />
                         <Route 
                           path="/editSlideDetail/:id/:packageName" 
-                          element={hasPermission(permissionData, "/slideDetail") ? <RouteEditSlideDetail /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/slideDetail") ? <RouteEditSlideDetail /> : <NoPermission/>} 
                         />
 
                         {/* Routes for Account */}
                         <Route 
                           path="/account" 
-                          element={hasPermission(permissionData, "/account") ? <RouteAccount /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/account") ? <RouteAccount /> : <NoPermission/>} 
                         />
                         <Route 
                           path="/viewAccount/:id" 
-                          element={hasPermission(permissionData, "/account") ? <RouteViewAccount /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/account") ? <RouteViewAccount /> : <NoPermission/>} 
                         />
 
                         {/* Routes for Loan */}
                         <Route 
                           path="/loantransaction" 
-                          element={hasPermission(permissionData, "/loantransaction") ? <RouteLoanTransaction /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/loantransaction") ? <RouteLoanTransaction /> : <NoPermission/>} 
                         />
                         <Route 
                           path="/savingtransaction" 
-                          element={hasPermission(permissionData, "/savingtransaction") ? <RouteSavingTransaction /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/savingtransaction") ? <RouteSavingTransaction /> : <NoPermission/>} 
                         />
                         <Route 
                           path="/loanstatement" 
-                          element={hasPermission(permissionData, "/loanstatement") ? <RouteLoanStatement /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/loanstatement") ? <RouteLoanStatement /> : <NoPermission/>} 
                         />
                         <Route 
                           path="/savingstatement" 
-                          element={hasPermission(permissionData, "/savingstatement") ? <RouteSavingStatement /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/savingstatement") ? <RouteSavingStatement /> : <NoPermission/>} 
                         />
 
                         {/* Routes for Insurance Transaction */}
                         <Route 
                           path="/insuranceTransaction" 
-                          element={hasPermission(permissionData, "/insuranceTransaction") ? <RouteInsuranceTransaction /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/insuranceTransaction") ? <RouteInsuranceTransaction /> : <NoPermission/>} 
                         />
 
                         {/* Routes for Insurance Package */}
                         <Route 
                           path="/insurancePackage" 
-                          element={hasPermission(permissionData, "/insurancePackage") ? <RouteInsurancePackage /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/insurancePackage") ? <RouteInsurancePackage /> : <NoPermission/>} 
                         />
                         <Route 
                           path="/viewPackageDetail/:id/:packageName" 
-                          element={hasPermission(permissionData, "/insurancePackage") ? <RouteViewInsurancePackage /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/insurancePackage") ? <RouteViewInsurancePackage /> : <NoPermission/>} 
                         />
                         <Route 
                           path="/addInsurancePackage" 
@@ -330,7 +330,7 @@ const App = () => {
                         {/* Routes for Insurance Package Detail */}
                         <Route 
                           path="/insurancePackageDetail/:id" 
-                          element={hasPermission(permissionData, "/insurancePackageDetail") ? <RouteInsuranceDetail /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/insurancePackageDetail") ? <RouteInsuranceDetail /> : <NoPermission/>} 
                         />
                         <Route 
                           path="/addInsurancePackageDetail/:id" 
@@ -344,7 +344,7 @@ const App = () => {
                         {/* Routes for Insurance Benefit */}
                         <Route 
                           path="/benefitDetail/:id" 
-                          element={hasPermission(permissionData, "/insurancePackage") ? <RouteBenefitDetail /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/insurancePackage") ? <RouteBenefitDetail /> : <NoPermission/>} 
                         />
                         <Route 
                           path="/addBenefit/:id/:packageName" 
@@ -368,7 +368,7 @@ const App = () => {
                         {/* Routes for Insurance Provider */}
                         <Route 
                           path="/insuranceProvider" 
-                          element={hasPermission(permissionData, "/insuranceProvider") ? <RouteInsuranceProvider /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/insuranceProvider") ? <RouteInsuranceProvider /> : <NoPermission/>} 
                         />
                         <Route 
                           path="/addInsuranceProvider" 
@@ -382,7 +382,7 @@ const App = () => {
                         {/* Routes for Insurance Type */}
                         <Route 
                           path="/insuranceType" 
-                          element={hasPermission(permissionData, "/insuranceType") ? <RouteInsuranceType /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/insuranceType") ? <RouteInsuranceType /> : <NoPermission />} 
                         />
                         <Route 
                           path="/addInsuranceType" 
@@ -396,7 +396,7 @@ const App = () => {
                         {/* Routes for Insurance Term */}
                         <Route 
                           path="/insuranceTerm" 
-                          element={hasPermission(permissionData, "/insuranceTerm") ? <RouteInsuranceTerm /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/insuranceTerm") ? <RouteInsuranceTerm /> : <NoPermission/>} 
                         />
                         <Route 
                           path="/addInsuranceTerm" 
@@ -410,7 +410,7 @@ const App = () => {
                         {/* Routes for Insurance Age Range */}
                         <Route 
                           path="/insuranceAgeRange" 
-                          element={hasPermission(permissionData, "/insuranceAgeRange") ? <RouteInsuranceAgeRange /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/insuranceAgeRange") ? <RouteInsuranceAgeRange /> : <NoPermission/>} 
                         />
                         <Route 
                           path="/addAgeRange" 
@@ -424,23 +424,23 @@ const App = () => {
                         {/* Routes for Logs */}
                         <Route 
                           path="/transactionlogs" 
-                          element={hasPermission(permissionData, "/transactionlogs") ? <RouteTransactionLogs /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/transactionlogs") ? <RouteTransactionLogs /> : <NoPermission/>} 
                         />
                         <Route 
                           path="/activitylogs" 
-                          element={hasPermission(permissionData, "/activitylogs") ? <RouteActivityLogs /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/activitylogs") ? <RouteActivityLogs /> : <NoPermission/>} 
                         />
                         <Route 
                           path="/notificationlogs" 
-                          element={hasPermission(permissionData, "/notificationlogs") ? <RouteNotificationLogs /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/notificationlogs") ? <RouteNotificationLogs /> : <NoPermission/>} 
                         />
                         <Route 
                           path="/audit" 
-                          element={hasPermission(permissionData, "/audit") ? <RouteAudit /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/audit") ? <RouteAudit /> : <NoPermission/>} 
                         />
                         <Route 
                           path="/kioskHealth" 
-                          element={hasPermission(permissionData, "/kioskHealth") ? <RouteKioskHealth /> : <Navigate to="/dashboard" />} 
+                          element={hasPermission(permissionData, "/kioskHealth") ? <RouteKioskHealth /> : <NoPermission/>} 
                         />
 
                         <Route path="/logout" element={<RouteLogout onLogout={logout} />} />
