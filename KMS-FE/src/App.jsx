@@ -140,13 +140,28 @@ const App = () => {
   const [permissionData, setPermissionData] = useState([]);
   const editPermission = true;
   const addPermission = true;
-  // Fetch permission info on component mount
+
   useEffect(() => {
     setShowHeaderbar(isAuthenticated);
     fetchPermissionInfo(groupId)
       .then(data => {
         setPermissionData(data);
+      })
+      .catch(error => {
+        console.error('Error fetching permission info:', error);
       });
+  
+    const intervalId = setInterval(() => {
+      fetchPermissionInfo(groupId)
+        .then(data => {
+          setPermissionData(data);
+        })
+        .catch(error => {
+          console.error('Error fetching permission info:', error);
+        });
+    }, 500); 
+  
+    return () => clearInterval(intervalId);
   }, [isAuthenticated, groupId]);
   
   return (
