@@ -329,6 +329,26 @@ namespace KMS.Controllers
         [Route("DeleteKiosk")]
         public JsonResult DeleteKiosk([FromBody] List<int> kioskIds)
         {
+
+            var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault() ?? HttpContext.Connection.RemoteIpAddress.ToString();
+            string host = Dns.GetHostName();
+            IPHostEntry ip = Dns.GetHostEntry(host);
+            IPAddress ipv4 = null;
+            IPAddress ipv6 = null;
+
+            foreach (var address in ip.AddressList)
+            {
+                if (address.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    ipv4 = address;
+                }
+                else if (address.AddressFamily == AddressFamily.InterNetworkV6)
+                {
+                    ipv6 = address;
+                }
+            }
+
+
             if (kioskIds == null || kioskIds.Count == 0)
             {
                 return new JsonResult("No kiosk IDs provided for deletion");
@@ -355,7 +375,6 @@ namespace KMS.Controllers
             deleteQuery.Append(");");
 
             _exQuery.ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
-            _exQuery.ExecuteRawQuery(query2, parameters2);
 
             return new JsonResult("Kiosk deleted successfully");
         }

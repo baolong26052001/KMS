@@ -356,6 +356,26 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
+
+                var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault() ?? HttpContext.Connection.RemoteIpAddress.ToString();
+                string host = Dns.GetHostName();
+                IPHostEntry ip = Dns.GetHostEntry(host);
+                IPAddress ipv4 = null;
+                IPAddress ipv6 = null;
+
+                foreach (var address in ip.AddressList)
+                {
+                    if (address.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        ipv4 = address;
+                    }
+                    else if (address.AddressFamily == AddressFamily.InterNetworkV6)
+                    {
+                        ipv6 = address;
+                    }
+                }
+
+
                 if (insurancePackageDetailIds == null || insurancePackageDetailIds.Count == 0)
                 {
                     return new JsonResult("No insurance package detail IDs provided for deletion");
