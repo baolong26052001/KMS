@@ -7,10 +7,23 @@ import { useNavigate } from 'react-router-dom';
 const AddGroup = () => {
   const navigate = useNavigate();
   const API_URL = "https://localhost:7017/";
+  function getCookie(name) {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.startsWith(name + '=')) {
+        return cookie.substring(name.length + 1);
+      }
+    }
+    return null;
+  }
+
+  const userIdCookie = getCookie('userId');
   const [newGroup, setnewGroup] = useState({
     groupName: '',
     accessRuleId: '',
     isActive: true,
+    userId: userIdCookie,
   });
 
   const handleInputChange = (key, value) => {

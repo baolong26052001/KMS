@@ -4,8 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using System.Data;
 using System.Text;
+using System.Net.Sockets;
 using Microsoft.Extensions.Configuration;
-
+using System.Net;
 
 namespace KMS.Controllers
 {
@@ -122,13 +123,33 @@ namespace KMS.Controllers
 
         [HttpPost]
         [Route("AddSlideshow")]
-        public JsonResult AddSlideshow([FromBody] TslideHeader slideshow)
+        public JsonResult AddSlideshow([FromBody] TslideHeaderModel slideshow)
         {
             ResponseDto response = new ResponseDto();
             try
             {
+                var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault() ?? HttpContext.Connection.RemoteIpAddress.ToString();
+                string host = Dns.GetHostName();
+                IPHostEntry ip = Dns.GetHostEntry(host);
+                IPAddress ipv4 = null;
+                IPAddress ipv6 = null;
+
+                foreach (var address in ip.AddressList)
+                {
+                    if (address.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        ipv4 = address;
+                    }
+                    else if (address.AddressFamily == AddressFamily.InterNetworkV6)
+                    {
+                        ipv6 = address;
+                    }
+                }
+
                 string query = "INSERT INTO TSlideHeader (description, startDate, endDate, IsActive, timeNext, dateModified, dateCreated) " +
                            "VALUES (@Description, @StartDate, @EndDate, @IsActive, @TimeNext, GETDATE(), GETDATE())";
+                string query2 = "INSERT INTO TAudit (userId, ipAddress, macAddress, action, tableName, dateModified, dateCreated, isActive) " +
+                           "VALUES (@UserId, @IpAddress, @Ipv6, 'Add', 'TSlideHeader', GETDATE(), GETDATE(), 1)";
 
                 DateTime startDate = (DateTime)slideshow.StartDate;
                 DateTime endDate = (DateTime)slideshow.EndDate;
@@ -142,13 +163,22 @@ namespace KMS.Controllers
 
                 SqlParameter[] parameters =
                 {
-                new SqlParameter("@Description", slideshow.Description),
-                new SqlParameter("@StartDate", startDate),
-                new SqlParameter("@EndDate", endDate),
-                new SqlParameter("@IsActive", slideshow.IsActive),
-                new SqlParameter("@TimeNext", slideshow.TimeNext),
-            };
+                    new SqlParameter("@Description", slideshow.Description),
+                    new SqlParameter("@StartDate", startDate),
+                    new SqlParameter("@EndDate", endDate),
+                    new SqlParameter("@IsActive", slideshow.IsActive),
+                    new SqlParameter("@TimeNext", slideshow.TimeNext),
+                };
+                SqlParameter[] parameters2 =
+                {
+                    new SqlParameter("@IpAddress", ipv4?.ToString()),
+                    new SqlParameter("@Ipv6", ipv6?.ToString()),
+                    new SqlParameter("@UserId", (object)slideshow.UserId ?? DBNull.Value),
+                };
+
                 _exQuery.ExecuteRawQuery(query, parameters);
+                _exQuery.ExecuteRawQuery(query2, parameters2);
+
                 return new JsonResult("Slideshow added successfully");
             }
             catch (Exception ex)
@@ -166,14 +196,34 @@ namespace KMS.Controllers
 
         [HttpPut]
         [Route("UpdateSlideshow/{id}")]
-        public JsonResult UpdateSlideshow(int id, [FromBody] TslideHeader slideshow)
+        public JsonResult UpdateSlideshow(int id, [FromBody] TslideHeaderModel slideshow)
         {
             ResponseDto response = new ResponseDto();
             try
             {
+                var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault() ?? HttpContext.Connection.RemoteIpAddress.ToString();
+                string host = Dns.GetHostName();
+                IPHostEntry ip = Dns.GetHostEntry(host);
+                IPAddress ipv4 = null;
+                IPAddress ipv6 = null;
+
+                foreach (var address in ip.AddressList)
+                {
+                    if (address.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        ipv4 = address;
+                    }
+                    else if (address.AddressFamily == AddressFamily.InterNetworkV6)
+                    {
+                        ipv6 = address;
+                    }
+                }
+
                 string query = "UPDATE TslideHeader SET description = @Description, dateModified = GETDATE(), IsActive = @IsActive, timeNext = @TimeNext, " +
                            "startDate = @StartDate, endDate = @EndDate " +
                            "WHERE id = @Id";
+                string query2 = "INSERT INTO TAudit (userId, ipAddress, macAddress, action, tableName, dateModified, dateCreated, isActive) " +
+                           "VALUES (@UserId, @IpAddress, @Ipv6, 'Update', 'TSlideHeader', GETDATE(), GETDATE(), 1)";
 
                 DateTime startDate = (DateTime)slideshow.StartDate;
                 DateTime endDate = (DateTime)slideshow.EndDate;
@@ -194,8 +244,16 @@ namespace KMS.Controllers
                     new SqlParameter("@IsActive", slideshow.IsActive),
                     new SqlParameter("@TimeNext", slideshow.TimeNext),
                 };
+                SqlParameter[] parameters2 =
+                {
+                    new SqlParameter("@IpAddress", ipv4?.ToString()),
+                    new SqlParameter("@Ipv6", ipv6?.ToString()),
+                    new SqlParameter("@UserId", (object)slideshow.UserId ?? DBNull.Value),
+                };
 
                 _exQuery.ExecuteRawQuery(query, parameters);
+                _exQuery.ExecuteRawQuery(query2, parameters2);
+
                 return new JsonResult("Slideshow updated successfully");
             }
             catch (Exception ex)

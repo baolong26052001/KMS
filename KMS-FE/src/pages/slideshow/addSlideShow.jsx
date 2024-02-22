@@ -8,6 +8,18 @@ import InputAdornment from '@mui/material/InputAdornment';
 const AddSlideShow = () => {
   const navigate = useNavigate();
   const API_URL = "https://localhost:7017/";
+  function getCookie(name) {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.startsWith(name + '=')) {
+        return cookie.substring(name.length + 1);
+      }
+    }
+    return null;
+  }
+
+  const userIdCookie = getCookie('userId');
   // State to store user information
   const [newItem, setnewItem] = useState({
     description: '',
@@ -15,6 +27,7 @@ const AddSlideShow = () => {
     endDate: new Date().toISOString().split('T')[0],
     timeNext: '',
     isActive: true,
+    userId: userIdCookie,
   });
 
   const handleInputChange = (key, value) => {

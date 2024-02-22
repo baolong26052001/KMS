@@ -10,6 +10,18 @@ const EditSlideShow = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const API_URL = "https://localhost:7017/";
+  function getCookie(name) {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.startsWith(name + '=')) {
+        return cookie.substring(name.length + 1);
+      }
+    }
+    return null;
+  }
+
+  const userIdCookie = getCookie('userId');
 
   // State to store user information
   const [editedItem, seteditedItem] = useState({
@@ -17,7 +29,8 @@ const EditSlideShow = () => {
     startDate: '',
     endDate: '',
     timeNext: '',
-    IsActive: ''
+    IsActive: '',
+    userId: '',
   });
 
   useEffect(() => {
@@ -35,6 +48,7 @@ const EditSlideShow = () => {
             endDate: groupData[0].endDate.substring(0, 10), 
             timeNext: groupData[0].timeNext, 
             IsActive: groupData[0].IsActive,
+            userId: userIdCookie,
           });
         } else {
           console.log('Failed to fetch group details');

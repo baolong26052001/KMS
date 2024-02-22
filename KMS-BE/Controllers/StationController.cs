@@ -5,6 +5,8 @@ using Microsoft.Data.SqlClient;
 using System.Data;
 using System.Text;
 using KMS.Tools;
+using System.Net.Sockets;
+using System.Net;
 
 namespace KMS.Controllers
 {
@@ -131,14 +133,33 @@ namespace KMS.Controllers
 
         [HttpPost]
         [Route("AddStation")]
-        public JsonResult AddStation([FromBody] Tstation station)
+        public JsonResult AddStation([FromBody] TstationModel station)
         {
             ResponseDto response = new ResponseDto();
             try
             {
+                var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault() ?? HttpContext.Connection.RemoteIpAddress.ToString();
+                string host = Dns.GetHostName();
+                IPHostEntry ip = Dns.GetHostEntry(host);
+                IPAddress ipv4 = null;
+                IPAddress ipv6 = null;
+
+                foreach (var address in ip.AddressList)
+                {
+                    if (address.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        ipv4 = address;
+                    }
+                    else if (address.AddressFamily == AddressFamily.InterNetworkV6)
+                    {
+                        ipv6 = address;
+                    }
+                }
+
                 string query = "INSERT INTO TStation (stationName, companyName, city, address, isActive, dateCreated) " +
                            "VALUES (@StationName, @CompanyName, @City, @Address, @IsActive, GETDATE())";
-                string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Add', 'TStation', GETDATE(), GETDATE(), 1)";
+                string query2 = "INSERT INTO TAudit (userId, ipAddress, macAddress, action, tableName, dateModified, dateCreated, isActive) " +
+                           "VALUES (@UserId, @IpAddress, @Ipv6, 'Add', 'TStation', GETDATE(), GETDATE(), 1)";
 
                 SqlParameter[] parameters =
                 {
@@ -148,7 +169,13 @@ namespace KMS.Controllers
                     new SqlParameter("@Address", station.Address),
                     new SqlParameter("@IsActive", station.IsActive)
                 };
-                SqlParameter[] parameters2 = { };
+                SqlParameter[] parameters2 =
+                {
+                    new SqlParameter("@IpAddress", ipv4?.ToString()),
+                    new SqlParameter("@Ipv6", ipv6?.ToString()),
+                    new SqlParameter("@UserId", (object)station.UserId ?? DBNull.Value),
+                };
+
                 _exQuery.ExecuteRawQuery(query, parameters);
                 _exQuery.ExecuteRawQuery(query2, parameters2);
 
@@ -167,16 +194,35 @@ namespace KMS.Controllers
 
         [HttpPut]
         [Route("UpdateStation/{id}")]
-        public JsonResult UpdateStation(int id, [FromBody] Tstation station)
+        public JsonResult UpdateStation(int id, [FromBody] TstationModel station)
         {
             ResponseDto response = new ResponseDto();
             try
             {
+                var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault() ?? HttpContext.Connection.RemoteIpAddress.ToString();
+                string host = Dns.GetHostName();
+                IPHostEntry ip = Dns.GetHostEntry(host);
+                IPAddress ipv4 = null;
+                IPAddress ipv6 = null;
+
+                foreach (var address in ip.AddressList)
+                {
+                    if (address.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        ipv4 = address;
+                    }
+                    else if (address.AddressFamily == AddressFamily.InterNetworkV6)
+                    {
+                        ipv6 = address;
+                    }
+                }
+
                 string query = "UPDATE TStation " +
                            "SET stationName = @StationName, companyName = @CompanyName, " +
                            "city = @City, address = @Address, dateModified = GETDATE(), isActive = @IsActive " +
                            "WHERE id = @Id";
-                string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Update', 'TStation', GETDATE(), GETDATE(), 1)";
+                string query2 = "INSERT INTO TAudit (userId, ipAddress, macAddress, action, tableName, dateModified, dateCreated, isActive) " +
+                           "VALUES (@UserId, @IpAddress, @Ipv6, 'Update', 'TStation', GETDATE(), GETDATE(), 1)";
 
                 SqlParameter[] parameters =
                 {
@@ -187,9 +233,16 @@ namespace KMS.Controllers
                     new SqlParameter("@Address", station.Address),
                     new SqlParameter("@IsActive", station.IsActive)
                 };
-                SqlParameter[] parameters2 = { };
+                SqlParameter[] parameters2 =
+                {
+                    new SqlParameter("@IpAddress", ipv4?.ToString()),
+                    new SqlParameter("@Ipv6", ipv6?.ToString()),
+                    new SqlParameter("@UserId", (object)station.UserId ?? DBNull.Value),
+                };
+
                 _exQuery.ExecuteRawQuery(query, parameters);
                 _exQuery.ExecuteRawQuery(query2, parameters2);
+
                 return new JsonResult("Station updated successfully");
             }
             catch (Exception ex)

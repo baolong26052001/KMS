@@ -160,7 +160,7 @@ namespace KMS.Controllers
                 await _dbcontext.SaveChangesAsync();
 
 
-                string query = "INSERT INTO TAudit (userId, action, ipAddress, macAddress, dateCreated, isActive) VALUES (@UserId, 'Login', @IpAddress, @Ipv6, GETDATE(), 1)";
+                string query = "INSERT INTO TAudit (userId, action, ipAddress, macAddress, dateModified, dateCreated, isActive) VALUES (@UserId, 'Login', @IpAddress, @Ipv6, GETDATE(), GETDATE(), 1)";
 
                 IPAddress ipv4 = null;
                 IPAddress ipv6 = null;
@@ -201,15 +201,33 @@ namespace KMS.Controllers
 
         [HttpPost]
         [Route("AddUser")]
-        public JsonResult AddUser([FromBody] Tuser newUser)
+        public JsonResult AddUser([FromBody] TuserModel newUser)
         {
             ResponseDto response = new ResponseDto();
             try
             {
+                var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault() ?? HttpContext.Connection.RemoteIpAddress.ToString();
+                string host = Dns.GetHostName();
+                IPHostEntry ip = Dns.GetHostEntry(host);
+                IPAddress ipv4 = null;
+                IPAddress ipv6 = null;
+
+                foreach (var address in ip.AddressList)
+                {
+                    if (address.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        ipv4 = address;
+                    }
+                    else if (address.AddressFamily == AddressFamily.InterNetworkV6)
+                    {
+                        ipv6 = address;
+                    }
+                }
+
                 string insertQuery = "INSERT INTO TUser (username, fullname, email, password, userGroupId, lastLogin, isActive, dateCreated, dateModified) " +
                                 "VALUES (@Username, @Fullname, @Email, @Password, @UserGroupId, GETDATE(), @IsActive, GETDATE(), GETDATE());";
-
-                string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Add', 'TUser', GETDATE(), GETDATE(), 1)";
+                string query2 = "INSERT INTO TAudit (userId, ipAddress, macAddress, action, tableName, dateModified, dateCreated, isActive) " +
+                           "VALUES (@UserId, @IpAddress, @Ipv6, 'Add', 'TUser', GETDATE(), GETDATE(), 1)";
 
                 SqlParameter[] parameters =
                 {
@@ -220,11 +238,13 @@ namespace KMS.Controllers
                     new SqlParameter("@UserGroupId", newUser.UserGroupId),
                     new SqlParameter("@IsActive", newUser.IsActive),
                 };
-
                 SqlParameter[] parameters2 =
                 {
-
+                    new SqlParameter("@IpAddress", ipv4?.ToString()),
+                    new SqlParameter("@Ipv6", ipv6?.ToString()),
+                    new SqlParameter("@UserId", (object)newUser.UserId ?? DBNull.Value),
                 };
+
 
                 _exQuery.ExecuteRawQuery(insertQuery, parameters);
                 _exQuery.ExecuteRawQuery(query2, parameters2);
@@ -318,11 +338,29 @@ namespace KMS.Controllers
 
         [HttpPut]
         [Route("UpdateUser/{id}")]
-        public JsonResult UpdateUser(int id, [FromBody] Tuser updatedUser)
+        public JsonResult UpdateUser(int id, [FromBody] TuserModel updatedUser)
         {
             ResponseDto response = new ResponseDto();
             try
             {
+                var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault() ?? HttpContext.Connection.RemoteIpAddress.ToString();
+                string host = Dns.GetHostName();
+                IPHostEntry ip = Dns.GetHostEntry(host);
+                IPAddress ipv4 = null;
+                IPAddress ipv6 = null;
+
+                foreach (var address in ip.AddressList)
+                {
+                    if (address.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        ipv4 = address;
+                    }
+                    else if (address.AddressFamily == AddressFamily.InterNetworkV6)
+                    {
+                        ipv6 = address;
+                    }
+                }
+
                 string getPasswordQuery = "SELECT password FROM TUser WHERE id = @Id;";
                 SqlParameter[] getPasswordParams = { new SqlParameter("@Id", id) };
                 string currentPassword = _exQuery.ExecuteScalar<string>(getPasswordQuery, getPasswordParams);
@@ -332,6 +370,8 @@ namespace KMS.Controllers
                     string updateQuery = "UPDATE TUser SET username = @Username, fullname = @Fullname, email = @Email, " +
                                          "password = @Password, userGroupId = @UserGroupId, isActive = @IsActive, " +
                                          "dateModified = GETDATE() WHERE id = @Id;";
+                    string query2 = "INSERT INTO TAudit (userId, ipAddress, macAddress, action, tableName, dateModified, dateCreated, isActive) " +
+                           "VALUES (@UserId, @IpAddress, @Ipv6, 'Update', 'TUser', GETDATE(), GETDATE(), 1)";
 
                     SqlParameter[] parameters =
                     {
@@ -343,12 +383,17 @@ namespace KMS.Controllers
                         new SqlParameter("@UserGroupId", updatedUser.UserGroupId),
                         new SqlParameter("@IsActive", updatedUser.IsActive),
                     };
+                    SqlParameter[] parameters2 =
+                    {
+                        new SqlParameter("@IpAddress", ipv4?.ToString()),
+                        new SqlParameter("@Ipv6", ipv6?.ToString()),
+                        new SqlParameter("@UserId", (object)updatedUser.UserId ?? DBNull.Value),
+                    };
 
                     _exQuery.ExecuteRawQuery(updateQuery, parameters);
+                    _exQuery.ExecuteRawQuery(query2, parameters2);
 
-                    string auditQuery = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) " +
-                                        "VALUES ('Update', 'TUser', GETDATE(), GETDATE(), 1)";
-                    _exQuery.ExecuteRawQuery(auditQuery);
+                    
 
                     return new JsonResult("User updated successfully");
                 }
@@ -357,6 +402,8 @@ namespace KMS.Controllers
                     string updateQuery = "UPDATE TUser SET username = @Username, fullname = @Fullname, email = @Email, " +
                                          "userGroupId = @UserGroupId, isActive = @IsActive, " +
                                          "dateModified = GETDATE() WHERE id = @Id;";
+                    string query2 = "INSERT INTO TAudit (userId, ipAddress, macAddress, action, tableName, dateModified, dateCreated, isActive) " +
+                           "VALUES (@UserId, @IpAddress, @Ipv6, 'Update', 'TUser', GETDATE(), GETDATE(), 1)";
 
                     SqlParameter[] parameters =
                     {
@@ -368,12 +415,17 @@ namespace KMS.Controllers
                         new SqlParameter("@UserGroupId", updatedUser.UserGroupId),
                         new SqlParameter("@IsActive", updatedUser.IsActive),
                     };
+                    SqlParameter[] parameters2 =
+                    {
+                        new SqlParameter("@IpAddress", ipv4?.ToString()),
+                        new SqlParameter("@Ipv6", ipv6?.ToString()),
+                        new SqlParameter("@UserId", (object)updatedUser.UserId ?? DBNull.Value),
+                    };
 
                     _exQuery.ExecuteRawQuery(updateQuery, parameters);
+                    _exQuery.ExecuteRawQuery(query2, parameters2);
 
-                    string auditQuery = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) " +
-                                        "VALUES ('Update', 'TUser', GETDATE(), GETDATE(), 1)";
-                    _exQuery.ExecuteRawQuery(auditQuery);
+                    
 
                     return new JsonResult("User updated successfully");
                 }
@@ -384,8 +436,9 @@ namespace KMS.Controllers
                 response.Message = ex.Message;
                 response.Exception = ex.ToString();
                 response.Data = null;
-                return new JsonResult(response);
+                
             }
+            return new JsonResult(response);
         }
 
 

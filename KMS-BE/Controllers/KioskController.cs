@@ -5,6 +5,8 @@ using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Text;
 using KMS.Tools;
+using System.Net.Sockets;
+using System.Net;
 
 namespace KMS.Controllers
 {
@@ -198,14 +200,34 @@ namespace KMS.Controllers
 
         [HttpPost]
         [Route("AddKiosk")]
-        public JsonResult AddKiosk([FromBody] Tkiosk kiosk)
+        public JsonResult AddKiosk([FromBody] TkioskModel kiosk)
         {
             ResponseDto response = new ResponseDto();
             try
             {
+                var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault() ?? HttpContext.Connection.RemoteIpAddress.ToString();
+                string host = Dns.GetHostName();
+                IPHostEntry ip = Dns.GetHostEntry(host);
+                IPAddress ipv4 = null;
+                IPAddress ipv6 = null;
+
+                foreach (var address in ip.AddressList)
+                {
+                    if (address.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        ipv4 = address;
+                    }
+                    else if (address.AddressFamily == AddressFamily.InterNetworkV6)
+                    {
+                        ipv6 = address;
+                    }
+                }
+
                 string query = "INSERT INTO TKiosk (kioskName, location, stationCode, slidePackage, webServices) " +
                            "VALUES (@kioskName, @location, @stationCode, @slidePackage, @webServices)";
-                string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Add', 'TKiosk', GETDATE(), GETDATE(), 1)";
+                string query2 = "INSERT INTO TAudit (userId, ipAddress, macAddress, action, tableName, dateModified, dateCreated, isActive) " +
+                           "VALUES (@UserId, @IpAddress, @Ipv6, 'Add', 'TKiosk', GETDATE(), GETDATE(), 1)";
+
                 SqlParameter[] parameters =
                 {
                     new SqlParameter("@kioskName", kiosk.KioskName),
@@ -218,7 +240,9 @@ namespace KMS.Controllers
 
                 SqlParameter[] parameters2 =
                 {
-
+                    new SqlParameter("@IpAddress", ipv4?.ToString()),
+                    new SqlParameter("@Ipv6", ipv6?.ToString()),
+                    new SqlParameter("@UserId", (object)kiosk.UserId ?? DBNull.Value),
                 };
 
                 _exQuery.ExecuteRawQuery(query, parameters);
@@ -240,15 +264,35 @@ namespace KMS.Controllers
 
         [HttpPut]
         [Route("UpdateKiosk/{id}")]
-        public JsonResult UpdateKiosk(int id, [FromBody] Tkiosk kiosk)
+        public JsonResult UpdateKiosk(int id, [FromBody] TkioskModel kiosk)
         {
             ResponseDto response = new ResponseDto();
             try
             {
+                var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault() ?? HttpContext.Connection.RemoteIpAddress.ToString();
+                string host = Dns.GetHostName();
+                IPHostEntry ip = Dns.GetHostEntry(host);
+                IPAddress ipv4 = null;
+                IPAddress ipv6 = null;
+
+                foreach (var address in ip.AddressList)
+                {
+                    if (address.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        ipv4 = address;
+                    }
+                    else if (address.AddressFamily == AddressFamily.InterNetworkV6)
+                    {
+                        ipv6 = address;
+                    }
+                }
+
                 string query = "UPDATE TKiosk SET kioskName = @kioskName, location = @location, stationCode = @stationCode, " +
                            "slidePackage = @slidePackage, webServices = @webServices " +
                            "WHERE id = @id";
-                string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Update', 'TKiosk', GETDATE(), GETDATE(), 1)";
+                string query2 = "INSERT INTO TAudit (userId, ipAddress, macAddress, action, tableName, dateModified, dateCreated, isActive) " +
+                           "VALUES (@UserId, @IpAddress, @Ipv6, 'Update', 'TKiosk', GETDATE(), GETDATE(), 1)";
+
                 SqlParameter[] parameters =
                 {
                     new SqlParameter("@id", id),
@@ -258,9 +302,16 @@ namespace KMS.Controllers
                     new SqlParameter("@slidePackage", kiosk.SlidePackage),
                     new SqlParameter("@webServices", kiosk.WebServices),
                 };
-                SqlParameter[] parameters2 = { };
+                SqlParameter[] parameters2 =
+                {
+                    new SqlParameter("@IpAddress", ipv4?.ToString()),
+                    new SqlParameter("@Ipv6", ipv6?.ToString()),
+                    new SqlParameter("@UserId", (object)kiosk.UserId ?? DBNull.Value),
+                };
+
                 _exQuery.ExecuteRawQuery(query, parameters);
                 _exQuery.ExecuteRawQuery(query2, parameters2);
+
                 return new JsonResult("Kiosk updated successfully");
             }
             catch (Exception ex)

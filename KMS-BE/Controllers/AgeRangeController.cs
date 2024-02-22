@@ -4,6 +4,8 @@ using KMS.Tools;
 using System.Data;
 using Microsoft.Data.SqlClient;
 using System.Text;
+using System.Net.Sockets;
+using System.Net;
 
 namespace KMS.Controllers
 {
@@ -115,21 +117,48 @@ namespace KMS.Controllers
 
         [HttpPost]
         [Route("AddAgeRange")]
-        public JsonResult AddAgeRange([FromBody] AgeRange ageRange)
+        public JsonResult AddAgeRange([FromBody] AgeRangeModel ageRange)
         {
             ResponseDto response = new ResponseDto();
             try
             {
+                var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault() ?? HttpContext.Connection.RemoteIpAddress.ToString();
+                string host = Dns.GetHostName();
+                IPHostEntry ip = Dns.GetHostEntry(host);
+                IPAddress ipv4 = null;
+                IPAddress ipv6 = null;
+
+                foreach (var address in ip.AddressList)
+                {
+                    if (address.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        ipv4 = address;
+                    }
+                    else if (address.AddressFamily == AddressFamily.InterNetworkV6)
+                    {
+                        ipv6 = address;
+                    }
+                }
+
                 string query = "INSERT INTO AgeRange (startAge, endAge, dateCreated, dateModified) " +
                            "VALUES (@StartAge, @EndAge, GETDATE(), GETDATE())";
+                string query2 = "INSERT INTO TAudit (userId, ipAddress, macAddress, action, tableName, dateModified, dateCreated, isActive) " +
+                           "VALUES (@UserId, @IpAddress, @Ipv6, 'Add', 'AgeRange', GETDATE(), GETDATE(), 1)";
 
                 SqlParameter[] parameters =
                 {
                     new SqlParameter("@StartAge", ageRange.StartAge),
                     new SqlParameter("@EndAge", ageRange.EndAge),
                 };
+                SqlParameter[] parameters2 =
+                {
+                    new SqlParameter("@IpAddress", ipv4?.ToString()),
+                    new SqlParameter("@Ipv6", ipv6?.ToString()),
+                    new SqlParameter("@UserId", (object)ageRange.UserId ?? DBNull.Value),
+                };
 
                 _exQuery.ExecuteRawQuery(query, parameters);
+                _exQuery.ExecuteRawQuery(query2, parameters2);
 
                 return new JsonResult("Age Range added successfully");
             }
@@ -145,14 +174,34 @@ namespace KMS.Controllers
 
         [HttpPut]
         [Route("EditAgeRange/{id}")]
-        public JsonResult EditAgeRange(int id, [FromBody] AgeRange ageRange)
+        public JsonResult EditAgeRange(int id, [FromBody] AgeRangeModel ageRange)
         {
             ResponseDto response = new ResponseDto();
             try
             {
+                var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault() ?? HttpContext.Connection.RemoteIpAddress.ToString();
+                string host = Dns.GetHostName();
+                IPHostEntry ip = Dns.GetHostEntry(host);
+                IPAddress ipv4 = null;
+                IPAddress ipv6 = null;
+
+                foreach (var address in ip.AddressList)
+                {
+                    if (address.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        ipv4 = address;
+                    }
+                    else if (address.AddressFamily == AddressFamily.InterNetworkV6)
+                    {
+                        ipv6 = address;
+                    }
+                }
+
                 string query = "UPDATE AgeRange " +
                            "SET startAge = @StartAge, endAge = @EndAge, dateModified = GETDATE() " +
                            "WHERE id = @Id";
+                string query2 = "INSERT INTO TAudit (userId, ipAddress, macAddress, action, tableName, dateModified, dateCreated, isActive) " +
+                           "VALUES (@UserId, @IpAddress, @Ipv6, 'Update', 'AgeRange', GETDATE(), GETDATE(), 1)";
 
                 SqlParameter[] parameters =
                 {
@@ -160,9 +209,16 @@ namespace KMS.Controllers
                     new SqlParameter("@StartAge", ageRange.StartAge),
                     new SqlParameter("@EndAge", ageRange.EndAge),
                 };
+                SqlParameter[] parameters2 =
+                {
+                    new SqlParameter("@IpAddress", ipv4?.ToString()),
+                    new SqlParameter("@Ipv6", ipv6?.ToString()),
+                    new SqlParameter("@UserId", (object)ageRange.UserId ?? DBNull.Value),
+                };
 
 
                 _exQuery.ExecuteRawQuery(query, parameters);
+                _exQuery.ExecuteRawQuery(query2, parameters2);
 
 
                 return new JsonResult("Age Range updated successfully");

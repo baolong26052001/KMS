@@ -8,6 +8,18 @@ import MenuItem from '@mui/material/MenuItem';
 const AddUser = () => {
   const navigate = useNavigate();
   const API_URL = "https://localhost:7017/";
+  function getCookie(name) {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.startsWith(name + '=')) {
+        return cookie.substring(name.length + 1);
+      }
+    }
+    return null;
+  }
+
+  const userIdCookie = getCookie('userId');
 
   // State to store user information
   const [newUser, setNewUser] = useState({
@@ -17,6 +29,7 @@ const AddUser = () => {
     password: '',
     userGroupId: '',
     isActive: true, // Assuming isActive is a boolean
+    userId: userIdCookie,
   });
 
   const [userGroups, setUserGroups] = useState([]);

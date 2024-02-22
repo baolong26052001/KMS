@@ -9,10 +9,23 @@ const EditAgeRange = () => {
   const { id } = useParams();
 
   const API_URL = "https://localhost:7017/";
+  function getCookie(name) {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.startsWith(name + '=')) {
+        return cookie.substring(name.length + 1);
+      }
+    }
+    return null;
+  }
+
+  const userIdCookie = getCookie('userId');
 
   const [editedItem, seteditedItem] = useState({
     startAge: '',
-    endAge: ''
+    endAge: '',
+    userId: '',
   });
 
   useEffect(() => {
@@ -26,6 +39,7 @@ const EditAgeRange = () => {
           seteditedItem({
             startAge: groupData[0].startAge,
             endAge: groupData[0].endAge,
+            userId: userIdCookie,
           });
           console.log(editedItem.endAge);
         } else {

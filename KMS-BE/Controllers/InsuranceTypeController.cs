@@ -4,6 +4,8 @@ using KMS.Tools;
 using System.Data;
 using Microsoft.Data.SqlClient;
 using System.Text;
+using System.Net.Sockets;
+using System.Net;
 
 namespace KMS.Controllers
 {
@@ -79,21 +81,45 @@ namespace KMS.Controllers
 
         [HttpPost]
         [Route("AddInsuranceType")]
-        public JsonResult AddInsuranceType([FromBody] InsuranceType insuranceType)
+        public JsonResult AddInsuranceType([FromBody] InsuranceTypeModel insuranceType)
         {
             ResponseDto response = new ResponseDto();
             try
             {
+                var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault() ?? HttpContext.Connection.RemoteIpAddress.ToString();
+                string host = Dns.GetHostName();
+                IPHostEntry ip = Dns.GetHostEntry(host);
+                IPAddress ipv4 = null;
+                IPAddress ipv6 = null;
+
+                foreach (var address in ip.AddressList)
+                {
+                    if (address.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        ipv4 = address;
+                    }
+                    else if (address.AddressFamily == AddressFamily.InterNetworkV6)
+                    {
+                        ipv6 = address;
+                    }
+                }
+
                 string query = "INSERT INTO InsuranceType (typeName, dateModified, dateCreated) " +
                            "VALUES (@TypeName, GETDATE(), GETDATE())";
-                string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Add', 'InsuranceType', GETDATE(), GETDATE(), 1)";
+                string query2 = "INSERT INTO TAudit (userId, ipAddress, macAddress, action, tableName, dateModified, dateCreated, isActive) " +
+                           "VALUES (@UserId, @IpAddress, @Ipv6, 'Add', 'InsuranceType', GETDATE(), GETDATE(), 1)";
 
                 SqlParameter[] parameters =
                 {
                     new SqlParameter("@TypeName", insuranceType.TypeName),
 
                 };
-                SqlParameter[] parameters2 = { };
+                SqlParameter[] parameters2 =
+                {
+                    new SqlParameter("@IpAddress", ipv4?.ToString()),
+                    new SqlParameter("@Ipv6", ipv6?.ToString()),
+                    new SqlParameter("@UserId", (object)insuranceType.UserId ?? DBNull.Value),
+                };
 
                 _exQuery.ExecuteRawQuery(query, parameters);
                 _exQuery.ExecuteRawQuery(query2, parameters2);
@@ -114,15 +140,34 @@ namespace KMS.Controllers
 
         [HttpPut]
         [Route("EditInsuranceType/{id}")]
-        public JsonResult EditInsuranceType(int id, [FromBody] InsuranceType insuranceType)
+        public JsonResult EditInsuranceType(int id, [FromBody] InsuranceTypeModel insuranceType)
         {
             ResponseDto response = new ResponseDto();
             try
             {
+                var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault() ?? HttpContext.Connection.RemoteIpAddress.ToString();
+                string host = Dns.GetHostName();
+                IPHostEntry ip = Dns.GetHostEntry(host);
+                IPAddress ipv4 = null;
+                IPAddress ipv6 = null;
+
+                foreach (var address in ip.AddressList)
+                {
+                    if (address.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        ipv4 = address;
+                    }
+                    else if (address.AddressFamily == AddressFamily.InterNetworkV6)
+                    {
+                        ipv6 = address;
+                    }
+                }
+
                 string query = "UPDATE InsuranceType " +
                            "SET typeName = @TypeName, dateModified = GETDATE() " +
                            "WHERE id = @id";
-                string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Edit', 'InsuranceType', GETDATE(), GETDATE(), 1)";
+                string query2 = "INSERT INTO TAudit (userId, ipAddress, macAddress, action, tableName, dateModified, dateCreated, isActive) " +
+                           "VALUES (@UserId, @IpAddress, @Ipv6, 'Update', 'InsuranceType', GETDATE(), GETDATE(), 1)";
 
                 SqlParameter[] parameters =
                 {
@@ -131,7 +176,12 @@ namespace KMS.Controllers
 
 
                 };
-                SqlParameter[] parameters2 = { };
+                SqlParameter[] parameters2 =
+                {
+                    new SqlParameter("@IpAddress", ipv4?.ToString()),
+                    new SqlParameter("@Ipv6", ipv6?.ToString()),
+                    new SqlParameter("@UserId", (object)insuranceType.UserId ?? DBNull.Value),
+                };
 
                 _exQuery.ExecuteRawQuery(query, parameters);
                 _exQuery.ExecuteRawQuery(query2, parameters2);

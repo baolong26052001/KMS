@@ -9,6 +9,18 @@ const EditUser = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const API_URL = "https://localhost:7017/";
+  function getCookie(name) {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.startsWith(name + '=')) {
+        return cookie.substring(name.length + 1);
+      }
+    }
+    return null;
+  }
+
+  const userIdCookie = getCookie('userId');
 
   // State to store user information
   const [editedUser, setEditedUser] = useState({
@@ -18,6 +30,7 @@ const EditUser = () => {
     password: '',
     userGroupId: '',
     isActive: '',
+    userId: '',
   });
 
   const [userGroups, setUserGroups] = useState([]);
@@ -38,6 +51,7 @@ const EditUser = () => {
             password: userData[0].password,
             userGroupId: userData[0].userGroupId,
             isActive: userData[0].isActive,
+            userId: userIdCookie,
           });
         } else {
           console.log('Failed to fetch user details');

@@ -4,6 +4,8 @@ using KMS.Tools;
 using System.Data;
 using Microsoft.Data.SqlClient;
 using System.Text;
+using System.Net.Sockets;
+using System.Net;
 
 namespace KMS.Controllers
 {
@@ -79,20 +81,47 @@ namespace KMS.Controllers
 
         [HttpPost]
         [Route("AddTerm")]
-        public JsonResult AddTerm([FromBody] Term term)
+        public JsonResult AddTerm([FromBody] TermModel term)
         {
             ResponseDto response = new ResponseDto();
             try
             {
+                var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault() ?? HttpContext.Connection.RemoteIpAddress.ToString();
+                string host = Dns.GetHostName();
+                IPHostEntry ip = Dns.GetHostEntry(host);
+                IPAddress ipv4 = null;
+                IPAddress ipv6 = null;
+
+                foreach (var address in ip.AddressList)
+                {
+                    if (address.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        ipv4 = address;
+                    }
+                    else if (address.AddressFamily == AddressFamily.InterNetworkV6)
+                    {
+                        ipv6 = address;
+                    }
+                }
+
                 string query = "INSERT INTO Term (content, dateCreated, dateModified) " +
                            "VALUES (@Content, GETDATE(), GETDATE())";
+                string query2 = "INSERT INTO TAudit (userId, ipAddress, macAddress, action, tableName, dateModified, dateCreated, isActive) " +
+                           "VALUES (@UserId, @IpAddress, @Ipv6, 'Add', 'Term', GETDATE(), GETDATE(), 1)";
 
                 SqlParameter[] parameters =
                 {
                     new SqlParameter("@Content", term.Content),
                 };
+                SqlParameter[] parameters2 =
+                {
+                    new SqlParameter("@IpAddress", ipv4?.ToString()),
+                    new SqlParameter("@Ipv6", ipv6?.ToString()),
+                    new SqlParameter("@UserId", (object)term.UserId ?? DBNull.Value),
+                };
 
                 _exQuery.ExecuteRawQuery(query, parameters);
+                _exQuery.ExecuteRawQuery(query2, parameters2);
 
                 return new JsonResult("Term added successfully");
             }
@@ -109,14 +138,34 @@ namespace KMS.Controllers
 
         [HttpPut]
         [Route("EditTerm/{id}")]
-        public JsonResult EditTerm(int id, [FromBody] Term term)
+        public JsonResult EditTerm(int id, [FromBody] TermModel term)
         {
             ResponseDto response = new ResponseDto();
             try
             {
+                var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault() ?? HttpContext.Connection.RemoteIpAddress.ToString();
+                string host = Dns.GetHostName();
+                IPHostEntry ip = Dns.GetHostEntry(host);
+                IPAddress ipv4 = null;
+                IPAddress ipv6 = null;
+
+                foreach (var address in ip.AddressList)
+                {
+                    if (address.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        ipv4 = address;
+                    }
+                    else if (address.AddressFamily == AddressFamily.InterNetworkV6)
+                    {
+                        ipv6 = address;
+                    }
+                }
+
                 string query = "UPDATE Term " +
                            "SET content = @Content, dateModified = GETDATE() " +
                            "WHERE id = @Id";
+                string query2 = "INSERT INTO TAudit (userId, ipAddress, macAddress, action, tableName, dateModified, dateCreated, isActive) " +
+                           "VALUES (@UserId, @IpAddress, @Ipv6, 'Update', 'Term', GETDATE(), GETDATE(), 1)";
 
                 SqlParameter[] parameters =
                 {
@@ -124,10 +173,15 @@ namespace KMS.Controllers
                     new SqlParameter("@Content", term.Content),
 
                 };
-
+                SqlParameter[] parameters2 =
+                {
+                    new SqlParameter("@IpAddress", ipv4?.ToString()),
+                    new SqlParameter("@Ipv6", ipv6?.ToString()),
+                    new SqlParameter("@UserId", (object)term.UserId ?? DBNull.Value),
+                };
 
                 _exQuery.ExecuteRawQuery(query, parameters);
-
+                _exQuery.ExecuteRawQuery(query2, parameters2);
 
                 return new JsonResult("Term updated successfully");
             }
