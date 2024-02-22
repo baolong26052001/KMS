@@ -155,7 +155,7 @@ namespace KMS.Controllers
                     idOfUser = dbUser.Id;
                 }
 
-                
+
                 dbUser.LastLogin = DateTime.Now;
                 await _dbcontext.SaveChangesAsync();
 
@@ -196,6 +196,8 @@ namespace KMS.Controllers
                 return BadRequest(new { Code = -1, message = "Login failed" });
             }
         }
+
+        
 
         [HttpPost]
         [Route("AddUser")]
@@ -321,32 +323,60 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
-                string updateQuery = "UPDATE TUser SET username = @Username, fullname = @Fullname, email = @Email, " +
-                                 "password = @Password, userGroupId = @UserGroupId, isActive = @IsActive, " +
-                                 "dateModified = GETDATE() WHERE id = @Id;";
+                string getPasswordQuery = "SELECT password FROM TUser WHERE id = @Id;";
+                SqlParameter[] getPasswordParams = { new SqlParameter("@Id", id) };
+                string currentPassword = _exQuery.ExecuteScalar<string>(getPasswordQuery, getPasswordParams);
 
-                string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Update', 'TUser', GETDATE(), GETDATE(), 1)";
-
-                SqlParameter[] parameters =
+                if (currentPassword != updatedUser.Password)
                 {
-                    new SqlParameter("@Id", id),
-                    new SqlParameter("@Username", updatedUser.Username),
-                    new SqlParameter("@Fullname", updatedUser.Fullname),
-                    new SqlParameter("@Email", updatedUser.Email),
-                    new SqlParameter("@Password", Password.hashPassword(updatedUser.Password)),
-                    new SqlParameter("@UserGroupId", updatedUser.UserGroupId),
-                    new SqlParameter("@IsActive", updatedUser.IsActive),
-                };
+                    string updateQuery = "UPDATE TUser SET username = @Username, fullname = @Fullname, email = @Email, " +
+                                         "password = @Password, userGroupId = @UserGroupId, isActive = @IsActive, " +
+                                         "dateModified = GETDATE() WHERE id = @Id;";
 
-                SqlParameter[] parameters2 =
+                    SqlParameter[] parameters =
+                    {
+                        new SqlParameter("@Id", id),
+                        new SqlParameter("@Username", updatedUser.Username),
+                        new SqlParameter("@Fullname", updatedUser.Fullname),
+                        new SqlParameter("@Email", updatedUser.Email),
+                        new SqlParameter("@Password", Password.hashPassword(updatedUser.Password)),
+                        new SqlParameter("@UserGroupId", updatedUser.UserGroupId),
+                        new SqlParameter("@IsActive", updatedUser.IsActive),
+                    };
+
+                    _exQuery.ExecuteRawQuery(updateQuery, parameters);
+
+                    string auditQuery = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) " +
+                                        "VALUES ('Update', 'TUser', GETDATE(), GETDATE(), 1)";
+                    _exQuery.ExecuteRawQuery(auditQuery);
+
+                    return new JsonResult("User updated successfully");
+                }
+                else
                 {
+                    string updateQuery = "UPDATE TUser SET username = @Username, fullname = @Fullname, email = @Email, " +
+                                         "userGroupId = @UserGroupId, isActive = @IsActive, " +
+                                         "dateModified = GETDATE() WHERE id = @Id;";
 
-            };
+                    SqlParameter[] parameters =
+                    {
+                        new SqlParameter("@Id", id),
+                        new SqlParameter("@Username", updatedUser.Username),
+                        new SqlParameter("@Fullname", updatedUser.Fullname),
+                        new SqlParameter("@Email", updatedUser.Email),
+                        
+                        new SqlParameter("@UserGroupId", updatedUser.UserGroupId),
+                        new SqlParameter("@IsActive", updatedUser.IsActive),
+                    };
 
-                _exQuery.ExecuteRawQuery(updateQuery, parameters);
-                _exQuery.ExecuteRawQuery(query2, parameters2);
+                    _exQuery.ExecuteRawQuery(updateQuery, parameters);
 
-                return new JsonResult("User updated successfully");
+                    string auditQuery = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) " +
+                                        "VALUES ('Update', 'TUser', GETDATE(), GETDATE(), 1)";
+                    _exQuery.ExecuteRawQuery(auditQuery);
+
+                    return new JsonResult("User updated successfully");
+                }
             }
             catch (Exception ex)
             {
@@ -354,10 +384,10 @@ namespace KMS.Controllers
                 response.Message = ex.Message;
                 response.Exception = ex.ToString();
                 response.Data = null;
+                return new JsonResult(response);
             }
-            return new JsonResult(response);
-            
         }
+
 
         [HttpDelete]
         [Route("DeleteUsers")]

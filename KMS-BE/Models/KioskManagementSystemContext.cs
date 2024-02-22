@@ -94,7 +94,7 @@ namespace KMS.Models
 
                 entity.Property(e => e.MemberId).HasColumnName("memberId");
 
-                entity.Property(e => e.PackageId).HasColumnName("packageId");
+                
 
                 entity.Property(e => e.Relationship)
                     .HasMaxLength(20)

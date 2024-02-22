@@ -8,6 +8,18 @@ import MenuItem from '@mui/material/MenuItem';
 const AddInsurancePackage = () => {
   const navigate = useNavigate();
   const API_URL = "https://localhost:7017/";
+  function getCookie(name) {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.startsWith(name + '=')) {
+        return cookie.substring(name.length + 1);
+      }
+    }
+    return null;
+  }
+
+  const userIdCookie = getCookie('userId');
   const { id } = useParams();
   const [insType, setinsType] = useState([]);
   const [insTerm, setinsTerm] = useState([]);
@@ -21,6 +33,7 @@ const AddInsurancePackage = () => {
     insuranceProviderId: '',
     priority: '',
     isActive: true,
+    userId: userIdCookie,
   });
 
   useEffect(() => {

@@ -10,7 +10,7 @@ namespace KMS.Models
         public string? BeneficiaryName { get; set; }
         public string? BeneficiaryId { get; set; }
         public string? Relationship { get; set; }
-        public int? PackageId { get; set; }
+        
         public int? TransactionId { get; set; }
     }
 }

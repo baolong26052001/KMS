@@ -216,13 +216,16 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
+                Random random = new Random();
+                int contractId = random.Next(10000000, 99999999);
+
                 string query = "INSERT INTO InsuranceTransaction (memberId, contractId, packageDetailId, registrationDate, expireDate, annualPay, status, transactionDate) " +
                            "VALUES (@MemberId, @ContractId, @PackageDetailId, GETDATE(), DATEADD(YEAR, 1, GETDATE()), @AnnualPay, @Status, GETDATE()) ";
 
                 SqlParameter[] parameters =
                 {
                     new SqlParameter("@MemberId", insuranceTransaction.MemberId),
-                    new SqlParameter("@ContractId", insuranceTransaction.ContractId),
+                    new SqlParameter("@ContractId", contractId),
                     new SqlParameter("@PackageDetailId", insuranceTransaction.PackageDetailId),
                     new SqlParameter("@AnnualPay", insuranceTransaction.AnnualPay),
                     new SqlParameter("@Status", insuranceTransaction.Status),
@@ -252,8 +255,8 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = "INSERT INTO Beneficiary (memberId, beneficiaryName, beneficiaryId, relationship, packageId, transactionId) " +
-                   "VALUES (@MemberId, @BeneficiaryName, @BeneficiaryId, @Relationship, @PackageId, @TransactionId)";
+                string query = "INSERT INTO Beneficiary (memberId, beneficiaryName, beneficiaryId, relationship, transactionId) " +
+                   "VALUES (@MemberId, @BeneficiaryName, @BeneficiaryId, @Relationship, @TransactionId)";
 
                 SqlParameter[] parameters =
                 {
@@ -261,7 +264,7 @@ namespace KMS.Controllers
                     new SqlParameter("@BeneficiaryName", beneficiary.BeneficiaryName),
                     new SqlParameter("@BeneficiaryId", beneficiary.BeneficiaryId),
                     new SqlParameter("@Relationship", beneficiary.Relationship),
-                    new SqlParameter("@PackageId", beneficiary.PackageId),
+                    
                     new SqlParameter("@TransactionId", beneficiary.TransactionId),
                 };
 

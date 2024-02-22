@@ -11,7 +11,7 @@ namespace KMS.Models
         public int? PackageDetailId { get; set; }
         public DateTime? RegistrationDate { get; set; }
         public DateTime? ExpireDate { get; set; }
-        public double? AnnualPay { get; set; }
+        public int? AnnualPay { get; set; }
         public int? Status { get; set; }
         public DateTime? TransactionDate { get; set; }
     }

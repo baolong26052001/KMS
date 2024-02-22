@@ -9,6 +9,18 @@ import { useParams } from 'react-router-dom';
 const AddBenefit = () => {
   const navigate = useNavigate();
   const API_URL = "https://localhost:7017/";
+  function getCookie(name) {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.startsWith(name + '=')) {
+        return cookie.substring(name.length + 1);
+      }
+    }
+    return null;
+  }
+
+  const userIdCookie = getCookie('userId');
   const { id } = useParams();
   const { packageName } = useParams();
   // State to store user information
@@ -17,6 +29,7 @@ const AddBenefit = () => {
     content: '',
     coverage: '',
     description: '',
+    userId: userIdCookie,
   });
 
   const handleInputChange = (key, value) => {
