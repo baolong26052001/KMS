@@ -100,6 +100,8 @@ function hasPermission(permissionData, path, isEdit = false, isAdd = false) {
   // Check if groupId is 1 - Admin
   if (getCookie('groupId') === '1') {
     return true; // Allow permission to all routes
+  } else if (path === "/usersGroup") {
+    return false;
   }
   
   const formattedPath = path.startsWith("/") ? path.substring(1) : path;
@@ -121,8 +123,11 @@ function hasPermission(permissionData, path, isEdit = false, isAdd = false) {
   return false;
 }
 
-
-
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+}
 
 function fetchPermissionInfo(groupId) {
   const apiUrl = `https://localhost:7017/api/AccessRule/ShowPermissionInfoInEditPage/${groupId}`;
@@ -159,7 +164,7 @@ const App = () => {
         .catch(error => {
           console.error('Error fetching permission info:', error);
         });
-    }, 500); 
+    }, 3000); 
   
     return () => clearInterval(intervalId);
   }, [isAuthenticated, groupId]);
@@ -488,13 +493,6 @@ const App = () => {
       </Router>
     </div>
   );
-}
-
-// Function to get cookie value by name
-function getCookie(name) {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(';').shift();
 }
 
 export default App;
