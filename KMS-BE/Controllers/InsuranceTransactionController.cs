@@ -206,7 +206,37 @@ namespace KMS.Controllers
             
         }
 
-        
+        [HttpGet]
+        [Route("ShowBeneficiaryByInsuranceTransactionId/{insuranceTransactionId}")]
+        public JsonResult ShowBeneficiaryByInsuranceTransactionId(int insuranceTransactionId)
+        {
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = @"select * from Beneficiary where transactionId = @InsuranceTransactionId";
+
+                SqlParameter parameter = new SqlParameter("@InsuranceTransactionId", insuranceTransactionId);
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+
+                if (table.Rows.Count > 0)
+                {
+                    return new JsonResult(table);
+                }
+                else
+                {
+                    return new JsonResult("Not found");
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+
+        }
 
 
         [HttpPost]
@@ -255,8 +285,8 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = "INSERT INTO Beneficiary (memberId, beneficiaryName, beneficiaryId, relationship, transactionId) " +
-                   "VALUES (@MemberId, @BeneficiaryName, @BeneficiaryId, @Relationship, @TransactionId)";
+                string query = "INSERT INTO Beneficiary (memberId, beneficiaryName, beneficiaryId, relationship, transactionId, birthday, gender, address, occupation, email, phone, taxCode) " +
+               "VALUES (@MemberId, @BeneficiaryName, @BeneficiaryId, @Relationship, @TransactionId, @Birthday, @Gender, @Address, @Occupation, @Email, @Phone, @TaxCode)";
 
                 SqlParameter[] parameters =
                 {
@@ -264,9 +294,18 @@ namespace KMS.Controllers
                     new SqlParameter("@BeneficiaryName", beneficiary.BeneficiaryName),
                     new SqlParameter("@BeneficiaryId", beneficiary.BeneficiaryId),
                     new SqlParameter("@Relationship", beneficiary.Relationship),
-                    
                     new SqlParameter("@TransactionId", beneficiary.TransactionId),
+    
+                    // Additional parameters
+                    new SqlParameter("@Birthday", beneficiary.Birthday), 
+                    new SqlParameter("@Gender", beneficiary.Gender),
+                    new SqlParameter("@Address", beneficiary.Address),
+                    new SqlParameter("@Occupation", beneficiary.Occupation),
+                    new SqlParameter("@Email", beneficiary.Email),
+                    new SqlParameter("@Phone", beneficiary.Phone),
+                    new SqlParameter("@TaxCode", (object)beneficiary.TaxCode ?? DBNull.Value)
                 };
+
 
                 _exQuery.ExecuteRawQuery(query, parameters);
 

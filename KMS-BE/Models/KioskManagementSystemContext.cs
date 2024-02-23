@@ -94,7 +94,31 @@ namespace KMS.Models
 
                 entity.Property(e => e.MemberId).HasColumnName("memberId");
 
-                
+                entity.Property(e => e.Birthday).HasColumnName("birthday");
+
+                entity.Property(e => e.Gender)
+                    .HasMaxLength(10)
+                    .HasColumnName("gender");
+
+                entity.Property(e => e.Address)
+                    .HasMaxLength(255)
+                    .HasColumnName("address");
+
+                entity.Property(e => e.Occupation)
+                    .HasMaxLength(255)
+                    .HasColumnName("occupation");
+
+                entity.Property(e => e.Email)
+                    .HasMaxLength(255)
+                    .HasColumnName("email");
+
+                entity.Property(e => e.Phone)
+                    .HasMaxLength(255)
+                    .HasColumnName("phone");
+
+                entity.Property(e => e.TaxCode)
+                    .HasMaxLength(255)
+                    .HasColumnName("taxCode");
 
                 entity.Property(e => e.Relationship)
                     .HasMaxLength(20)
@@ -102,6 +126,7 @@ namespace KMS.Models
 
                 entity.Property(e => e.TransactionId).HasColumnName("transactionId");
             });
+
 
             modelBuilder.Entity<Benefit>(entity =>
             {
