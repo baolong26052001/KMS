@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
+﻿using KMS.Models;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Net.Http;
 
 namespace KMS.Controllers
 {
@@ -10,61 +13,88 @@ namespace KMS.Controllers
     [Route("api/[controller]")]
     public class FaceIDController : ControllerBase
     {
-        private readonly string _targetFolder;
+        private readonly string _remoteApiUrl = "https://speedpos.facedb.test.verigram.cloud/facedb/find";
+        private readonly KioskManagementSystemContext _dbContext;
 
-        public FaceIDController()
+        public FaceIDController(KioskManagementSystemContext dbContext)
         {
-            _targetFolder = @"bin\Debug\net6.0\IdImage";
+            _dbContext = dbContext;
         }
 
         [HttpPost]
-        [Route("StoreImages")]
-        public JsonResult StoreImages(IFormFile file1)
+        [Route("FindPersonByImage")]
+        public JsonResult FindPersonByImage(IFormFile img_file, int person_id, string image_id)
         {
             try
             {
-                if (file1 == null || file1.Length == 0)
+                if (img_file == null || img_file.Length == 0)
                 {
-                    return new JsonResult(new
+                    return new JsonResult(new { Error = "Invalid image file" })
                     {
-                        Error = "Invalid files"
-                    })
-                    {
-                        StatusCode = StatusCodes.Status400BadRequest
+                        StatusCode = 400
                     };
                 }
 
-                var uniqueFileName1 = file1.FileName;
-                
-
-                var filePath1 = Path.Combine(_targetFolder, uniqueFileName1);
-                
-
-                using (var fileStream1 = new FileStream(filePath1, FileMode.Create))
+                using (var client = new HttpClient())
                 {
-                    file1.CopyTo(fileStream1);
+                    using (var formData = new MultipartFormDataContent())
+                    {
+                        formData.Add(new StreamContent(img_file.OpenReadStream()), "img_file", img_file.FileName);
+                        formData.Add(new StringContent("default"), "list_name");
+                        formData.Add(new StringContent(person_id.ToString()), "person_id");
+                        formData.Add(new StringContent(image_id), "image_id");
+
+                        var response = client.PostAsync(_remoteApiUrl, formData).Result;
+                        response.EnsureSuccessStatusCode();
+
+                        var responseContent = response.Content.ReadAsStringAsync().Result;
+
+                        // Deserialize the JSON response
+                        var result = JsonConvert.DeserializeObject<Result>(responseContent);
+
+                        int personId = int.Parse(result.result[0].person_id);
+
+                        // Compare person_id and image_id to the database
+                        var person = _dbContext.Lmembers.FirstOrDefault(l => l.Id == personId && l.IdenNumber == image_id);
+
+                        if (person != null)
+                        {
+                            // If the person exists in the database, execute the query
+                            var queryResult = _dbContext.Lmembers.Where(l => l.Id == person_id).ToList();
+                            return new JsonResult(queryResult)
+                            {
+                                StatusCode = 200
+                            };
+                        }
+                        else
+                        {
+                            return new JsonResult(new { Error = "Person not found in the database" })
+                            {
+                                StatusCode = 404
+                            };
+                        }
+                    }
                 }
-
-                
-
-                return new JsonResult(new
-                {
-                    Message = "Face ID image stored successfully"
-                })
-                {
-                    StatusCode = StatusCodes.Status200OK
-                };
             }
             catch (Exception ex)
             {
-                return new JsonResult(new
+                return new JsonResult(new { Error = $"An error occurred: {ex.Message}" })
                 {
-                    Error = $"Error: {ex.Message}"
-                })
-                {
-                    StatusCode = StatusCodes.Status500InternalServerError
+                    StatusCode = 500
                 };
             }
+        }
+
+        // Define classes to represent the JSON response
+        public class Result
+        {
+            public List<ResultItem> result { get; set; }
+        }
+
+        public class ResultItem
+        {
+            public string person_id { get; set; }
+            public double similarity { get; set; }
         }
     }
 }

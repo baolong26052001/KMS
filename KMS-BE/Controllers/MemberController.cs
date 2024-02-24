@@ -14,6 +14,7 @@ using KMS.Tools;
 using System.Globalization;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Diagnostics.Metrics;
+using Microsoft.EntityFrameworkCore;
 
 namespace KMS.Controllers
 {
@@ -24,6 +25,7 @@ namespace KMS.Controllers
         private readonly KioskManagementSystemContext _dbcontext;
         private IConfiguration _configuration;
         private readonly ExecuteQuery _exQuery;
+        private readonly string _remoteApiUrl = "https://speedpos.facedb.test.verigram.cloud/facedb/insert";
 
         public MemberController(IConfiguration configuration, KioskManagementSystemContext _context, ExecuteQuery exQuery)
         {
@@ -208,7 +210,7 @@ namespace KMS.Controllers
 
         [HttpPost]
         [Route("GetMemberInformationFromScanner2")]
-        public JsonResult AddMember2(IFormFile file, IFormFile imageIdCardFile)
+        public async Task<JsonResult> AddMember2(IFormFile file, IFormFile imageIdCardFile)
         {
             try
             {
@@ -254,6 +256,8 @@ namespace KMS.Controllers
                             IsActive = false, // Assuming default value for IsActive
                         };
 
+                        
+
                         // Now, insert the member into the database using your existing code
                         string query = "INSERT INTO LMember (imageIdCard, gender, firstName, lastName, fullName, birthday, idenNumber, ward, district, city, address1, address2, " +
                                        "isActive, dateCreated, dateModified) " +
@@ -281,11 +285,40 @@ namespace KMS.Controllers
 
                         _exQuery.ExecuteRawQuery(query, parameters);
 
-                        return new JsonResult(new ResponseDto
+                        // Fetch the highest ID from the LMember table
+                        int highestId = await _dbcontext.Lmembers.MaxAsync(m => m.Id);
+
+                        // Prepare and send the API request
+                        using (var client = new HttpClient())
                         {
-                            Code = 200,
-                            Message = "Member added successfully"
-                        });
+                            MultipartFormDataContent content = new MultipartFormDataContent
+                            {
+                                { new StreamContent(imageIdCardFile.OpenReadStream()), "img_file", imageIdCardFile.FileName },
+                                { new StringContent(highestId.ToString()), "person_id" },
+                                { new StringContent(member.IdenNumber), "image_id" }
+                            };
+
+                            var response = await client.PostAsync(_remoteApiUrl, content);
+
+                            if (response.IsSuccessStatusCode)
+                            {
+                                return new JsonResult(new ResponseDtoResult
+                                {
+                                    Code = 200,
+                                    Message = "Member added successfully",
+                                    PersonId = highestId.ToString(),
+                                    ImageId = member.IdenNumber,
+                                });
+                            }
+                            else
+                            {
+                                return new JsonResult(new ResponseDto
+                                {
+                                    Code = (int)response.StatusCode,
+                                    Message = "Failed to add member. Remote API request failed."
+                                });
+                            }
+                        }
                     }
 
                     return new JsonResult(new ResponseDto
@@ -304,6 +337,13 @@ namespace KMS.Controllers
                     Message = $"Error: {ex.Message}"
                 });
             }
+        }
+        public class ResponseDtoResult
+        {
+            public int Code { get; set; } = 200;
+            public string Message { get; set; } = "Add member successfully";
+            public string PersonId { get; set; }
+            public string ImageId { get; set; }
         }
 
         private List<string> IdenNumbersExist(string idenNumber)
