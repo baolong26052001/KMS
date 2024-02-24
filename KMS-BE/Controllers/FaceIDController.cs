@@ -23,7 +23,7 @@ namespace KMS.Controllers
 
         [HttpPost]
         [Route("FindPersonByImage")]
-        public JsonResult FindPersonByImage(IFormFile img_file, int person_id, string image_id)
+        public JsonResult FindPersonByImage(IFormFile img_file)
         {
             try
             {
@@ -41,8 +41,7 @@ namespace KMS.Controllers
                     {
                         formData.Add(new StreamContent(img_file.OpenReadStream()), "img_file", img_file.FileName);
                         formData.Add(new StringContent("default"), "list_name");
-                        formData.Add(new StringContent(person_id.ToString()), "person_id");
-                        formData.Add(new StringContent(image_id), "image_id");
+                        
 
                         var response = client.PostAsync(_remoteApiUrl, formData).Result;
                         response.EnsureSuccessStatusCode();
@@ -55,12 +54,12 @@ namespace KMS.Controllers
                         int personId = int.Parse(result.result[0].person_id);
 
                         // Compare person_id and image_id to the database
-                        var person = _dbContext.Lmembers.FirstOrDefault(l => l.Id == personId && l.IdenNumber == image_id);
+                        var person = _dbContext.Lmembers.FirstOrDefault(l => l.Id == personId);
 
                         if (person != null)
                         {
                             // If the person exists in the database, execute the query
-                            var queryResult = _dbContext.Lmembers.Where(l => l.Id == person_id).ToList();
+                            var queryResult = _dbContext.Lmembers.Where(l => l.Id == personId).ToList();
                             return new JsonResult(queryResult)
                             {
                                 StatusCode = 200
