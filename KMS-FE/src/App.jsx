@@ -341,7 +341,7 @@ const App = () => {
                         {/* Routes for Insurance Transaction */}
                         <Route 
                           path="/insuranceTransaction" 
-                          element={hasPermission(permissionData, "/insuranceTransaction") ? <RouteInsuranceTransaction /> : <NoPermission/>} 
+                          element={hasPermission(permissionData, "/insurancetransaction") ? <RouteInsuranceTransaction /> : <NoPermission/>} 
                         />
 
                         {/* Routes for Insurance Package */}
@@ -475,7 +475,7 @@ const App = () => {
                         />
                         <Route 
                           path="/kioskHealth" 
-                          element={hasPermission(permissionData, "/kioskHealth") ? <RouteKioskHealth /> : <NoPermission/>} 
+                          element={hasPermission(permissionData, "/kioskhealth") ? <RouteKioskHealth /> : <NoPermission/>} 
                         />
 
                         <Route path="/logout" element={<RouteLogout onLogout={logout} />} />
