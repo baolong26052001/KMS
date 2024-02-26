@@ -17,6 +17,10 @@ function fetchPermissionInfo(groupId) {
 }
 
 function checkDeletePermission(permissionData, path) {
+  if (getCookie('groupId') === '1') {
+    return true;
+  }
+
   let modifiedPath = path.startsWith("/") ? path.substring(1) : path;
   modifiedPath = modifiedPath.replace("slideDetail", "slideshow");
   modifiedPath = modifiedPath.replace("insurancePackageDetail", "insurancePackage");
