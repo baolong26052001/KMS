@@ -50,8 +50,14 @@ namespace KMS.Controllers
 
                         // Deserialize the JSON response
                         var result = JsonConvert.DeserializeObject<Result>(responseContent);
+                        int personId = 0;
 
-                        int personId = int.Parse(result.result[0].person_id);
+                        if (result.result.Count > 0 && result.result[0].similarity >= 96)
+                        {
+                            personId = int.Parse(result.result[0].person_id);
+                        }
+                        
+                        
 
                         // Compare person_id and image_id to the database
                         var person = _dbContext.Lmembers.FirstOrDefault(l => l.Id == personId);
