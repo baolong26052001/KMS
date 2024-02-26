@@ -66,11 +66,12 @@ namespace KMS.Controllers
                         {
                             // If the person exists in the database, execute the query
                             var queryResult = _dbContext.Lmembers.Where(l => l.Id == personId).ToList();
-                            return new JsonResult(queryResult)
+                            return new JsonResult(new { Code = 200, Data = queryResult })
                             {
                                 StatusCode = 200
                             };
                         }
+
                         else
                         {
                             return new JsonResult(new { Error = "Person not found in the database" })

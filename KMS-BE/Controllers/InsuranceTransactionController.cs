@@ -285,6 +285,15 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
+                int transactionId;
+                using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+                {
+                    connection.Open();
+                    SqlCommand cmd = new SqlCommand("SELECT ISNULL(MAX(id), 0) + 1 FROM InsuranceTransaction", connection);
+                    transactionId = (int)cmd.ExecuteScalar();
+                }
+
+
                 string query = "INSERT INTO Beneficiary (memberId, beneficiaryName, beneficiaryId, relationship, transactionId, birthday, gender, address, occupation, email, phone, taxCode) " +
                "VALUES (@MemberId, @BeneficiaryName, @BeneficiaryId, @Relationship, @TransactionId, @Birthday, @Gender, @Address, @Occupation, @Email, @Phone, @TaxCode)";
 
@@ -294,7 +303,7 @@ namespace KMS.Controllers
                     new SqlParameter("@BeneficiaryName", beneficiary.BeneficiaryName),
                     new SqlParameter("@BeneficiaryId", beneficiary.BeneficiaryId),
                     new SqlParameter("@Relationship", beneficiary.Relationship),
-                    new SqlParameter("@TransactionId", beneficiary.TransactionId),
+                    new SqlParameter("@TransactionId", transactionId),
     
                     // Additional parameters
                     new SqlParameter("@Birthday", beneficiary.Birthday), 
