@@ -22,7 +22,7 @@ dayjs.locale('en'); // Set the locale to English
 
 const CustomToolbar = ({ onButtonClick, selectedRows }) => {
     const navigate = useNavigate();
-    const { handleDelete, handleClose, open } = useDeleteHook('InsurancePackage/DeleteBenefit'); 
+    const { handleDelete, handleClose, open, alertMessage } = useDeleteHook('InsurancePackage/DeleteBenefit'); 
     const { id } = useParams();
     const { packageName } = useParams();
     // const [open, setOpen] = React.useState(false);
@@ -61,9 +61,9 @@ const CustomToolbar = ({ onButtonClick, selectedRows }) => {
         >
           Delete
         </Button>
-        <Snackbar open={open} autoHideDuration={1000} onClose={handleClose}>
+        <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
           <Alert onClose={handleClose} variant="filled" severity="error">
-            No rows selected for deletion!!!
+              {alertMessage}
           </Alert>
         </Snackbar>
         <GridToolbarExport />

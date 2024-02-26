@@ -21,7 +21,7 @@ dayjs.locale('en'); // Set the locale to English
 
 const CustomToolbar = ({ onButtonClick, selectedRows }) => {
   const navigate = useNavigate();
-  const { handleDelete, handleClose, open } = useDeleteHook('SlideHeader/DeleteSlideshow'); 
+  const { handleDelete, handleClose, open, alertMessage } = useDeleteHook('SlideHeader/DeleteSlideshow'); 
 
   // const [open, setOpen] = React.useState(false);
   const handleButtonClick = (buttonId) => {
@@ -56,9 +56,9 @@ const CustomToolbar = ({ onButtonClick, selectedRows }) => {
       >
         Delete
       </Button>
-      <Snackbar open={open} autoHideDuration={1000} onClose={handleClose}>
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
         <Alert onClose={handleClose} variant="filled" severity="error">
-          No rows selected for deletion!!!
+            {alertMessage}
         </Alert>
       </Snackbar>
       <GridToolbarExport />
