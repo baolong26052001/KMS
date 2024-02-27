@@ -171,9 +171,21 @@ const Permission = ({ routes }) => {
     }
   };
 
-  const handleCancel = async => {
+  const handleCancel = async () => {
     navigate('/usersGroup');
-  }
+  };
+
+  const handleSelectAll = (permissionType) => {
+    // Check if all of the checkboxes in the column are checked
+    const allChecked = rows.every(row => row[permissionType]);
+
+    // Toggle between selecting all and deselecting all checkboxes
+    const updatedRows = rows.map(row => ({
+      ...row,
+      [permissionType]: !allChecked,
+    }));
+    setRows(updatedRows);
+  };
 
   return (
     <div className="content">
@@ -197,6 +209,17 @@ const Permission = ({ routes }) => {
               ...columns.slice(0, 1), // 'site' column
               ...columns.slice(1).map(column => ({
                 ...column,
+                renderHeader: (params) => (
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <span><strong>{column.headerName}</strong></span>
+                    <Checkbox
+                      onChange={() => handleSelectAll(column.field)}
+                      checked={rows.every(row => row[column.field])}
+                      color="primary"
+                      inputProps={{ 'aria-label': `Select All ${column.headerName} checkbox` }}
+                    />
+                  </div>
+                ),
                 renderCell: (params) => (
                   <Checkbox
                     checked={params.value}
