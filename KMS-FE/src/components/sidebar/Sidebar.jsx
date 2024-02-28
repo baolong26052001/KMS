@@ -208,6 +208,14 @@ const Sidebar = () => {
           );
         }
 
+        if (item.key === '#') {
+          return (
+            <Menu.Item key={item.key} icon={item.icon} className="admin-group-disabled">
+              {item.label}
+            </Menu.Item>
+          );
+        }
+
         if (item.children) {
           return (
             <Menu.SubMenu key={item.key} title={item.label} icon={item.icon}>

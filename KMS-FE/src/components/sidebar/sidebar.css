@@ -47,3 +47,8 @@
 hr.MuiDivider-root.MuiDivider-fullWidth.css-9mgopn-MuiDivider-root {
     margin-bottom: 25px;
 }
+
+.admin-group-disabled {
+    pointer-events: none;
+    cursor: default;
+}
