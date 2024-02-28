@@ -97,7 +97,7 @@ const columns = [
       />
     ),
   },
-  { field: 'id', headerName: 'Type ID', minWidth: 100, flex: 1,},
+  { field: 'id', headerName: 'Age Range ID', minWidth: 100, flex: 1,},
   { field: 'description', headerName: 'Description', minWidth: 300, flex: 1,},
   {
     field: 'dateCreated',

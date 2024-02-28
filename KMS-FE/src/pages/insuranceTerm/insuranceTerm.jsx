@@ -97,7 +97,7 @@ const columns = [
       />
     ),
   },
-  { field: 'id', headerName: 'Type ID', minWidth: 100, flex: 1,},
+  { field: 'id', headerName: 'Term ID', minWidth: 100, flex: 1,},
   { field: 'content', headerName: 'Insurance Term', minWidth: 300, flex: 1,},
   {
     field: 'dateCreated',

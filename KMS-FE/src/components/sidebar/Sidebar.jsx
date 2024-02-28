@@ -123,7 +123,7 @@ const Sidebar = () => {
         });
       }
     });
-
+    
     localStorage.setItem('childrenKeys', JSON.stringify(extractedKeys));
 
     return extractedKeys;
@@ -141,6 +141,7 @@ const Sidebar = () => {
   };
 
   useEffect(() => {
+    extractAndStoreChildrenKeys();
     fetch('https://localhost:7017/api/AccessRule/ShowPermission')
       .then((response) => response.json())
       .then((data) => setPermissions(data))
