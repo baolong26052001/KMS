@@ -115,6 +115,33 @@ const statusImages = {
   const rows = [];
 
 const Dashboard = () => {
+  const [totalNumbers, setTotalNumbers] = useState({
+    TotalKiosk: 0,
+    TotalKioskOnline: 0,
+    TotalKioskOffline: 0,
+    TotalTransaction: 0
+  });
+
+  // Function to fetch total numbers from the API
+  const fetchTotalNumbers = async () => {
+    try {
+      const response = await fetch('https://localhost:7017/api/Dashboard/ShowTotalNumbers');
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const data = await response.json();
+      // Update the state with total numbers
+      setTotalNumbers(data[0]);
+    } catch (error) {
+      console.error('Error fetching total numbers:', error);
+    }
+  };
+
+  // Fetch total numbers on component mount
+  useEffect(() => {
+    fetchTotalNumbers();
+  }, []);
+
     const [searchTerm, setSearchTerm] = useState('');
 
     const [searchTermButton, setSearchTermButton] = useState('');
@@ -202,7 +229,7 @@ const Dashboard = () => {
                             </Typography>
                             <Typography variant="body2" gutterBottom>
                                 <Stack direction="row" spacing={2}> 
-                                    <div className='kiosk-num'>100</div>
+                        <div className='kiosk-num'>{totalNumbers.TotalKiosk}</div>
                                     <div className='percent' style={{color: '#12E95B'}}>(+18%)</div>
                                 </Stack>
                             </Typography>
@@ -238,7 +265,7 @@ const Dashboard = () => {
                             </Typography>
                             <Typography variant="body2" gutterBottom>
                                 <Stack direction="row" spacing={2}> 
-                                    <div className='kiosk-num'>99</div>
+                        <div className='kiosk-num'>{totalNumbers.TotalKioskOnline}</div>
                                     <div className='percent' style={{color: '#E92323'}}>(-1%)</div>
                                 </Stack>
                             </Typography>
@@ -274,7 +301,7 @@ const Dashboard = () => {
                             </Typography>
                             <Typography variant="body2" gutterBottom>
                                 <Stack direction="row" spacing={2}> 
-                                    <div className='kiosk-num'>1</div>
+                        <div className='kiosk-num'>{totalNumbers.TotalKioskOffline}</div>
                                     <div className='percent' style={{color: '#12E95B'}}>(+1%)</div>
                                 </Stack>
                             </Typography>
@@ -310,7 +337,7 @@ const Dashboard = () => {
                             </Typography>
                             <Typography variant="body2" gutterBottom>
                                 <Stack direction="row" spacing={2}> 
-                                    <div className='kiosk-num'>100</div>
+                        <div className='kiosk-num'>{totalNumbers.TotalTransaction}</div>
                                     <div className='percent' style={{color: '#12E95B'}}>(+29%)</div>
                                 </Stack>
                             </Typography>
