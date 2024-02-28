@@ -127,15 +127,6 @@ const AddGroup = () => {
                 >
                 </TextField>
 
-                <TextField
-                id="accessRuleId"
-                label="Access Rule"
-                variant="outlined"
-                value={newGroup.accessRuleId}
-                onChange={(e) => handleInputChange('accessRuleId', e.target.value)}
-                />
-
-
               <Box sx={{ display: 'flex', gap: '8px' }}>
                 <Button variant="contained" fullWidth onClick={handleSave}>
                   Save
