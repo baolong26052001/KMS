@@ -7,6 +7,7 @@ using System.Text;
 using KMS.Tools;
 using System.Net.Sockets;
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
 
 namespace KMS.Controllers
 {
@@ -50,6 +51,7 @@ namespace KMS.Controllers
             
         }
 
+        
         [HttpGet]
         [Route("ShowUsergroup/{id}")]
         public JsonResult GetUsergroupById(int id)
@@ -162,7 +164,7 @@ namespace KMS.Controllers
                 SqlParameter[] parameters =
                 {
                     new SqlParameter("@GroupName", usergroup.GroupName),
-                    new SqlParameter("@AccessRuleId", usergroup.AccessRuleId),
+                    new SqlParameter("@AccessRuleId", (object)usergroup.AccessRuleId ?? DBNull.Value),
                     new SqlParameter("@IsActive", usergroup.IsActive)
                 };
                 SqlParameter[] parameters2 =
