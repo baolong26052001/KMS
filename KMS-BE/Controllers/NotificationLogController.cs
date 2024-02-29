@@ -114,18 +114,18 @@ namespace KMS.Controllers
         }
 
         [HttpPost]
-        [Route("AddNotificationLog")]
-        public JsonResult AddNotificationLog(TnotificationLog newNotificationLog)
+        [Route("SaveNotificationLog")]
+        public JsonResult SaveNotificationLog(TnotificationLogModel newNotificationLog)
         {
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = "INSERT INTO TNotificationLog (type, sendType, memberId, title, content, status, dateCreated, isActive) " +
-                           "VALUES (@type, @sendType, @memberId, @title, @content, @status, GETDATE(), @isActive)";
+                string query = "INSERT INTO TNotificationLog (sendType, memberId, title, content, status, dateCreated, isActive) " +
+                           "VALUES (@sendType, @memberId, @title, @content, @status, GETDATE(), @isActive)";
 
                 SqlParameter[] parameters =
                 {
-                    new SqlParameter("@type", newNotificationLog.Type),
+                    
                     new SqlParameter("@sendType", newNotificationLog.SendType),
                     new SqlParameter("@memberId", newNotificationLog.MemberId),
                     new SqlParameter("@title", newNotificationLog.Title),
@@ -136,7 +136,7 @@ namespace KMS.Controllers
 
                 _exQuery.ExecuteRawQuery(query, parameters);
 
-                return new JsonResult("NotificationLog added successfully");
+                return new JsonResult("NotificationLog saved successfully");
             }
             catch (Exception ex)
             {
