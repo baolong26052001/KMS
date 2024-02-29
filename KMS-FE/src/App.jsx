@@ -159,17 +159,6 @@ const App = () => {
         console.error('Error fetching permission info:', error);
       });
   
-    // const intervalId = setInterval(() => {
-    //   fetchPermissionInfo(groupId)
-    //     .then(data => {
-    //       setPermissionData(data);
-    //     })
-    //     .catch(error => {
-    //       console.error('Error fetching permission info:', error);
-    //     });
-    // }, 3000); 
-  
-    // return () => clearInterval(intervalId);
   }, [isAuthenticated, groupId]);
   
   return (

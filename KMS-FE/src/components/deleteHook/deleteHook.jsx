@@ -21,21 +21,24 @@ function checkDeletePermission(permissionData, path) {
   }
 
   let modifiedPath = path.startsWith("/") ? path.substring(1) : path;
-  modifiedPath = modifiedPath.replace("slideDetail", "slideshow");
-  modifiedPath = modifiedPath.replace("insurancePackageDetail", "insurancePackage");
-  modifiedPath = modifiedPath.replace("viewPackageDetail", "insurancePackage");
-  modifiedPath = modifiedPath.replace("benefitDetail", "insurancePackage");
+  // Extracting the main part without any additional parameters or sub-paths
+  let mainPart = modifiedPath.split("/")[0];
+  mainPart = mainPart.replace("slideDetail", "slideshow");
+  mainPart = mainPart.replace("insurancePackageDetail", "insurancePackage");
+  mainPart = mainPart.replace("viewPackageDetail", "insurancePackage");
+  mainPart = mainPart.replace("benefitDetail", "insurancePackage");
 
+  console.log(mainPart);
   for (const entry of permissionData) {
     const normalizedSite = entry.site.startsWith("/") ? entry.site.substring(1) : entry.site;
-    if (modifiedPath === normalizedSite) {
+    if (mainPart === normalizedSite) {
       if (entry.canDelete) {
         return true;
       } else {
         return false;
       }
     }
-  }
+  }  
 
   return false;
 }
@@ -44,6 +47,7 @@ function checkDeletePermission(permissionData, path) {
 const useDeleteHook = (deleteEndpoint, fetchDataCallback) => {
   const [open, setOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
+  const [severity, setSeverity] = useState('');
 
   const deleteItems = async (itemIds) => {
     try {
@@ -84,15 +88,20 @@ const useDeleteHook = (deleteEndpoint, fetchDataCallback) => {
       // Check if there are selected items to delete
       if (selectedItems.length === 0) {
         setAlertMessage(`No Items selected for deletion.`);
+        setSeverity('warning');
         setOpen(true);
         return;
       }
   
       if (!canDelete) {
-        setAlertMessage("You don't have permission to delete.");
+        setAlertMessage("You don't have permission to delete");
+        setSeverity('error');
         setOpen(true);
         return;
-      }
+      }         
+      setAlertMessage("Delete item successfully");
+      setSeverity('success');
+      setOpen(true);
   
       await deleteItems(selectedItems);
     } catch (error) {
@@ -112,7 +121,8 @@ const useDeleteHook = (deleteEndpoint, fetchDataCallback) => {
     handleDelete,
     handleClose,
     open,
-    alertMessage
+    alertMessage,
+    severity
   };
 };
 

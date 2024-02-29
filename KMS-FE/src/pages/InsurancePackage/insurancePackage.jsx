@@ -22,7 +22,7 @@ dayjs.locale('en'); // Set the locale to English
 
 const CustomToolbar = ({ onButtonClick, selectedRows }) => {
     const navigate = useNavigate();
-    const { handleDelete, handleClose, open, alertMessage } = useDeleteHook('InsurancePackageHeader/DeleteInsurancePackageHeader'); 
+    const { handleDelete, handleClose, open, alertMessage, severity } = useDeleteHook('InsurancePackageHeader/DeleteInsurancePackageHeader'); 
   
     // const [open, setOpen] = React.useState(false);
     const handleButtonClick = (buttonId) => {
@@ -58,7 +58,7 @@ const CustomToolbar = ({ onButtonClick, selectedRows }) => {
           Delete
         </Button>
         <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-          <Alert onClose={handleClose} variant="filled" severity="error">
+          <Alert onClose={handleClose} variant="filled" severity={severity}>
               {alertMessage}
           </Alert>
         </Snackbar>

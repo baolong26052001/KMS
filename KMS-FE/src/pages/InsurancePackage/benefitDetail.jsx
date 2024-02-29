@@ -21,7 +21,7 @@ dayjs.locale('en'); // Set the locale to English
 
 const CustomToolbar = ({ onButtonClick, selectedRows }) => {
     const navigate = useNavigate();
-    const { handleDelete, handleClose, open, alertMessage } = useDeleteHook('InsurancePackage/DeleteBenefitDetail'); 
+    const { handleDelete, handleClose, open, alertMessage, severity } = useDeleteHook('InsurancePackage/DeleteBenefitDetail'); 
     const { id } = useParams();
     const { packageName } = useParams();
     // const [open, setOpen] = React.useState(false);
@@ -59,30 +59,13 @@ const CustomToolbar = ({ onButtonClick, selectedRows }) => {
           Delete
         </Button>
         <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-          <Alert onClose={handleClose} variant="filled" severity="error">
+          <Alert onClose={handleClose} variant="filled" severity={severity}>
               {alertMessage}
           </Alert>
         </Snackbar>
         <GridToolbarExport />
       </div>
     );
-};
-
-const ViewButton = ({ rowId, label, onClick }) => {
-  const navigate = useNavigate();
-  const handleClick = (event) => {
-    event.stopPropagation(); 
-    onClick(rowId);
-    //navigate(`/benefitTable`);
-  };
-
-  return (
-    <Box sx={{alignItems: 'center' }}>
-      <Button size="small" variant="contained" onClick={handleClick}>
-        {label}
-      </Button>
-    </Box>
-  );
 };
 
 const EditButton = ({ rowId, label, onClick}) => {

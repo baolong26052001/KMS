@@ -15,7 +15,7 @@ import useDeleteHook from '../../components/deleteHook/deleteHook';
 
 const CustomToolbar = ({ onButtonClick, selectedRows }) => {
   const navigate = useNavigate();
-  const { handleDelete, handleClose, open, alertMessage } = useDeleteHook('Station/DeleteStation'); 
+  const { handleDelete, handleClose, open, alertMessage, severity } = useDeleteHook('Station/DeleteStation'); 
 
   // const [open, setOpen] = React.useState(false);
   const handleButtonClick = (buttonId) => {
@@ -52,7 +52,7 @@ const CustomToolbar = ({ onButtonClick, selectedRows }) => {
         Delete
       </Button>
       <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-        <Alert onClose={handleClose} variant="filled" severity="error">
+        <Alert onClose={handleClose} variant="filled" severity={severity}>
             {alertMessage}
         </Alert>
       </Snackbar>
