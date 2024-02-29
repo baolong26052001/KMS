@@ -103,9 +103,9 @@ const EditButton = ({ rowId, label, onClick}) => {
     );
   };
 
-  const formatNumber = (value) => {
-    return value.toLocaleString('vi-VN').replace(/,/g, '.');
-  };
+const formatNumber = (value) => {
+  return value.toLocaleString('vi-VN').replace(/,/g, '.');
+};
 
 function createData(id, content, coverage, benefitId, dateModified, dateCreated) {
   return {id, content, coverage, benefitId, dateModified, dateCreated};
@@ -153,10 +153,7 @@ const columns = [
   },
 ];
 
-const rows = [];
-
 const handleButtonClick = (id) => {
-  // Handle button click, e.g., navigate to another page
   console.log(`Button clicked for row with ID: ${id}`);
 };
 
@@ -166,7 +163,9 @@ const InsurancePackageDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const API_URL = "https://localhost:7017/";
-    
+    const goBack = () => {
+      window.history.back();
+    };
     useEffect(() => {
       async function fetchData() {
         try {
@@ -207,9 +206,11 @@ const InsurancePackageDetail = () => {
             <h1 className="h1-dashboard">Benefit Details</h1>
         </div>
             <div className="bigcarddashboard">
+             <Button variant="contained" color="primary" onClick={goBack}>
+                Go Back
+              </Button>
                 <div className='Table' style={{ height: 400, width: '100%'}}>
-                
-                <DataGrid
+                  <DataGrid
                       rows={rows}
                       columns={columns}
                       initialState={{

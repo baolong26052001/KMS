@@ -154,14 +154,14 @@ const columns = [
     field: 'lastLogin',
     headerName: 'Last Login',
     sortable: false,
-    minWidth: 180,
+    minWidth: 190,
     flex: 1,
   },
   {
     field: 'totalDaysDormant',
     headerName: 'Total Days Dormant',
     sortable: false,
-    minWidth: 160,
+    minWidth: 150,
     flex: 1,
   },
 ];

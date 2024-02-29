@@ -216,3 +216,6 @@ StyleCop.Cache
 bin
 obj
 
+KioskApp/Insurance/Images/LoanKiosk.mp4
+KioskApp/Insurance/obj/Release/net6.0-windows/View/Insurance/CashDepositView.g.cs
+*.png

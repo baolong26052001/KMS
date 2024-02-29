@@ -102,7 +102,7 @@ const columns = [
   },
   { field: 'id', headerName: 'Provider ID', minWidth: 100, flex: 1,},
   { field: 'provider', headerName: 'Insurance Provider', minWidth: 120, flex: 1,},
-  { field: 'email', headerName: 'Email', minWidth: 200, flex: 1,},
+  { field: 'email', headerName: 'Email', minWidth: 300, flex: 1,},
   {
     field: 'dateCreated',
     headerName: 'Date Created',

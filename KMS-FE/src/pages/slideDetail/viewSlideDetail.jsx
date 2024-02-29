@@ -4,11 +4,16 @@ import TableCell from '@mui/material/TableCell';
 import TableBody from '@mui/material/TableBody';
 import TableRow from '@mui/material/TableRow';
 import { useParams } from 'react-router-dom';
+import { Button } from '@mui/material';
 
-export default function ViewAccount() {
+export default function ViewSlideDetail() {
   const { id } = useParams();
   const [details, setDetails] = useState({});
   const [errorMessage, setErrorMessage] = useState('');
+
+  const goBack = () => {
+    window.history.back();
+  };
 
   // Get Back-end API URL to connect
   const API_URL = "https://localhost:7017/";
@@ -16,7 +21,7 @@ export default function ViewAccount() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch(`${API_URL}api/Account/ShowAccount/${id}`);
+        const response = await fetch(`${API_URL}api/SlideDetail/ShowSlideDetailInEditPage/${id}`);
         console.log(response.status);
         if (response.status === 401) {
           setErrorMessage("You don't have permission");
@@ -35,14 +40,17 @@ export default function ViewAccount() {
   return (
     <div className="content">
       <div className="admin-dashboard-text-div pt-5">
-        <h1 className="h1-dashboard">Account Details</h1>
+        <h1 className="h1-dashboard">Slide Details</h1>
       </div>
       <div className="bigcarddashboard">
         <div className="App">
           {errorMessage ? (
             <p className="error-message">{errorMessage}</p>
           ) : (
-            <div className='table-container'>
+            <div className="table-container">
+              <Button variant="contained" color="primary" onClick={goBack} style={{ marginBottom: '10px', float: 'left' }}>
+                Go Back
+              </Button>
               <Table className='custom-table'>
                 <TableBody>
                   {Object.entries(details).map(([key, value]) => (

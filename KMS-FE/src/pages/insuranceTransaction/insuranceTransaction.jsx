@@ -13,9 +13,11 @@ dayjs.locale('en'); // Set the locale to English
 
 
 const ViewButton = ({ rowId, label, onClick }) => {
+  const navigate = useNavigate();
   const handleClick = (event) => {
     event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
     onClick(rowId);
+    navigate(`/viewInsuranceTransaction/${rowId}`);
   };
 
   return (

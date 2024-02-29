@@ -149,9 +149,9 @@ const ViewImage = ({ imageUrl }) => {
 const ViewButton = ({ rowId, label, onClick }) => {
   const navigate = useNavigate();
   const handleClick = (event) => {
-    event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
+    event.stopPropagation();
     onClick(rowId);
-    // navigate(`/viewSlideShow/${rowId}`)
+    navigate(`/viewSlideDetail/${rowId}`)
   };
 
   return (
