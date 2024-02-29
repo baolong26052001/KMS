@@ -16,7 +16,7 @@ export default function ViewInsuranceTransaction() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch(`${API_URL}api/InsuranceTransaction/ShowBeneficiaryByInsuranceTransactionId/${id}`);
+        const response = await fetch(`${API_URL}api/InsuranceTransaction/ShowInsuranceTransaction/${id}`);
         console.log(response.status);
         if (response.status === 401) {
           setErrorMessage("You don't have permission");
@@ -35,7 +35,7 @@ export default function ViewInsuranceTransaction() {
   return (
     <div className="content">
       <div className="admin-dashboard-text-div pt-5">
-        <h1 className="h1-dashboard">Insurance Beneficiary</h1>
+        <h1 className="h1-dashboard">Insurance Details</h1>
       </div>
       <div className="bigcarddashboard">
         <div className="App">

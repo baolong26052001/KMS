@@ -29,6 +29,23 @@ const ViewButton = ({ rowId, label, onClick }) => {
   );
 };
 
+const DetailButton = ({ rowId, label, onClick }) => {
+  const navigate = useNavigate();
+  const handleClick = (event) => {
+    event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
+    onClick(rowId);
+    navigate(`/beneficiary/${rowId}`);
+  };
+
+  return (
+    <Box sx={{alignItems: 'center' }}>
+      <Button size="small" variant="contained" color='info' onClick={handleClick}>
+        {label}
+      </Button>
+    </Box>
+  );
+};
+
 const formatNumber = (value) => {
   return value.toLocaleString('vi-VN').replace(/,/g, '.');
 };
@@ -49,6 +66,21 @@ const columns = [
         <ViewButton
         rowId={params.row.id}
         label="View"
+        onClick={handleButtonClick}
+      />
+    ),
+  },
+  {
+    field: 'detailButton',
+    headerName: '',
+    width: 120,
+    disableColumnMenu: true,
+    sortable: false, // Disable sorting for this column
+    filterable: false, // Disable filtering for this column
+    renderCell: (params) => (
+        <DetailButton
+        rowId={params.row.id}
+        label="Beneficiary"
         onClick={handleButtonClick}
       />
     ),

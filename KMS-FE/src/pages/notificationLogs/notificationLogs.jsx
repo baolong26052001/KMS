@@ -54,7 +54,7 @@ const columns = [
       />
     ),
   },
-  { field: 'id', headerName: 'Account ID', minWidth: 100, flex: 1,},
+  { field: 'id', headerName: 'Notification ID', minWidth: 120, flex: 1,},
   { field: 'memberId', headerName: 'Member ID', minWidth: 100, flex: 1,},
   { field: 'sendType', headerName: 'Send Type', minWidth: 100, flex: 1,},
   { field: 'notificationTitle', headerName: 'Notification Title', minWidth: 150,  

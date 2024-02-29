@@ -59,6 +59,7 @@ import RouteAudit from './pages/audit/audit';
 import RouteKioskHealth from './pages/kioskHealth/kioskHealth';
 
 import RouteInsuranceTransaction from './pages/insuranceTransaction/insuranceTransaction';
+import RouteBeneficiary from './pages/insuranceTransaction/beneficiary';
 import RouteViewInsuranceTransaction from './pages/insuranceTransaction/viewInsuranceTransaction';
 import RouteInsurancePackage from './pages/InsurancePackage/insurancePackage';
 import RouteViewInsurancePackage from './pages/InsurancePackage/insuranceBenefit';
@@ -352,6 +353,10 @@ const App = () => {
                         <Route 
                           path="/viewInsuranceTransaction/:id" 
                           element={hasPermission(permissionData, "/insurancetransaction") ? <RouteViewInsuranceTransaction /> : <NoPermission/>} 
+                        />
+                        <Route 
+                          path="/beneficiary/:id" 
+                          element={hasPermission(permissionData, "/insurancetransaction") ? <RouteBeneficiary /> : <NoPermission/>} 
                         />
                         {/* Routes for Insurance Package */}
                         <Route 
