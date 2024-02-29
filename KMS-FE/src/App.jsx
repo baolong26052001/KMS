@@ -40,6 +40,7 @@ import RouteEditSlideShow from './pages/slideshow/editSlideShow';
 import RouteAddSlideShow from './pages/slideshow/addSlideShow';
 
 import RouteSlideDetail from './pages/slideDetail/slideDetail';
+import RouteViewSlideDetail from './pages/slideDetail/viewSlideDetail';
 import RouteEditSlideDetail from './pages/slideDetail/editSlide';
 import RouteAddSlideDetail from './pages/slideDetail/addSlide';
 
@@ -58,6 +59,7 @@ import RouteAudit from './pages/audit/audit';
 import RouteKioskHealth from './pages/kioskHealth/kioskHealth';
 
 import RouteInsuranceTransaction from './pages/insuranceTransaction/insuranceTransaction';
+import RouteViewInsuranceTransaction from './pages/insuranceTransaction/viewInsuranceTransaction';
 import RouteInsurancePackage from './pages/InsurancePackage/insurancePackage';
 import RouteViewInsurancePackage from './pages/InsurancePackage/insuranceBenefit';
 import RouteAddInsurancePackage from './pages/InsurancePackage/addInsurancePackage';
@@ -156,17 +158,17 @@ const App = () => {
         console.error('Error fetching permission info:', error);
       });
   
-    const intervalId = setInterval(() => {
-      fetchPermissionInfo(groupId)
-        .then(data => {
-          setPermissionData(data);
-        })
-        .catch(error => {
-          console.error('Error fetching permission info:', error);
-        });
-    }, 3000); 
+    // const intervalId = setInterval(() => {
+    //   fetchPermissionInfo(groupId)
+    //     .then(data => {
+    //       setPermissionData(data);
+    //     })
+    //     .catch(error => {
+    //       console.error('Error fetching permission info:', error);
+    //     });
+    // }, 3000); 
   
-    return () => clearInterval(intervalId);
+    // return () => clearInterval(intervalId);
   }, [isAuthenticated, groupId]);
   
   return (
@@ -302,6 +304,10 @@ const App = () => {
                           element={hasPermission(permissionData, "/slideshow") ? <RouteSlideDetail /> : <NoPermission/>} 
                         />
                         <Route 
+                          path="/viewSlideDetail/:id" 
+                          element={hasPermission(permissionData, "/slideshow") ? <RouteViewSlideDetail /> : <NoPermission/>} 
+                        />
+                        <Route 
                           path="/addSlideDetail/:id/:packageName" 
                           element={hasPermission(permissionData, "/slideshow", editPermission) ? <RouteAddSlideDetail /> : <NoPermission/>} 
                         />
@@ -343,7 +349,10 @@ const App = () => {
                           path="/insuranceTransaction" 
                           element={hasPermission(permissionData, "/insurancetransaction") ? <RouteInsuranceTransaction /> : <NoPermission/>} 
                         />
-
+                        <Route 
+                          path="/viewInsuranceTransaction/:id" 
+                          element={hasPermission(permissionData, "/insurancetransaction") ? <RouteViewInsuranceTransaction /> : <NoPermission/>} 
+                        />
                         {/* Routes for Insurance Package */}
                         <Route 
                           path="/insurancePackage" 
@@ -353,7 +362,7 @@ const App = () => {
                           path="/viewPackageDetail/:id/:packageName" 
                           element={hasPermission(permissionData, "/insurancePackage") ? <RouteViewInsurancePackage /> : <NoPermission/>} 
                         />
-                        <Route 
+                        <Route  
                           path="/addInsurancePackage" 
                           element={hasPermission(permissionData, "/insurancePackage", !editPermission, addPermission) ? <RouteAddInsurancePackage /> : <NoPermission />} 
                         />
