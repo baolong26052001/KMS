@@ -448,9 +448,9 @@ namespace KMS.Controllers
             {
                 string query = "SELECT b.id, b.packageName, b.priority, c.provider, c.email, e.content, f.typeName, b.dateModified, b.dateCreated " +
                            "FROM InsurancePackageHeader b " +
-                           "INNER JOIN InsuranceProvider c ON c.id = b.insuranceProviderId " +
-                           "INNER JOIN Term e ON e.id = b.termId " +
-                           "INNER JOIN InsuranceType f ON b.insuranceTypeId = f.id ";
+                           "LEFT JOIN InsuranceProvider c ON c.id = b.insuranceProviderId " +
+                           "LEFT JOIN Term e ON e.id = b.termId " +
+                           "LEFT JOIN InsuranceType f ON b.insuranceTypeId = f.id ";
 
                 List<SqlParameter> parameters = new List<SqlParameter>();
 
