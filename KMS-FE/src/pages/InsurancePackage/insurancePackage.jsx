@@ -274,9 +274,10 @@ const InsurancePackageHeader = () => {
         } catch (error) {
           console.error('Error fetching data:', error);
         }
-      }
-    
-      fetchData();
+      };
+      const interval = setInterval(fetchData, 100);
+      return () => clearInterval(interval);
+
     }, [searchTerm, startDate, endDate]);
     
     
