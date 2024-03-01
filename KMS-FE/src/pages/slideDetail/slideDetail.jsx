@@ -347,10 +347,9 @@ const SlideDetail = () => {
         } catch (error) {
           console.error('Error fetching data:', error);
         }
-      };
-      const interval = setInterval(fetchData, 100);
-      return () => clearInterval(interval);
-
+      }
+    
+      fetchData();
     }, [searchTerm, startDate, endDate]);
     
     
