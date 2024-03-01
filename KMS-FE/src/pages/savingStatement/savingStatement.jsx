@@ -5,6 +5,7 @@ import 'dayjs/locale/en'; // Import the English locale
 import { DataGrid } from '@mui/x-data-grid';
 import DateFilter from '../../components/dateFilter/DateFilter';
 import CustomButton from '../../components/CustomButton/customButton';
+import { API_URL } from '../../components/config/apiUrl';
 // Enable the customParseFormat plugin
 dayjs.extend(customParseFormat);
 dayjs.locale('en'); // Set the locale to English
@@ -104,7 +105,6 @@ const SavingStatement = () => {
   };
 
   const getRowId = (row) => row.id;
-  const API_URL = "https://localhost:7017/";
 
   const handleSearchButton = () => {
     setSearchTerm(searchTermButton);

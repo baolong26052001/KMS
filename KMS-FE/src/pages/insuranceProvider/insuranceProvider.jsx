@@ -8,7 +8,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
-
+import { API_URL } from '../../components/config/apiUrl';
 // import Delete Hook
 import useDeleteHook from '../../components/deleteHook/deleteHook';
 
@@ -116,9 +116,6 @@ const InsuranceProvider = () => {
 
     const [rows, setRows] = useState([]);
 
-    // Get Back-end API URL to connect
-    const API_URL = "https://localhost:7017/";
-  
     useEffect(() => {
       async function fetchData() {
         try {

@@ -12,6 +12,7 @@ import Alert from '@mui/material/Alert';
 import CustomButton from '../../components/CustomButton/customButton';
 // import Delete Hook
 import useDeleteHook from '../../components/deleteHook/deleteHook';
+import { API_URL } from '../../components/config/apiUrl';
 
 const CustomToolbar = ({ onButtonClick, selectedRows }) => {
   const navigate = useNavigate();
@@ -113,9 +114,6 @@ const InsuranceTerm = () => {
 
     const [selectedRowIds, setSelectedRowIds] = useState([]);
     const [rows, setRows] = useState([]);
-
-    // Get Back-end API URL to connect
-    const API_URL = "https://localhost:7017/";
   
     useEffect(() => {
       async function fetchData() {

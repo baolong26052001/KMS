@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react';
 import dayjs from 'dayjs'; // Import dayjs
 import customParseFormat from 'dayjs/plugin/customParseFormat'; // Import the customParseFormat plugin
 import 'dayjs/locale/en'; // Import the English locale
-import { DataGrid, GridToolbarExport } from '@mui/x-data-grid';
-import { Button, Box } from '@mui/material';
-import {useNavigate} from 'react-router-dom';
+import { DataGrid } from '@mui/x-data-grid';
 import DateFilter from '../../components/dateFilter/DateFilter';
 import CustomButton from '../../components/CustomButton/customButton';
+import { API_URL } from '../../components/config/apiUrl';
 // Enable the customParseFormat plugin
 dayjs.extend(customParseFormat);
 dayjs.locale('en'); // Set the locale to English
@@ -118,7 +117,6 @@ const LoanTransaction = () => {
   };
 
   const getRowId = (row) => row.id;
-  const API_URL = "https://localhost:7017/";
 
   const handleSearchButton = () => {
     setSearchTerm(searchTermButton);

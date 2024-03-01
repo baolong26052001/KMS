@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import CustomButton from '../../components/CustomButton/customButton';
+import { API_URL } from '../../components/config/apiUrl';
 //import css
 import './kiosk-hardware.css';
 
@@ -59,8 +60,6 @@ const columns = [
   },
 ];
 
-const rows = [];
-
 const KioskHardware = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchTermButton, setSearchTermButton] = useState('');
@@ -77,8 +76,6 @@ const KioskHardware = () => {
   };
 
 const [rows, setRows] = useState([]);
-// Get Back-end API URL to connect
-const API_URL = "https://localhost:7017/";
 
 useEffect(() => {
   async function fetchData() {

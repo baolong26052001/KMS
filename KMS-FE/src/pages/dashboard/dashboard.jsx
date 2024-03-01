@@ -10,6 +10,7 @@ import Paper from '@mui/material/Paper';
 import ButtonBase from '@mui/material/ButtonBase';
 import Stack from '@mui/material/Stack';
 import { DataGrid, GridToolbarExport } from '@mui/x-data-grid';
+import { API_URL } from '../../components/config/apiUrl';
 
 const statusImages = {
     1: require('../../images/online.png'), // Status: Online
@@ -19,10 +20,6 @@ const statusImages = {
   };
 
   function createData(id, kioskName, stationCode, kioskStatus, camStatus, scannerStatus, cashDeStatus, printerStatus) {
-    // const kioskStatusWithDate = kioskStatus + ` ${kisokdate}`;
-    // const camStatusWithDate = camStatus + ` ${kisokdate}`;
-    // const scannerStatusWithDate = scannerStatus + ` ${kisokdate}`;
-    // const cashDeStatusWithDate = cashDeStatus + ` ${kisokdate}`;
     return {id, kioskName, stationCode, kioskStatus: statusImages[kioskStatus], camStatus: statusImages[camStatus], scannerStatus: statusImages[scannerStatus], cashDeStatus: statusImages[cashDeStatus], printerStatus: statusImages[printerStatus]};
   }
   
@@ -112,8 +109,6 @@ const statusImages = {
      },
   ];
 
-  const rows = [];
-
 const Dashboard = () => {
   const [totalNumbers, setTotalNumbers] = useState({
     TotalKiosk: 0,
@@ -125,7 +120,7 @@ const Dashboard = () => {
   // Function to fetch total numbers from the API
   const fetchTotalNumbers = async () => {
     try {
-      const response = await fetch('https://localhost:7017/api/Dashboard/ShowTotalNumbers');
+      const response = await fetch(`${API_URL}api/Dashboard/ShowTotalNumbers`);
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
@@ -156,8 +151,6 @@ const Dashboard = () => {
       };
   
       const [rows, setRows] = useState([]);
-      // Get Back-end API URL to connect
-      const API_URL = "https://localhost:7017/";
     
       useEffect(() => {
         async function fetchData() {

@@ -1,12 +1,12 @@
-import React, { useState, useEffect  } from 'react';
+import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { useNavigate } from 'react-router-dom';
+import { API_URL } from '../../components/config/apiUrl';
 
 const AddStation = () => {
   const navigate = useNavigate();
-  const API_URL = "https://localhost:7017/";
   function getCookie(name) {
     const cookies = document.cookie.split(';');
     for (let i = 0; i < cookies.length; i++) {

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Navigate } from "react-router-dom";
 import Button from '@mui/material/Button';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
@@ -9,7 +8,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-
+import { API_URL } from '../../components/config/apiUrl';
 import '../login/login.css';
 
 const Login = ({onLogin }) => {
@@ -30,7 +29,6 @@ const Login = ({onLogin }) => {
   };
 
   const onFinish = async () => {
-    const API_URL = 'https://localhost:7017/';
 
     try {
       setValues({ ...values, loading: true }); 

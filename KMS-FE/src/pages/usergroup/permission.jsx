@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
 import { useParams, useNavigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
-
+import { API_URL } from '../../components/config/apiUrl';
 const columns = [
   {
     field: 'site',
@@ -83,7 +83,6 @@ const Permission = ({ routes }) => {
   const { id } = useParams();
   const [rows, setRows] = useState([]);
   const navigate = useNavigate();
-  const API_URL = "https://localhost:7017/";
 
   const [groupName, setGroupName] = useState({
     groupName: '',

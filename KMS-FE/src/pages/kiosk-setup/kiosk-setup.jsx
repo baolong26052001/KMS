@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid, GridToolbarExport } from '@mui/x-data-grid';
-import { Button, Box, Tooltip } from '@mui/material';
+import { Button, Tooltip } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import CustomButton from '../../components/CustomButton/customButton';
+import { API_URL } from '../../components/config/apiUrl';
 // Import from React Router
 import {useNavigate} from 'react-router-dom';
 //import css
@@ -311,8 +312,6 @@ const KioskSetup = () => {
     };
 
   const [rows, setRows] = useState([]);
-  // Get Back-end API URL to connect
-  const API_URL = "https://localhost:7017/";
 
   useEffect(() => {
     async function fetchData() {

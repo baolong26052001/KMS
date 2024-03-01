@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import dayjs from 'dayjs'; // Import dayjs
 import customParseFormat from 'dayjs/plugin/customParseFormat'; // Import the customParseFormat plugin
@@ -15,7 +14,7 @@ import Alert from '@mui/material/Alert';
 
 // import Delete Hook
 import useDeleteHook from '../../components/deleteHook/deleteHook';
-
+import { API_URL } from '../../components/config/apiUrl';
 import CustomButton from '../../components/CustomButton/customButton';
 
 dayjs.extend(customParseFormat);
@@ -261,7 +260,6 @@ const SlideDetail = () => {
     };
   
     const getRowId = (row) => row.id;
-    const API_URL = "https://localhost:7017/";
   
     const handleSearchButton = () => {
       setSearchTerm(searchTermButton);

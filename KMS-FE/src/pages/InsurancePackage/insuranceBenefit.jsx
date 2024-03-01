@@ -12,7 +12,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
-
+import { API_URL } from '../../components/config/apiUrl';
 // import Delete Hook
 import useDeleteHook from '../../components/deleteHook/deleteHook';
 import CustomButton from '../../components/CustomButton/customButton';
@@ -174,10 +174,7 @@ const InsurancePackageDetail = () => {
     const [rows, setRows] = useState([]);
     const { id } = useParams();
     const { packageName } = useParams();
-    
-    const API_URL = "https://localhost:7017/";
   
-    
     useEffect(() => {
       async function fetchData() {
         try {

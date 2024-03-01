@@ -2,12 +2,10 @@ import React, { useState, useEffect } from 'react';
 import dayjs from 'dayjs'; // Import dayjs
 import customParseFormat from 'dayjs/plugin/customParseFormat'; // Import the customParseFormat plugin
 import 'dayjs/locale/en'; // Import the English locale
-import { DataGrid, GridToolbarExport } from '@mui/x-data-grid';
-import { Button, Box } from '@mui/material';
-import {useNavigate} from 'react-router-dom';
+import { DataGrid } from '@mui/x-data-grid';
 import DateFilter from '../../components/dateFilter/DateFilter';
 import CustomButton from '../../components/CustomButton/customButton';
-
+import { API_URL } from '../../components/config/apiUrl';
 // Enable the customParseFormat plugin
 dayjs.extend(customParseFormat);
 dayjs.locale('en'); // Set the locale to English
@@ -57,7 +55,7 @@ const columns = [
   renderCell: (params) => (
     <CustomButton
       rowId={params.row.id}
-      label="Detail"
+      label="Details"
       onClick={handleButtonClick}
       //destination={`/viewUser/${params.row.id}`}
       color="info"
@@ -106,10 +104,6 @@ const columns = [
 },
 ];
 
-const rows = [];
-
-
-
 const TransactionLog = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchTermButton, setSearchTermButton] = useState('');
@@ -127,7 +121,6 @@ const TransactionLog = () => {
   };
 
   const getRowId = (row) => row.id;
-  const API_URL = "https://localhost:7017/";
 
   const handleSearchButton = () => {
     setSearchTerm(searchTermButton);
@@ -192,25 +185,21 @@ const TransactionLog = () => {
   
     fetchData();
   }, [searchTerm, startDate, endDate]);
-  
-  
-return (
-  
-  <div className="content"> 
 
+return (
+  <div className="content"> 
       <div className="admin-dashboard-text-div pt-5"> 
           <h1 className="h1-dashboard">Transaction Logs</h1>
       </div>
           <div className="bigcarddashboard">
-
-          <div className="Filter">
-          <DateFilter
-            startDate={startDate}
-            endDate={endDate}
-            handleStartDateChange={handleStartDateChange}
-            handleEndDateChange={handleEndDateChange}
-          />
-          </div>
+            <div className="Filter">
+              <DateFilter
+                startDate={startDate}
+                endDate={endDate}
+                handleStartDateChange={handleStartDateChange}
+                handleEndDateChange={handleEndDateChange}
+              />
+            </div>
               <div className="searchdivuser">
                   <input onChange={(event) => setSearchTermButton(event.target.value)} onKeyDown={handleKeyPress} placeholder="  Search..." type="text" id="kioskID myInput" name="kioskID" class="searchbar"></input>
                   <input onClick={() => {handleSearchButton()}} type="button" value="Search" className="button button-search"></input>

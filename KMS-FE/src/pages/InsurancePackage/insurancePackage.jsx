@@ -15,7 +15,7 @@ import Alert from '@mui/material/Alert';
 import CustomButton from '../../components/CustomButton/customButton';
 // import Delete Hook
 import useDeleteHook from '../../components/deleteHook/deleteHook';
-
+import { API_URL } from '../../components/config/apiUrl';
 // Enable the customParseFormat plugin
 dayjs.extend(customParseFormat);
 dayjs.locale('en'); // Set the locale to English
@@ -176,7 +176,6 @@ const InsurancePackageHeader = () => {
     };
   
     const getRowId = (row) => row.id;
-    const API_URL = "https://localhost:7017/";
   
     const handleSearchButton = () => {
       setSearchTerm(searchTermButton);

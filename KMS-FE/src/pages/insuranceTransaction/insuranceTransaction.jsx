@@ -5,6 +5,7 @@ import 'dayjs/locale/en'; // Import the English locale
 import { DataGrid } from '@mui/x-data-grid';
 import DateFilter from '../../components/dateFilter/DateFilter';
 import CustomButton from '../../components/CustomButton/customButton';
+import { API_URL } from '../../components/config/apiUrl';
 // Enable the customParseFormat plugin
 dayjs.extend(customParseFormat);
 dayjs.locale('en'); // Set the locale to English
@@ -86,8 +87,6 @@ const columns = [
   { field: 'status', headerName: 'Status', minWidth: 100, flex: 1,},
 ];
 
-const rows = [];
-
 const handleButtonClick = (id) => {
   // Handle button click, e.g., navigate to another page
   console.log(`Button clicked for row with ID: ${id}`);
@@ -110,7 +109,6 @@ const InsuranceTransaction = () => {
     };
   
     const getRowId = (row) => row.id;
-    const API_URL = "https://localhost:7017/";
   
     const handleSearchButton = () => {
       setSearchTerm(searchTermButton);

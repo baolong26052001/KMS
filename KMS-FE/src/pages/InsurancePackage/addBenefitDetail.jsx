@@ -5,10 +5,10 @@ import Button from '@mui/material/Button';
 import { useNavigate } from 'react-router-dom';
 import MenuItem from '@mui/material/MenuItem';
 import { useParams } from 'react-router-dom';
+import { API_URL } from '../../components/config/apiUrl';
 
 const AddBenefitDetail = () => {
   const navigate = useNavigate();
-  const API_URL = "https://localhost:7017/";
   function getCookie(name) {
     const cookies = document.cookie.split(';');
     for (let i = 0; i < cookies.length; i++) {

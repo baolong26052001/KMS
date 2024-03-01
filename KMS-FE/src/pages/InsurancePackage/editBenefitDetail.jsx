@@ -4,13 +4,13 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
+import { API_URL } from '../../components/config/apiUrl';
 
 const EditBenefitDetail = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { id } = useParams();
   const { benefitId } = location.state;
-  const API_URL = "https://localhost:7017/";
   function getCookie(name) {
     const cookies = document.cookie.split(';');
     for (let i = 0; i < cookies.length; i++) {

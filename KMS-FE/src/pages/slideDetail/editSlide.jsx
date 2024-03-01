@@ -5,13 +5,11 @@ import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
-
+import { API_URL } from '../../components/config/apiUrl';
 
 const EditSlideDetail = () => {
     const navigate = useNavigate();
-    const location = useLocation();
     const { id, packageName } = useParams();
-    const API_URL = "https://localhost:7017/";
     function getCookie(name) {
         const cookies = document.cookie.split(';');
         for (let i = 0; i < cookies.length; i++) {

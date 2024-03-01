@@ -8,6 +8,7 @@ import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 import Box from '@mui/material/Box';
 import { useAuth } from './components/AuthContext/AuthContext';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { API_URL } from './components/config/apiUrl';
 import NoPermission from './components/redirect/noPermission';
 
 import RouteDashboard from './pages/dashboard/dashboard';
@@ -133,7 +134,7 @@ function getCookie(name) {
 }
 
 function fetchPermissionInfo(groupId) {
-  const apiUrl = `https://localhost:7017/api/AccessRule/ShowPermissionInfoInEditPage/${groupId}`;
+  const apiUrl = `${API_URL}api/AccessRule/ShowPermissionInfoInEditPage/${groupId}`;
   return fetch(apiUrl)
     .then(response => response.json())
     .catch(error => {

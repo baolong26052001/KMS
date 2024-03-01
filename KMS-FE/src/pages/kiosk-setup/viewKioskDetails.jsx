@@ -4,6 +4,7 @@ import TableCell from '@mui/material/TableCell';
 import TableBody from '@mui/material/TableBody';
 import TableRow from '@mui/material/TableRow';
 import { useParams } from 'react-router-dom';
+import { API_URL } from '../../components/config/apiUrl';
 
 const statusDes = {
   1: "Online", // Status: Online
@@ -16,9 +17,6 @@ export default function ViewKioskDetails() {
 
   const { id } = useParams();
   const [Details, setDetails] = useState({});
-
-  // Get Back-end API URL to connect
-  const API_URL = "https://localhost:7017/";
 
   useEffect(() => {
     async function fetchData() {

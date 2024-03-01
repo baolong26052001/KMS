@@ -14,7 +14,7 @@ import Alert from '@mui/material/Alert';
 import useDeleteHook from '../../components/deleteHook/deleteHook';
 
 import CustomButton from '../../components/CustomButton/customButton';
-
+import { API_URL } from '../../components/config/apiUrl';
 const CustomToolbar = ({ onButtonClick, selectedRows }) => {
   const navigate = useNavigate();
   const { handleDelete, handleClose, open, alertMessage, severity  } = useDeleteHook('User/DeleteUsers'); 
@@ -61,7 +61,6 @@ const CustomToolbar = ({ onButtonClick, selectedRows }) => {
     </div>
   );
 };
-
 
 function createData(id, userName, email, userGroup, isActive, lastLogin, totalDaysDormant) {
   return {id, userName, email, userGroup, isActive, lastLogin, totalDaysDormant };
@@ -165,8 +164,6 @@ const User = () => {
     };
 
     const [rows, setRows] = useState([]);
-
-    const API_URL = "https://localhost:7017/";
   
     useEffect(() => {
       async function fetchData() {

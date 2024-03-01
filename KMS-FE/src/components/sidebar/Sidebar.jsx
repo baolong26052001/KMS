@@ -5,7 +5,7 @@ import { Link  } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import Divider from '@mui/material/Divider';
 import { HomeOutlined, ProfileOutlined, WifiOutlined, CreditCardOutlined, CopyOutlined, BellOutlined, AccountBookOutlined, MoneyCollectOutlined, FileTextOutlined, LockOutlined, SettingOutlined, UserOutlined, UsergroupAddOutlined, AppstoreAddOutlined } from '@ant-design/icons';
-
+import { API_URL } from '../../components/config/apiUrl';
 
 // Import Icon from MUI
 import HealthAndSafetyIcon from '@mui/icons-material/HealthAndSafety';
@@ -142,7 +142,7 @@ const Sidebar = () => {
 
   useEffect(() => {
     extractAndStoreChildrenKeys();
-    fetch('https://localhost:7017/api/AccessRule/ShowPermission')
+    fetch(`${API_URL}api/AccessRule/ShowPermission`)
       .then((response) => response.json())
       .then((data) => setPermissions(data))
       .catch((error) => console.error('Error fetching permissions:', error));

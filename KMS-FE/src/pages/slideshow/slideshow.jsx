@@ -11,7 +11,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
-
+import { API_URL } from '../../components/config/apiUrl';
 // import Delete Hook
 import useDeleteHook from '../../components/deleteHook/deleteHook';
 
@@ -201,7 +201,6 @@ const Slideshow = () => {
     };
   
     const getRowId = (row) => row.id;
-    const API_URL = "https://localhost:7017/";
   
     const handleSearchButton = () => {
       setSearchTerm(searchTermButton);

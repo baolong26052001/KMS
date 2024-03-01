@@ -3,12 +3,11 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { useParams, useNavigate } from 'react-router-dom';
+import { API_URL } from '../../components/config/apiUrl';
 
 const EditInsuranceType = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-
-  const API_URL = "https://localhost:7017/";
   function getCookie(name) {
     const cookies = document.cookie.split(';');
     for (let i = 0; i < cookies.length; i++) {

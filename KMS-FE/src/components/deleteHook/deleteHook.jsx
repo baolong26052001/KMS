@@ -1,5 +1,5 @@
 import { useState } from 'react';
-
+import { API_URL } from '../../components/config/apiUrl';
 function getCookie(name) {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
@@ -7,7 +7,7 @@ function getCookie(name) {
 }
 
 function fetchPermissionInfo(groupId) {
-  const apiUrl = `https://localhost:7017/api/AccessRule/ShowPermissionInfoInEditPage/${groupId}`;
+  const apiUrl = `${API_URL}api/AccessRule/ShowPermissionInfoInEditPage/${groupId}`;
   return fetch(apiUrl)
     .then(response => response.json())
     .catch(error => {
@@ -51,8 +51,6 @@ const useDeleteHook = (deleteEndpoint) => {
 
   const deleteItems = async (itemIds) => {
     try {
-      const API_URL = "https://localhost:7017/";
-
       const response = await fetch(`${API_URL}api/${deleteEndpoint}`, {
         method: 'DELETE',
         headers: {
