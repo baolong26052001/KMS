@@ -8,7 +8,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
-
+import CustomButton from '../../components/CustomButton/customButton';
 // import Delete Hook
 import useDeleteHook from '../../components/deleteHook/deleteHook';
 
@@ -59,24 +59,6 @@ const CustomToolbar = ({ onButtonClick, selectedRows }) => {
   );
 };
 
-const EditButton = ({ rowId, label, onClick }) => {
-  const navigate = useNavigate();
-
-  const handleClick = (event) => {
-    event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
-    onClick(rowId);
-    navigate(`/editAgeRange/${rowId}`);
-  };
-
-  return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0 }}>
-      <Button size="small"  variant="contained" color="warning" onClick={handleClick}>
-        {label}
-      </Button>
-    </Box>
-  );
-};
-
 function createData(id, description, dateCreated, dateModified) {
   return {id, description, dateCreated, dateModified };
 };
@@ -90,10 +72,14 @@ const columns = [
     sortable: false,
     filterable: false, 
     renderCell: (params) => (
-        <EditButton
+      <CustomButton
         rowId={params.row.id}
         label="Edit"
         onClick={handleButtonClick}
+        destination={`/editAgeRange/${params.row.id}`}
+        color="warning"
+        variant="contained"
+        size="small"
       />
     ),
   },

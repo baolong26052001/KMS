@@ -6,37 +6,15 @@ import { DataGrid, GridToolbarExport } from '@mui/x-data-grid';
 import { Button, Box } from '@mui/material';
 import {useNavigate} from 'react-router-dom';
 import DateFilter from '../../components/dateFilter/DateFilter';
-
+import CustomButton from '../../components/CustomButton/customButton';
 // Enable the customParseFormat plugin
 dayjs.extend(customParseFormat);
 dayjs.locale('en'); // Set the locale to English
 
-const ViewButton = ({ rowId, label, onClick }) => {
-  const navigate = useNavigate();
-
-  const handleClick = (event) => {
-    event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
-    onClick(rowId);
-    //navigate(`/viewAccount/${rowId}`);
-  };
-
-  return (
-    <Box sx={{alignItems: 'center' }}>
-      <Button size="small" variant="contained" onClick={handleClick}>
-        {label}
-      </Button>
-    </Box>
-  );
-};
-
 const handleButtonClick = (id) => {
   // Handle button click, e.g., navigate to another page
   console.log(`Button clicked for row with ID: ${id}`);
-  //navigate(`/viewAccount/${id}`);
 };
-
-
-
 
 function createData(id, memberId, accountId, loanTerm, debt, balance, transactionType, interestRate, isActive, loanDate) {
   return {id, memberId, accountId, loanTerm, debt, balance, transactionType, interestRate, isActive, loanDate};
@@ -51,10 +29,14 @@ const columns = [
     sortable: false, // Disable sorting for this column
     filterable: false, // Disable filtering for this column
     renderCell: (params) => (
-        <ViewButton
+      <CustomButton
         rowId={params.row.id}
         label="View"
         onClick={handleButtonClick}
+        //destination={`/viewStation/${params.row.id}`}
+        color="primary"
+        variant="contained"
+        size="small"
       />
     ),
   },

@@ -16,7 +16,8 @@ import Alert from '@mui/material/Alert';
 // import Delete Hook
 import useDeleteHook from '../../components/deleteHook/deleteHook';
 
-// Enable the customParseFormat plugin
+import CustomButton from '../../components/CustomButton/customButton';
+
 dayjs.extend(customParseFormat);
 dayjs.locale('en'); // Set the locale to English
 
@@ -146,41 +147,6 @@ const ViewImage = ({ imageUrl }) => {
   );
 };
 
-const ViewButton = ({ rowId, label, onClick }) => {
-  const navigate = useNavigate();
-  const handleClick = (event) => {
-    event.stopPropagation();
-    onClick(rowId);
-    navigate(`/viewSlideDetail/${rowId}`)
-  };
-
-  return (
-    <Box sx={{alignItems: 'center' }}>
-      <Button size="small" variant="contained" onClick={handleClick}>
-        {label}
-      </Button>
-    </Box>
-  );
-};
-
-const EditButton = ({ rowId, label, onClick }) => {
-  const navigate = useNavigate();
-  const { packageName } = useParams();
-  const handleClick = (event) => {
-    event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
-    onClick(rowId);
-    navigate(`/editSlideDetail/${rowId}/${packageName}`)
-  };
-
-  return (
-    <Box sx={{alignItems: 'center'}}>
-      <Button size="small"  variant="contained" color="warning" onClick={handleClick}>
-        {label}
-      </Button>
-    </Box>
-  );
-};
-
 function createData(id, description, typeContent, contentUrl, isActive, slideHeaderId, sequence, dateModified, dateCreated) {
   return {id, description, typeContent, contentUrl, isActive, slideHeaderId, sequence, dateModified, dateCreated};
 }
@@ -194,11 +160,15 @@ const columns = [
     sortable: false,
     filterable: false,
     renderCell: (params) => (
-      <ViewButton
-      rowId={params.row.id}
-      label="View"
-      onClick={handleButtonClick}
-    />
+      <CustomButton
+        rowId={params.row.id}
+        label="View"
+        onClick={handleButtonClick}
+        destination={`/viewSlideDetail/${params.row.id}`}
+        color="primary"
+        variant="contained"
+        size="small"
+      />
     ),
   },
   {
@@ -209,10 +179,15 @@ const columns = [
     sortable: false, // Disable sorting for this column
     filterable: false, // Disable filtering for this column
     renderCell: (params) => (
-        <EditButton
+      <CustomButton
         rowId={params.row.id}
+        packageName = {params.row.packageName}
         label="Edit"
         onClick={handleButtonClick}
+        destination={`/editSlideDetail/${params.row.id}/${params.row.packageName}`}
+        color="warning"
+        variant="contained"
+        size="small"
       />
     ),
   },

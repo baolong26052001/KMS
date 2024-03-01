@@ -15,6 +15,8 @@ import Alert from '@mui/material/Alert';
 // import Delete Hook
 import useDeleteHook from '../../components/deleteHook/deleteHook';
 
+import CustomButton from '../../components/CustomButton/customButton';
+
 // Enable the customParseFormat plugin
 dayjs.extend(customParseFormat);
 dayjs.locale('en'); // Set the locale to English
@@ -66,57 +68,6 @@ const CustomToolbar = ({ onButtonClick, selectedRows }) => {
   );
 };
 
-const ViewButton = ({ rowId, label, onClick }) => {
-  const navigate = useNavigate();
-  const handleClick = (event) => {
-    event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
-    onClick(rowId);
-    navigate(`/viewSlideShow/${rowId}`)
-  };
-
-  return (
-    <Box sx={{alignItems: 'center' }}>
-      <Button size="small" variant="contained" onClick={handleClick}>
-        {label}
-      </Button>
-    </Box>
-  );
-};
-
-const EditButton = ({ rowId, label, onClick }) => {
-  const navigate = useNavigate();
-  const handleClick = (event) => {
-    event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
-    onClick(rowId);
-    navigate(`/editSlideShow/${rowId}`)
-  };
-
-  return (
-    <Box sx={{alignItems: 'center'}}>
-      <Button size="small"  variant="contained" color="warning" onClick={handleClick}>
-        {label}
-      </Button>
-    </Box>
-  );
-};
-
-const DetailButton = ({ rowId, label, onClick, packageName }) => {
-  const navigate = useNavigate();
-  const handleClick = (event) => {
-    event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
-    onClick(rowId, packageName);
-    navigate(`/slideDetail/${rowId}/${packageName}`);
-  };
-
-  return (
-    <Box sx={{alignItems: 'center'}}>
-      <Button size="small"  variant="contained" color="info" onClick={handleClick}>
-        {label}
-      </Button>
-    </Box>
-  );
-};
-
 function createData(id, description, startDate, endDate, isActive, timeNext, dateModified, dateCreated) {
   return {id, description, startDate, endDate, isActive, timeNext, dateModified, dateCreated};
 }
@@ -130,10 +81,14 @@ const columns = [
     sortable: false, // Disable sorting for this column
     filterable: false, // Disable filtering for this column
     renderCell: (params) => (
-        <ViewButton
+      <CustomButton
         rowId={params.row.id}
         label="View"
         onClick={handleButtonClick}
+        destination={`/viewSlideShow/${params.row.id}`}
+        color="primary"
+        variant="contained"
+        size="small"
       />
     ),
   },
@@ -145,10 +100,14 @@ const columns = [
     sortable: false, // Disable sorting for this column
     filterable: false, // Disable filtering for this column
     renderCell: (params) => (
-        <EditButton
+      <CustomButton
         rowId={params.row.id}
         label="Edit"
         onClick={handleButtonClick}
+        destination={`/editSlideShow/${params.row.id}`}
+        color="warning"
+        variant="contained"
+        size="small"
       />
     ),
   },
@@ -161,11 +120,15 @@ const columns = [
     sortable: false, 
     filterable: false, 
     renderCell: (params) => (
-        <DetailButton
+      <CustomButton
         rowId={params.row.id}
         packageName = {params.row.description}
         label="Slide Detail"
         onClick={handleButtonClick}
+        destination={`/slideDetail/${params.row.id}/${params.row.description}`}
+        color="info"
+        variant="contained"
+        size="small"
       />
     ),
   },

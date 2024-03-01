@@ -44,7 +44,7 @@ function checkDeletePermission(permissionData, path) {
 }
 
 
-const useDeleteHook = (deleteEndpoint, fetchDataCallback) => {
+const useDeleteHook = (deleteEndpoint) => {
   const [open, setOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
   const [severity, setSeverity] = useState('');
@@ -110,7 +110,7 @@ const useDeleteHook = (deleteEndpoint, fetchDataCallback) => {
   };
   
 
-  const handleClose = (event, reason) => {
+  const handleClose = (reason) => {
     if (reason === 'clickaway') {
       return;
     }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid, GridToolbarExport } from '@mui/x-data-grid';
-import { Button, Box } from '@mui/material';
+import { Button } from '@mui/material';
 // import { useHistory } from 'react-router-dom'; // Import useHistory from React Router
 import {useNavigate} from 'react-router-dom';
 
@@ -13,6 +13,7 @@ import Alert from '@mui/material/Alert';
 // import Delete Hook
 import useDeleteHook from '../../components/deleteHook/deleteHook';
 
+import CustomButton from '../../components/CustomButton/customButton';
 
 const CustomToolbar = ({ onButtonClick, selectedRows }) => {
   const navigate = useNavigate();
@@ -61,42 +62,6 @@ const CustomToolbar = ({ onButtonClick, selectedRows }) => {
   );
 };
 
-const ViewButton = ({ rowId, label, onClick }) => {
-  const navigate = useNavigate();
-
-  const handleClick = (event) => {
-    event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
-    onClick(rowId);
-    navigate(`/viewUser/${rowId}`);
-  };
-
-  return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0 }}>
-      <Button size="small" variant="contained" onClick={handleClick}>
-        {label}
-      </Button>
-    </Box>
-
-  );
-};
-
-const EditButton = ({ rowId, label, onClick }) => {
-  const navigate = useNavigate();
-
-  const handleClick = (event) => {
-    event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
-    onClick(rowId);
-    navigate(`/editUser/${rowId}`);
-  };
-
-  return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0 }}>
-      <Button size="small" variant="contained" color="warning" onClick={handleClick}>
-        {label}
-      </Button>
-    </Box>
-  );
-};
 
 function createData(id, userName, email, userGroup, isActive, lastLogin, totalDaysDormant) {
   return {id, userName, email, userGroup, isActive, lastLogin, totalDaysDormant };
@@ -104,17 +69,21 @@ function createData(id, userName, email, userGroup, isActive, lastLogin, totalDa
 
 const columns = [ 
   {
-    field: 'permissionButton',
+    field: 'viewButton',
     headerName: '',
     width: 80,
     disableColumnMenu: true,
     sortable: false,
     filterable: false, 
     renderCell: (params) => (
-        <ViewButton
+      <CustomButton
         rowId={params.row.id}
         label="View"
         onClick={handleButtonClick}
+        destination={`/viewUser/${params.row.id}`}
+        color="primary"
+        variant="contained"
+        size="small"
       />
     ),
   },
@@ -126,10 +95,14 @@ const columns = [
     sortable: false,
     filterable: false, 
     renderCell: (params) => (
-        <EditButton
+      <CustomButton
         rowId={params.row.id}
         label="Edit"
         onClick={handleButtonClick}
+        destination={`/editUser/${params.row.id}`}
+        color="warning"
+        variant="contained"
+        size="small"
       />
     ),
   },

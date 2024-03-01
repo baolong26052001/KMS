@@ -6,56 +6,14 @@ import { DataGrid, GridToolbarExport } from '@mui/x-data-grid';
 import { Button, Box } from '@mui/material';
 import {useNavigate} from 'react-router-dom';
 import DateFilter from '../../components/dateFilter/DateFilter';
-
+import CustomButton from '../../components/CustomButton/customButton';
 // Enable the customParseFormat plugin
 dayjs.extend(customParseFormat);
 dayjs.locale('en'); // Set the locale to English
 
-const ViewButton = ({ rowId, label, onClick }) => {
-  const navigate = useNavigate();
-
-  const handleClick = (event) => {
-    event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
-    onClick(rowId);
-    // navigate(`/viewAccount/${rowId}`);
-  };
-
-  return (
-    <Box sx={{alignItems: 'center' }}>
-      <Button size="small" variant="contained" onClick={handleClick}>
-        {label}
-      </Button>
-    </Box>
-  );
-};
-
-
-const DetailButton = ({ rowId, label, onClick }) => {
-  const handleClick = (event) => {
-    event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
-    onClick(rowId);
-  };
-
-  return (
-    <Box sx={{alignItems: 'center' }}>
-      <Button size="small" variant="contained" onClick={handleClick} 
-              sx={{
-                  backgroundColor: 'gray', // Set the background color to gray
-                  '&:hover': {
-                    backgroundColor: '#999', // Change the background color on hover
-                  },
-                }}>
-        {label}
-      </Button>
-    </Box>
-  );
-};
-
 const handleButtonClick = (id) => {
   console.log(`Button clicked for row with ID: ${id}`);
 };
-
-
 
 function createData(id, transactionDate, station, upTime, downTime, lastUpdate) {
   return {id, transactionDate, station, upTime, downTime, lastUpdate};
@@ -70,25 +28,33 @@ const columns = [
     sortable: false, // Disable sorting for this column
     filterable: false, // Disable filtering for this column
     renderCell: (params) => (
-        <ViewButton
+      <CustomButton
         rowId={params.row.id}
         label="View"
         onClick={handleButtonClick}
+        //destination={`/viewStation/${params.row.id}`}
+        color="primary"
+        variant="contained"
+        size="small"
       />
     ),
   },
   {
     field: 'detailButton',
     headerName: '',
-    width: 100,
+    width: 90,
     disableColumnMenu: true,
     sortable: false, // Disable sorting for this column
     filterable: false, // Disable filtering for this column
     renderCell: (params) => (
-        <DetailButton
+      <CustomButton
         rowId={params.row.id}
         label="Details"
         onClick={handleButtonClick}
+        destination={`/viewStation/${params.row.id}`}
+        color="info"
+        variant="contained"
+        size="small"
       />
     ),
   },

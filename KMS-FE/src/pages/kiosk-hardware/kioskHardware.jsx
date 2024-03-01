@@ -1,35 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import {EyeOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
-
-//import Sidebar from '../components/sidebar/Sidebar';
-import { render } from '@testing-library/react';
-import {useNavigate} from 'react-router-dom';
-// import components from MUI
-import { DataGrid, GridColDef, GridValueGetterParams, GridToolbarExport } from '@mui/x-data-grid';
-import { Button, Box } from '@mui/material';
+import { DataGrid } from '@mui/x-data-grid';
+import CustomButton from '../../components/CustomButton/customButton';
 //import css
 import './kiosk-hardware.css';
 
 const handleButtonClick = (id) => {
   // Handle button click, e.g., navigate to another page
   console.log(`Button clicked for row with ID: ${id}`);
-};
-
-const ViewButton = ({ rowId, label, onClick }) => {
-  const navigate = useNavigate();
-  const handleClick = (event) => {
-    event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
-    onClick(rowId);
-    navigate(`/viewKioskHardware/${rowId}`);
-  };
-
-  return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0 }}>
-      <Button size="small" variant="contained" onClick={handleClick}>
-        {label}
-      </Button>
-    </Box>
-  );
 };
 
 function createData(id, memory, ipAddress, osName, osPlatform, osVersion) {
@@ -45,10 +22,14 @@ const columns = [
     sortable: false,
     filterable: false, 
     renderCell: (params) => (
-        <ViewButton
+      <CustomButton
         rowId={params.row.id}
         label="View"
         onClick={handleButtonClick}
+        destination={`/viewKioskHardware/${params.row.id}`}
+        color="primary"
+        variant="contained"
+        size="small"
       />
     ),
   },

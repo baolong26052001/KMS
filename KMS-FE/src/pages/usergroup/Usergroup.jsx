@@ -16,6 +16,8 @@ import Alert from '@mui/material/Alert';
 // import Delete Hook
 import useDeleteHook from '../../components/deleteHook/deleteHook';
 
+import CustomButton from '../../components/CustomButton/customButton';
+
 const CustomToolbar = ({ onButtonClick, selectedRows }) => {
   const navigate = useNavigate();
   const { handleDelete, handleClose, open, alertMessage, severity } = useDeleteHook('Usergroup/DeleteUsergroup'); 
@@ -67,47 +69,6 @@ function createData(id, groupName, dateModified, dateCreated, isActive) {
   return {id, groupName, dateModified, dateCreated, isActive };
 }
 
-const PermissionButton = ({ rowId, groupName, label, onClick }) => {
-  const navigate = useNavigate();
-
-  const handleClick = (event) => {
-    event.stopPropagation();
-    onClick(rowId);
-    navigate(`/permission/${rowId}`);
-  };
-
-  const isPermissionButtonVisible = groupName !== 'Admin';
-
-  return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-      {isPermissionButtonVisible && (
-        <Button size="small" variant="contained" color="error" onClick={handleClick}>
-          {label}
-        </Button>
-      )}
-    </Box>
-  );
-};
-
-
-const EditButton = ({ rowId, label, onClick }) => {
-  const navigate = useNavigate();
-
-  const handleClick = (event) => {
-    event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
-    onClick(rowId);
-    navigate(`/editGroup/${rowId}`);
-  };
-
-  return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-      <Button size="small"  variant="contained" color="warning" onClick={handleClick}>
-        {label}
-      </Button>
-    </Box>
-  );
-};
-
 const columns = [
   {
     field: 'editButton',
@@ -117,10 +78,14 @@ const columns = [
     sortable: false,
     filterable: false, 
     renderCell: (params) => (
-        <EditButton
+      <CustomButton
         rowId={params.row.id}
         label="Edit"
         onClick={handleButtonClick}
+        destination={`/editGroup/${params.row.id}`}
+        color="warning"
+        variant="contained"
+        size="small"
       />
     ),
   },
@@ -131,14 +96,23 @@ const columns = [
     disableColumnMenu: true,
     sortable: false,
     filterable: false, 
-    renderCell: (params) => (
-      <PermissionButton
-        rowId={params.row.id}
-        groupName={params.row.groupName}
-        label="Permission"
-        onClick={handleButtonClick}
-      />
-    ),
+    renderCell: (params) => {
+      if (params.row.id !== 1) {
+        return (
+          <CustomButton
+            rowId={params.row.id}
+            label="Permission"
+            onClick={handleButtonClick}
+            destination={`/permission/${params.row.id}`}
+            color="error"
+            variant="contained"
+            size="small"
+          />
+        );
+      } else {
+        return null;
+      }
+    },
   },
   { field: 'id', headerName: 'Group ID', minWidth: 100, flex: 1, },
   { field: 'groupName', headerName: 'Group Name', minWidth: 200, flex: 1, },
@@ -158,7 +132,6 @@ const columns = [
     flex: 1,
   },
 ];
-
 
 const handleButtonClick = (id) => {
   // Handle button click, e.g., navigate to another page

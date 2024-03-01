@@ -15,7 +15,7 @@ import Alert from '@mui/material/Alert';
 
 // import Delete Hook
 import useDeleteHook from '../../components/deleteHook/deleteHook';
-
+import CustomButton from '../../components/CustomButton/customButton';
 // Enable the customParseFormat plugin
 dayjs.extend(customParseFormat);
 dayjs.locale('en'); // Set the locale to English
@@ -71,23 +71,6 @@ const CustomToolbar = ({ onButtonClick, selectedRows }) => {
     );
 };
 
-const ViewButton = ({ rowId, label, onClick }) => {
-  const navigate = useNavigate();
-  const handleClick = (event) => {
-    event.stopPropagation(); 
-    onClick(rowId);
-    navigate(`/benefitDetail/${rowId}`);
-  };
-
-  return (
-    <Box sx={{alignItems: 'center' }}>
-      <Button size="small" variant="contained" color="info" onClick={handleClick}>
-        {label}
-      </Button>
-    </Box>
-  );
-};
-
 const EditButton = ({ rowId, label, onClick}) => {
   const { id: packageId } = useParams();
   const { packageName } = useParams();
@@ -134,17 +117,21 @@ const columns = [
     ),
   },
   {
-    field: 'viewButton',
+    field: 'detailButton',
     headerName: '',
     width: 80,
     disableColumnMenu: true,
     sortable: false, // Disable sorting for this column
     filterable: false, // Disable filtering for this column
     renderCell: (params) => (
-        <ViewButton
+      <CustomButton
         rowId={params.row.id}
         label="Details"
         onClick={handleButtonClick}
+        destination={`/benefitDetail/${params.row.id}`}
+        color="info"
+        variant="contained"
+        size="small"
       />
     ),
   },
@@ -176,8 +163,6 @@ const columns = [
     flex: 1,
   },
 ];
-
-const rows = [];
 
 const handleButtonClick = (id) => {
   // Handle button click, e.g., navigate to another page

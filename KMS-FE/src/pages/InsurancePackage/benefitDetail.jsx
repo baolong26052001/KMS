@@ -14,7 +14,6 @@ import Alert from '@mui/material/Alert';
 
 // import Delete Hook
 import useDeleteHook from '../../components/deleteHook/deleteHook';
-
 // Enable the customParseFormat plugin
 dayjs.extend(customParseFormat);
 dayjs.locale('en'); // Set the locale to English
@@ -144,7 +143,6 @@ const InsurancePackageDetail = () => {
     const [selectedRowIds, setSelectedRowIds] = useState([]);
     const [rows, setRows] = useState([]);
     const { id } = useParams();
-    const navigate = useNavigate();
     const API_URL = "https://localhost:7017/";
     const goBack = () => {
       window.history.back();

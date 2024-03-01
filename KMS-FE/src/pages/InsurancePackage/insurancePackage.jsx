@@ -12,7 +12,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
-
+import CustomButton from '../../components/CustomButton/customButton';
 // import Delete Hook
 import useDeleteHook from '../../components/deleteHook/deleteHook';
 
@@ -67,57 +67,6 @@ const CustomToolbar = ({ onButtonClick, selectedRows }) => {
     );
 };
 
-const ViewButton = ({ rowId, label, onClick, packageName }) => {
-  const navigate = useNavigate();
-  const handleClick = (event) => {
-    event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
-    onClick(rowId, packageName);
-    navigate(`/viewPackageDetail/${rowId}/${packageName}`);
-  };
-
-  return (
-    <Box sx={{alignItems: 'center' }}>
-      <Button size="small" variant="contained" color="success" onClick={handleClick}>
-        {label}
-      </Button>
-    </Box>
-  );
-};
-
-const DetailButton = ({ rowId, label, onClick, packageName }) => {
-  const navigate = useNavigate();
-  const handleClick = (event) => {
-    event.stopPropagation(); 
-    onClick(rowId, packageName);
-    navigate(`/insurancePackageDetail/${rowId}`);
-  };
-
-  return (
-    <Box sx={{alignItems: 'center' }}>
-      <Button size="small" variant="contained" color="info" onClick={handleClick}>
-        {label}
-      </Button>
-    </Box>
-  );
-};
-
-const EditButton = ({ rowId, label, onClick }) => {
-  const navigate = useNavigate();
-    const handleClick = (event) => {
-      event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
-      onClick(rowId);
-      navigate(`/editInsurancePackage/${rowId}`);
-    };
-   
-    return (
-      <Box sx={{alignItems: 'center'}}>
-        <Button size="small"  variant="contained" color="warning" onClick={handleClick}>
-          {label}
-        </Button>
-      </Box>
-    );
-  };
-
 function createData(id, packageName, insuranceType, provider, term, priority, dateModified, dateCreated, isActive) {
   return {id, packageName, insuranceType, provider, term, priority, dateModified, dateCreated, isActive};
 }
@@ -131,10 +80,14 @@ const columns = [
     sortable: false, // Disable sorting for this column
     filterable: false, // Disable filtering for this column
     renderCell: (params) => (
-        <EditButton
+      <CustomButton
         rowId={params.row.id}
         label="Edit"
         onClick={handleButtonClick}
+        destination={`/editInsurancePackage/${params.row.id}`}
+        color="warning"
+        variant="contained"
+        size="small"
       />
     ),
   },
@@ -146,27 +99,34 @@ const columns = [
     sortable: false, // Disable sorting for this column
     filterable: false, // Disable filtering for this column
     renderCell: (params) => (
-        <DetailButton
+      <CustomButton
         rowId={params.row.id}
-        packageName = {params.row.packageName}
         label="Details"
         onClick={handleButtonClick}
+        destination={`/insurancePackageDetail/${params.row.id}`}
+        color="info"
+        variant="contained"
+        size="small"
       />
     ),
   },
   {
-    field: 'viewButton',
+    field: 'benefitButton',
     headerName: '',
     width: 100,
     disableColumnMenu: true,
     sortable: false, // Disable sorting for this column
     filterable: false, // Disable filtering for this column
     renderCell: (params) => (
-        <ViewButton
+      <CustomButton
         rowId={params.row.id}
         packageName = {params.row.packageName}
         label="Benefits"
         onClick={handleButtonClick}
+        destination={`/viewPackageDetail/${params.row.id}/${params.row.packageName}`}
+        color="primary"
+        variant="contained"
+        size="small"
       />
     ),
   },

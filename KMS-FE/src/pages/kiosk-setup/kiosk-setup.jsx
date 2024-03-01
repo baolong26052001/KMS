@@ -5,7 +5,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
-
+import CustomButton from '../../components/CustomButton/customButton';
 // Import from React Router
 import {useNavigate} from 'react-router-dom';
 //import css
@@ -58,42 +58,6 @@ const CustomToolbar = ({ onButtonClick, selectedRows }) => {
       </Snackbar>
       <GridToolbarExport />
     </div>
-  );
-};
-
-
-const ViewButton = ({ rowId, label, onClick }) => {
-  const navigate = useNavigate();
-
-  const handleClick = (event) => {
-    event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
-    onClick(rowId);
-    navigate(`/viewKioskDetails/${rowId}`);
-  };
-
-  return (
-    <Box sx={{alignItems: 'center' }}>
-      <Button size="small" variant="contained" onClick={handleClick}>
-        {label}
-      </Button>
-    </Box>
-  );
-};
-
-const EditButton = ({ rowId, label, onClick }) => {
-  const navigate = useNavigate();
-  const handleClick = (event) => {
-    event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
-    onClick(rowId);
-    navigate(`/editKiosk/${rowId}`);
-  };
-
-  return (
-    <Box sx={{alignItems: 'center'}}>
-      <Button size="small"  variant="contained" color="warning" onClick={handleClick}>
-        {label}
-      </Button>
-    </Box>
   );
 };
 
@@ -178,10 +142,14 @@ const columns = [
     sortable: false, // Disable sorting for this column
     filterable: false, // Disable filtering for this column
     renderCell: (params) => (
-        <ViewButton
+      <CustomButton
         rowId={params.row.id}
         label="View"
         onClick={handleButtonClick}
+        destination={`/viewKioskDetails/${params.row.id}`}
+        color="primary"
+        variant="contained"
+        size="small"
       />
     ),
   },
@@ -193,10 +161,14 @@ const columns = [
     sortable: false, // Disable sorting for this column
     filterable: false, // Disable filtering for this column
     renderCell: (params) => (
-        <EditButton
+      <CustomButton
         rowId={params.row.id}
         label="Edit"
         onClick={handleButtonClick}
+        destination={`/editKiosk/${params.row.id}`}
+        color="warning"
+        variant="contained"
+        size="small"
       />
     ),
   },
@@ -317,8 +289,6 @@ const columns = [
     ),
   },
 ];
-
-const rows = [];
 
 const handleButtonClick = (id) => {
   // Handle button click, e.g., navigate to another page

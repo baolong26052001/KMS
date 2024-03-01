@@ -12,6 +12,7 @@ import Alert from '@mui/material/Alert';
 // import Delete Hook
 import useDeleteHook from '../../components/deleteHook/deleteHook';
 
+import CustomButton from '../../components/CustomButton/customButton';
 
 const CustomToolbar = ({ onButtonClick, selectedRows }) => {
   const navigate = useNavigate();
@@ -61,40 +62,6 @@ const CustomToolbar = ({ onButtonClick, selectedRows }) => {
   );
 };
 
-const ViewButton = ({ rowId, label, onClick }) => {
-  const navigate = useNavigate();
-  const handleClick = (event) => {
-    event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
-    onClick(rowId);
-    navigate(`/viewStation/${rowId}`);
-  };
-
-  return (
-    <Box sx={{alignItems: 'center' }}>
-      <Button size="small" variant="contained" onClick={handleClick}>
-        {label}
-      </Button>
-    </Box>
-  );
-};
-
-const EditButton = ({ rowId, label, onClick }) => {
-  const navigate = useNavigate();
-  const handleClick = (event) => {
-    event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
-    onClick(rowId);
-    navigate(`/editStation/${rowId}`);
-  };
-
-  return (
-    <Box sx={{alignItems: 'center'}}>
-      <Button size="small"  variant="contained" color="warning" onClick={handleClick}>
-        {label}
-      </Button>
-    </Box>
-  );
-};
-
 function createData(id, stationName, companyName, city, address, isActive) {
   return {id, stationName, companyName, city, address, isActive};
 }
@@ -108,10 +75,14 @@ const columns = [
     sortable: false,
     filterable: false,
     renderCell: (params) => (
-      <ViewButton
+      <CustomButton
         rowId={params.row.id}
         label="View"
         onClick={handleButtonClick}
+        destination={`/viewStation/${params.row.id}`}
+        color="primary"
+        variant="contained"
+        size="small"
       />
     ),
   },
@@ -123,10 +94,14 @@ const columns = [
     sortable: false,
     filterable: false,
     renderCell: (params) => (
-      <EditButton
+      <CustomButton
         rowId={params.row.id}
         label="Edit"
         onClick={handleButtonClick}
+        destination={`/editStation/${params.row.id}`}
+        color="warning"
+        variant="contained"
+        size="small"
       />
     ),
   },
@@ -151,8 +126,6 @@ const columns = [
     flex: 1,
   },
 ];
-
-const rows = [];
 
 const handleButtonClick = (id) => {
   // Handle button click, e.g., navigate to another page

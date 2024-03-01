@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid, GridToolbarExport } from '@mui/x-data-grid';
-import { Button, Box } from '@mui/material';
+import { Button } from '@mui/material';
 import {useNavigate} from 'react-router-dom';
 
 //import MUI Library
@@ -8,7 +8,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
-
+import CustomButton from '../../components/CustomButton/customButton';
 // import Delete Hook
 import useDeleteHook from '../../components/deleteHook/deleteHook';
 
@@ -58,24 +58,6 @@ const CustomToolbar = ({ onButtonClick, selectedRows }) => {
   );
 };
 
-const EditButton = ({ rowId, label, onClick }) => {
-  const navigate = useNavigate();
-
-  const handleClick = (event) => {
-    event.stopPropagation(); // Stop the click event from propagating to the parent DataGrid row
-    onClick(rowId);
-    navigate(`/editInsuranceType/${rowId}`);
-  };
-
-  return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0 }}>
-      <Button size="small"  variant="contained" color="warning" onClick={handleClick}>
-        {label}
-      </Button>
-    </Box>
-  );
-};
-
 function createData(id, typeName, dateCreated, dateModified) {
   return {id, typeName, dateCreated, dateModified };
 };
@@ -89,10 +71,14 @@ const columns = [
     sortable: false,
     filterable: false, 
     renderCell: (params) => (
-        <EditButton
+      <CustomButton
         rowId={params.row.id}
         label="Edit"
         onClick={handleButtonClick}
+        destination={`/editInsuranceType/${params.row.id}`}
+        color="warning"
+        variant="contained"
+        size="small"
       />
     ),
   },
