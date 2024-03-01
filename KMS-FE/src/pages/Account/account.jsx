@@ -140,7 +140,7 @@ const Account = () => {
         if (startDate || endDate) {
           apiUrl = `${API_URL}api/Account/FilterAccount?startDate=${encodeURIComponent(dayjs(startDate).format('YYYY/MM/DD'))}&endDate=${encodeURIComponent(dayjs(endDate).format('YYYY/MM/DD'))}`;
           if (searchTerm) {
-            searchApi = `${API_URL}api/Account/FilterAccount?searchQuery=${encodeURIComponent(searchTerm)}`;
+            searchApi = `${API_URL}api/Account/SearchAccount?searchQuery=${encodeURIComponent(searchTerm)}`;
           }
         } else if (searchTerm) {
           apiUrl = `${API_URL}api/Account/SearchAccount?searchQuery=${encodeURIComponent(searchTerm)}`;
