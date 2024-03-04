@@ -35,7 +35,7 @@ namespace KMS.Controllers
 
             try
             {
-                string query = "select a.id, a.memberId, m.fullname, a.contractId, m.phone, m.bankName, m.department, m.companyName, m.address1, m.isActive, m.dateCreated " +
+                string query = "select a.id, a.memberId, m.fullname, a.contractId, m.phone, m.email, m.idenNumber, m.bankName, m.department, m.companyName, m.address1, m.isActive, m.dateCreated " +
                 "from LAccount a, LMember m " +
                 "where a.memberId = m.id";
 
@@ -60,7 +60,7 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = "select a.id, a.memberId, m.fullname, a.contractId, m.phone, m.bankName, m.department, m.companyName, m.address1, m.isActive, m.dateCreated " +
+                string query = "select a.id, a.memberId, m.fullname, a.contractId, m.phone, m.email, m.idenNumber, m.bankName, m.department, m.companyName, m.address1, m.isActive, m.dateCreated " +
                 "from LAccount a, LMember m " +
                 "where a.memberId = m.id and a.id=@Id";
 
@@ -96,8 +96,8 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = "SELECT a.id, a.memberId, m.fullname, a.contractId, m.phone, m.bankName, m.department, m.companyName, m.address1, a.status, a.dateCreated " +
-                "FROM LAccount a INNER JOIN LMember m ON a.memberId = m.id ";
+                string query = "select a.id, a.memberId, m.fullname, a.contractId, m.phone, m.email, m.idenNumber, m.bankName, m.department, m.companyName, m.address1, m.isActive, m.dateCreated " +
+                "FROM LAccount a LEFT JOIN LMember m ON a.memberId = m.id ";
 
                 List<SqlParameter> parameters = new List<SqlParameter>();
 
@@ -193,11 +193,9 @@ namespace KMS.Controllers
         [Route("SearchAccount")]
         public JsonResult SearchAccount(string searchQuery)
         {
-            string query = "SELECT a.id, a.memberId, a.contractId, " +
-                           "m.phone, m.fullname, m.bankName, m.department, m.companyName, m.address1, m.isActive, m.dateCreated, " +
-                           "a.accountName, a.accountType, a.balance, a.rate, a.dateDue, a.status, a.dateModified, a.dateCreated, a.isActive " +
+            string query = "select a.id, a.memberId, m.fullname, a.contractId, m.phone, m.email, m.idenNumber, m.bankName, m.department, m.companyName, m.address1, m.isActive, m.dateCreated " +
                            "FROM LAccount a " +
-                           "INNER JOIN LMember m ON a.memberId = m.id " +
+                           "LEFT JOIN LMember m ON a.memberId = m.id " +
                            "WHERE a.id LIKE @searchQuery OR " +
                            "a.memberId LIKE @searchQuery OR " +
                            "a.contractId LIKE @searchQuery OR " +
