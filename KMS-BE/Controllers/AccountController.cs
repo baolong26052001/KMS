@@ -206,6 +206,8 @@ namespace KMS.Controllers
                            "CONVERT(VARCHAR(20), a.rate) LIKE @searchQuery OR " +
                            "a.status LIKE @searchQuery OR " +
                            "m.phone LIKE @searchQuery OR " +
+                           "m.email LIKE @searchQuery OR " +
+                           "m.idenNumber LIKE @searchQuery OR " +
                            "m.bankName LIKE @searchQuery OR " +
                            "m.department LIKE @searchQuery OR " +
                            "m.companyName LIKE @searchQuery OR " +
