@@ -16,8 +16,8 @@ const handleButtonClick = (id) => {
   //navigate(`/viewAccount/${id}`);
 };
 
-function createData(id, memberId, memberName, contractId, phoneNumber, department, company, bankName, memberAddress, status, dateCreated) {
-  return {id, memberId, memberName, contractId, phoneNumber, department, company, bankName, memberAddress, status, dateCreated};
+function createData(id, memberId, memberName, contractId, phoneNumber, email, department, company, bankName, memberAddress, status, dateCreated) {
+  return {id, memberId, memberName, contractId, phoneNumber, email, department, company, bankName, memberAddress, status, dateCreated};
 }
 
 const columns = [
@@ -49,6 +49,22 @@ const columns = [
     sortable: false,
     disableColumnMenu: true,
   },
+  { field: 'email', headerName: 'Email', minWidth: 150,  
+    flex: 1,
+    sortable: false,
+    disableColumnMenu: true,
+  },
+  {
+    field: 'memberAddress',
+    headerName: 'Member Address',
+    minWidth: 250,
+    flex: 1,
+    sortable: false,
+    disableColumnMenu: true,
+    renderCell: (params) => (
+        <div style={{ whiteSpace: 'pre-wrap' }}>{params.value}</div>
+    ),
+  },
   {
     field: 'department',
     headerName: 'Department',
@@ -72,17 +88,6 @@ const columns = [
     flex: 1,
     sortable: false,
     disableColumnMenu: true,
-  },
-  {
-    field: 'memberAddress',
-    headerName: 'Member Address',
-    minWidth: 250,
-    flex: 1,
-    sortable: false,
-    disableColumnMenu: true,
-    renderCell: (params) => (
-        <div style={{ whiteSpace: 'pre-wrap' }}>{params.value}</div>
-    ),
   },
   {
     field: 'status',
@@ -150,7 +155,6 @@ const Account = () => {
           fetch(apiUrl, {
             headers: {
               Authorization: `Bearer ${localStorage.token}`,
-              //Authorization: 'Bearer eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW41IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3MDYxNTU5NTZ9.UjfuLu7AG1AnkzNLxJj29O5fS3tLNHBqRHO8mNckHAc', // Include Bearer token in the Authorization header
             },
           }),
           searchApi ? fetch(searchApi) : Promise.resolve(null),
@@ -179,7 +183,7 @@ const Account = () => {
           }
         
           const updatedRows = filteredRows.map(row =>
-            createData(row.id, row.memberId, row.fullname, row.contractId, row.phone, row.department, row.companyName, row.bankName, row.address1, row.isActive, row.dateCreated)
+            createData(row.id, row.memberId, row.fullname, row.contractId, row.phone, row.email, row.department, row.companyName, row.bankName, row.address1, row.isActive, row.dateCreated)
           );
         
           setRows(updatedRows); 

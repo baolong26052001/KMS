@@ -45,11 +45,11 @@ const ViewModal = ({ open, handleClose, imageUrl }) => {
                 const isVideo = ['mp4', 'webm', 'ogg'].includes(fileExtension);
 
                 if (isImage) {
-                  return <img src={require(`../../../../KioskApp/Insurance/bin/Debug/net6.0-windows/images/${imageUrl}`)} alt="Image" style={{ width: '100%' }} />;
+                  return <img src={require(`../../../../KMS-BE/bin/Debug/net6.0/images/${imageUrl}`)} alt="Image" style={{ width: '100%' }} />;
                 } else if (isVideo) {
                   return (
                     <video controls style={{ width: '100%' }}>
-                      <source src={require(`../../../../KioskApp/Insurance/bin/Debug/net6.0-windows/images/${imageUrl}`)} type={`video/${fileExtension}`} />
+                      <source src={require(`../../../../KMS-BE/bin/Debug/net6.0/images/${imageUrl}`)} type={`video/${fileExtension}`} />
                       Your browser does not support the video tag.
                     </video>
                   );

@@ -23,8 +23,7 @@ dayjs.locale('en'); // Set the locale to English
 const CustomToolbar = ({ onButtonClick, selectedRows }) => {
     const navigate = useNavigate();
     const { handleDelete, handleClose, open, alertMessage, severity } = useDeleteHook('InsurancePackageHeader/DeleteInsurancePackageHeader'); 
-  
-    // const [open, setOpen] = React.useState(false);
+
     const handleButtonClick = (buttonId) => {
       onButtonClick(buttonId);
       
@@ -32,9 +31,7 @@ const CustomToolbar = ({ onButtonClick, selectedRows }) => {
         navigate('/addInsurancePackage');
   
       } else if (buttonId === 'Delete') {
-  
         const userIdsToDelete = selectedRows;
-  
         handleDelete(userIdsToDelete);
       }
     };
@@ -151,8 +148,6 @@ const columns = [
   },
   { field: 'isActive', headerName: 'Is Active', minWidth: 100, flex: 1,},
 ];
-
-const rows = [];
 
 const handleButtonClick = (id) => {
   // Handle button click, e.g., navigate to another page
