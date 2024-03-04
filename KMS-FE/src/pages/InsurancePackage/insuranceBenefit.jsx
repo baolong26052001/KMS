@@ -136,12 +136,12 @@ const columns = [
     ),
   },
   { field: 'id', headerName: 'Package Benefit ID', minWidth: 180, flex: 1,},
-  { field: 'content', headerName: 'Content', minWidth: 300, flex: 1,},
-  { field: 'coverage', headerName: 'Coverage', minWidth: 150, flex: 1, renderCell: (params) => formatNumber(params.value)},
+  { field: 'content', headerName: 'Content', minWidth: 400, flex: 1,},
+  { field: 'coverage', headerName: 'Coverage', minWidth: 500, flex: 1, renderCell: (params) => formatNumber(params.value)},
   { 
     field: 'description', 
     headerName: 'Description', 
-    minWidth: 600, 
+    minWidth: 400, 
     flex: 1,
     renderCell: (params) => (
       <div style={{ whiteSpace: 'pre-wrap'}} title={params.value}>
@@ -195,7 +195,7 @@ const InsurancePackageDetail = () => {
               createData(row.id, row.content, row.coverage, row.description, row.dateModified, row.dateCreated)
             );
           
-            setRows(updatedRows); // Update the component state with the combined data
+            setRows(updatedRows);
           } else {
             console.error('Invalid data structure:', responseData);
           }

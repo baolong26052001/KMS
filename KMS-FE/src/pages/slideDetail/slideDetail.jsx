@@ -179,11 +179,9 @@ const columns = [
     filterable: false, // Disable filtering for this column
     renderCell: (params) => (
       <CustomButton
-        rowId={params.row.id}
-        packageName = {params.row.packageName}
         label="Edit"
         onClick={handleButtonClick}
-        destination={`/editSlideDetail/${params.row.id}/${params.row.packageName}`}
+        destination={`/editSlideDetail/${params.row.id}/${localStorage.getItem("packageName")}`}
         color="warning"
         variant="contained"
         size="small"
@@ -251,6 +249,7 @@ const SlideDetail = () => {
     const [endDate, setEndDate] = useState(null);
     const [rows, setRows] = useState([]);
     const { id, packageName } = useParams();
+    localStorage.setItem('packageName', packageName);
     const handleStartDateChange = (date) => {
       setStartDate(date);
     };
