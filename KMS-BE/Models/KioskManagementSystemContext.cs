@@ -551,71 +551,67 @@ namespace KMS.Models
             {
                 entity.ToTable("LoanTransaction");
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Id)
+                    .HasColumnName("id");
 
-                entity.Property(e => e.AccountId).HasColumnName("accountId");
 
-                entity.Property(e => e.Balance).HasColumnName("balance");
+                entity.Property(e => e.AccountId)
+                    .HasColumnName("accountId");
+                    
 
-                entity.Property(e => e.Debt).HasColumnName("debt");
+                entity.Property(e => e.ContractId)
+                    .HasColumnName("contractId");
 
-                entity.Property(e => e.DueDate)
-                    .HasColumnType("datetime")
-                    .HasColumnName("dueDate");
+                entity.Property(e => e.Debt)
+                    .HasColumnName("debt");
+                    
 
-                entity.Property(e => e.InterestRate).HasColumnName("interestRate");
+                entity.Property(e => e.TotalDebtMustPay)
+                    .HasColumnName("totalDebtMustPay");
 
-                entity.Property(e => e.IsActive).HasColumnName("isActive");
+                entity.Property(e => e.DebtPayPerMonth)
+                    .HasColumnName("debtPayPerMonth");
+
+                entity.Property(e => e.LoanRate)
+                    .HasColumnName("loanRate");
 
                 entity.Property(e => e.LoanDate)
-                    .HasColumnType("datetime")
-                    .HasColumnName("loanDate");
+                    .HasColumnName("loanDate")
+                    .HasColumnType("datetime");
 
-                entity.Property(e => e.LoanTerm).HasColumnName("loanTerm");
 
-                entity.Property(e => e.MemberId).HasColumnName("memberId");
+                entity.Property(e => e.DueDate)
+                    .HasColumnName("dueDate")
+                    .HasColumnType("datetime");
+                    
 
-                entity.Property(e => e.TransactionType)
-                    .HasMaxLength(50)
-                    .HasColumnName("transactionType");
+                entity.Property(e => e.LoanTerm)
+                    .HasColumnName("loanTerm");
             });
+
 
             modelBuilder.Entity<LoanTransactionDetail>(entity =>
             {
                 entity.ToTable("LoanTransactionDetail");
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.HasKey(e => e.Id);
 
-                entity.Property(e => e.AccountId).HasColumnName("accountId");
+                entity.Property(e => e.Id)
+                    .HasColumnName("id");
 
-                entity.Property(e => e.ActualPayback).HasColumnName("actualPayback");
+                entity.Property(e => e.LoanHeaderId)
+                    .HasColumnName("loanHeaderId");
 
-                entity.Property(e => e.BeginningBalance).HasColumnName("beginningBalance");
+                entity.Property(e => e.PaidAmount)
+                    .HasColumnName("paidAmount");
 
-                entity.Property(e => e.ContractId).HasColumnName("contractId");
+                entity.Property(e => e.DebtRemaining)
+                    .HasColumnName("debtRemaining");
 
-                entity.Property(e => e.DateCreated)
-                    .HasColumnType("datetime")
-                    .HasColumnName("dateCreated");
-
-                entity.Property(e => e.EndingBalance).HasColumnName("endingBalance");
-
-                entity.Property(e => e.InterestRate).HasColumnName("interestRate");
-
-                entity.Property(e => e.IsActive).HasColumnName("isActive");
-
-                entity.Property(e => e.LoanTransactionId).HasColumnName("loanTransactionId");
-
-                entity.Property(e => e.MemberId).HasColumnName("memberId");
-
-                entity.Property(e => e.PaymentDate)
-                    .HasColumnType("datetime")
-                    .HasColumnName("paymentDate");
-
-                entity.Property(e => e.ScheduledPayment).HasColumnName("scheduledPayment");
-
-                entity.Property(e => e.Status).HasColumnName("status");
+                entity.Property(e => e.TransactionDate)
+                    .HasColumnName("transactionDate");
             });
+
 
             modelBuilder.Entity<LtransactionLog>(entity =>
             {

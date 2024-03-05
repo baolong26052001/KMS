@@ -79,15 +79,13 @@ namespace KMS.Controllers
         }
 
         [HttpGet]
-        [Route("ShowLoanTransactionDetail/{id}")]
+        [Route("ShowLoanTransactionDetailByHeaderId/{id}")]
         public JsonResult GetLoanTransactionDetail(int id)
         {
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = "select ltd.*, lt.loanDate, lt.dueDate, lt.debt " +
-                "from LoanTransactionDetail ltd, LoanTransaction lt " +
-                "where ltd.loanTransactionId = lt.id and lt.id=@id";
+                string query = @"select * from LoanTransactionDetail where loanHeaderId = @id";
 
                 SqlParameter parameter = new SqlParameter("@id", id);
                 DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
@@ -112,6 +110,118 @@ namespace KMS.Controllers
             
         }
 
+        [HttpPost]
+        [Route("SaveLoanTransaction")]
+        public JsonResult SaveLoanTransaction([FromBody] LoanTransaction loanTransaction)
+        {
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                Random random = new Random();
+                int contractId = random.Next(10000000, 99999999);
+
+                string query = @"DECLARE @DueDate AS DATE
+                SET @DueDate = DATEADD(MONTH, @LoanTerm, GETDATE())
+                INSERT INTO LoanTransaction (accountId, contractId, loanTerm, debt, totalDebtMustPay, debtPayPerMonth, loanRate, loanDate, dueDate, status)
+                VALUES (@AccountId, @ContractId, @LoanTerm, @Debt, @TotalDebtMustPay, @DebtPayPerMonth, @LoanRate, GETDATE(), @DueDate, 0)";
+
+                SqlParameter[] parameters =
+                {
+                    
+                    new SqlParameter("@AccountId", loanTransaction.AccountId),
+                    new SqlParameter("@ContractId", contractId),
+                    new SqlParameter("@LoanTerm", loanTransaction.LoanTerm),
+                    new SqlParameter("@Debt", loanTransaction.Debt),
+                    new SqlParameter("@TotalDebtMustPay", loanTransaction.Debt + (int)((double)loanTransaction.Debt * loanTransaction.LoanRate)),
+                    new SqlParameter("@DebtPayPerMonth", (loanTransaction.Debt + loanTransaction.Debt * loanTransaction.LoanRate) / loanTransaction.LoanTerm),
+                    new SqlParameter("@LoanRate", loanTransaction.LoanRate),
+                    
+                };
+
+
+                _exQuery.ExecuteRawQuery(query, parameters);
+
+                return new JsonResult("Loan Transaction saved successfully");
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+
+        }
+
+        [HttpPost]
+        [Route("SaveLoanTransactionDetail")]
+        public JsonResult SaveLoanTransactionDetail([FromBody] LoanTransactionDetail loanTransactionDetail)
+        {
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = @"
+                            DECLARE @TotalDebtMustPay DECIMAL(18, 2)
+
+                            -- Retrieve totalDebtMustPay from LoanTransaction table
+                            SELECT @TotalDebtMustPay = totalDebtMustPay 
+                            FROM LoanTransaction 
+                            WHERE id = @LoanHeaderId
+
+                            -- Calculate debt remaining
+                            DECLARE @DebtRemaining DECIMAL(18, 2)
+
+                            -- Check if there are existing transactions for the same loanHeaderId
+                            DECLARE @LatestDebtRemaining DECIMAL(18, 2)
+
+                            SELECT TOP 1 @LatestDebtRemaining = debtRemaining
+                            FROM LoanTransactionDetail
+                            WHERE loanHeaderId = @LoanHeaderId
+                            ORDER BY transactionDate DESC
+
+                            -- If there are existing transactions, calculate @DebtRemaining based on the latest debtRemaining
+                            IF (@LatestDebtRemaining IS NOT NULL)
+                                SET @DebtRemaining = @LatestDebtRemaining - @PaidAmount
+                            ELSE
+                                SET @DebtRemaining = @TotalDebtMustPay - @PaidAmount
+
+                            -- Insert into LoanTransactionDetail
+                            INSERT INTO LoanTransactionDetail (loanHeaderId, paidAmount, debtRemaining, transactionDate)
+                            VALUES (@LoanHeaderId, @PaidAmount, @DebtRemaining, GETDATE())
+
+                            IF (@DebtRemaining <= 0)
+                            UPDATE LoanTransaction 
+                            SET status = 1 -- Assuming 'status' is a bit field
+                            WHERE id = @LoanHeaderId
+
+
+                            ";
+
+                SqlParameter[] parameters =
+                {
+                    
+                    new SqlParameter("@LoanHeaderId", loanTransactionDetail.LoanHeaderId),
+                    new SqlParameter("@PaidAmount", loanTransactionDetail.PaidAmount),
+                    
+                    
+                };
+
+                _exQuery.ExecuteRawQuery(query, parameters);
+
+                return new JsonResult("Loan Transaction Detail saved successfully");
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+        }
+
+
         [HttpGet]
         [Route("SearchLoanTransaction")]
         public JsonResult SearchLoanTransaction(string searchQuery)
@@ -121,11 +231,13 @@ namespace KMS.Controllers
             {
                 string query = "SELECT * " +
                            "FROM LoanTransaction " +
-                           "WHERE memberId LIKE @searchQuery OR " +
-                           "accountId LIKE @searchQuery OR " +
+                           "WHERE accountId LIKE @searchQuery OR " +
+                           "contractId LIKE @searchQuery OR " +
                            "loanTerm LIKE @searchQuery OR " +
-                           "transactionType LIKE @searchQuery OR " +
-                           "interestRate LIKE @searchQuery";
+                           "debt LIKE @searchQuery OR " +
+                           "debtPayPerMonth LIKE @searchQuery OR " +
+                           "loanRate LIKE @searchQuery OR " +
+                           "totalDebtMustPay LIKE @searchQuery";
 
                 SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
                 DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
@@ -157,7 +269,7 @@ namespace KMS.Controllers
 
                 if (isActive.HasValue)
                 {
-                    query += (parameters.Count == 0 ? " WHERE " : " AND ") + "isActive = @isActive";
+                    query += (parameters.Count == 0 ? " WHERE " : " AND ") + "status = @isActive";
                     parameters.Add(new SqlParameter("@isActive", isActive.Value));
                 }
 

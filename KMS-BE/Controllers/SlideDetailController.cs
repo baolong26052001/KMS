@@ -22,6 +22,7 @@ namespace KMS.Controllers
         private IConfiguration _configuration;
         private readonly ExecuteQuery _exQuery;
         private readonly IWebHostEnvironment _hostingEnvironment;
+        private readonly string localFolderPath;
 
         public SlideDetailController(IWebHostEnvironment hostingEnvironment, IConfiguration configuration, KioskManagementSystemContext _context, ExecuteQuery exQuery)
         {
@@ -29,6 +30,16 @@ namespace KMS.Controllers
             _dbcontext = _context;
             _configuration = configuration;
             _exQuery = exQuery;
+
+            if (Directory.Exists("../KMS-BE"))
+            {
+                localFolderPath = "../KMS-BE/bin/Debug/net6.0/images/";
+            }
+            else if (Directory.Exists("../KMS_BE"))
+            {
+                localFolderPath = "../KMS_BE/bin/Debug/net6.0/images/";
+            }
+
         }
 
         [HttpGet]
@@ -125,13 +136,14 @@ namespace KMS.Controllers
                 if (slideDetail.File != null && slideDetail.File.Length > 0)
                 {
                     
-                    var localFolderPath = "../KMS-BE/bin/Debug/net6.0-windows/images/";
-
-
                     var uniqueFileName = Guid.NewGuid().ToString() + "_" + slideDetail.File.FileName;
                     var filePath = Path.Combine(localFolderPath, uniqueFileName);
 
-                    
+                    if (!Directory.Exists(localFolderPath))
+                    {
+                        Directory.CreateDirectory(localFolderPath);
+                    }
+
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
                         slideDetail.File.CopyTo(stream);
@@ -209,7 +221,7 @@ namespace KMS.Controllers
                 if (slideDetail.File != null && slideDetail.File.Length > 0)
                 {
                     
-                    var localFolderPath = "../KMS-BE/bin/Debug/net6.0-windows/images/";
+                    
 
 
                     var uniqueFileName = Guid.NewGuid().ToString() + "_" + slideDetail.File.FileName;
@@ -429,7 +441,7 @@ namespace KMS.Controllers
 
                 foreach (string contentUrl in oldContentUrls)
                 {
-                    System.IO.File.Delete("../KMS-BE/bin/Debug/net6.0-windows/images/" + contentUrl);
+                    System.IO.File.Delete(localFolderPath + contentUrl);
                 }
 
                 return new JsonResult("Slide detail and associated image files deleted successfully");
