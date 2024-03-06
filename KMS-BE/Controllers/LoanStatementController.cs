@@ -87,13 +87,11 @@ namespace KMS.Controllers
             {
                 string query = "SELECT * " +
                            "FROM LoanStatement " +
-                           "WHERE memberId LIKE @searchQuery OR " +
-                           "accountId LIKE @searchQuery OR " +
-                           "loanId LIKE @searchQuery OR " +
-                           "loanTerm LIKE @searchQuery OR " +
-                           "interestRate LIKE @searchQuery OR " +
-                           "status LIKE @searchQuery OR " +
-                           "balance LIKE @searchQuery";
+                           "WHERE accountId LIKE @searchQuery OR " +
+                           "debt LIKE @searchQuery OR " +
+                           "paid LIKE @searchQuery OR " +
+                           "description LIKE @searchQuery OR " +
+                           "status LIKE @searchQuery";
 
                 SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
                 DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
@@ -125,7 +123,7 @@ namespace KMS.Controllers
 
                 if (isActive.HasValue)
                 {
-                    query += (parameters.Count == 0 ? " WHERE " : " AND ") + "isActive = @isActive";
+                    query += (parameters.Count == 0 ? " WHERE " : " AND ") + "status = @isActive";
                     parameters.Add(new SqlParameter("@isActive", isActive.Value));
                 }
 
@@ -135,7 +133,7 @@ namespace KMS.Controllers
                     startDate = startDate.Value.Date.AddHours(0).AddMinutes(0).AddSeconds(0);
                     endDate = endDate.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
 
-                    query += (parameters.Count == 0 ? " WHERE " : " AND ") + "dateLoan >= @startDate AND dateLoan <= @endDate";
+                    query += (parameters.Count == 0 ? " WHERE " : " AND ") + "transactionDate >= @startDate AND transactionDate <= @endDate";
                     parameters.Add(new SqlParameter("@startDate", startDate.Value));
                     parameters.Add(new SqlParameter("@endDate", endDate.Value));
                 }

@@ -120,10 +120,19 @@ namespace KMS.Controllers
                 Random random = new Random();
                 int contractId = random.Next(10000000, 99999999);
 
-                string query = @"DECLARE @DueDate AS DATE
+                string query = @"
+                
+                DECLARE @DueDate AS DATE
                 SET @DueDate = DATEADD(MONTH, @LoanTerm, GETDATE())
+                
                 INSERT INTO LoanTransaction (accountId, contractId, loanTerm, debt, totalDebtMustPay, debtPayPerMonth, loanRate, loanDate, dueDate, status)
-                VALUES (@AccountId, @ContractId, @LoanTerm, @Debt, @TotalDebtMustPay, @DebtPayPerMonth, @LoanRate, GETDATE(), @DueDate, 0)";
+                VALUES (@AccountId, @ContractId, @LoanTerm, @Debt, @TotalDebtMustPay, @DebtPayPerMonth, @LoanRate, GETDATE(), @DueDate, 0)
+                
+                INSERT INTO LoanStatement (accountId, debt, paid, transactionDate, description, status)
+                VALUES (@AccountId, @Debt, 0, GETDATE(), N'Tài khoản ' + CAST(@AccountId AS NVARCHAR(50)) + N' đã vay ' + CAST(@Debt AS NVARCHAR(50)) + N' VND vào lúc ' + CONVERT(NVARCHAR(50), GETDATE()), 1)
+
+
+                ";
 
                 SqlParameter[] parameters =
                 {
@@ -180,6 +189,13 @@ namespace KMS.Controllers
                             WHERE loanHeaderId = @LoanHeaderId
                             ORDER BY transactionDate DESC
 
+
+                            DECLARE @AccountId INT
+                            SELECT TOP 1 @AccountId = accountId
+                            FROM LoanTransaction
+                            WHERE id = @LoanHeaderId
+
+
                             -- If there are existing transactions, calculate @DebtRemaining based on the latest debtRemaining
                             IF (@LatestDebtRemaining IS NOT NULL)
                                 SET @DebtRemaining = @LatestDebtRemaining - @PaidAmount
@@ -189,6 +205,13 @@ namespace KMS.Controllers
                             -- Insert into LoanTransactionDetail
                             INSERT INTO LoanTransactionDetail (loanHeaderId, paidAmount, debtRemaining, transactionDate)
                             VALUES (@LoanHeaderId, @PaidAmount, @DebtRemaining, GETDATE())
+
+
+                            -- Insert into LoanStatement
+                            INSERT INTO LoanStatement (accountId, debt, paid, transactionDate, description, status)
+                            VALUES (@AccountId, 0, @PaidAmount, GETDATE(), N'Tài khoản ' + CAST(@AccountId AS NVARCHAR(50)) + N' đã trả ' + CAST(@PaidAmount AS NVARCHAR(50)) + N' VND vào lúc ' + CONVERT(NVARCHAR(50), GETDATE()), 0)
+
+
 
                             IF (@DebtRemaining <= 0)
                             UPDATE LoanTransaction 

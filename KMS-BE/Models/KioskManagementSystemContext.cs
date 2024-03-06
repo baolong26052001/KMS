@@ -522,30 +522,29 @@ namespace KMS.Models
             {
                 entity.ToTable("LoanStatement");
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Id)
+                    .HasColumnName("id");
 
-                entity.Property(e => e.AccountId).HasColumnName("accountId");
+                entity.Property(e => e.AccountId)
+                    .HasColumnName("accountId");
 
-                entity.Property(e => e.Balance).HasColumnName("balance");
+                entity.Property(e => e.Debt)
+                    .HasColumnName("debt");
 
-                entity.Property(e => e.DateLoan)
-                    .HasColumnType("datetime")
-                    .HasColumnName("dateLoan");
+                entity.Property(e => e.Paid)
+                    .HasColumnName("paid");
 
-                entity.Property(e => e.DueDate)
-                    .HasColumnType("datetime")
-                    .HasColumnName("dueDate");
+                entity.Property(e => e.TransactionDate)
+                    .HasColumnName("transactionDate")
+                    .HasColumnType("datetime");
 
-                entity.Property(e => e.InterestRate).HasColumnName("interestRate");
+                entity.Property(e => e.Description)
+                    .HasColumnName("description");
 
-                entity.Property(e => e.LoanId).HasColumnName("loanId");
-
-                entity.Property(e => e.LoanTerm).HasColumnName("loanTerm");
-
-                entity.Property(e => e.MemberId).HasColumnName("memberId");
-
-                entity.Property(e => e.Status).HasColumnName("status");
+                entity.Property(e => e.Status)
+                    .HasColumnName("status");
             });
+
 
             modelBuilder.Entity<LoanTransaction>(entity =>
             {
@@ -587,6 +586,9 @@ namespace KMS.Models
 
                 entity.Property(e => e.LoanTerm)
                     .HasColumnName("loanTerm");
+
+                entity.Property(e => e.Status)
+                    .HasColumnName("status");
             });
 
 
