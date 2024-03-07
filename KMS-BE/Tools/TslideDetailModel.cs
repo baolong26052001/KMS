@@ -10,7 +10,7 @@ namespace KMS.Tools
         public string? Description { get; set; }
         public string? TypeContent { get; set; }
         public string? ContentUrl { get; set; }
-        public byte[]? ImageData { get; set; }
+        
         public string? ImageBase64 { get; set; }
 
         [NotMapped]
