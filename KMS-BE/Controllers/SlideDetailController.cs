@@ -125,16 +125,17 @@ namespace KMS.Controllers
                     }
                 }
 
+                byte[] imageByte;
                 if (slideDetail.File != null && slideDetail.File.Length > 0)
                 {
                     // Read the binary data of the image file
                     using (var memoryStream = new MemoryStream())
                     {
                         slideDetail.File.CopyTo(memoryStream);
-                        slideDetail.ImageData = memoryStream.ToArray(); // Assign the binary data to the ImageData property
+                        imageByte = memoryStream.ToArray(); // Assign the binary data to the ImageData property
                     }
 
-                    string base64String = Convert.ToBase64String(slideDetail.ImageData);
+                    string base64String = Convert.ToBase64String(imageByte);
                     slideDetail.ImageBase64 = base64String;
 
                     //var uniqueFileName = Guid.NewGuid().ToString() + "_" + slideDetail.File.FileName;
@@ -223,16 +224,17 @@ namespace KMS.Controllers
 
                 string oldContentUrl = GetOldContentUrl(id);
 
+                byte[] imageByte;
                 if (slideDetail.File != null && slideDetail.File.Length > 0)
                 {
 
                     using (var memoryStream = new MemoryStream())
                     {
                         slideDetail.File.CopyTo(memoryStream);
-                        slideDetail.ImageData = memoryStream.ToArray(); // Assign the binary data to the ImageData property
+                        imageByte = memoryStream.ToArray(); // Assign the binary data to the ImageData property
                     }
 
-                    string base64String = Convert.ToBase64String(slideDetail.ImageData);
+                    string base64String = Convert.ToBase64String(imageByte);
                     slideDetail.ImageBase64 = base64String;
 
                     //var uniqueFileName = Guid.NewGuid().ToString() + "_" + slideDetail.File.FileName;
