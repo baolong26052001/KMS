@@ -31,15 +31,7 @@ namespace KMS.Controllers
             _configuration = configuration;
             _exQuery = exQuery;
 
-            if (Directory.Exists("../KMS-BE"))
-            {
-                localFolderPath = "../KMS-BE/bin/Debug/net6.0/images/";
-            }
-            else if (Directory.Exists("../KMS_BE"))
-            {
-                localFolderPath = "../KMS_BE/bin/Debug/net6.0/images/";
-            }
-
+            localFolderPath = "../KMS_BE/bin/Debug/net6.0/images/";
         }
 
         [HttpGet]
@@ -135,7 +127,13 @@ namespace KMS.Controllers
 
                 if (slideDetail.File != null && slideDetail.File.Length > 0)
                 {
-                    
+                    // Read the binary data of the image file
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        slideDetail.File.CopyTo(memoryStream);
+                        slideDetail.ImageData = memoryStream.ToArray(); // Assign the binary data to the ImageData property
+                    }
+
                     var uniqueFileName = Guid.NewGuid().ToString() + "_" + slideDetail.File.FileName;
                     var filePath = Path.Combine(localFolderPath, uniqueFileName);
 
@@ -144,14 +142,15 @@ namespace KMS.Controllers
                         Directory.CreateDirectory(localFolderPath);
                     }
 
+                    // Save the uploaded file to the local folder
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
                         slideDetail.File.CopyTo(stream);
                     }
 
-                    
                     slideDetail.ContentUrl = uniqueFileName;
                 }
+
 
                 else
                 {
@@ -159,8 +158,8 @@ namespace KMS.Controllers
                 }
 
                 
-                string query = "INSERT INTO TSlideDetail (sequence, description, typeContent, contentUrl, slideHeaderId, dateModified, dateCreated, isActive) " +
-                               "VALUES (@Sequence, @Description, @TypeContent, @ContentUrl, @SlideHeaderId, GETDATE(), GETDATE(), 1)";
+                string query = "INSERT INTO TSlideDetail (sequence, description, typeContent, contentUrl, imageData, slideHeaderId, dateModified, dateCreated, isActive) " +
+                               "VALUES (@Sequence, @Description, @TypeContent, @ContentUrl, @ImageData, @SlideHeaderId, GETDATE(), GETDATE(), 1)";
                 string query2 = "INSERT INTO TAudit (userId, ipAddress, macAddress, action, tableName, dateModified, dateCreated, isActive) " +
                            "VALUES (@UserId, @IpAddress, @Ipv6, 'Add', 'TSlideDetail', GETDATE(), GETDATE(), 1)";
 
@@ -170,6 +169,7 @@ namespace KMS.Controllers
                     new SqlParameter("@Description", slideDetail.Description),
                     new SqlParameter("@TypeContent", slideDetail.TypeContent),
                     new SqlParameter("@ContentUrl", slideDetail.ContentUrl),
+                    new SqlParameter("@ImageData", slideDetail.ImageData),
                     new SqlParameter("@SlideHeaderId", slideDetail.SlideHeaderId),
                     new SqlParameter("@IsActive", slideDetail.IsActive),
                 };
@@ -220,8 +220,12 @@ namespace KMS.Controllers
 
                 if (slideDetail.File != null && slideDetail.File.Length > 0)
                 {
-                    
-                    
+
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        slideDetail.File.CopyTo(memoryStream);
+                        slideDetail.ImageData = memoryStream.ToArray(); // Assign the binary data to the ImageData property
+                    }
 
 
                     var uniqueFileName = Guid.NewGuid().ToString() + "_" + slideDetail.File.FileName;
@@ -237,11 +241,13 @@ namespace KMS.Controllers
                     slideDetail.ContentUrl = uniqueFileName;
 
                     var existingFilePath = Path.Combine(localFolderPath, oldContentUrl);
+
                     if (System.IO.File.Exists(existingFilePath))
                     {
                         System.IO.File.Delete(existingFilePath);
                     }
-                    string query = "UPDATE TSlideDetail SET sequence = @Sequence, description = @Description, typeContent = @TypeContent, contentUrl = @ContentUrl, slideHeaderId = @SlideHeaderId, dateModified = GETDATE(), isActive = @IsActive  " +
+
+                    string query = "UPDATE TSlideDetail SET sequence = @Sequence, description = @Description, imageData = @ImageData, typeContent = @TypeContent, contentUrl = @ContentUrl, slideHeaderId = @SlideHeaderId, dateModified = GETDATE(), isActive = @IsActive  " +
                             "WHERE id = @Id";
                     string query2 = "INSERT INTO TAudit (userId, ipAddress, macAddress, action, tableName, dateModified, dateCreated, isActive) " +
                            "VALUES (@UserId, @IpAddress, @Ipv6, 'Update', 'TSlideDetail', GETDATE(), GETDATE(), 1)";
@@ -252,6 +258,7 @@ namespace KMS.Controllers
                         new SqlParameter("@Sequence", slideDetail.Sequence),
                         new SqlParameter("@Description", slideDetail.Description),
                         new SqlParameter("@TypeContent", slideDetail.TypeContent),
+                        new SqlParameter("@ImageData", slideDetail.ImageData),
                         new SqlParameter("@ContentUrl", slideDetail.ContentUrl),
                         new SqlParameter("@SlideHeaderId", slideDetail.SlideHeaderId),
                         new SqlParameter("@IsActive", slideDetail.IsActive),
