@@ -134,7 +134,11 @@ namespace KMS.Controllers
                         slideDetail.ImageData = memoryStream.ToArray(); // Assign the binary data to the ImageData property
                     }
 
-                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + slideDetail.File.FileName;
+                    string base64String = Convert.ToBase64String(slideDetail.ImageData);
+                    slideDetail.ImageBase64 = base64String;
+
+                    //var uniqueFileName = Guid.NewGuid().ToString() + "_" + slideDetail.File.FileName;
+                    var uniqueFileName = slideDetail.File.FileName;
                     var filePath = Path.Combine(localFolderPath, uniqueFileName);
 
                     if (!Directory.Exists(localFolderPath))
@@ -158,8 +162,8 @@ namespace KMS.Controllers
                 }
 
                 
-                string query = "INSERT INTO TSlideDetail (sequence, description, typeContent, contentUrl, imageData, slideHeaderId, dateModified, dateCreated, isActive) " +
-                               "VALUES (@Sequence, @Description, @TypeContent, @ContentUrl, @ImageData, @SlideHeaderId, GETDATE(), GETDATE(), 1)";
+                string query = "INSERT INTO TSlideDetail (sequence, description, typeContent, contentUrl, imageBase64, slideHeaderId, dateModified, dateCreated, isActive) " +
+                               "VALUES (@Sequence, @Description, @TypeContent, @ContentUrl, @ImageBase64, @SlideHeaderId, GETDATE(), GETDATE(), 1)";
                 string query2 = "INSERT INTO TAudit (userId, ipAddress, macAddress, action, tableName, dateModified, dateCreated, isActive) " +
                            "VALUES (@UserId, @IpAddress, @Ipv6, 'Add', 'TSlideDetail', GETDATE(), GETDATE(), 1)";
 
@@ -169,7 +173,8 @@ namespace KMS.Controllers
                     new SqlParameter("@Description", slideDetail.Description),
                     new SqlParameter("@TypeContent", slideDetail.TypeContent),
                     new SqlParameter("@ContentUrl", slideDetail.ContentUrl),
-                    new SqlParameter("@ImageData", slideDetail.ImageData),
+                    
+                    new SqlParameter("@ImageBase64", slideDetail.ImageBase64),
                     new SqlParameter("@SlideHeaderId", slideDetail.SlideHeaderId),
                     new SqlParameter("@IsActive", slideDetail.IsActive),
                 };
@@ -227,8 +232,11 @@ namespace KMS.Controllers
                         slideDetail.ImageData = memoryStream.ToArray(); // Assign the binary data to the ImageData property
                     }
 
+                    string base64String = Convert.ToBase64String(slideDetail.ImageData);
+                    slideDetail.ImageBase64 = base64String;
 
-                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + slideDetail.File.FileName;
+                    //var uniqueFileName = Guid.NewGuid().ToString() + "_" + slideDetail.File.FileName;
+                    var uniqueFileName = slideDetail.File.FileName;
                     var filePath = Path.Combine(localFolderPath, uniqueFileName);
 
                     
@@ -247,7 +255,7 @@ namespace KMS.Controllers
                         System.IO.File.Delete(existingFilePath);
                     }
 
-                    string query = "UPDATE TSlideDetail SET sequence = @Sequence, description = @Description, imageData = @ImageData, typeContent = @TypeContent, contentUrl = @ContentUrl, slideHeaderId = @SlideHeaderId, dateModified = GETDATE(), isActive = @IsActive  " +
+                    string query = "UPDATE TSlideDetail SET sequence = @Sequence, description = @Description, imageBase64 = @ImageBase64, typeContent = @TypeContent, contentUrl = @ContentUrl, slideHeaderId = @SlideHeaderId, dateModified = GETDATE(), isActive = @IsActive  " +
                             "WHERE id = @Id";
                     string query2 = "INSERT INTO TAudit (userId, ipAddress, macAddress, action, tableName, dateModified, dateCreated, isActive) " +
                            "VALUES (@UserId, @IpAddress, @Ipv6, 'Update', 'TSlideDetail', GETDATE(), GETDATE(), 1)";
@@ -258,7 +266,8 @@ namespace KMS.Controllers
                         new SqlParameter("@Sequence", slideDetail.Sequence),
                         new SqlParameter("@Description", slideDetail.Description),
                         new SqlParameter("@TypeContent", slideDetail.TypeContent),
-                        new SqlParameter("@ImageData", slideDetail.ImageData),
+                        
+                        new SqlParameter("@ImageBase64", slideDetail.ImageBase64),
                         new SqlParameter("@ContentUrl", slideDetail.ContentUrl),
                         new SqlParameter("@SlideHeaderId", slideDetail.SlideHeaderId),
                         new SqlParameter("@IsActive", slideDetail.IsActive),

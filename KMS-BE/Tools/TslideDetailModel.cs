@@ -11,6 +11,7 @@ namespace KMS.Tools
         public string? TypeContent { get; set; }
         public string? ContentUrl { get; set; }
         public byte[]? ImageData { get; set; }
+        public string? ImageBase64 { get; set; }
 
         [NotMapped]
         public IFormFile? File { get; set; }
