@@ -31,7 +31,7 @@ namespace KMS.Controllers
             _configuration = configuration;
             _exQuery = exQuery;
 
-            localFolderPath = "../KMS_BE/bin/Debug/net6.0/images/";
+            localFolderPath = "../KMS-BE/bin/Debug/net6.0/images/";
         }
 
         [HttpGet]
@@ -41,7 +41,7 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = "select sd.id, sd.description, sd.typeContent, sd.sequence, sd.contentUrl, sd.slideHeaderId, sd.isActive, sd.dateModified, sd.dateCreated " +
+                string query = "select sd.id, sd.description, sd.typeContent, sd.imageBase64, sd.sequence, sd.contentUrl, sd.slideHeaderId, sd.isActive, sd.dateModified, sd.dateCreated " +
                 "from TSlideDetail sd " +
                 "WHERE sd.slideHeaderId = @Id ORDER BY sd.sequence ASC";
 
@@ -75,7 +75,7 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = "select sd.id, sd.description, sd.typeContent, sd.sequence, sd.contentUrl, sd.slideHeaderId, sd.isActive, sd.dateModified, sd.dateCreated " +
+                string query = "select sd.id, sd.description, sd.typeContent, sd.imageBase64, sd.sequence, sd.contentUrl, sd.slideHeaderId, sd.isActive, sd.dateModified, sd.dateCreated " +
                 "\r\nfrom TSlideDetail sd " +
                 "WHERE sd.id = @Id";
                 SqlParameter parameter = new SqlParameter("@Id", id);
