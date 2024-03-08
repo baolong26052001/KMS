@@ -3,9 +3,10 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { API_URL } from '../../components/config/apiUrl';
+import ImageUpload from './imageUpload';
 
 const EditSlideDetail = () => {
     const navigate = useNavigate();
@@ -23,7 +24,7 @@ const EditSlideDetail = () => {
 
     const userIdCookie = getCookie('userId');
 
-    const [editedItem, seteditedItem] = useState({
+    const [editedItem, setEditedItem] = useState({
         description: '',
         typeContent: '',
         contentUrl: '',
@@ -31,28 +32,30 @@ const EditSlideDetail = () => {
         sequence: '',
         isActive: '',
         userId: '',
+        imageBase64: '', // Add imageBase64 to state
     });
+
+    const [selectedFile, setSelectedFile] = useState(null);
 
     const handleChange = (e) => {
         const { id, type, value } = e.target;
-
         if (type === 'file') {
-            handleFileChange(e);
-            handleInputChange('contentUrl', value.replace(/^.*[\\\/]/, ''));
+            const file = e.target.files[0];
+            setSelectedFile(file);
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const base64Data = reader.result.split(',')[1];
+                    setEditedItem(prevState => ({
+                        ...prevState,
+                        contentUrl: file.name,
+                        imageBase64: base64Data // Update imageBase64 when new file is selected
+                    }));
+                };
+                reader.readAsDataURL(file);
+            }
         } else {
             handleInputChange(id, value);
-        }
-    };
-    const [selectedFile, setSelectedFile] = useState(null);
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        setSelectedFile(file);
-
-        if (file) {
-            const typeContent = file.type.startsWith('image/') ? 'Image' : file.type.startsWith('video/') ? 'Video' : "";
-            handleInputChange('typeContent', typeContent);
-        } else {
-            handleInputChange('typeContent', "");
         }
     };
 
@@ -64,8 +67,7 @@ const EditSlideDetail = () => {
                 if (response.ok) {
                     const groupData = await response.json();
 
-                    // Populate the state with fetched group details
-                    seteditedItem({
+                    setEditedItem({
                         description: groupData[0].description,
                         typeContent: groupData[0].typeContent,
                         contentUrl: groupData[0].contentUrl,
@@ -73,6 +75,7 @@ const EditSlideDetail = () => {
                         sequence: groupData[0].sequence,
                         isActive: groupData[0].isActive,
                         userId: userIdCookie,
+                        imageBase64: groupData[0].imageBase64, // Update imageBase64 from data
                     });
                 } else {
                     console.log('Failed to fetch group details');
@@ -86,8 +89,8 @@ const EditSlideDetail = () => {
     }, [API_URL, id]);
 
     const handleInputChange = (key, value) => {
-        seteditedItem((prev) => ({
-            ...prev,
+        setEditedItem(prevState => ({
+            ...prevState,
             [key]: value,
         }));
     };
@@ -95,21 +98,14 @@ const EditSlideDetail = () => {
     const handleSave = async () => {
         try {
             const formData = new FormData();
-            
-            const headerId = editedItem.slideHeaderId;
-            // Append other form data
             Object.entries(editedItem).forEach(([key, value]) => {
                 formData.append(key, value);
-                console.log(key+": "+value);
             });
             formData.append('File', selectedFile);
             const response = await axios.put(`${API_URL}api/SlideDetail/UpdateSlideDetail/${id}`, formData);
-            
-            console.log('Response Status:', response.ok);
-            // console.log('Response Data:', response.data);
-            // console.log('Response Content:', await response.text());
-            
+
             if (response.status >= 200 && response.status < 300) {
+                const headerId = editedItem.slideHeaderId;
                 navigate(`/slideDetail/${headerId}/${packageName}`);
                 console.log('Slide detail updated successfully');
             } else {
@@ -121,7 +117,8 @@ const EditSlideDetail = () => {
     };
 
     const handleCancel = () => {
-        navigate(`/slideDetail/${editedItem.slideHeaderId}/${packageName}`);
+        const headerId = editedItem.slideHeaderId;
+        navigate(`/slideDetail/${headerId}/${packageName}`);
     };
 
     return (
@@ -137,8 +134,7 @@ const EditSlideDetail = () => {
                             sx={{
                                 display: 'flex',
                                 flexDirection: 'column',
-                                gap: '20px', // Add some spacing between form elements
-                                //width: 300, 
+                                gap: '20px',
                                 margin: 'auto',
                             }}
                             noValidate
@@ -162,13 +158,12 @@ const EditSlideDetail = () => {
 
                             <input
                                 id="contentUrl"
-                                value={selectedFile}
-                                type={selectedFile ? 'text' : 'file'}
-                                accept="image/*, video/*"
+                                type="file"
+                                accept=".jpg, .jpeg, .png, .mp4, .avi, .mov"
                                 onChange={handleChange}
                                 style={{ display: 'none' }}
                             />
-                            
+
                             <label htmlFor="contentUrl">
                                 <Button
                                     variant="contained"
@@ -176,7 +171,7 @@ const EditSlideDetail = () => {
                                     component="span"
                                     sx={{ backgroundColor: '#685ed5', color: '#fff', marginBottom: '10px' }}
                                 >
-                                    Choose Image/Video
+                                    Choose File
                                 </Button>
                             </label>
 
@@ -189,53 +184,18 @@ const EditSlideDetail = () => {
                                 onChange={(e) => handleInputChange('contentUrl', e.target.value)}
                                 style={{ textAlign: 'left', color: '#333' }}>File Name: <strong>{editedItem.contentUrl}</strong></p>
 
-
-                            {editedItem.contentUrl ? (
-                                <React.Fragment>
-                                {(() => {
-                                    try {
-                                    const fileExtension = editedItem.contentUrl.split('.').pop().toLowerCase();
-                                    const isImage = ['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension);
-                                    const isVideo = ['mp4', 'webm', 'ogg'].includes(fileExtension);
-
-                                    if (isImage) {
-                                        return <img src={require(`../../../../KMS_BE/bin/Debug/net6.0/images/${editedItem.contentUrl}`)} alt="Image" style={{ width: '100%' }} />;
-                                    } else if (isVideo) {
-                                        return (
-                                        <video controls style={{ width: '100%' }}>
-                                            <source src={require(`../../../../KMS_BE/bin/Debug/net6.0/images/${editedItem.contentUrl}`)} type={`video/${fileExtension}`} />
-                                            Your browser does not support the video tag.
-                                        </video>
-                                        );
-                                    } else {
-                                        console.error("Unsupported file type:", fileExtension);
-                                        return <p>Unsupported File Type</p>;
-                                    }
-                                    } catch (error) {
-                                    console.error("Error loading file:", error);
-                                    return <p>Error Loading File</p>;
-                                    }
-                                })()}
-                                </React.Fragment>
-                            ) : (
-                                <p>No Image</p>
+                            {editedItem.imageBase64 && (
+                               <img 
+                                    src={`data:image/jpeg;base64,${editedItem.imageBase64}`} 
+                                    alt="Uploaded File" 
+                                    style={{ 
+                                        maxWidth: '50%', 
+                                        display: 'block', 
+                                        margin: '0 auto' 
+                                    }} 
+                                />                           
                             )}
-                            {selectedFile && (
-                                <div>
-                                    {selectedFile.type.startsWith('image/') ? (
-                                        <img
-                                            src={URL.createObjectURL(selectedFile)}
-                                            alt="Selected Image"
-                                            style={{ maxWidth: '100%', maxHeight: '200px' }}
-                                        />
-                                    ) : selectedFile.type.startsWith('video/') ? (
-                                        <video controls style={{ maxWidth: '100%', maxHeight: '200px' }}>
-                                            <source src={URL.createObjectURL(selectedFile)} type={selectedFile.type} />
-                                            Your browser does not support the video tag.
-                                        </video>
-                                    ) : null}
-                                </div>
-                            )}
+
                             <TextField
                                 id="sequence"
                                 label="Sequence"

@@ -29,7 +29,8 @@ const ViewModal = ({ open, handleClose, imageUrl }) => {
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: 700,
+          maxWidth: '700px', // Set maximum width
+          maxHeight: '700px', // Set maximum height
           bgcolor: 'background.paper',
           border: '2px solid #000',
           boxShadow: 24,
@@ -39,24 +40,8 @@ const ViewModal = ({ open, handleClose, imageUrl }) => {
         {imageUrl ? (
           <React.Fragment>
             {(() => {
-              try {
-                const fileExtension = imageUrl.split('.').pop().toLowerCase();
-                const isImage = ['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension);
-                const isVideo = ['mp4', 'webm', 'ogg'].includes(fileExtension);
-
-                if (isImage) {
-                  return <img src={require(`../../../../KMS_BE/bin/Debug/net6.0/images/${imageUrl}`)} alt="Image" style={{ width: '100%' }} />;
-                } else if (isVideo) {
-                  return (
-                    <video controls style={{ width: '100%' }}>
-                      <source src={require(`../../../../KMS_BE/bin/Debug/net6.0/images/${imageUrl}`)} type={`video/${fileExtension}`} />
-                      Your browser does not support the video tag.
-                    </video>
-                  );
-                } else {
-                  console.error("Unsupported file type:", fileExtension);
-                  return <p>Unsupported File Type</p>;
-                }
+              try {                
+                return <img src={`data:image/jpeg;base64,${imageUrl}`} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
               } catch (error) {
                 console.error("Error loading file:", error);
                 return <p>Error Loading File</p>;
@@ -136,7 +121,7 @@ const ViewImage = ({ imageUrl }) => {
     <div>
       {imageUrl ? (
         <a href="#" onClick={handleClick}>
-          {imageUrl}
+          Image
         </a>
       ) : (
         <p>No image found</p>
@@ -146,8 +131,8 @@ const ViewImage = ({ imageUrl }) => {
   );
 };
 
-function createData(id, description, typeContent, contentUrl, isActive, slideHeaderId, sequence, dateModified, dateCreated) {
-  return {id, description, typeContent, contentUrl, isActive, slideHeaderId, sequence, dateModified, dateCreated};
+function createData(id, description, typeContent, contentUrl, isActive, slideHeaderId, sequence, imageBase64, dateModified, dateCreated) {
+  return {id, description, typeContent, contentUrl, isActive, slideHeaderId, sequence, imageBase64, dateModified, dateCreated};
 }
 
 const columns = [ 
@@ -200,10 +185,17 @@ const columns = [
     field: 'contentUrl',
     headerName: 'Content Url',
     sortable: false,
-    minWidth: 250,
+    minWidth: 300,
+    flex: 1,
+  },
+  {
+    field: 'imageBase64',
+    headerName: 'Image File',
+    sortable: false,
+    minWidth: 150,
     flex: 1,
     renderCell: (params) => (
-      <ViewImage imageUrl={params.row.contentUrl} />
+      <ViewImage imageUrl={params.row.imageBase64} />
     ),
   },
   {
@@ -293,11 +285,9 @@ const SlideDetail = () => {
           if (!apiResponse.ok) {
             throw new Error(`HTTP error! Status: ${apiResponse.status}`);
           }
-    
+
           const apiResponseData = await apiResponse.json();
           const searchApiResponseData = searchApiResponse ? await searchApiResponse.json() : null;
-          
-          console.log(searchApiResponseData);
     
           if (Array.isArray(apiResponseData)) {
             let filteredRows = apiResponseData;
@@ -307,9 +297,9 @@ const SlideDetail = () => {
                 searchApiResponseData.some(searchRow => row.id === searchRow.id)
               );
             }
-          
+            
             const updatedRows = filteredRows.map(row =>
-              createData(row.id, row.description, row.typeContent, row.contentUrl, row.isActive, row.slideHeaderId, row.sequence, row.dateModified, row.dateCreated)
+              createData(row.id, row.description, row.typeContent, row.contentUrl, row.isActive, row.slideHeaderId, row.sequence, row.imageBase64, row.dateModified, row.dateCreated)
             );
           
             setRows(updatedRows); 
