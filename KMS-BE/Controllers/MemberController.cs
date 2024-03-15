@@ -15,6 +15,7 @@ using System.Globalization;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Diagnostics.Metrics;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 
 namespace KMS.Controllers
 {
@@ -375,24 +376,172 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = "UPDATE LMember SET phone=@Phone, department=@Department, companyName=@CompanyName, " +
-                           "bankName=@BankName, address1=@Address1, dateModified = GETDATE(), isActive=@IsActive " +
-                           "WHERE id=@Id";
+                StringBuilder queryBuilder = new StringBuilder("UPDATE LMember SET ");
+                List<SqlParameter> parameters = new List<SqlParameter>();
 
-                SqlParameter[] parameters =
+                if (member.FirstName != null && member.FirstName != "string")
                 {
-                    new SqlParameter("@Id", id),
-                    new SqlParameter("@Phone", member.Phone),
-                    new SqlParameter("@Department", member.Department),
-                    new SqlParameter("@CompanyName", member.CompanyName),
-                    new SqlParameter("@BankName", member.BankName),
-                    new SqlParameter("@Address1", member.Address1),
-                    new SqlParameter("@IsActive", member.IsActive)
-                };
+                    queryBuilder.Append("FirstName = @FirstName, ");
+                    parameters.Add(new SqlParameter("@FirstName", member.FirstName));
+                }
+                if (member.LastName != null && member.LastName != "string")
+                {
+                    queryBuilder.Append("LastName = @LastName, ");
+                    parameters.Add(new SqlParameter("@LastName", member.LastName));
+                }
+                if (member.FullName != null && member.FullName != "string")
+                {
+                    queryBuilder.Append("FullName = @FullName, ");
+                    parameters.Add(new SqlParameter("@FullName", member.FullName));
+                }
+                
+                if (member.Phone != null && member.Phone != "string")
+                {
+                    queryBuilder.Append("Phone = @Phone, ");
+                    parameters.Add(new SqlParameter("@Phone", member.Phone));
+                }
+                if (member.Address1 != null && member.Address1 != "string")
+                {
+                    queryBuilder.Append("Address1 = @Address1, ");
+                    parameters.Add(new SqlParameter("@Address1", member.Address1));
+                }
+                if (member.Address2 != null && member.Address2 != "string")
+                {
+                    queryBuilder.Append("Address2 = @Address2, ");
+                    parameters.Add(new SqlParameter("@Address2", member.Address2));
+                }
+                if (member.District != null && member.District != "string")
+                {
+                    queryBuilder.Append("District = @District, ");
+                    parameters.Add(new SqlParameter("@District", member.District));
+                }
+                if (member.City != null && member.City != "string")
+                {
+                    queryBuilder.Append("City = @City, ");
+                    parameters.Add(new SqlParameter("@City", member.City));
+                }
+                if (member.Ward != null && member.Ward != "string")
+                {
+                    queryBuilder.Append("Ward = @Ward, ");
+                    parameters.Add(new SqlParameter("@Ward", member.Ward));
+                }
+                if (member.ImageIdCard != null && member.ImageIdCard != "string")
+                {
+                    queryBuilder.Append("ImageIdCard = @ImageIdCard, ");
+                    parameters.Add(new SqlParameter("@ImageIdCard", member.ImageIdCard));
+                }
+                if (member.Fingerprint1 != null && member.Fingerprint1 != "string")
+                {
+                    queryBuilder.Append("Fingerprint1 = @Fingerprint1, ");
+                    parameters.Add(new SqlParameter("@Fingerprint1", member.Fingerprint1));
+                }
+                if (member.Fingerprint2 != null && member.Fingerprint2 != "string")
+                {
+                    queryBuilder.Append("Fingerprint2 = @Fingerprint2, ");
+                    parameters.Add(new SqlParameter("@Fingerprint2", member.Fingerprint2));
+                }
+                if (member.IdenNumber != null && member.IdenNumber != "string")
+                {
+                    queryBuilder.Append("IdenNumber = @IdenNumber, ");
+                    parameters.Add(new SqlParameter("@IdenNumber", member.IdenNumber));
+                }
+                if (member.BankName != null && member.BankName != "string")
+                {
+                    queryBuilder.Append("BankName = @BankName, ");
+                    parameters.Add(new SqlParameter("@BankName", member.BankName));
+                }
+                if (member.BankNumber != null && member.BankNumber != "string")
+                {
+                    queryBuilder.Append("BankNumber = @BankNumber, ");
+                    parameters.Add(new SqlParameter("@BankNumber", member.BankNumber));
+                }
+                if (member.RefCode != null && member.RefCode != 0)
+                {
+                    queryBuilder.Append("RefCode = @RefCode, ");
+                    parameters.Add(new SqlParameter("@RefCode", member.RefCode));
+                }
+                if (member.CompanyName != null && member.CompanyName != "string")
+                {
+                    queryBuilder.Append("CompanyName = @CompanyName, ");
+                    parameters.Add(new SqlParameter("@CompanyName", member.CompanyName));
+                }
+                if (member.CompanyAddress != null && member.CompanyAddress != "string")
+                {
+                    queryBuilder.Append("CompanyAddress = @CompanyAddress, ");
+                    parameters.Add(new SqlParameter("@CompanyAddress", member.CompanyAddress));
+                }
+                if (member.Department != null && member.Department != "string")
+                {
+                    queryBuilder.Append("Department = @Department, ");
+                    parameters.Add(new SqlParameter("@Department", member.Department));
+                }
+                if (member.SalaryAmount != null && member.SalaryAmount != 0)
+                {
+                    queryBuilder.Append("SalaryAmount = @SalaryAmount, ");
+                    parameters.Add(new SqlParameter("@SalaryAmount", member.SalaryAmount));
+                }
+                if (member.CreditLimit != null && member.CreditLimit != 0)
+                {
+                    queryBuilder.Append("CreditLimit = @CreditLimit, ");
+                    parameters.Add(new SqlParameter("@CreditLimit", member.CreditLimit));
+                }
+                
+                if (member.DebtStatus != null && member.DebtStatus != "string")
+                {
+                    queryBuilder.Append("DebtStatus = @DebtStatus, ");
+                    parameters.Add(new SqlParameter("@DebtStatus", member.DebtStatus));
+                }
+                if (member.DateModified != null || member.DateModified == null)
+                {
+                    queryBuilder.Append("DateModified = GETDATE(), ");
+                    
+                }
+                
+                if (member.IsActive != null)
+                {
+                    queryBuilder.Append("IsActive = @IsActive, ");
+                    parameters.Add(new SqlParameter("@IsActive", member.IsActive));
+                }
+                if (member.Gender != null && member.Gender != "string")
+                {
+                    queryBuilder.Append("Gender = @Gender, ");
+                    parameters.Add(new SqlParameter("@Gender", member.Gender));
+                }
+                if (member.ImageMember != null && member.ImageMember != "string")
+                {
+                    queryBuilder.Append("ImageMember = @ImageMember, ");
+                    parameters.Add(new SqlParameter("@ImageMember", member.ImageMember));
+                }
+                if (member.Occupation != null && member.Occupation != "string")
+                {
+                    queryBuilder.Append("Occupation = @Occupation, ");
+                    parameters.Add(new SqlParameter("@Occupation", member.Occupation));
+                }
+                if (member.Email != null && member.Email != "string")
+                {
+                    queryBuilder.Append("Email = @Email, ");
+                    parameters.Add(new SqlParameter("@Email", member.Email));
+                }
 
-                _exQuery.ExecuteRawQuery(query, parameters);
+                // Remove the trailing comma and space
+                if (parameters.Count > 0)
+                {
+                    queryBuilder.Remove(queryBuilder.Length - 2, 2);
 
-                return new JsonResult("Member updated successfully");
+                    // Add the condition for updating a specific member by Id
+                    queryBuilder.Append(" WHERE Id = @Id");
+                    parameters.Add(new SqlParameter("@Id", id));
+
+                    string query = queryBuilder.ToString();
+
+                    _exQuery.ExecuteRawQuery(query, parameters.ToArray());
+
+                    return new JsonResult("Member updated successfully");
+                }
+                else
+                {
+                    return new JsonResult("No properties provided for update");
+                }
             }
             catch (Exception ex)
             {
@@ -402,10 +551,10 @@ namespace KMS.Controllers
                 response.Data = null;
             }
             return new JsonResult(response);
-            
         }
 
-        
+
+
 
         [HttpGet]
         [Route("SearchMember")]

@@ -12,5 +12,14 @@ namespace KMS.Tools
             var hashedPassword = sha.ComputeHash(asByteArray);
             return Convert.ToBase64String(hashedPassword);
         }
+
+        public static bool VerifyPassword(string password, string hashedPassword)
+        {
+            // Hash the input password
+            string hashedInputPassword = hashPassword(password);
+
+            // Compare the hashed input password with the stored hashed password
+            return hashedInputPassword == hashedPassword;
+        }
     }
 }

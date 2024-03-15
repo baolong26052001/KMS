@@ -280,7 +280,7 @@ namespace KMS.Controllers
 
         [HttpGet]
         [Route("FilterLoanTransaction")]
-        public JsonResult FilterLoanTransaction([FromQuery] bool? isActive = null, [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
+        public JsonResult FilterLoanTransaction([FromQuery] bool? status = null, [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
         {
             ResponseDto response = new ResponseDto();
             try
@@ -290,10 +290,10 @@ namespace KMS.Controllers
 
                 List<SqlParameter> parameters = new List<SqlParameter>();
 
-                if (isActive.HasValue)
+                if (status.HasValue)
                 {
-                    query += (parameters.Count == 0 ? " WHERE " : " AND ") + "status = @isActive";
-                    parameters.Add(new SqlParameter("@isActive", isActive.Value));
+                    query += (parameters.Count == 0 ? " WHERE " : " AND ") + "status = @Status";
+                    parameters.Add(new SqlParameter("@Status", status.Value));
                 }
 
                 if (startDate.HasValue && endDate.HasValue)
@@ -321,6 +321,41 @@ namespace KMS.Controllers
             return new JsonResult(response);
             
         }
+
+        //[HttpGet]
+        //[Route("FilterLoanTransactionByStatus")]
+        //public JsonResult FilterLoanTransactionByStatus([FromQuery] bool? status = null)
+        //{
+        //    ResponseDto response = new ResponseDto();
+        //    try
+        //    {
+        //        string query = "SELECT * " +
+        //                   "FROM LoanTransaction ";
+
+        //        List<SqlParameter> parameters = new List<SqlParameter>();
+
+        //        if (status.HasValue)
+        //        {
+        //            query += (parameters.Count == 0 ? " WHERE " : " AND ") + "status = @Status";
+        //            parameters.Add(new SqlParameter("@Status", status.Value));
+        //        }
+
+                
+
+        //        DataTable table = _exQuery.ExecuteRawQuery(query, parameters.ToArray());
+
+        //        return new JsonResult(table);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        response.Code = -1;
+        //        response.Message = ex.Message;
+        //        response.Exception = ex.ToString();
+        //        response.Data = null;
+        //    }
+        //    return new JsonResult(response);
+
+        //}
 
     }
 }

@@ -35,7 +35,7 @@ namespace KMS.Controllers
 
             try
             {
-                string query = "select a.id, a.memberId, m.fullname, a.contractId, m.phone, m.email, m.idenNumber, m.bankName, m.department, m.companyName, m.address1, m.isActive, m.dateCreated " +
+                string query = "select a.id, a.memberId, m.fullname, a.contractId, m.phone, m.email, m.idenNumber, a.balance, m.bankName, m.department, m.companyName, m.address1, m.isActive, m.dateCreated " +
                 "from LAccount a, LMember m " +
                 "where a.memberId = m.id";
 
@@ -60,7 +60,7 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = "select a.id, a.memberId, m.fullname, a.contractId, m.phone, m.email, m.idenNumber, m.bankName, m.department, m.companyName, m.address1, m.isActive, m.dateCreated " +
+                string query = "select a.id, a.memberId, m.fullname, a.contractId, m.phone, m.email, m.idenNumber, a.balance, m.bankName, m.department, m.companyName, m.address1, m.isActive, m.dateCreated " +
                 "from LAccount a, LMember m " +
                 "where a.memberId = m.id and a.id=@Id";
 
@@ -89,6 +89,38 @@ namespace KMS.Controllers
             return new JsonResult(response);
         }
 
+        [HttpPut]
+        [Route("UpdateBalance/{id}")]
+        public JsonResult UpdateBalance(int id, int money)
+        {
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "UPDATE LAccount " +
+                           "SET balance = balance + @Money " +
+                           "WHERE id = @Id";
+
+                SqlParameter[] parameters =
+                {
+                    new SqlParameter("@Id", id),
+                    new SqlParameter("@Money", money),
+
+                };
+
+                _exQuery.ExecuteRawQuery(query, parameters);
+
+                return new JsonResult("Balance updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+        }
+
         [HttpGet]
         [Route("FilterAccount")]
         public JsonResult FilterAccount([FromQuery] int? status = null, [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
@@ -96,7 +128,7 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = "select a.id, a.memberId, m.fullname, a.contractId, m.phone, m.email, m.idenNumber, m.bankName, m.department, m.companyName, m.address1, m.isActive, m.dateCreated " +
+                string query = "select a.id, a.memberId, m.fullname, a.contractId, m.phone, m.email, m.idenNumber, a.balance, m.bankName, m.department, m.companyName, m.address1, m.isActive, m.dateCreated " +
                 "FROM LAccount a LEFT JOIN LMember m ON a.memberId = m.id ";
 
                 List<SqlParameter> parameters = new List<SqlParameter>();
@@ -193,7 +225,7 @@ namespace KMS.Controllers
         [Route("SearchAccount")]
         public JsonResult SearchAccount(string searchQuery)
         {
-            string query = "select a.id, a.memberId, m.fullname, a.contractId, m.phone, m.email, m.idenNumber, m.bankName, m.department, m.companyName, m.address1, m.isActive, m.dateCreated " +
+            string query = "select a.id, a.memberId, m.fullname, a.contractId, m.phone, m.email, m.idenNumber, a.balance, m.bankName, m.department, m.companyName, m.address1, m.isActive, m.dateCreated " +
                            "FROM LAccount a " +
                            "LEFT JOIN LMember m ON a.memberId = m.id " +
                            "WHERE a.id LIKE @searchQuery OR " +

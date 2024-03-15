@@ -5,6 +5,8 @@ using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Text;
 using KMS.Tools;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace KMS.Controllers
 {
@@ -23,13 +25,23 @@ namespace KMS.Controllers
             _exQuery = exQuery;
         }
 
+        
         [HttpGet]
         [Route("ShowActivityLog")]
-        public JsonResult GetActivityLog()
+        //[Authorize]
+        public IActionResult GetActivityLog()
         {
             ResponseDto response = new ResponseDto();
             try
             {
+                //List<string> authorizedGroupNames = _exQuery.GetAuthorizedGroupNames("activitylogs", "canView");
+
+                //var userRoles = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value);
+                //if (!_exQuery.IsUserAuthorized(authorizedGroupNames, userRoles))
+                //{
+                //    return Unauthorized();
+                //}
+
                 string query = "select ac.id, ac.kioskId, ac.hardwareName, ac.status, ac.stationId, ac.dateModified, ac.dateCreated, ac.isActive" +
                 "\r\nfrom TActivityLog ac";
                 DataTable table = _exQuery.ExecuteRawQuery(query);

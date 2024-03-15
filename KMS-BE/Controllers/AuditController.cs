@@ -5,6 +5,8 @@ using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Text;
 using KMS.Tools;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace KMS.Controllers
 {
@@ -25,11 +27,20 @@ namespace KMS.Controllers
 
         [HttpGet]
         [Route("ShowAudit")]
+        //[Authorize]
         public JsonResult GetAudit()
         {
             ResponseDto response = new ResponseDto();
             try
             {
+                //List<string> authorizedGroupNames = _exQuery.GetAuthorizedGroupNames("audit", "canView");
+
+                //var userRoles = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value);
+                //if (!_exQuery.IsUserAuthorized(authorizedGroupNames, userRoles))
+                //{
+                //    return Unauthorized();
+                //}
+
                 string query = "select au.id, au.kioskId, au.userId,au.action,au.script,au.field, au.tableName, au.ipAddress, au.macAddress, au.dateCreated, au.isActive " +
                 "\r\nfrom TAudit au";
                 DataTable table = _exQuery.ExecuteRawQuery(query);

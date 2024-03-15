@@ -110,6 +110,38 @@ namespace KMS.Controllers
             
         }
 
+        [HttpPost]
+        [Route("SaveSavingTransaction")]
+        public JsonResult SaveSavingTransaction([FromBody] SavingTransaction savingTransaction)
+        {
+            ResponseDto response = new ResponseDto();
+            try
+            {
+
+                string query = @"INSERT INTO SavingTransaction (memberId, accountId, loanTerm, debt, balance, transactionType, interestRate, loanDate, dueDate, isActive)
+                VALUES (@MemberId, @AccountId, @LoanTerm, @Debt, @Balance, @TransactionType, @InterestRate, GETDATE(), DATEADD(year, 1, GETDATE()), @IsActive)";
+
+                SqlParameter[] parameters =
+                {
+                    new SqlParameter("@MemberId", savingTransaction.MemberId),
+                    
+                };
+
+                _exQuery.ExecuteRawQuery(query, parameters);
+
+                return new JsonResult("Saving Transaction saved successfully");
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+
+        }
+
         [HttpGet]
         [Route("SearchSavingTransaction")]
         public JsonResult SearchSavingTransaction(string searchQuery)

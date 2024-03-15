@@ -31,7 +31,7 @@ namespace KMS.Controllers
             _configuration = configuration;
             _exQuery = exQuery;
 
-            localFolderPath = "../KMS-BE/bin/Debug/net6.0/images/";
+            localFolderPath = "../KMS_BE/bin/Debug/net6.0/images/";
         }
 
         [HttpGet]
@@ -318,13 +318,6 @@ namespace KMS.Controllers
                     return new JsonResult("Slide detail updated successfully");
                 }
 
-
-
-
-                
-
-
-
             }
             catch (Exception ex)
             {
@@ -358,7 +351,7 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = "select sd.id, sd.description, sd.typeContent, sd.sequence, sd.contentUrl, sd.slideHeaderId, sd.isActive, sd.dateModified, sd.dateCreated " +
+                string query = "select sd.id, sd.description, sd.typeContent, sd.imageBase64, sd.sequence, sd.contentUrl, sd.slideHeaderId, sd.isActive, sd.dateModified, sd.dateCreated " +
                            "FROM TSlideDetail sd " +
                            "WHERE slideHeaderId = @Id";
 

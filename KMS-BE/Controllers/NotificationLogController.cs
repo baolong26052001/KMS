@@ -128,10 +128,10 @@ namespace KMS.Controllers
                     
                     new SqlParameter("@sendType", newNotificationLog.SendType),
                     new SqlParameter("@memberId", newNotificationLog.MemberId),
-                    new SqlParameter("@title", newNotificationLog.Title),
+                    new SqlParameter("@title", (object)newNotificationLog.Title ?? DBNull.Value),
                     new SqlParameter("@content", newNotificationLog.Content),
-                    new SqlParameter("@status", newNotificationLog.Status),
-                    new SqlParameter("@isActive", newNotificationLog.IsActive),
+                    new SqlParameter("@status", (object)newNotificationLog.Status ?? DBNull.Value),
+                    new SqlParameter("@isActive", (object)newNotificationLog.IsActive ?? DBNull.Value),
                 };
 
                 _exQuery.ExecuteRawQuery(query, parameters);

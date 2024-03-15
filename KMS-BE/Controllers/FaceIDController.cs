@@ -52,7 +52,7 @@ namespace KMS.Controllers
                         var result = JsonConvert.DeserializeObject<Result>(responseContent);
                         int personId = 0;
 
-                        if (result.result.Count > 0 && result.result[0].similarity >= 96)
+                        if (result.result.Count > 0 && result.result[0].similarity >= 90)
                         {
                             personId = int.Parse(result.result[0].person_id);
                         }
