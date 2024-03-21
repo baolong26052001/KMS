@@ -19,6 +19,7 @@ namespace KMS.Controllers
         private readonly ExecuteQuery _exQuery;
         private readonly IWebHostEnvironment _hostingEnvironment;
         private int number = 1060;
+        private int initialVerticalPosition = 40;
 
         public QRController(IWebHostEnvironment hostingEnvironment, IConfiguration configuration, KioskManagementSystemContext context, ExecuteQuery exQuery)
         {
@@ -58,7 +59,7 @@ namespace KMS.Controllers
 
                             using (Graphics g = Graphics.FromImage(croppedBitmap))
                             {
-                                Rectangle cropArea = new Rectangle(number, 40, 160, 160);
+                                Rectangle cropArea = new Rectangle(number, initialVerticalPosition, 160, 160);
 
                                 g.DrawImage(originalBitmap, new Rectangle(0, 0, 646, 607), cropArea, GraphicsUnit.Pixel);
                             }
@@ -102,8 +103,15 @@ namespace KMS.Controllers
                                 }
 
                                 attempts--;
+
                                 if (number >= 800 && number < 1060)
                                 {
+                                    continue;
+                                }
+                                else if (number < 800 && initialVerticalPosition == 40)
+                                {
+                                    initialVerticalPosition = 83;
+                                    number = 1060;
                                     continue;
                                 }
 
