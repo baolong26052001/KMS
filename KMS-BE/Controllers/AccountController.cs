@@ -35,7 +35,7 @@ namespace KMS.Controllers
 
             try
             {
-                string query = "select a.id, a.memberId, m.fullname, a.contractId, m.phone, m.email, m.idenNumber, a.balance, m.bankName, m.department, m.companyName, m.address1, m.isActive, m.dateCreated " +
+                string query = "select a.id, a.memberId, m.fullname, a.contractId, m.phone, m.email, m.idenNumber, m.taxCode, a.balance, m.bankName, m.department, m.companyName, m.address1, m.isActive, m.dateCreated " +
                 "from LAccount a, LMember m " +
                 "where a.memberId = m.id";
 
@@ -60,7 +60,7 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = "select a.id, a.memberId, m.fullname, a.contractId, m.phone, m.email, m.idenNumber, a.balance, m.bankName, m.department, m.companyName, m.address1, m.isActive, m.dateCreated " +
+                string query = "select a.id, a.memberId, m.fullname, a.contractId, m.phone, m.email, m.idenNumber, m.taxCode, a.balance, m.bankName, m.department, m.companyName, m.address1, m.isActive, m.dateCreated " +
                 "from LAccount a, LMember m " +
                 "where a.memberId = m.id and a.id=@Id";
 
@@ -128,7 +128,7 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = "select a.id, a.memberId, m.fullname, a.contractId, m.phone, m.email, m.idenNumber, a.balance, m.bankName, m.department, m.companyName, m.address1, m.isActive, m.dateCreated " +
+                string query = "select a.id, a.memberId, m.fullname, a.contractId, m.phone, m.email, m.idenNumber, m.taxCode, a.balance, m.bankName, m.department, m.companyName, m.address1, m.isActive, m.dateCreated " +
                 "FROM LAccount a LEFT JOIN LMember m ON a.memberId = m.id ";
 
                 List<SqlParameter> parameters = new List<SqlParameter>();
@@ -225,7 +225,7 @@ namespace KMS.Controllers
         [Route("SearchAccount")]
         public JsonResult SearchAccount(string searchQuery)
         {
-            string query = "select a.id, a.memberId, m.fullname, a.contractId, m.phone, m.email, m.idenNumber, a.balance, m.bankName, m.department, m.companyName, m.address1, m.isActive, m.dateCreated " +
+            string query = "select a.id, a.memberId, m.fullname, a.contractId, m.phone, m.email, m.idenNumber, m.taxCode, a.balance, m.bankName, m.department, m.companyName, m.address1, m.isActive, m.dateCreated " +
                            "FROM LAccount a " +
                            "LEFT JOIN LMember m ON a.memberId = m.id " +
                            "WHERE a.id LIKE @searchQuery OR " +
@@ -240,6 +240,7 @@ namespace KMS.Controllers
                            "m.phone LIKE @searchQuery OR " +
                            "m.email LIKE @searchQuery OR " +
                            "m.idenNumber LIKE @searchQuery OR " +
+                           "m.taxCode LIKE @searchQuery OR " +
                            "m.bankName LIKE @searchQuery OR " +
                            "m.department LIKE @searchQuery OR " +
                            "m.companyName LIKE @searchQuery OR " +

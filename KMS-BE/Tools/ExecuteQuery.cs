@@ -143,23 +143,23 @@ namespace KMS.Tools
 
     }
 
-    public class WordApi
-    {
-        public void InsertText(string filePath, string text)
-        {
-            Application wordApp = new Application();
-            Document wordDoc = wordApp.Documents.Open(filePath);
+    //public class WordApi
+    //{
+    //    public void InsertText(string filePath, string text)
+    //    {
+    //        Application wordApp = new Application();
+    //        Document wordDoc = wordApp.Documents.Open(filePath);
 
-            // Insert text at the end of the document
-            wordDoc.Content.InsertAfter(text);
+    //        // Insert text at the end of the document
+    //        wordDoc.Content.InsertAfter(text);
 
-            // Save and close the document
-            wordDoc.Save();
-            wordDoc.Close();
+    //        // Save and close the document
+    //        wordDoc.Save();
+    //        wordDoc.Close();
 
-            // Quit Word application
-            wordApp.Quit();
-        }
-    }
+    //        // Quit Word application
+    //        wordApp.Quit();
+    //    }
+    //}
 
 }

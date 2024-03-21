@@ -29,7 +29,7 @@ namespace KMS.Controllers
         [HttpGet]
         [Route("ShowActivityLog")]
         //[Authorize]
-        public IActionResult GetActivityLog()
+        public JsonResult GetActivityLog()
         {
             ResponseDto response = new ResponseDto();
             try

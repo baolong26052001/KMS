@@ -38,5 +38,6 @@ namespace KMS.Models
         public string? ImageMember { get; set; }
         public string? Occupation { get; set; }
         public string? Email { get; set; }
+        public string? TaxCode { get; set; }
     }
 }

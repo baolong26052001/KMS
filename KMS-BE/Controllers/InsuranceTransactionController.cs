@@ -66,51 +66,23 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = @"SELECT 
-	                        itr.transactionDate,
-	                        itr.id,
-	                        itr.memberId,
-	                        m.fullName,
-                            m.idenNumber,
-                            m.phone,
-	                        itr.contractId,
-	                        ipd.id AS packageId,
-	                        iph.packageName,
-							b.beneficiaryName,
-	                        it.typeName,
-                            t.content as termName,
-	                        inspvd.provider,
-	                        ipd.ageRangeId,
-	                        ar.startAge,
-	                        ar.endAge,
-	                        N'Từ ' + CONVERT(VARCHAR(10), ar.startAge) + N' đến ' + CONVERT(VARCHAR(10), ar.endAge) + N' tuổi' AS description,
-	                        itr.annualPay,
-                            itr.paymentMethod,
-	                        ipd.fee,
-	                        itr.registrationDate,
-	                        itr.expireDate,
-	                        itr.status 
-                        FROM 
-	                        InsuranceTransaction itr
-                        LEFT JOIN 
-	                        LMember m ON m.id = itr.memberId
-                        LEFT JOIN 
-	                        InsurancePackageDetail ipd ON itr.packageDetailId = ipd.id
-                        LEFT JOIN 
-	                        AgeRange ar ON ar.id = ipd.ageRangeId
-                        LEFT JOIN
-	                        InsurancePackageHeader iph on iph.id = ipd.packageHeaderId
-                        LEFT JOIN
-	                        InsuranceProvider inspvd on inspvd.id = iph.insuranceProviderId
-                        LEFT JOIN
-	                        InsuranceType it on it.id = iph.insuranceTypeId 
-						LEFT JOIN
-							Term t on t.id = iph.termId
-						LEFT JOIN
-							Beneficiary b on b.transactionId = itr.id
-						where itr.memberId = @MemberId
-                        UPDATE InsuranceTransaction
-                        SET status = CASE WHEN expireDate <= GETDATE() THEN 0 ELSE 1 END";
+                string query = @"SELECT itr.transactionDate, itr.id, itr.memberId, m.fullName, m.idenNumber, m.phone, 
+                                itr.contractId, ipd.id AS packageId, iph.packageName, b.beneficiaryName, it.typeName, 
+                                t.content as termName, inspvd.provider, ipd.ageRangeId, ar.startAge, ar.endAge, 
+                                N'Từ ' + CONVERT(VARCHAR(10), ar.startAge) + N' đến ' + CONVERT(VARCHAR(10), ar.endAge) + N' tuổi' AS description, 
+                                itr.annualPay, itr.paymentMethod, ipd.fee, itr.registrationDate, itr.expireDate, itr.status 
+                                FROM InsuranceTransaction itr 
+                                LEFT JOIN LMember m ON m.id = itr.memberId 
+                                LEFT JOIN InsurancePackageDetail ipd ON itr.packageDetailId = ipd.id 
+                                LEFT JOIN AgeRange ar ON ar.id = ipd.ageRangeId 
+                                LEFT JOIN InsurancePackageHeader iph ON iph.id = ipd.packageHeaderId 
+                                LEFT JOIN InsuranceProvider inspvd ON inspvd.id = iph.insuranceProviderId 
+                                LEFT JOIN InsuranceType it ON it.id = iph.insuranceTypeId 
+                                LEFT JOIN Term t ON t.id = iph.termId 
+                                LEFT JOIN Beneficiary b ON b.transactionId = itr.id 
+                                WHERE itr.memberId = @MemberId; 
+                                UPDATE InsuranceTransaction 
+                                SET status = CASE WHEN expireDate <= GETDATE() THEN 0 ELSE 1 END;";
 
                 SqlParameter parameter = new SqlParameter("@MemberId", memberId);
                 DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
@@ -143,47 +115,20 @@ namespace KMS.Controllers
             try
             {
                 string query = @"SELECT 
-                                itr.transactionDate,
-                                itr.id,
-                                itr.memberId,
-                                m.fullName,
-                                m.idenNumber,
-                                m.phone,
-                                itr.contractId,
-                                ipd.id AS packageId,
-                                iph.packageName,
-                                
-                                it.typeName,
-                                t.content as termName,
-                                inspvd.provider,
-                                ipd.ageRangeId,
-                                ar.startAge,
-                                ar.endAge,
+                                itr.transactionDate, itr.id, itr.memberId, m.fullName, m.idenNumber, m.phone,
+                                itr.contractId, ipd.id AS packageId, iph.packageName, it.typeName, t.content as termName,
+                                inspvd.provider, ipd.ageRangeId, ar.startAge, ar.endAge,
                                 N'Từ ' + CONVERT(VARCHAR(10), ar.startAge) + N' đến ' + CONVERT(VARCHAR(10), ar.endAge) + N' tuổi' AS description,
-                                itr.annualPay,
-                                itr.paymentMethod,
-                                ipd.fee,
-                                itr.registrationDate,
-                                itr.expireDate,
-                                itr.status 
-                            FROM 
-                                InsuranceTransaction itr
-                            LEFT JOIN 
-                                LMember m ON m.id = itr.memberId
-                            LEFT JOIN 
-                                InsurancePackageDetail ipd ON itr.packageDetailId = ipd.id
-                            LEFT JOIN 
-                                AgeRange ar ON ar.id = ipd.ageRangeId
-                            LEFT JOIN
-                                InsurancePackageHeader iph on iph.id = ipd.packageHeaderId
-                            LEFT JOIN
-                                InsuranceProvider inspvd on inspvd.id = iph.insuranceProviderId
-                            LEFT JOIN
-                                InsuranceType it on it.id = iph.insuranceTypeId 
-                            LEFT JOIN
-                                Term t on t.id = iph.termId
-                            
-                            WHERE itr.memberId = @MemberId";
+                                itr.annualPay, itr.paymentMethod, ipd.fee, itr.registrationDate, itr.expireDate, itr.status 
+                                FROM InsuranceTransaction itr
+                                LEFT JOIN LMember m ON m.id = itr.memberId
+                                LEFT JOIN InsurancePackageDetail ipd ON itr.packageDetailId = ipd.id
+                                LEFT JOIN AgeRange ar ON ar.id = ipd.ageRangeId
+                                LEFT JOIN InsurancePackageHeader iph on iph.id = ipd.packageHeaderId
+                                LEFT JOIN InsuranceProvider inspvd on inspvd.id = iph.insuranceProviderId
+                                LEFT JOIN InsuranceType it on it.id = iph.insuranceTypeId 
+                                LEFT JOIN Term t on t.id = iph.termId
+                                WHERE itr.memberId = @MemberId";
 
                 if (status != null)
                 {
@@ -237,50 +182,23 @@ namespace KMS.Controllers
             try
             {
                 string query = @"SELECT 
-	                        itr.transactionDate,
-	                        itr.id,
-	                        itr.memberId,
-	                        m.fullName,
-                            m.idenNumber,
-                            m.phone,
-	                        itr.contractId,
-	                        ipd.id AS packageId,
-	                        iph.packageName,
-							b.beneficiaryName,
-	                        it.typeName,
-                            t.content as termName,
-	                        inspvd.provider,
-	                        ipd.ageRangeId,
-	                        ar.startAge,
-	                        ar.endAge,
+	                        itr.transactionDate, itr.id, itr.memberId, m.fullName, m.idenNumber, m.phone, 
+	                        itr.contractId, ipd.id AS packageId, iph.packageName, b.beneficiaryName, it.typeName,
+	                        t.content as termName, inspvd.provider, ipd.ageRangeId, ar.startAge, ar.endAge,
 	                        N'Từ ' + CONVERT(VARCHAR(10), ar.startAge) + N' đến ' + CONVERT(VARCHAR(10), ar.endAge) + N' tuổi' AS description,
-	                        itr.annualPay,
-                            itr.paymentMethod,
-	                        ipd.fee,
-	                        itr.registrationDate,
-	                        itr.expireDate,
-	                        itr.status 
-                        FROM 
-	                        InsuranceTransaction itr
-                        LEFT JOIN 
-	                        LMember m ON m.id = itr.memberId
-                        LEFT JOIN 
-	                        InsurancePackageDetail ipd ON itr.packageDetailId = ipd.id
-                        LEFT JOIN 
-	                        AgeRange ar ON ar.id = ipd.ageRangeId
-                        LEFT JOIN
-	                        InsurancePackageHeader iph on iph.id = ipd.packageHeaderId
-                        LEFT JOIN
-	                        InsuranceProvider inspvd on inspvd.id = iph.insuranceProviderId
-                        LEFT JOIN
-	                        InsuranceType it on it.id = iph.insuranceTypeId 
-						LEFT JOIN
-							Term t on t.id = iph.termId
-						LEFT JOIN
-							Beneficiary b on b.transactionId = itr.id
-						where itr.id = @Id
-                        UPDATE InsuranceTransaction
-                        SET status = CASE WHEN expireDate <= GETDATE() THEN 0 ELSE 1 END";
+	                        itr.annualPay, itr.paymentMethod, ipd.fee, itr.registrationDate, itr.expireDate, itr.status 
+                            FROM InsuranceTransaction itr
+                            LEFT JOIN LMember m ON m.id = itr.memberId
+                            LEFT JOIN InsurancePackageDetail ipd ON itr.packageDetailId = ipd.id
+                            LEFT JOIN AgeRange ar ON ar.id = ipd.ageRangeId
+                            LEFT JOIN InsurancePackageHeader iph on iph.id = ipd.packageHeaderId
+                            LEFT JOIN InsuranceProvider inspvd on inspvd.id = iph.insuranceProviderId
+                            LEFT JOIN InsuranceType it on it.id = iph.insuranceTypeId 
+						    LEFT JOIN Term t on t.id = iph.termId
+						    LEFT JOIN Beneficiary b on b.transactionId = itr.id
+						    WHERE itr.id = @Id
+                            UPDATE InsuranceTransaction
+                            SET status = CASE WHEN expireDate <= GETDATE() THEN 0 ELSE 1 END";
 
                 SqlParameter parameter = new SqlParameter("@Id", id);
                 DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
@@ -439,50 +357,27 @@ namespace KMS.Controllers
             try
             {
                 string query = @"SELECT 
-	                        itr.transactionDate,
-	                        itr.id,
-	                        itr.memberId,
-	                        m.fullName,
-	                        itr.contractId,
-	                        ipd.id AS packageId,
-	                        iph.packageName,
-	                        it.typeName,
-	                        inspvd.provider,
-	                        ipd.ageRangeId,
-	                        ar.startAge,
-	                        ar.endAge,
+	                        itr.transactionDate, itr.id, itr.memberId, m.fullName, itr.contractId, ipd.id AS packageId,
+	                        iph.packageName, it.typeName, inspvd.provider, ipd.ageRangeId, ar.startAge, ar.endAge,
 	                        N'Từ ' + CONVERT(VARCHAR(10), ar.startAge) + N' đến ' + CONVERT(VARCHAR(10), ar.endAge) + N' tuổi' AS description,
-	                        itr.annualPay,
-                            itr.paymentMethod,
-	                        ipd.fee,
-	                        itr.registrationDate,
-	                        itr.expireDate,
-	                        itr.status 
-                        FROM 
-	                        InsuranceTransaction itr
-                        LEFT JOIN 
-	                        LMember m ON m.id = itr.memberId
-                        LEFT JOIN 
-	                        InsurancePackageDetail ipd ON itr.packageDetailId = ipd.id
-                        LEFT JOIN 
-	                        AgeRange ar ON ar.id = ipd.ageRangeId
-                        left join
-	                        InsurancePackageHeader iph on iph.id = ipd.packageHeaderId
-                        left join
-	                        InsuranceProvider inspvd on inspvd.id = iph.insuranceProviderId
-                        left join
-	                        InsuranceType it on it.id = iph.insuranceTypeId " +
-
-                "where m.fullName LIKE @searchQuery " +
-                "or iph.packageName LIKE @searchQuery " +
-                "or itr.id LIKE @searchQuery " +
-                "or itr.memberId LIKE @searchQuery " +
-                "or itr.contractId LIKE @searchQuery " +
-                "or it.typeName LIKE @searchQuery " +
-                "or inspvd.provider LIKE @searchQuery " +
-                "or itr.annualPay LIKE @searchQuery " +
-                "or ar.startAge LIKE @searchQuery " +
-                "or ar.endAge LIKE @searchQuery";
+	                        itr.annualPay, itr.paymentMethod, ipd.fee, itr.registrationDate, itr.expireDate, itr.status
+                            FROM InsuranceTransaction itr
+                            LEFT JOIN LMember m ON m.id = itr.memberId
+                            LEFT JOIN InsurancePackageDetail ipd ON itr.packageDetailId = ipd.id
+                            LEFT JOIN AgeRange ar ON ar.id = ipd.ageRangeId
+                            LEFT JOIN InsurancePackageHeader iph on iph.id = ipd.packageHeaderId
+                            LEFT JOIN InsuranceProvider inspvd on inspvd.id = iph.insuranceProviderId
+	                        LEFT JOIN InsuranceType it on it.id = iph.insuranceTypeId " +
+                            "where m.fullName LIKE @searchQuery " +
+                            "or iph.packageName LIKE @searchQuery " +
+                            "or itr.id LIKE @searchQuery " +
+                            "or itr.memberId LIKE @searchQuery " +
+                            "or itr.contractId LIKE @searchQuery " +
+                            "or it.typeName LIKE @searchQuery " +
+                            "or inspvd.provider LIKE @searchQuery " +
+                            "or itr.annualPay LIKE @searchQuery " +
+                            "or ar.startAge LIKE @searchQuery " +
+                            "or ar.endAge LIKE @searchQuery";
 
                 SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
                 DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
@@ -507,40 +402,18 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = @"SELECT 
-	                        itr.transactionDate,
-	                        itr.id,
-	                        itr.memberId,
-	                        m.fullName,
-	                        itr.contractId,
-	                        ipd.id AS packageId,
-	                        iph.packageName,
-	                        it.typeName,
-	                        inspvd.provider,
-	                        ipd.ageRangeId,
-	                        ar.startAge,
-	                        ar.endAge,
-	                        N'Từ ' + CONVERT(VARCHAR(10), ar.startAge) + N' đến ' + CONVERT(VARCHAR(10), ar.endAge) + N' tuổi' AS description,
-	                        itr.annualPay,
-                            itr.paymentMethod,
-	                        ipd.fee,
-	                        itr.registrationDate,
-	                        itr.expireDate,
-	                        itr.status 
-                        FROM 
-	                        InsuranceTransaction itr
-                        LEFT JOIN 
-	                        LMember m ON m.id = itr.memberId
-                        LEFT JOIN 
-	                        InsurancePackageDetail ipd ON itr.packageDetailId = ipd.id
-                        LEFT JOIN 
-	                        AgeRange ar ON ar.id = ipd.ageRangeId
-                        left join
-	                        InsurancePackageHeader iph on iph.id = ipd.packageHeaderId
-                        left join
-	                        InsuranceProvider inspvd on inspvd.id = iph.insuranceProviderId
-                        left join
-	                        InsuranceType it on it.id = iph.insuranceTypeId ";
+                string query = @"SELECT itr.transactionDate, itr.id, itr.memberId, m.fullName, itr.contractId, 
+                        ipd.id AS packageId, iph.packageName, it.typeName, inspvd.provider, ipd.ageRangeId, 
+                        ar.startAge, ar.endAge, 
+                        N'Từ ' + CONVERT(VARCHAR(10), ar.startAge) + N' đến ' + CONVERT(VARCHAR(10), ar.endAge) + N' tuổi' AS description, 
+                        itr.annualPay, itr.paymentMethod, ipd.fee, itr.registrationDate, itr.expireDate, itr.status 
+                        FROM InsuranceTransaction itr
+                        LEFT JOIN LMember m ON m.id = itr.memberId
+                        LEFT JOIN InsurancePackageDetail ipd ON itr.packageDetailId = ipd.id
+                        LEFT JOIN AgeRange ar ON ar.id = ipd.ageRangeId
+                        LEFT JOIN InsurancePackageHeader iph on iph.id = ipd.packageHeaderId
+                        LEFT JOIN InsuranceProvider inspvd on inspvd.id = iph.insuranceProviderId
+                        LEFT JOIN InsuranceType it on it.id = iph.insuranceTypeId ";
 
                 List<SqlParameter> parameters = new List<SqlParameter>();
 

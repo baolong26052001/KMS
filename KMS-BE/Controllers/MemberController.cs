@@ -522,6 +522,11 @@ namespace KMS.Controllers
                     queryBuilder.Append("Email = @Email, ");
                     parameters.Add(new SqlParameter("@Email", member.Email));
                 }
+                if (member.TaxCode != null && member.TaxCode != "string")
+                {
+                    queryBuilder.Append("taxCode = @TaxCode, ");
+                    parameters.Add(new SqlParameter("@TaxCode", member.TaxCode));
+                }
 
                 // Remove the trailing comma and space
                 if (parameters.Count > 0)
