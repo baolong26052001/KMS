@@ -7,6 +7,10 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.ComponentModel.DataAnnotations;
 using ZXing;
+using DocumentFormat.OpenXml.Spreadsheet;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using static KMS.Controllers.MemberController;
 
 namespace KMS.Controllers
 {
@@ -20,6 +24,7 @@ namespace KMS.Controllers
         private readonly IWebHostEnvironment _hostingEnvironment;
         private int number = 1060;
         private int initialVerticalPosition = 40;
+        private readonly string _remoteApiUrl = "https://speedpos.facedb.test.verigram.cloud/facedb/insert";
 
         public QRController(IWebHostEnvironment hostingEnvironment, IConfiguration configuration, KioskManagementSystemContext context, ExecuteQuery exQuery)
         {
@@ -33,7 +38,7 @@ namespace KMS.Controllers
 
         [HttpPost]
         [Route("ScanQR")]
-        public IActionResult ScanQR([FromForm] ScanQRModel scanQrModel)
+        public async Task<IActionResult> ScanQR([FromForm] ScanQRModel scanQrModel)
         {
             try
             {
@@ -89,6 +94,59 @@ namespace KMS.Controllers
                                     Address = qrData[5]
                                 });
 
+                                string query = @"
+                                    IF NOT EXISTS (SELECT 1 FROM LMember WHERE idenNumber = @IdenNumber)
+                                    BEGIN
+                                        INSERT INTO LMember (imageIdCard, gender, fullName, birthday, idenNumber, address1, isActive, dateCreated, dateModified)
+                                        VALUES (@ImageIdCard, @Gender, @FullName, @Birthday, @IdenNumber, @Address1, 0, GETDATE(), GETDATE());
+                                    END
+                                ";
+
+                                SqlParameter[] parameters =
+                                {
+                                    new SqlParameter("@ImageIdCard", scanQrModel.file.FileName),
+                                    new SqlParameter("@IdenNumber", qrData[0]),
+                                    new SqlParameter("@FullName", qrData[2]),
+                                    new SqlParameter("@Birthday", birthday),
+                                    new SqlParameter("@Gender", qrData[4]),
+                                    new SqlParameter("@Address1", qrData[5]),
+                                };
+
+                                _exQuery.ExecuteRawQuery(query, parameters);
+
+                                //int highestId = await _dbcontext.Lmembers.MaxAsync(m => m.Id);
+
+                                //using (var client = new HttpClient())
+                                //{
+                                //    MultipartFormDataContent content = new MultipartFormDataContent
+                                //    {
+                                //        { new StreamContent(scanQrModel.file.OpenReadStream()), "img_file", scanQrModel.file.FileName },
+                                //        { new StringContent(highestId.ToString()), "person_id" },
+                                //        { new StringContent(qrData[0]), "image_id" }
+                                //    };
+
+                                //    var response = await client.PostAsync(_remoteApiUrl, content);
+
+                                //    if (response.IsSuccessStatusCode)
+                                //    {
+                                //        return new JsonResult(new ResponseDtoResult
+                                //        {
+                                //            Code = 200,
+                                //            Message = "Member added successfully",
+                                //            PersonId = highestId.ToString(),
+                                //            ImageId = qrData[0],
+                                //        });
+                                //    }
+                                //    else
+                                //    {
+                                //        return new JsonResult(new ResponseDto
+                                //        {
+                                //            Code = (int)response.StatusCode,
+                                //            Message = "Failed to add member. Remote API request failed."
+                                //        });
+                                //    }
+                                //}
+
                                 return jsonResult;
                             }
                             else
@@ -134,4 +192,5 @@ namespace KMS.Controllers
     {
         public IFormFile file { get; set; }
     }
+
 }
