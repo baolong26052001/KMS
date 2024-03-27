@@ -31,7 +31,7 @@ namespace KMS.Controllers
             {
                 string query = @"SELECT 
 	                        itr.transactionDate, itr.id, itr.memberId, m.fullName, itr.contractId, ipd.id AS packageId,
-	                        iph.packageName, it.typeName, inspvd.provider, ipd.ageRangeId, ar.startAge, ar.endAge,
+	                        iph.packageName, it.typeName, t.content, inspvd.provider, ipd.ageRangeId, ar.startAge, ar.endAge,
 	                        N'Từ ' + CONVERT(VARCHAR(10), ar.startAge) + N' đến ' + CONVERT(VARCHAR(10), ar.endAge) + N' tuổi' AS description,
 	                        itr.annualPay, itr.paymentMethod, ipd.fee, itr.registrationDate, itr.expireDate, itr.status
                             FROM InsuranceTransaction itr   
@@ -41,6 +41,8 @@ namespace KMS.Controllers
                             LEFT JOIN InsurancePackageHeader iph on iph.id = ipd.packageHeaderId
                             LEFT JOIN InsuranceProvider inspvd on inspvd.id = iph.insuranceProviderId
                             LEFT JOIN InsuranceType it on it.id = iph.insuranceTypeId
+                            LEFT JOIN Term t ON t.id = iph.termId
+
                             UPDATE InsuranceTransaction
                             SET status = CASE WHEN expireDate <= GETDATE() THEN 0 ELSE 1 END";
 
@@ -109,7 +111,7 @@ namespace KMS.Controllers
 
         [HttpGet]
         [Route("FilterInsuranceTransactionOfMemberByStatus/{memberId}")]
-        public JsonResult FilterInsuranceTransactionOfMemberByStatus(int memberId, bool? status)
+        public JsonResult FilterInsuranceTransactionOfMemberByStatus(int memberId, int? status)
         {
             ResponseDto response = new ResponseDto();
             try
@@ -266,8 +268,11 @@ namespace KMS.Controllers
                 Random random = new Random();
                 int contractId = random.Next(10000000, 99999999);
 
-                string query = "INSERT INTO InsuranceTransaction (memberId, contractId, packageDetailId, registrationDate, expireDate, annualPay, paymentMethod, status, transactionDate) " +
-                           "VALUES (@MemberId, @ContractId, @PackageDetailId, GETDATE(), CAST(DATEADD(YEAR, 1, GETDATE()) AS DATE), @AnnualPay, @PaymentMethod, @Status, GETDATE()) ";
+                string query = @"INSERT INTO InsuranceTransaction (memberId, contractId, packageDetailId, registrationDate, expireDate, annualPay, paymentMethod, status, transactionDate)
+                           VALUES (@MemberId, @ContractId, @PackageDetailId, GETDATE(), CAST(DATEADD(YEAR, 1, GETDATE()) AS DATE), @AnnualPay, @PaymentMethod, @Status, GETDATE()) 
+                            INSERT INTO LTransactionLog (memberId, transactionType, status, transactionDate)
+                            VALUES (@MemberId, 'Insurance', 1, GETDATE())
+                            ";
 
                 SqlParameter[] parameters =
                 {
@@ -275,7 +280,7 @@ namespace KMS.Controllers
                     new SqlParameter("@ContractId", contractId),
                     new SqlParameter("@PackageDetailId", insuranceTransaction.PackageDetailId),
                     new SqlParameter("@AnnualPay", insuranceTransaction.AnnualPay),
-                    new SqlParameter("@PaymentMethod", insuranceTransaction.PaymentMethod),
+                    new SqlParameter("@PaymentMethod", (object)insuranceTransaction.PaymentMethod ?? DBNull.Value),
                     new SqlParameter("@Status", insuranceTransaction.Status),
 
 
@@ -397,7 +402,7 @@ namespace KMS.Controllers
 
         [HttpGet]
         [Route("FilterInsuranceTransaction")]
-        public JsonResult FilterInsuranceTransaction([FromQuery] bool? status = null, [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
+        public JsonResult FilterInsuranceTransaction([FromQuery] int? status = null, [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
         {
             ResponseDto response = new ResponseDto();
             try

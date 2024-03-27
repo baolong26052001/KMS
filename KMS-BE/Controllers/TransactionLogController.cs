@@ -29,9 +29,13 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = "select tl.id, tl.transactionDate, tl.kioskId, k.kioskName, tl.memberId, m.fullName, tl.transactionId, st.stationName, tl.transactionType, tl.kioskRemainingMoney, tl.status " +
-                "from LTransactionLog tl, TKiosk k, LMember m, LAccount a, TStation st " +
-                "where tl.kioskId = k.id and tl.memberId = m.id and tl.accountId = a.id and tl.stationId = st.id";
+                string query = "SELECT tl.id, tl.transactionDate, tl.kioskId, k.kioskName, tl.memberId, m.fullName, tl.transactionId, st.stationName, tl.transactionType, tl.kioskRemainingMoney, tl.status " +
+               "FROM LTransactionLog tl " +
+               "LEFT JOIN TKiosk k ON tl.kioskId = k.id " +
+               "LEFT JOIN LMember m ON tl.memberId = m.id " +
+               "LEFT JOIN LAccount a ON tl.accountId = a.id " +
+               "LEFT JOIN TStation st ON tl.stationId = st.id";
+
                 DataTable table = _exQuery.ExecuteRawQuery(query);
                 return new JsonResult(table);
             }

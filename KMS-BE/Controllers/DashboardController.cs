@@ -27,10 +27,12 @@ namespace KMS.Controllers
         {
             string query = @"
         SELECT
-            (SELECT COUNT(*) FROM TKiosk) AS TotalKiosk,
-            (SELECT COUNT(*) FROM TKiosk WHERE kioskStatus = 1) AS TotalKioskOnline,
-            (SELECT COUNT(*) FROM TKiosk WHERE kioskStatus = 0) AS TotalKioskOffline,
-            (SELECT COUNT(*) FROM LTransactionLog) AS TotalTransaction";
+        (SELECT COUNT(*) FROM TKiosk) AS TotalKiosk,
+        (SELECT COUNT(*) FROM TKiosk WHERE kioskStatus = 1) AS TotalKioskOnline,
+        (SELECT COUNT(*) FROM TKiosk WHERE kioskStatus = 0) AS TotalKioskOffline,
+        (SELECT COUNT(*) FROM LoanTransaction) +
+        (SELECT COUNT(*) FROM SavingTransaction) +
+        (SELECT COUNT(*) FROM InsuranceTransaction) AS TotalTransaction";
 
             DataTable table = _exQuery.ExecuteRawQuery(query);
             return new JsonResult(table);

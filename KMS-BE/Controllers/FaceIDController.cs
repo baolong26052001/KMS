@@ -1,8 +1,12 @@
-﻿using KMS.Models;
+﻿//using DocumentFormat.OpenXml.Office2010.Excel;
+using KMS.Models;
+using KMS.Tools;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -15,10 +19,12 @@ namespace KMS.Controllers
     {
         private readonly string _remoteApiUrl = "https://speedpos.facedb.test.verigram.cloud/facedb/find";
         private readonly KioskManagementSystemContext _dbContext;
+        private readonly ExecuteQuery _exQuery;
 
-        public FaceIDController(KioskManagementSystemContext dbContext)
+        public FaceIDController(KioskManagementSystemContext dbContext, ExecuteQuery exQuery)
         {
             _dbContext = dbContext;
+            _exQuery = exQuery;
         }
 
         [HttpPost]
@@ -56,27 +62,23 @@ namespace KMS.Controllers
                         {
                             personId = int.Parse(result.result[0].person_id);
                         }
-                        
-                        
+                        string query = "select * from LMember where id=@Id";
 
-                        // Compare person_id and image_id to the database
-                        var person = _dbContext.Lmembers.FirstOrDefault(l => l.Id == personId);
+                        SqlParameter parameter = new SqlParameter("@Id", personId);
+                        DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
-                        if (person != null)
+                        if (table.Rows.Count > 0)
                         {
-                            // If the person exists in the database, execute the query
-                            var queryResult = _dbContext.Lmembers.Where(l => l.Id == personId).ToList();
-                            return new JsonResult(new { Code = 200, Data = queryResult })
+                            return new JsonResult(new { Code = 200, Data = table })
                             {
                                 StatusCode = 200
                             };
                         }
-
                         else
                         {
-                            return new JsonResult(new { Error = "Person not found in the database" })
+                            return new JsonResult(new { Code = 400, Data = "Member not found" })
                             {
-                                StatusCode = 404
+                                StatusCode = 400
                             };
                         }
                     }

@@ -286,10 +286,8 @@ namespace KMS.Controllers
 
                         _exQuery.ExecuteRawQuery(query, parameters);
 
-                        // Fetch the highest ID from the LMember table
                         int highestId = await _dbcontext.Lmembers.MaxAsync(m => m.Id);
 
-                        // Prepare and send the API request
                         using (var client = new HttpClient())
                         {
                             MultipartFormDataContent content = new MultipartFormDataContent

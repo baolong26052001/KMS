@@ -104,27 +104,73 @@ namespace KMS.Controllers
                     }
                 }
 
-                string query = "INSERT INTO InsuranceProvider (provider, email, dateCreated, dateModified) " +
+                byte[] imageByte;
+                if (insuranceProvider.ProviderImageFile != null)
+                {
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        insuranceProvider.ProviderImageFile.CopyTo(memoryStream);
+                        imageByte = memoryStream.ToArray();
+                    }
+
+                    string base64String = Convert.ToBase64String(imageByte);
+                    insuranceProvider.ProviderImage = base64String;
+
+                    var uniqueFileName = insuranceProvider.ProviderImageFile.FileName;
+
+                    string query = "INSERT INTO InsuranceProvider (provider, email, providerImage, dateCreated, dateModified) " +
+                           "VALUES (@Provider, @Email, @ProviderImage, GETDATE(), GETDATE())";
+                    string query2 = "INSERT INTO TAudit (userId, ipAddress, macAddress, action, tableName, dateModified, dateCreated, isActive) " +
+                               "VALUES (@UserId, @IpAddress, @Ipv6, 'Add', 'InsuranceProvider', GETDATE(), GETDATE(), 1)";
+
+                    SqlParameter[] parameters =
+                    {
+                        new SqlParameter("@Provider", insuranceProvider.Provider),
+                        new SqlParameter("@Email", (object)insuranceProvider.Email ?? DBNull.Value),
+                        new SqlParameter("@ProviderImage", (object)insuranceProvider.ProviderImage ?? DBNull.Value),
+                    };
+                    SqlParameter[] parameters2 =
+                    {
+                        new SqlParameter("@IpAddress", ipv4?.ToString()),
+                        new SqlParameter("@Ipv6", ipv6?.ToString()),
+                        new SqlParameter("@UserId", (object)insuranceProvider.UserId ?? DBNull.Value),
+                    };
+
+                    _exQuery.ExecuteRawQuery(query, parameters);
+                    _exQuery.ExecuteRawQuery(query2, parameters2);
+
+                    return new JsonResult("Insurance Provider added successfully");
+
+                }
+
+
+                else
+                {
+                    string query = "INSERT INTO InsuranceProvider (provider, email, dateCreated, dateModified) " +
                            "VALUES (@Provider, @Email, GETDATE(), GETDATE())";
-                string query2 = "INSERT INTO TAudit (userId, ipAddress, macAddress, action, tableName, dateModified, dateCreated, isActive) " +
-                           "VALUES (@UserId, @IpAddress, @Ipv6, 'Add', 'InsuranceProvider', GETDATE(), GETDATE(), 1)";
+                    string query2 = "INSERT INTO TAudit (userId, ipAddress, macAddress, action, tableName, dateModified, dateCreated, isActive) " +
+                               "VALUES (@UserId, @IpAddress, @Ipv6, 'Add', 'InsuranceProvider', GETDATE(), GETDATE(), 1)";
 
-                SqlParameter[] parameters =
-                {
-                    new SqlParameter("@Provider", insuranceProvider.Provider),
-                    new SqlParameter("@Email", insuranceProvider.Email),
-                };
-                SqlParameter[] parameters2 =
-                {
-                    new SqlParameter("@IpAddress", ipv4?.ToString()),
-                    new SqlParameter("@Ipv6", ipv6?.ToString()),
-                    new SqlParameter("@UserId", (object)insuranceProvider.UserId ?? DBNull.Value),
-                };
+                    SqlParameter[] parameters =
+                    {
+                        new SqlParameter("@Provider", insuranceProvider.Provider),
+                        new SqlParameter("@Email", (object)insuranceProvider.Email ?? DBNull.Value),
+                        
+                    };
+                    SqlParameter[] parameters2 =
+                    {
+                        new SqlParameter("@IpAddress", ipv4?.ToString()),
+                        new SqlParameter("@Ipv6", ipv6?.ToString()),
+                        new SqlParameter("@UserId", (object)insuranceProvider.UserId ?? DBNull.Value),
+                    };
 
-                _exQuery.ExecuteRawQuery(query, parameters);
-                _exQuery.ExecuteRawQuery(query2, parameters2);
+                    _exQuery.ExecuteRawQuery(query, parameters);
+                    _exQuery.ExecuteRawQuery(query2, parameters2);
 
-                return new JsonResult("Insurance Provider added successfully");
+                    return new JsonResult("Insurance Provider added successfully");
+                }
+
+                
             }
             catch (Exception ex)
             {
@@ -136,6 +182,8 @@ namespace KMS.Controllers
             return new JsonResult(response);
             
         }
+
+
 
         [HttpPut]
         [Route("EditInsuranceProvider/{id}")]
@@ -162,30 +210,76 @@ namespace KMS.Controllers
                     }
                 }
 
-                string query = "UPDATE InsuranceProvider " +
+                byte[] imageByte;
+                if (insuranceProvider.ProviderImageFile != null)
+                {
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        insuranceProvider.ProviderImageFile.CopyTo(memoryStream);
+                        imageByte = memoryStream.ToArray();
+                    }
+
+                    string base64String = Convert.ToBase64String(imageByte);
+                    insuranceProvider.ProviderImage = base64String;
+
+                    var uniqueFileName = insuranceProvider.ProviderImageFile.FileName;
+
+                    string query = "UPDATE InsuranceProvider " +
+                           "SET provider = @Provider, email = @Email, providerImage = @ProviderImage, dateModified = GETDATE() " +
+                           "WHERE id = @Id";
+                    string query2 = "INSERT INTO TAudit (userId, ipAddress, macAddress, action, tableName, dateModified, dateCreated, isActive) " +
+                               "VALUES (@UserId, @IpAddress, @Ipv6, 'Update', 'InsuranceProvider', GETDATE(), GETDATE(), 1)";
+
+                    SqlParameter[] parameters =
+                    {
+                        new SqlParameter("@Id", id),
+                        new SqlParameter("@Provider", insuranceProvider.Provider),
+                        new SqlParameter("@Email", (object)insuranceProvider.Email ?? DBNull.Value),
+                        new SqlParameter("@ProviderImage", (object)insuranceProvider.ProviderImage ?? DBNull.Value),
+                    };
+                    SqlParameter[] parameters2 =
+                    {
+                        new SqlParameter("@IpAddress", ipv4?.ToString()),
+                        new SqlParameter("@Ipv6", ipv6?.ToString()),
+                        new SqlParameter("@UserId", (object)insuranceProvider.UserId ?? DBNull.Value),
+                    };
+
+
+                    _exQuery.ExecuteRawQuery(query, parameters);
+                    _exQuery.ExecuteRawQuery(query2, parameters2);
+
+                    return new JsonResult("Insurance Provider updated successfully");
+
+                }
+                else
+                {
+                    string query = "UPDATE InsuranceProvider " +
                            "SET provider = @Provider, email = @Email, dateModified = GETDATE() " +
                            "WHERE id = @Id";
-                string query2 = "INSERT INTO TAudit (userId, ipAddress, macAddress, action, tableName, dateModified, dateCreated, isActive) " +
-                           "VALUES (@UserId, @IpAddress, @Ipv6, 'Update', 'InsuranceProvider', GETDATE(), GETDATE(), 1)";
+                    string query2 = "INSERT INTO TAudit (userId, ipAddress, macAddress, action, tableName, dateModified, dateCreated, isActive) " +
+                               "VALUES (@UserId, @IpAddress, @Ipv6, 'Update', 'InsuranceProvider', GETDATE(), GETDATE(), 1)";
 
-                SqlParameter[] parameters =
-                {
-                    new SqlParameter("@Id", id),
-                    new SqlParameter("@Provider", insuranceProvider.Provider),
-                    new SqlParameter("@Email", insuranceProvider.Email),
-                };
-                SqlParameter[] parameters2 =
-                {
-                    new SqlParameter("@IpAddress", ipv4?.ToString()),
-                    new SqlParameter("@Ipv6", ipv6?.ToString()),
-                    new SqlParameter("@UserId", (object)insuranceProvider.UserId ?? DBNull.Value),
-                };
+                    SqlParameter[] parameters =
+                    {
+                        new SqlParameter("@Id", id),
+                        new SqlParameter("@Provider", insuranceProvider.Provider),
+                        new SqlParameter("@Email", (object)insuranceProvider.Email ?? DBNull.Value),
+                    };
+                    SqlParameter[] parameters2 =
+                    {
+                        new SqlParameter("@IpAddress", ipv4?.ToString()),
+                        new SqlParameter("@Ipv6", ipv6?.ToString()),
+                        new SqlParameter("@UserId", (object)insuranceProvider.UserId ?? DBNull.Value),
+                    };
 
 
-                _exQuery.ExecuteRawQuery(query, parameters);
-                _exQuery.ExecuteRawQuery(query2, parameters2);
+                    _exQuery.ExecuteRawQuery(query, parameters);
+                    _exQuery.ExecuteRawQuery(query2, parameters2);
 
-                return new JsonResult("Insurance Provider updated successfully");
+                    return new JsonResult("Insurance Provider updated successfully");
+                }
+
+                
             }
             catch (Exception ex)
             {

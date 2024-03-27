@@ -2,12 +2,13 @@
 using KMS.Models;
 using KMS.Tools;
 using System;
+using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.ComponentModel.DataAnnotations;
 using ZXing;
-using DocumentFormat.OpenXml.Spreadsheet;
+//using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using static KMS.Controllers.MemberController;
@@ -87,18 +88,31 @@ namespace KMS.Controllers
 
                                 var jsonResult = new JsonResult(new
                                 {
-                                    IdenNumber = qrData[0],
-                                    FullName = qrData[2],
-                                    Birthday = birthday,
-                                    Gender = qrData[4],
-                                    Address = qrData[5]
+                                    idenNumber = qrData[0],
+                                    fullName = qrData[2],
+                                    birthday = birthday,
+                                    gender = qrData[4],
+                                    address1 = qrData[5]
                                 });
+
+                                string checkIfExistsQuery = "SELECT COUNT(*) FROM LMember WHERE idenNumber = @IdenNumber";
+                                SqlParameter[] checkIfExistsParameters = { new SqlParameter("@IdenNumber", qrData[0]) };
+                                int count = _exQuery.ExecuteScalar<int>(checkIfExistsQuery, checkIfExistsParameters);
+                                if (count > 0)
+                                {
+                                    return new JsonResult(new ResponseDto
+                                    {
+                                        Code = 300,
+                                        Message = "This person already exists"
+                                    });
+                                }
 
                                 string query = @"
                                     IF NOT EXISTS (SELECT 1 FROM LMember WHERE idenNumber = @IdenNumber)
                                     BEGIN
                                         INSERT INTO LMember (imageIdCard, gender, fullName, birthday, idenNumber, address1, isActive, dateCreated, dateModified)
                                         VALUES (@ImageIdCard, @Gender, @FullName, @Birthday, @IdenNumber, @Address1, 0, GETDATE(), GETDATE());
+                                        SELECT SCOPE_IDENTITY();
                                     END
                                 ";
 
@@ -114,38 +128,40 @@ namespace KMS.Controllers
 
                                 _exQuery.ExecuteRawQuery(query, parameters);
 
-                                //int highestId = await _dbcontext.Lmembers.MaxAsync(m => m.Id);
+                                int insertedId = Convert.ToInt32(_exQuery.ExecuteRawQuery(query, parameters));
+                                
+                                
 
-                                //using (var client = new HttpClient())
-                                //{
-                                //    MultipartFormDataContent content = new MultipartFormDataContent
-                                //    {
-                                //        { new StreamContent(scanQrModel.file.OpenReadStream()), "img_file", scanQrModel.file.FileName },
-                                //        { new StringContent(highestId.ToString()), "person_id" },
-                                //        { new StringContent(qrData[0]), "image_id" }
-                                //    };
+                                using (var client = new HttpClient())
+                                {
+                                    MultipartFormDataContent content = new MultipartFormDataContent
+                                    {
+                                        { new StreamContent(scanQrModel.file.OpenReadStream()), "img_file", scanQrModel.file.FileName },
+                                        { new StringContent(insertedId.ToString()), "person_id" },
+                                        { new StringContent(qrData[0]), "image_id" }
+                                    };
 
-                                //    var response = await client.PostAsync(_remoteApiUrl, content);
+                                    var response = await client.PostAsync(_remoteApiUrl, content);
 
-                                //    if (response.IsSuccessStatusCode)
-                                //    {
-                                //        return new JsonResult(new ResponseDtoResult
-                                //        {
-                                //            Code = 200,
-                                //            Message = "Member added successfully",
-                                //            PersonId = highestId.ToString(),
-                                //            ImageId = qrData[0],
-                                //        });
-                                //    }
-                                //    else
-                                //    {
-                                //        return new JsonResult(new ResponseDto
-                                //        {
-                                //            Code = (int)response.StatusCode,
-                                //            Message = "Failed to add member. Remote API request failed."
-                                //        });
-                                //    }
-                                //}
+                                    if (response.IsSuccessStatusCode)
+                                    {
+                                        return new JsonResult(new ResponseDtoResult
+                                        {
+                                            Code = 200,
+                                            Message = "Member added successfully",
+                                            PersonId = insertedId.ToString(),
+                                            ImageId = qrData[0],
+                                        });
+                                    }
+                                    else
+                                    {
+                                        return new JsonResult(new ResponseDto
+                                        {
+                                            Code = (int)response.StatusCode,
+                                            Message = "Failed to add member. Remote API request failed."
+                                        });
+                                    }
+                                }
 
                                 return jsonResult;
                             }
