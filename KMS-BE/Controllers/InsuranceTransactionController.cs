@@ -34,7 +34,7 @@ namespace KMS.Controllers
 	                        iph.packageName, it.typeName, t.content, inspvd.provider, ipd.ageRangeId, ar.startAge, ar.endAge,
 	                        N'Từ ' + CONVERT(VARCHAR(10), ar.startAge) + N' đến ' + CONVERT(VARCHAR(10), ar.endAge) + N' tuổi' AS description,
 	                        itr.annualPay, itr.paymentMethod, ipd.fee, itr.registrationDate, itr.expireDate, itr.status
-                            FROM InsuranceTransaction itr   
+                            FROM InsuranceTransaction itr
                             LEFT JOIN LMember m ON m.id = itr.memberId
                             LEFT JOIN InsurancePackageDetail ipd ON itr.packageDetailId = ipd.id
                             LEFT JOIN AgeRange ar ON ar.id = ipd.ageRangeId
@@ -42,7 +42,7 @@ namespace KMS.Controllers
                             LEFT JOIN InsuranceProvider inspvd on inspvd.id = iph.insuranceProviderId
                             LEFT JOIN InsuranceType it on it.id = iph.insuranceTypeId
                             LEFT JOIN Term t ON t.id = iph.termId
-
+                            ORDER BY itr.transactionDate DESC
                             UPDATE InsuranceTransaction
                             SET status = CASE WHEN expireDate <= GETDATE() THEN 0 ELSE 1 END";
 
@@ -82,7 +82,8 @@ namespace KMS.Controllers
                                 LEFT JOIN InsuranceType it ON it.id = iph.insuranceTypeId 
                                 LEFT JOIN Term t ON t.id = iph.termId 
                                 LEFT JOIN Beneficiary b ON b.transactionId = itr.id 
-                                WHERE itr.memberId = @MemberId; 
+                                WHERE itr.memberId = @MemberId
+                                ORDER BY itr.transactionDate DESC
                                 UPDATE InsuranceTransaction 
                                 SET status = CASE WHEN expireDate <= GETDATE() THEN 0 ELSE 1 END;";
 
@@ -130,7 +131,8 @@ namespace KMS.Controllers
                                 LEFT JOIN InsuranceProvider inspvd on inspvd.id = iph.insuranceProviderId
                                 LEFT JOIN InsuranceType it on it.id = iph.insuranceTypeId 
                                 LEFT JOIN Term t on t.id = iph.termId
-                                WHERE itr.memberId = @MemberId";
+                                WHERE itr.memberId = @MemberId
+                                ORDER BY itr.transactionDate DESC";
 
                 if (status != null)
                 {
@@ -199,6 +201,7 @@ namespace KMS.Controllers
 						    LEFT JOIN Term t on t.id = iph.termId
 						    LEFT JOIN Beneficiary b on b.transactionId = itr.id
 						    WHERE itr.id = @Id
+                            ORDER BY itr.transactionDate DESC
                             UPDATE InsuranceTransaction
                             SET status = CASE WHEN expireDate <= GETDATE() THEN 0 ELSE 1 END";
 
@@ -382,7 +385,8 @@ namespace KMS.Controllers
                             "or inspvd.provider LIKE @searchQuery " +
                             "or itr.annualPay LIKE @searchQuery " +
                             "or ar.startAge LIKE @searchQuery " +
-                            "or ar.endAge LIKE @searchQuery";
+                            "or ar.endAge LIKE @searchQuery " +
+                            "ORDER BY itr.transactionDate DESC";
 
                 SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
                 DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
@@ -438,6 +442,8 @@ namespace KMS.Controllers
                     parameters.Add(new SqlParameter("@startDate", startDate.Value));
                     parameters.Add(new SqlParameter("@endDate", endDate.Value));
                 }
+
+                query += " ORDER BY itr.transactionDate DESC";
 
                 DataTable table = _exQuery.ExecuteRawQuery(query, parameters.ToArray());
 
