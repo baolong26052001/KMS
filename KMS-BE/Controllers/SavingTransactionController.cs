@@ -45,13 +45,13 @@ namespace KMS.Controllers
         }
 
         [HttpGet]
-        [Route("ShowSavingTransaction/{id}")]
+        [Route("ShowSavingTransaction/{id}")] // use for VIEW in KMS
         public JsonResult GetSavingTransactionById(int id)
         {
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = "select * from SavingTransaction where id=@id";
+                string query = "select * from SavingTransaction where savingId=@id";
 
                 SqlParameter parameter = new SqlParameter("@id", id);
                 DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
@@ -77,15 +77,13 @@ namespace KMS.Controllers
         }
 
         [HttpGet]
-        [Route("ShowSavingTransactionDetail/{id}")]
-        public JsonResult GetSavingTransactionDetail(int id)
+        [Route("ShowSavingTransactionByMemberId/{id}")]
+        public JsonResult ShowSavingTransactionByMemberId(int id)
         {
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = "select * " +
-                "from SavingTransactionDetail std, SavingTransaction st " +
-                "where std.savingId = st.id and st.id=@id";
+                string query = "select * from SavingTransaction where memberId=@id";
 
                 SqlParameter parameter = new SqlParameter("@id", id);
                 DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
@@ -96,7 +94,41 @@ namespace KMS.Controllers
                 }
                 else
                 {
-                    return new JsonResult("Saving transaction detail not found");
+                    return new JsonResult("Saving transaction not found");
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+
+        }
+
+        [HttpGet]
+        [Route("ShowWithdrawBySavingId/{id}")]
+        public JsonResult ShowWithdrawBySavingId(int id)
+        {
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = @"select * 
+                from Withdraw wd
+                where wd.savingId=@id";
+
+                SqlParameter parameter = new SqlParameter("@id", id);
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+
+                if (table.Rows.Count > 0)
+                {
+                    return new JsonResult(table);
+                }
+                else
+                {
+                    return new JsonResult("Withdraw data not found");
                 }
             }
             catch (Exception ex)
@@ -117,15 +149,25 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
+                Random random = new Random();
+                int contractId = random.Next(10000000, 99999999);
 
-                string query = @"INSERT INTO SavingTransaction (memberId, accountId, loanTerm, debt, balance, transactionType, interestRate, loanDate, dueDate, isActive)
-                VALUES (@MemberId, @AccountId, @LoanTerm, @Debt, @Balance, @TransactionType, @InterestRate, GETDATE(), DATEADD(year, 1, GETDATE()), @IsActive)";
+                string query = @"INSERT INTO SavingTransaction (memberId, contractId, savingTerm, topUp, savingRate, transactionDate, dueDate, status)
+                VALUES (@MemberId, @ContractId, @SavingTerm, @TopUp, @SavingRate, GETDATE(), DATEADD(year, 1, GETDATE()), @Status)";
 
                 SqlParameter[] parameters =
                 {
-                    new SqlParameter("@MemberId", savingTransaction.MemberId),
                     
+                    new SqlParameter("@MemberId", savingTransaction.MemberId),
+                    new SqlParameter("@ContractId", contractId),
+                    new SqlParameter("@SavingTerm", savingTransaction.SavingTerm),
+                    new SqlParameter("@TopUp", savingTransaction.TopUp),
+                   
+                    
+                    new SqlParameter("@SavingRate", savingTransaction.SavingRate),
+                    new SqlParameter("@Status", savingTransaction.Status)
                 };
+
 
                 _exQuery.ExecuteRawQuery(query, parameters);
 

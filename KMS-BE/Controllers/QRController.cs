@@ -100,10 +100,15 @@ namespace KMS.Controllers
                                 int count = _exQuery.ExecuteScalar<int>(checkIfExistsQuery, checkIfExistsParameters);
                                 if (count > 0)
                                 {
-                                    return new JsonResult(new ResponseDto
+                                    return new JsonResult(new
                                     {
                                         Code = 300,
-                                        Message = "This person already exists"
+                                        Message = "This person already exists",
+                                        idenNumber = qrData[0],
+                                        fullName = qrData[2],
+                                        birthday = birthday,
+                                        gender = qrData[4],
+                                        address1 = qrData[5]
                                     });
                                 }
 
@@ -126,9 +131,9 @@ namespace KMS.Controllers
                                     new SqlParameter("@Address1", qrData[5]),
                                 };
 
-                                _exQuery.ExecuteRawQuery(query, parameters);
+                                //_exQuery.ExecuteRawQuery(query, parameters);
 
-                                int insertedId = Convert.ToInt32(_exQuery.ExecuteRawQuery(query, parameters));
+                                int insertedId = _exQuery.ExecuteScalar<int>(query, parameters);
                                 
                                 
 
@@ -145,12 +150,16 @@ namespace KMS.Controllers
 
                                     if (response.IsSuccessStatusCode)
                                     {
-                                        return new JsonResult(new ResponseDtoResult
+                                        return new JsonResult(new
                                         {
                                             Code = 200,
                                             Message = "Member added successfully",
                                             PersonId = insertedId.ToString(),
                                             ImageId = qrData[0],
+                                            fullName = qrData[2],
+                                            birthday = birthday,
+                                            gender = qrData[4],
+                                            address1 = qrData[5]
                                         });
                                     }
                                     else

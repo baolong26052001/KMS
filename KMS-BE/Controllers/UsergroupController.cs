@@ -298,6 +298,8 @@ namespace KMS.Controllers
 
                 for (int i = 0; i < usergroupIds.Count; i++)
                 {
+                    if (usergroupIds[i] == 1) continue;
+
                     string parameterNameUsergroup = "@UsergroupId" + i;
                     deleteQueryUsergroup.Append(parameterNameUsergroup);
 

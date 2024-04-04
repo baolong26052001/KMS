@@ -47,13 +47,13 @@ namespace KMS.Controllers
         }
 
         [HttpGet]
-        [Route("ShowLoanTransaction/{id}")]
+        [Route("ShowLoanTransaction/{id}")] // use for VIEW in KMS
         public JsonResult GetLoanTransactionById(int id)
         {
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = "select * from LoanTransaction where id=@id";
+                string query = "select * from LoanTransaction where loanId=@id";
 
                 SqlParameter parameter = new SqlParameter("@id", id);
                 DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
@@ -79,13 +79,13 @@ namespace KMS.Controllers
         }
 
         [HttpGet]
-        [Route("ShowLoanTransactionDetailByHeaderId/{id}")]
-        public JsonResult GetLoanTransactionDetail(int id)
+        [Route("ShowLoanTransactionByMemberId/{id}")]
+        public JsonResult ShowLoanTransactionByMemberId(int id)
         {
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = @"select * from LoanTransactionDetail where loanHeaderId = @id";
+                string query = "select * from LoanTransaction where memberId=@id";
 
                 SqlParameter parameter = new SqlParameter("@id", id);
                 DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
@@ -96,7 +96,39 @@ namespace KMS.Controllers
                 }
                 else
                 {
-                    return new JsonResult("Loan transaction detail not found");
+                    return new JsonResult("Loan transaction not found");
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+
+        }
+
+        [HttpGet]
+        [Route("ShowPaybackByLoanId/{id}")]
+        public JsonResult ShowPaybackByLoanId(int id)
+        {
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = @"select * from Payback p where p.loanId = @id";
+
+                SqlParameter parameter = new SqlParameter("@id", id);
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+
+                if (table.Rows.Count > 0)
+                {
+                    return new JsonResult(table);
+                }
+                else
+                {
+                    return new JsonResult("Payback data not found");
                 }
             }
             catch (Exception ex)
@@ -125,24 +157,21 @@ namespace KMS.Controllers
                 DECLARE @DueDate AS DATE
                 SET @DueDate = DATEADD(MONTH, @LoanTerm, GETDATE())
                 
-                INSERT INTO LoanTransaction (accountId, contractId, loanTerm, debt, totalDebtMustPay, debtPayPerMonth, loanRate, loanDate, dueDate, status)
-                VALUES (@AccountId, @ContractId, @LoanTerm, @Debt, @TotalDebtMustPay, @DebtPayPerMonth, @LoanRate, GETDATE(), @DueDate, 0)
+                INSERT INTO LoanTransaction (memberId, contractId, loanTerm, debt, totalDebtMustPay, loanRate, transactionDate, dueDate, status)
+                VALUES (@MemberId, @ContractId, @LoanTerm, @Debt, @TotalDebtMustPay, @LoanRate, GETDATE(), @DueDate, 0)
                 
-                INSERT INTO LoanStatement (accountId, debt, paid, transactionDate, description, status)
-                VALUES (@AccountId, @Debt, 0, GETDATE(), N'Tài khoản ' + CAST(@AccountId AS NVARCHAR(50)) + N' đã vay ' + CAST(@Debt AS NVARCHAR(50)) + N' VND vào lúc ' + CONVERT(NVARCHAR(50), GETDATE()), 1)
-
 
                 ";
 
                 SqlParameter[] parameters =
                 {
                     
-                    new SqlParameter("@AccountId", loanTransaction.AccountId),
+                    new SqlParameter("@MemberId", loanTransaction.MemberId),
                     new SqlParameter("@ContractId", contractId),
                     new SqlParameter("@LoanTerm", loanTransaction.LoanTerm),
                     new SqlParameter("@Debt", loanTransaction.Debt),
                     new SqlParameter("@TotalDebtMustPay", loanTransaction.Debt + (int)((double)loanTransaction.Debt * loanTransaction.LoanRate)),
-                    new SqlParameter("@DebtPayPerMonth", (loanTransaction.Debt + loanTransaction.Debt * loanTransaction.LoanRate) / loanTransaction.LoanTerm),
+                    //new SqlParameter("@DebtPayPerMonth", (loanTransaction.Debt + loanTransaction.Debt * loanTransaction.LoanRate) / loanTransaction.LoanTerm),
                     new SqlParameter("@LoanRate", loanTransaction.LoanRate),
                     
                 };
@@ -164,8 +193,8 @@ namespace KMS.Controllers
         }
 
         [HttpPost]
-        [Route("SaveLoanTransactionDetail")]
-        public JsonResult SaveLoanTransactionDetail([FromBody] LoanTransactionDetail loanTransactionDetail)
+        [Route("SavePayback")]
+        public JsonResult SavePayback([FromBody] PayBack payback)
         {
             ResponseDto response = new ResponseDto();
             try
@@ -176,47 +205,43 @@ namespace KMS.Controllers
                             -- Retrieve totalDebtMustPay from LoanTransaction table
                             SELECT @TotalDebtMustPay = totalDebtMustPay 
                             FROM LoanTransaction 
-                            WHERE id = @LoanHeaderId
+                            WHERE loanId = @LoanId
 
                             -- Calculate debt remaining
                             DECLARE @DebtRemaining DECIMAL(18, 2)
 
-                            -- Check if there are existing transactions for the same loanHeaderId
+                            -- Check if there are existing transactions for the same LoanId
                             DECLARE @LatestDebtRemaining DECIMAL(18, 2)
 
-                            SELECT TOP 1 @LatestDebtRemaining = debtRemaining
-                            FROM LoanTransactionDetail
-                            WHERE loanHeaderId = @LoanHeaderId
+                            SELECT TOP 1 @LatestDebtRemaining = indebt
+                            FROM Payback
+                            WHERE loanId = @LoanId
                             ORDER BY transactionDate DESC
 
 
-                            DECLARE @AccountId INT
-                            SELECT TOP 1 @AccountId = accountId
+                            DECLARE @MemberId INT
+                            SELECT TOP 1 @MemberId = memberId
                             FROM LoanTransaction
-                            WHERE id = @LoanHeaderId
+                            WHERE loanId = @LoanId
 
 
                             -- If there are existing transactions, calculate @DebtRemaining based on the latest debtRemaining
                             IF (@LatestDebtRemaining IS NOT NULL)
-                                SET @DebtRemaining = @LatestDebtRemaining - @PaidAmount
+                                SET @DebtRemaining = @LatestDebtRemaining - @Payback
                             ELSE
-                                SET @DebtRemaining = @TotalDebtMustPay - @PaidAmount
+                                SET @DebtRemaining = @TotalDebtMustPay - @Payback
 
-                            -- Insert into LoanTransactionDetail
-                            INSERT INTO LoanTransactionDetail (loanHeaderId, paidAmount, debtRemaining, transactionDate)
-                            VALUES (@LoanHeaderId, @PaidAmount, @DebtRemaining, GETDATE())
-
-
-                            -- Insert into LoanStatement
-                            INSERT INTO LoanStatement (accountId, debt, paid, transactionDate, description, status)
-                            VALUES (@AccountId, 0, @PaidAmount, GETDATE(), N'Tài khoản ' + CAST(@AccountId AS NVARCHAR(50)) + N' đã trả ' + CAST(@PaidAmount AS NVARCHAR(50)) + N' VND vào lúc ' + CONVERT(NVARCHAR(50), GETDATE()), 0)
+                            -- Insert into Payback
+                            INSERT INTO Payback (LoanId, payback, indebt, transactionDate)
+                            VALUES (@LoanId, @Payback, @DebtRemaining, GETDATE())
 
 
+                            
 
                             IF (@DebtRemaining <= 0)
                             UPDATE LoanTransaction 
                             SET status = 1 -- Assuming 'status' is a bit field
-                            WHERE id = @LoanHeaderId
+                            WHERE loanId = @LoanId
 
 
                             ";
@@ -224,8 +249,8 @@ namespace KMS.Controllers
                 SqlParameter[] parameters =
                 {
                     
-                    new SqlParameter("@LoanHeaderId", loanTransactionDetail.LoanHeaderId),
-                    new SqlParameter("@PaidAmount", loanTransactionDetail.PaidAmount),
+                    new SqlParameter("@LoanId", payback.LoanId),
+                    new SqlParameter("@Payback", payback.Payback),
                     
                     
                 };
@@ -254,7 +279,7 @@ namespace KMS.Controllers
             {
                 string query = "SELECT * " +
                            "FROM LoanTransaction " +
-                           "WHERE accountId LIKE @searchQuery OR " +
+                           "WHERE memberId LIKE @searchQuery OR " +
                            "contractId LIKE @searchQuery OR " +
                            "loanTerm LIKE @searchQuery OR " +
                            "debt LIKE @searchQuery OR " +

@@ -260,7 +260,6 @@ namespace KMS.Controllers
 
         }
 
-
         [HttpPost]
         [Route("SaveInsuranceTransaction")]
         public JsonResult SaveInsuranceTransaction([FromBody] InsuranceTransaction insuranceTransaction)
@@ -271,11 +270,13 @@ namespace KMS.Controllers
                 Random random = new Random();
                 int contractId = random.Next(10000000, 99999999);
 
-                string query = @"INSERT INTO InsuranceTransaction (memberId, contractId, packageDetailId, registrationDate, expireDate, annualPay, paymentMethod, status, transactionDate)
-                           VALUES (@MemberId, @ContractId, @PackageDetailId, GETDATE(), CAST(DATEADD(YEAR, 1, GETDATE()) AS DATE), @AnnualPay, @PaymentMethod, @Status, GETDATE()) 
-                            INSERT INTO LTransactionLog (memberId, transactionType, status, transactionDate)
-                            VALUES (@MemberId, 'Insurance', 1, GETDATE())
-                            ";
+                string query = @"DECLARE @InsertedIds TABLE (ID INT);
+                         INSERT INTO InsuranceTransaction (memberId, contractId, packageDetailId, registrationDate, expireDate, annualPay, paymentMethod, status, transactionDate)
+                         OUTPUT INSERTED.ID INTO @InsertedIds
+                         VALUES (@MemberId, @ContractId, @PackageDetailId, GETDATE(), CAST(DATEADD(YEAR, 1, GETDATE()) AS DATE), @AnnualPay, @PaymentMethod, @Status, GETDATE());
+                         INSERT INTO LTransactionLog (memberId, transactionType, status, transactionDate)
+                         VALUES (@MemberId, 'Insurance', 3, GETDATE());
+                         SELECT ID FROM @InsertedIds;";
 
                 SqlParameter[] parameters =
                 {
@@ -285,13 +286,16 @@ namespace KMS.Controllers
                     new SqlParameter("@AnnualPay", insuranceTransaction.AnnualPay),
                     new SqlParameter("@PaymentMethod", (object)insuranceTransaction.PaymentMethod ?? DBNull.Value),
                     new SqlParameter("@Status", insuranceTransaction.Status),
-
-
                 };
 
-                _exQuery.ExecuteRawQuery(query, parameters);
+                int insertedId = _exQuery.ExecuteScalar<int>(query, parameters);
 
-                return new JsonResult("Insurance Transaction saved successfully");
+                return new JsonResult(new
+                {
+                    Code = 200,
+                    Message = "Save insurance transaction successfully",
+                    transactionId = insertedId
+                });
             }
             catch (Exception ex)
             {
@@ -299,10 +303,10 @@ namespace KMS.Controllers
                 response.Message = ex.Message;
                 response.Exception = ex.ToString();
                 response.Data = null;
+                return new JsonResult(response);
             }
-            return new JsonResult(response);
-            
         }
+
 
         [HttpPost]
         [Route("SaveBeneficiary")]

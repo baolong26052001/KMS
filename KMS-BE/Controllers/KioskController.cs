@@ -260,7 +260,59 @@ namespace KMS.Controllers
             return new JsonResult(response);
         }
 
-        
+        [HttpPut]
+        [Route("UpdatePrinterStatus/{id}")]
+        public JsonResult UpdatePrinterStatus(int id, [FromBody] TkioskModel kiosk)
+        {
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault() ?? HttpContext.Connection.RemoteIpAddress.ToString();
+                string host = Dns.GetHostName();
+                IPHostEntry ip = Dns.GetHostEntry(host);
+                IPAddress ipv4 = null;
+                IPAddress ipv6 = null;
+
+                foreach (var address in ip.AddressList)
+                {
+                    if (address.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        ipv4 = address;
+                    }
+                    else if (address.AddressFamily == AddressFamily.InterNetworkV6)
+                    {
+                        ipv6 = address;
+                    }
+                }
+
+                string query = @"UPDATE TKiosk 
+                                SET printerStatus = @printerStatus 
+                                WHERE id = @id";
+                
+
+                SqlParameter[] parameters =
+                {
+                    new SqlParameter("@id", id),
+                    new SqlParameter("@printerStatus", kiosk.PrinterStatus),
+                    
+                };
+                
+
+                _exQuery.ExecuteRawQuery(query, parameters);
+                
+
+                return new JsonResult("Kiosk printer status updated successfully");
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+
+        }
 
         [HttpPut]
         [Route("UpdateKiosk/{id}")]
@@ -324,6 +376,8 @@ namespace KMS.Controllers
             return new JsonResult(response);
             
         }
+
+
 
         [HttpDelete]
         [Route("DeleteKiosk")]

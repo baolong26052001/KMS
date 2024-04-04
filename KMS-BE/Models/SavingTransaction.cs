@@ -5,16 +5,28 @@ namespace KMS.Models
 {
     public partial class SavingTransaction
     {
-        public int Id { get; set; }
-        public int? AccountId { get; set; }
+        public int SavingId { get; set; }
+        public int? TransactionId { get; set; }
         public int? MemberId { get; set; }
-        public int? SavingTerm { get; set; }
-        public double? Balance { get; set; }
-        public double? AnnualRate { get; set; }
+        public int? ContractId { get; set; }
+        public int? TopUp { get; set; }
+        public int? Balance { get; set; }
+        public int? SavingRate { get; set; }
+        public double? SavingTerm { get; set; }
+        public DateTime? TransactionDate { get; set; }
         public DateTime? DueDate { get; set; }
         public int? Status { get; set; }
-        public bool? IsActive { get; set; }
-        public DateTime? DateCreated { get; set; }
-        public DateTime? DateModified { get; set; }
     }
+
+    public partial class WithDraw
+    {
+        public int WithdrawId { get; set; }
+        public int? TransactionId { get; set; }
+        public int? MemberId { get; set; }
+        public int? SavingId { get; set; }
+        public int? Withdraw { get; set; }
+        public int? Balance { get; set; }
+        public DateTime? TransactionDate { get; set; }
+    }
+
 }
