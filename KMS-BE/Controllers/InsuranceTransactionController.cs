@@ -270,13 +270,25 @@ namespace KMS.Controllers
                 Random random = new Random();
                 int contractId = random.Next(10000000, 99999999);
 
-                string query = @"DECLARE @InsertedIds TABLE (ID INT);
-                         INSERT INTO InsuranceTransaction (memberId, contractId, packageDetailId, registrationDate, expireDate, annualPay, paymentMethod, status, transactionDate)
-                         OUTPUT INSERTED.ID INTO @InsertedIds
-                         VALUES (@MemberId, @ContractId, @PackageDetailId, GETDATE(), CAST(DATEADD(YEAR, 1, GETDATE()) AS DATE), @AnnualPay, @PaymentMethod, @Status, GETDATE());
-                         INSERT INTO LTransactionLog (memberId, transactionType, status, transactionDate)
-                         VALUES (@MemberId, 'Insurance', 3, GETDATE());
-                         SELECT ID FROM @InsertedIds;";
+                string query = @"
+                                INSERT INTO InsuranceTransaction (memberId, contractId, packageDetailId, registrationDate, expireDate, annualPay, paymentMethod, status, transactionDate)
+                                VALUES (@MemberId, @ContractId, @PackageDetailId, GETDATE(), CAST(DATEADD(YEAR, 1, GETDATE()) AS DATE), @AnnualPay, @PaymentMethod, @Status, GETDATE());
+    
+                                DECLARE @InsertedIds TABLE (ID INT);
+    
+                                INSERT INTO LTransactionLog (memberId, transactionType, status, transactionDate)
+                                OUTPUT INSERTED.ID INTO @InsertedIds 
+                                VALUES (@MemberId, 'Insurance', 3, GETDATE());
+    
+                                DECLARE @InsertedId INT;
+                                SELECT @InsertedId = ID FROM @InsertedIds;
+    
+                                UPDATE LTransactionLog 
+                                SET transactionId = @InsertedId
+                                WHERE id = @InsertedId;
+    
+                                SELECT @InsertedId AS ID;";
+
 
                 SqlParameter[] parameters =
                 {
