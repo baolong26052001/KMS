@@ -157,15 +157,15 @@ namespace KMS.Controllers
                 DECLARE @DueDate AS DATE
                 SET @DueDate = DATEADD(MONTH, @LoanTerm, GETDATE())
                 
-                INSERT INTO LoanTransaction (memberId, contractId, loanTerm, debt, totalDebtMustPay, loanRate, transactionDate, dueDate, status)
-                VALUES (@MemberId, @ContractId, @LoanTerm, @Debt, @TotalDebtMustPay, @LoanRate, GETDATE(), @DueDate, 0)
+                INSERT INTO LoanTransaction (transactionId, memberId, contractId, loanTerm, debt, totalDebtMustPay, loanRate, transactionDate, dueDate, status)
+                VALUES (@TransactionId, @MemberId, @ContractId, @LoanTerm, @Debt, @TotalDebtMustPay, @LoanRate, GETDATE(), @DueDate, 0)
                 
 
                 ";
 
                 SqlParameter[] parameters =
                 {
-                    
+                    new SqlParameter("@TransactionId", loanTransaction.TransactionId),
                     new SqlParameter("@MemberId", loanTransaction.MemberId),
                     new SqlParameter("@ContractId", contractId),
                     new SqlParameter("@LoanTerm", loanTransaction.LoanTerm),
@@ -232,8 +232,8 @@ namespace KMS.Controllers
                                 SET @DebtRemaining = @TotalDebtMustPay - @Payback
 
                             -- Insert into Payback
-                            INSERT INTO Payback (LoanId, payback, indebt, transactionDate)
-                            VALUES (@LoanId, @Payback, @DebtRemaining, GETDATE())
+                            INSERT INTO Payback (memberId, loanId, payback, indebt, transactionDate)
+                            VALUES (@MemberId, @LoanId, @Payback, @DebtRemaining, GETDATE())
 
 
                             
@@ -248,7 +248,7 @@ namespace KMS.Controllers
 
                 SqlParameter[] parameters =
                 {
-                    
+                    new SqlParameter("@MemberId", payback.MemberId),
                     new SqlParameter("@LoanId", payback.LoanId),
                     new SqlParameter("@Payback", payback.Payback),
                     
@@ -257,7 +257,7 @@ namespace KMS.Controllers
 
                 _exQuery.ExecuteRawQuery(query, parameters);
 
-                return new JsonResult("Loan Transaction Detail saved successfully");
+                return new JsonResult("Payback data saved successfully");
             }
             catch (Exception ex)
             {
