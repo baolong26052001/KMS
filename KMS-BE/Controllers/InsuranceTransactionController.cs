@@ -270,7 +270,14 @@ namespace KMS.Controllers
                 Random random = new Random();
                 int contractId = random.Next(10000000, 99999999);
 
-                string queryA = @"INSERT INTO LTransactionLog (memberId, transactionId, transactionDate) VALUES (@MemberId, SCOPE_IDENTITY(), GETDATE())";
+                string queryA = @"
+                                DECLARE @InsertedId INT;
+                                INSERT INTO LTransactionLog (memberId, transactionId, transactionDate, transactionType) 
+                                VALUES (@MemberId, NULL, GETDATE(), 'Insurance');
+                                SET @InsertedId = SCOPE_IDENTITY();
+                                UPDATE LTransactionLog SET transactionId = @InsertedId WHERE id = @InsertedId;
+                            ";
+
                 SqlParameter[] parametersA =
                 {
                     new SqlParameter("@MemberId", insuranceTransaction.MemberId),

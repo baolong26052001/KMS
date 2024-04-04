@@ -11,8 +11,8 @@ namespace KMS.Models
         public int? ContractId { get; set; }
         public int? TopUp { get; set; }
         public int? Balance { get; set; }
-        public int? SavingRate { get; set; }
-        public double? SavingTerm { get; set; }
+        public double? SavingRate { get; set; }
+        public int? SavingTerm { get; set; }
         public DateTime? TransactionDate { get; set; }
         public DateTime? DueDate { get; set; }
         public int? Status { get; set; }
