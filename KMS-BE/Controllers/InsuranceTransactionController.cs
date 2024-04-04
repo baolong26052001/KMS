@@ -30,7 +30,7 @@ namespace KMS.Controllers
             try
             {
                 string query = @"SELECT 
-	                        itr.transactionDate, itr.id, itr.memberId, m.fullName, itr.contractId, ipd.id AS packageId,
+	                        itr.transactionDate, itr.id, itr.transactionId, itr.memberId, m.fullName, itr.contractId, ipd.id AS packageId,
 	                        iph.packageName, it.typeName, t.content, inspvd.provider, ipd.ageRangeId, ar.startAge, ar.endAge,
 	                        N'Từ ' + CONVERT(VARCHAR(10), ar.startAge) + N' đến ' + CONVERT(VARCHAR(10), ar.endAge) + N' tuổi' AS description,
 	                        itr.annualPay, itr.paymentMethod, ipd.fee, itr.registrationDate, itr.expireDate, itr.status
@@ -68,7 +68,7 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = @"SELECT itr.transactionDate, itr.id, itr.memberId, m.fullName, m.idenNumber, m.phone, 
+                string query = @"SELECT itr.transactionDate, itr.id, itr.transactionId, itr.memberId, m.fullName, m.idenNumber, m.phone, 
                                 itr.contractId, ipd.id AS packageId, iph.packageName, b.beneficiaryName, it.typeName, 
                                 t.content as termName, inspvd.provider, ipd.ageRangeId, ar.startAge, ar.endAge, 
                                 N'Từ ' + CONVERT(VARCHAR(10), ar.startAge) + N' đến ' + CONVERT(VARCHAR(10), ar.endAge) + N' tuổi' AS description, 
@@ -118,7 +118,7 @@ namespace KMS.Controllers
             try
             {
                 string query = @"SELECT 
-                                itr.transactionDate, itr.id, itr.memberId, m.fullName, m.idenNumber, m.phone,
+                                itr.transactionDate, itr.id, itr.transactionId, itr.memberId, m.fullName, m.idenNumber, m.phone,
                                 itr.contractId, ipd.id AS packageId, iph.packageName, it.typeName, t.content as termName,
                                 inspvd.provider, ipd.ageRangeId, ar.startAge, ar.endAge,
                                 N'Từ ' + CONVERT(VARCHAR(10), ar.startAge) + N' đến ' + CONVERT(VARCHAR(10), ar.endAge) + N' tuổi' AS description,
@@ -186,7 +186,7 @@ namespace KMS.Controllers
             try
             {
                 string query = @"SELECT 
-	                        itr.transactionDate, itr.id, itr.memberId, m.fullName, m.idenNumber, m.phone, 
+	                        itr.transactionDate, itr.id, itr.transactionId, itr.memberId, m.fullName, m.idenNumber, m.phone, 
 	                        itr.contractId, ipd.id AS packageId, iph.packageName, b.beneficiaryName, it.typeName,
 	                        t.content as termName, inspvd.provider, ipd.ageRangeId, ar.startAge, ar.endAge,
 	                        N'Từ ' + CONVERT(VARCHAR(10), ar.startAge) + N' đến ' + CONVERT(VARCHAR(10), ar.endAge) + N' tuổi' AS description,
@@ -270,28 +270,28 @@ namespace KMS.Controllers
                 Random random = new Random();
                 int contractId = random.Next(10000000, 99999999);
 
+                string queryA = @"INSERT INTO LTransactionLog (memberId, transactionId, transactionDate) VALUES (@MemberId, SCOPE_IDENTITY(), GETDATE())";
+                SqlParameter[] parametersA =
+                {
+                    new SqlParameter("@MemberId", insuranceTransaction.MemberId),
+                };
+                _exQuery.ExecuteRawQuery(queryA, parametersA);
+
+                string queryB = @"SELECT MAX(id) FROM LTransactionLog; ";
+                SqlParameter[] parametersB = { };
+
+                int insertedId = _exQuery.ExecuteScalar<int>(queryB, parametersB);
+
                 string query = @"
-                                INSERT INTO InsuranceTransaction (memberId, contractId, packageDetailId, registrationDate, expireDate, annualPay, paymentMethod, status, transactionDate)
-                                VALUES (@MemberId, @ContractId, @PackageDetailId, GETDATE(), CAST(DATEADD(YEAR, 1, GETDATE()) AS DATE), @AnnualPay, @PaymentMethod, @Status, GETDATE());
+                    INSERT INTO InsuranceTransaction (transactionId, memberId, contractId, packageDetailId, registrationDate, expireDate, annualPay, paymentMethod, status, transactionDate)
+                    VALUES (@TransactionId, @MemberId, @ContractId, @PackageDetailId, GETDATE(), CAST(DATEADD(YEAR, 1, GETDATE()) AS DATE), @AnnualPay, @PaymentMethod, @Status, GETDATE());
     
-                                DECLARE @InsertedIds TABLE (ID INT);
-    
-                                INSERT INTO LTransactionLog (memberId, transactionType, status, transactionDate)
-                                OUTPUT INSERTED.ID INTO @InsertedIds 
-                                VALUES (@MemberId, 'Insurance', 3, GETDATE());
-    
-                                DECLARE @InsertedId INT;
-                                SELECT @InsertedId = ID FROM @InsertedIds;
-    
-                                UPDATE LTransactionLog 
-                                SET transactionId = @InsertedId
-                                WHERE id = @InsertedId;
-    
-                                SELECT @InsertedId AS ID;";
+                    ";
 
 
                 SqlParameter[] parameters =
                 {
+                    new SqlParameter("@TransactionId", insertedId),
                     new SqlParameter("@MemberId", insuranceTransaction.MemberId),
                     new SqlParameter("@ContractId", contractId),
                     new SqlParameter("@PackageDetailId", insuranceTransaction.PackageDetailId),
@@ -300,7 +300,7 @@ namespace KMS.Controllers
                     new SqlParameter("@Status", insuranceTransaction.Status),
                 };
 
-                int insertedId = _exQuery.ExecuteScalar<int>(query, parameters);
+                _exQuery.ExecuteRawQuery(query, parameters);
 
                 return new JsonResult(new
                 {
@@ -381,7 +381,7 @@ namespace KMS.Controllers
             try
             {
                 string query = @"SELECT 
-	                        itr.transactionDate, itr.id, itr.memberId, m.fullName, itr.contractId, ipd.id AS packageId,
+	                        itr.transactionDate, itr.id, itr.transactionId, itr.memberId, m.fullName, itr.contractId, ipd.id AS packageId,
 	                        iph.packageName, it.typeName, inspvd.provider, ipd.ageRangeId, ar.startAge, ar.endAge,
 	                        N'Từ ' + CONVERT(VARCHAR(10), ar.startAge) + N' đến ' + CONVERT(VARCHAR(10), ar.endAge) + N' tuổi' AS description,
 	                        itr.annualPay, itr.paymentMethod, ipd.fee, itr.registrationDate, itr.expireDate, itr.status
@@ -427,7 +427,7 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = @"SELECT itr.transactionDate, itr.id, itr.memberId, m.fullName, itr.contractId, 
+                string query = @"SELECT itr.transactionDate, itr.id, itr.transactionId, itr.memberId, m.fullName, itr.contractId, 
                         ipd.id AS packageId, iph.packageName, it.typeName, inspvd.provider, ipd.ageRangeId, 
                         ar.startAge, ar.endAge, 
                         N'Từ ' + CONVERT(VARCHAR(10), ar.startAge) + N' đến ' + CONVERT(VARCHAR(10), ar.endAge) + N' tuổi' AS description, 

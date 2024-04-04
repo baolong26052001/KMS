@@ -152,12 +152,24 @@ namespace KMS.Controllers
                 Random random = new Random();
                 int contractId = random.Next(10000000, 99999999);
 
-                string query = @"INSERT INTO SavingTransaction (memberId, contractId, savingTerm, topUp, savingRate, transactionDate, dueDate, status)
-                VALUES (@MemberId, @ContractId, @SavingTerm, @TopUp, @SavingRate, GETDATE(), DATEADD(year, 1, GETDATE()), @Status)";
+                string queryA = @"INSERT INTO LTransactionLog (memberId, transactionId, transactionDate) VALUES (@MemberId, SCOPE_IDENTITY(), GETDATE())";
+                SqlParameter[] parametersA =
+                {
+                    new SqlParameter("@MemberId", savingTransaction.MemberId),
+                };
+                _exQuery.ExecuteRawQuery(queryA, parametersA);
+
+                string queryB = @"SELECT MAX(id) FROM LTransactionLog; ";
+                SqlParameter[] parametersB = { };
+
+                int insertedId = _exQuery.ExecuteScalar<int>(queryB, parametersB);
+
+                string query = @"INSERT INTO SavingTransaction (transactionId, memberId, contractId, savingTerm, topUp, savingRate, transactionDate, dueDate, status)
+                VALUES (@TransactionId, @MemberId, @ContractId, @SavingTerm, @TopUp, @SavingRate, GETDATE(), DATEADD(year, 1, GETDATE()), @Status)";
 
                 SqlParameter[] parameters =
                 {
-                    
+                    new SqlParameter("@TransactionId", insertedId),
                     new SqlParameter("@MemberId", savingTransaction.MemberId),
                     new SqlParameter("@ContractId", contractId),
                     new SqlParameter("@SavingTerm", savingTransaction.SavingTerm),
@@ -171,7 +183,12 @@ namespace KMS.Controllers
 
                 _exQuery.ExecuteRawQuery(query, parameters);
 
-                return new JsonResult("Saving Transaction saved successfully");
+                return new JsonResult(new
+                {
+                    Code = 200,
+                    Message = "Save saving transaction successfully",
+                    transactionId = insertedId
+                });
             }
             catch (Exception ex)
             {
