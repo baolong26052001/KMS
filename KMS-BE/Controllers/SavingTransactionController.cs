@@ -29,7 +29,7 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = "select * from SavingTransaction";
+                string query = "select * from SavingTransaction ORDER BY id DESC";
 
                 DataTable table = _exQuery.ExecuteRawQuery(query);
                 return new JsonResult(table);
@@ -186,10 +186,10 @@ namespace KMS.Controllers
                 maxSavingId = _exQuery.ExecuteScalar<int>(getMaxSavingIdQuery, null);
                 
                 int newSavingId = maxSavingId + 1;
-                savingTransaction.Balance = 0;
+                savingTransaction.Balance = savingTransaction.TopUp;
 
                 string query = @"INSERT INTO SavingTransaction (memberId, savingId, balance, contractId, savingTerm, topUp, savingRate, transactionDate, dueDate, status)
-                VALUES (@MemberId, @SavingId, @Balance, @ContractId, @SavingTerm, @TopUp, @SavingRate, GETDATE(), DATEADD(year, 1, GETDATE()), @Status)";
+                VALUES (@MemberId, @SavingId, @Balance, @ContractId, @SavingTerm, @TopUp, @SavingRate, GETDATE(), CAST(DATEADD(month, @SavingTerm, GETDATE()) AS DATE), @Status)";
 
                 SqlParameter[] parameters =
                 {
