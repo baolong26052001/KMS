@@ -30,7 +30,7 @@ namespace KMS.Controllers
             try
             {
                 string query = @"SELECT 
-	                        itr.transactionDate, itr.id, itr.transactionId, itr.memberId, m.fullName, itr.contractId, ipd.id AS packageId,
+	                        itr.transactionDate, itr.id, itr.memberId, m.fullName, itr.contractId, ipd.id AS packageId,
 	                        iph.packageName, it.typeName, t.content, inspvd.provider, ipd.ageRangeId, ar.startAge, ar.endAge,
 	                        N'Từ ' + CONVERT(VARCHAR(10), ar.startAge) + N' đến ' + CONVERT(VARCHAR(10), ar.endAge) + N' tuổi' AS description,
 	                        itr.annualPay, itr.paymentMethod, ipd.fee, itr.registrationDate, itr.expireDate, itr.status
@@ -68,7 +68,7 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = @"SELECT itr.transactionDate, itr.id, itr.transactionId, itr.memberId, m.fullName, m.idenNumber, m.phone, 
+                string query = @"SELECT itr.transactionDate, itr.id, itr.memberId, m.fullName, m.idenNumber, m.phone, 
                                 itr.contractId, ipd.id AS packageId, iph.packageName, b.beneficiaryName, it.typeName, 
                                 t.content as termName, inspvd.provider, ipd.ageRangeId, ar.startAge, ar.endAge, 
                                 N'Từ ' + CONVERT(VARCHAR(10), ar.startAge) + N' đến ' + CONVERT(VARCHAR(10), ar.endAge) + N' tuổi' AS description, 
@@ -118,7 +118,7 @@ namespace KMS.Controllers
             try
             {
                 string query = @"SELECT 
-                                itr.transactionDate, itr.id, itr.transactionId, itr.memberId, m.fullName, m.idenNumber, m.phone,
+                                itr.transactionDate, itr.id, itr.memberId, m.fullName, m.idenNumber, m.phone,
                                 itr.contractId, ipd.id AS packageId, iph.packageName, it.typeName, t.content as termName,
                                 inspvd.provider, ipd.ageRangeId, ar.startAge, ar.endAge,
                                 N'Từ ' + CONVERT(VARCHAR(10), ar.startAge) + N' đến ' + CONVERT(VARCHAR(10), ar.endAge) + N' tuổi' AS description,
@@ -186,7 +186,7 @@ namespace KMS.Controllers
             try
             {
                 string query = @"SELECT 
-	                        itr.transactionDate, itr.id, itr.transactionId, itr.memberId, m.fullName, m.idenNumber, m.phone, 
+	                        itr.transactionDate, itr.id, itr.memberId, m.fullName, m.idenNumber, m.phone, 
 	                        itr.contractId, ipd.id AS packageId, iph.packageName, b.beneficiaryName, it.typeName,
 	                        t.content as termName, inspvd.provider, ipd.ageRangeId, ar.startAge, ar.endAge,
 	                        N'Từ ' + CONVERT(VARCHAR(10), ar.startAge) + N' đến ' + CONVERT(VARCHAR(10), ar.endAge) + N' tuổi' AS description,
@@ -268,7 +268,12 @@ namespace KMS.Controllers
             try
             {
                 Random random = new Random();
-                int contractId = random.Next(10000000, 99999999);
+                int contractId;
+
+                do
+                {
+                    contractId = random.Next(10000000, 99999999);
+                } while (CheckIfContractIdExists(contractId));
 
                 string queryA = @"
                                 DECLARE @InsertedId INT;
@@ -290,15 +295,15 @@ namespace KMS.Controllers
                 int insertedId = _exQuery.ExecuteScalar<int>(queryB, parametersB);
 
                 string query = @"
-                    INSERT INTO InsuranceTransaction (transactionId, memberId, contractId, packageDetailId, registrationDate, expireDate, annualPay, paymentMethod, status, transactionDate)
-                    VALUES (@TransactionId, @MemberId, @ContractId, @PackageDetailId, GETDATE(), CAST(DATEADD(YEAR, 1, GETDATE()) AS DATE), @AnnualPay, @PaymentMethod, @Status, GETDATE());
+                    INSERT INTO InsuranceTransaction (memberId, contractId, packageDetailId, registrationDate, expireDate, annualPay, paymentMethod, status, transactionDate)
+                    VALUES (@MemberId, @ContractId, @PackageDetailId, GETDATE(), CAST(DATEADD(YEAR, 1, GETDATE()) AS DATE), @AnnualPay, @PaymentMethod, @Status, GETDATE());
     
                     ";
 
 
                 SqlParameter[] parameters =
                 {
-                    new SqlParameter("@TransactionId", insertedId),
+                    
                     new SqlParameter("@MemberId", insuranceTransaction.MemberId),
                     new SqlParameter("@ContractId", contractId),
                     new SqlParameter("@PackageDetailId", insuranceTransaction.PackageDetailId),
@@ -313,7 +318,7 @@ namespace KMS.Controllers
                 {
                     Code = 200,
                     Message = "Save insurance transaction successfully",
-                    transactionId = insertedId
+                    contractId = contractId
                 });
             }
             catch (Exception ex)
@@ -388,7 +393,7 @@ namespace KMS.Controllers
             try
             {
                 string query = @"SELECT 
-	                        itr.transactionDate, itr.id, itr.transactionId, itr.memberId, m.fullName, itr.contractId, ipd.id AS packageId,
+	                        itr.transactionDate, itr.id, itr.memberId, m.fullName, itr.contractId, ipd.id AS packageId,
 	                        iph.packageName, it.typeName, inspvd.provider, ipd.ageRangeId, ar.startAge, ar.endAge,
 	                        N'Từ ' + CONVERT(VARCHAR(10), ar.startAge) + N' đến ' + CONVERT(VARCHAR(10), ar.endAge) + N' tuổi' AS description,
 	                        itr.annualPay, itr.paymentMethod, ipd.fee, itr.registrationDate, itr.expireDate, itr.status
@@ -434,7 +439,7 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = @"SELECT itr.transactionDate, itr.id, itr.transactionId, itr.memberId, m.fullName, itr.contractId, 
+                string query = @"SELECT itr.transactionDate, itr.id, itr.memberId, m.fullName, itr.contractId, 
                         ipd.id AS packageId, iph.packageName, it.typeName, inspvd.provider, ipd.ageRangeId, 
                         ar.startAge, ar.endAge, 
                         N'Từ ' + CONVERT(VARCHAR(10), ar.startAge) + N' đến ' + CONVERT(VARCHAR(10), ar.endAge) + N' tuổi' AS description, 
@@ -483,70 +488,29 @@ namespace KMS.Controllers
             
         }
 
-        //[HttpGet]
-        //[Route("FilterInsuranceTransactionByStatus")]
-        //public JsonResult FilterInsuranceTransactionByStatus(bool status)
-        //{
-        //    ResponseDto response = new ResponseDto();
-        //    try
-        //    {
-        //        string query = @"SELECT 
-	       //                 itr.transactionDate,
-	       //                 itr.id,
-	       //                 itr.memberId,
-	       //                 m.fullName,
-	       //                 itr.contractId,
-	       //                 ipd.id AS packageId,
-	       //                 iph.packageName,
-	       //                 it.typeName,
-	       //                 inspvd.provider,
-	       //                 ipd.ageRangeId,
-	       //                 ar.startAge,
-	       //                 ar.endAge,
-	       //                 N'Từ ' + CONVERT(VARCHAR(10), ar.startAge) + N' đến ' + CONVERT(VARCHAR(10), ar.endAge) + N' tuổi' AS description,
-	       //                 itr.annualPay,
-        //                    itr.paymentMethod,
-	       //                 ipd.fee,
-	       //                 itr.registrationDate,
-	       //                 itr.expireDate,
-	       //                 itr.status 
-        //                FROM 
-	       //                 InsuranceTransaction itr
-        //                LEFT JOIN 
-	       //                 LMember m ON m.id = itr.memberId
-        //                LEFT JOIN 
-	       //                 InsurancePackageDetail ipd ON itr.packageDetailId = ipd.id
-        //                LEFT JOIN 
-	       //                 AgeRange ar ON ar.id = ipd.ageRangeId
-        //                left join
-	       //                 InsurancePackageHeader iph on iph.id = ipd.packageHeaderId
-        //                left join
-	       //                 InsuranceProvider inspvd on inspvd.id = iph.insuranceProviderId
-        //                left join
-	       //                 InsuranceType it on it.id = iph.insuranceTypeId
-        //                WHERE 
-        //                    itr.status = @status ";
+        bool CheckIfContractIdExists(int contractId)
+        {
+            // Check if contractId exists in LoanTransaction table
+            string loanQuery = "SELECT COUNT(*) FROM LoanTransaction WHERE contractId = @ContractId";
+            SqlParameter[] loanParameters = { new SqlParameter("@ContractId", contractId) };
+            int loanCount = _exQuery.ExecuteScalar<int>(loanQuery, loanParameters);
 
-        //        List<SqlParameter> parameters = new List<SqlParameter>
-        //        {
-        //            new SqlParameter("@status", status)
-        //        };
+            // Check if contractId exists in SavingTransaction table
+            string savingQuery = "SELECT COUNT(*) FROM SavingTransaction WHERE contractId = @ContractId";
+            SqlParameter[] savingParameters = { new SqlParameter("@ContractId", contractId) };
+            int savingCount = _exQuery.ExecuteScalar<int>(savingQuery, savingParameters);
+
+            // Check if contractId exists in InsuranceTransaction table
+            string insuranceQuery = "SELECT COUNT(*) FROM InsuranceTransaction WHERE contractId = @ContractId";
+            SqlParameter[] insuranceParameters = { new SqlParameter("@ContractId", contractId) };
+            int insuranceCount = _exQuery.ExecuteScalar<int>(insuranceQuery, insuranceParameters);
+
+            // If any count is greater than 0, contractId already exists
+            return loanCount > 0 || savingCount > 0 || insuranceCount > 0;
+        }
 
 
-        //        DataTable table = _exQuery.ExecuteRawQuery(query, parameters.ToArray());
 
-        //        return new JsonResult(table);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        response.Code = -1;
-        //        response.Message = ex.Message;
-        //        response.Exception = ex.ToString();
-        //        response.Data = null;
-        //    }
-        //    return new JsonResult(response);
-
-        //}
 
     }
 }

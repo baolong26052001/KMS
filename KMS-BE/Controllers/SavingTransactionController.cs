@@ -3,6 +3,7 @@ using KMS.Models;
 using KMS.Tools;
 using System.Data;
 using Microsoft.Data.SqlClient;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace KMS.Controllers
 {
@@ -150,7 +151,12 @@ namespace KMS.Controllers
             try
             {
                 Random random = new Random();
-                int contractId = random.Next(10000000, 99999999);
+                int contractId;
+
+                do
+                {
+                    contractId = random.Next(10000000, 99999999);
+                } while (CheckIfContractIdExists(contractId));
 
                 string queryA = @"
                                 DECLARE @InsertedId INT;
@@ -164,6 +170,7 @@ namespace KMS.Controllers
                 {
                     new SqlParameter("@MemberId", savingTransaction.MemberId),
                 };
+
                 _exQuery.ExecuteRawQuery(queryA, parametersA);
 
                 string queryB = @"SELECT MAX(id) FROM LTransactionLog; ";
@@ -171,22 +178,30 @@ namespace KMS.Controllers
 
                 int insertedId = _exQuery.ExecuteScalar<int>(queryB, parametersB);
 
-                string query = @"INSERT INTO SavingTransaction (transactionId, memberId, contractId, savingTerm, topUp, savingRate, transactionDate, dueDate, status)
-                VALUES (@TransactionId, @MemberId, @ContractId, @SavingTerm, @TopUp, @SavingRate, GETDATE(), DATEADD(year, 1, GETDATE()), @Status)";
+                //
+
+                string getMaxSavingIdQuery = "SELECT ISNULL(MAX(savingId), 0) FROM SavingTransaction";
+                int maxSavingId;
+
+                maxSavingId = _exQuery.ExecuteScalar<int>(getMaxSavingIdQuery, null);
+                
+                int newSavingId = maxSavingId + 1;
+                savingTransaction.Balance = 0;
+
+                string query = @"INSERT INTO SavingTransaction (memberId, savingId, balance, contractId, savingTerm, topUp, savingRate, transactionDate, dueDate, status)
+                VALUES (@MemberId, @SavingId, @Balance, @ContractId, @SavingTerm, @TopUp, @SavingRate, GETDATE(), DATEADD(year, 1, GETDATE()), @Status)";
 
                 SqlParameter[] parameters =
                 {
-                    new SqlParameter("@TransactionId", insertedId),
                     new SqlParameter("@MemberId", savingTransaction.MemberId),
+                    new SqlParameter("@SavingId", newSavingId),
+                    new SqlParameter("@Balance", savingTransaction.Balance),
                     new SqlParameter("@ContractId", contractId),
                     new SqlParameter("@SavingTerm", savingTransaction.SavingTerm),
                     new SqlParameter("@TopUp", savingTransaction.TopUp),
-                   
-                    
                     new SqlParameter("@SavingRate", savingTransaction.SavingRate),
                     new SqlParameter("@Status", savingTransaction.Status)
                 };
-
 
                 _exQuery.ExecuteRawQuery(query, parameters);
 
@@ -194,8 +209,9 @@ namespace KMS.Controllers
                 {
                     Code = 200,
                     Message = "Save saving transaction successfully",
-                    transactionId = insertedId
+                    contractId = contractId
                 });
+
             }
             catch (Exception ex)
             {
@@ -280,6 +296,27 @@ namespace KMS.Controllers
             }
             return new JsonResult(response);
             
+        }
+
+        bool CheckIfContractIdExists(int contractId)
+        {
+            // Check if contractId exists in LoanTransaction table
+            string loanQuery = "SELECT COUNT(*) FROM LoanTransaction WHERE contractId = @ContractId";
+            SqlParameter[] loanParameters = { new SqlParameter("@ContractId", contractId) };
+            int loanCount = _exQuery.ExecuteScalar<int>(loanQuery, loanParameters);
+
+            // Check if contractId exists in SavingTransaction table
+            string savingQuery = "SELECT COUNT(*) FROM SavingTransaction WHERE contractId = @ContractId";
+            SqlParameter[] savingParameters = { new SqlParameter("@ContractId", contractId) };
+            int savingCount = _exQuery.ExecuteScalar<int>(savingQuery, savingParameters);
+
+            // Check if contractId exists in InsuranceTransaction table
+            string insuranceQuery = "SELECT COUNT(*) FROM InsuranceTransaction WHERE contractId = @ContractId";
+            SqlParameter[] insuranceParameters = { new SqlParameter("@ContractId", contractId) };
+            int insuranceCount = _exQuery.ExecuteScalar<int>(insuranceQuery, insuranceParameters);
+
+            // If any count is greater than 0, contractId already exists
+            return loanCount > 0 || savingCount > 0 || insuranceCount > 0;
         }
 
     }

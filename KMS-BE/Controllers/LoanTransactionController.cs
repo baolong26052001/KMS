@@ -165,7 +165,7 @@ namespace KMS.Controllers
 
                 SqlParameter[] parameters =
                 {
-                    new SqlParameter("@TransactionId", loanTransaction.TransactionId),
+                    
                     new SqlParameter("@MemberId", loanTransaction.MemberId),
                     new SqlParameter("@ContractId", contractId),
                     new SqlParameter("@LoanTerm", loanTransaction.LoanTerm),
@@ -365,7 +365,7 @@ namespace KMS.Controllers
         //            parameters.Add(new SqlParameter("@Status", status.Value));
         //        }
 
-                
+
 
         //        DataTable table = _exQuery.ExecuteRawQuery(query, parameters.ToArray());
 
@@ -381,6 +381,27 @@ namespace KMS.Controllers
         //    return new JsonResult(response);
 
         //}
+
+        bool CheckIfContractIdExists(int contractId)
+        {
+            // Check if contractId exists in LoanTransaction table
+            string loanQuery = "SELECT COUNT(*) FROM LoanTransaction WHERE contractId = @ContractId";
+            SqlParameter[] loanParameters = { new SqlParameter("@ContractId", contractId) };
+            int loanCount = _exQuery.ExecuteScalar<int>(loanQuery, loanParameters);
+
+            // Check if contractId exists in SavingTransaction table
+            string savingQuery = "SELECT COUNT(*) FROM SavingTransaction WHERE contractId = @ContractId";
+            SqlParameter[] savingParameters = { new SqlParameter("@ContractId", contractId) };
+            int savingCount = _exQuery.ExecuteScalar<int>(savingQuery, savingParameters);
+
+            // Check if contractId exists in InsuranceTransaction table
+            string insuranceQuery = "SELECT COUNT(*) FROM InsuranceTransaction WHERE contractId = @ContractId";
+            SqlParameter[] insuranceParameters = { new SqlParameter("@ContractId", contractId) };
+            int insuranceCount = _exQuery.ExecuteScalar<int>(insuranceQuery, insuranceParameters);
+
+            // If any count is greater than 0, contractId already exists
+            return loanCount > 0 || savingCount > 0 || insuranceCount > 0;
+        }
 
     }
 }

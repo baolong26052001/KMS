@@ -555,8 +555,7 @@ namespace KMS.Models
                 entity.Property(e => e.LoanId)
                     .HasColumnName("LoanId"); // Assuming the column name in the database is LoanId
 
-                entity.Property(e => e.TransactionId)
-                    .HasColumnName("TransactionId");
+                
 
                 entity.Property(e => e.MemberId)
                     .HasColumnName("MemberId");
@@ -745,8 +744,7 @@ namespace KMS.Models
                 entity.Property(e => e.SavingId)
                     .HasColumnName("SavingId"); // Assuming the column name in the database is SavingId
 
-                entity.Property(e => e.TransactionId)
-                    .HasColumnName("TransactionId");
+                
 
                 entity.Property(e => e.MemberId)
                     .HasColumnName("MemberId");
