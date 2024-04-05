@@ -3,7 +3,7 @@ import dayjs from 'dayjs'; // Import dayjs
 import customParseFormat from 'dayjs/plugin/customParseFormat'; // Import the customParseFormat plugin
 import 'dayjs/locale/en'; // Import the English locale
 import { DataGrid, GridToolbarExport } from '@mui/x-data-grid';
-import { Button, Box, Modal, Typography } from '@mui/material';
+import { Button, Box, Modal } from '@mui/material';
 import DateFilter from '../../components/dateFilter/DateFilter';
 import {useNavigate, useParams} from 'react-router-dom';
 //import MUI Library
@@ -136,25 +136,25 @@ function createData(id, description, typeContent, contentUrl, isActive, slideHea
 }
 
 const columns = [ 
-  {
-    field: 'viewButton',
-    headerName: '',
-    width: 80,
-    disableColumnMenu: true,
-    sortable: false,
-    filterable: false,
-    renderCell: (params) => (
-      <CustomButton
-        rowId={params.row.id}
-        label="View"
-        onClick={handleButtonClick}
-        destination={`/viewSlideDetail/${params.row.id}`}
-        color="primary"
-        variant="contained"
-        size="small"
-      />
-    ),
-  },
+  // {
+  //   field: 'viewButton',
+  //   headerName: '',
+  //   width: 80,
+  //   disableColumnMenu: true,
+  //   sortable: false,
+  //   filterable: false,
+  //   renderCell: (params) => (
+  //     <CustomButton
+  //       rowId={params.row.id}
+  //       label="View"
+  //       onClick={handleButtonClick}
+  //       destination={`/viewSlideDetail/${params.row.id}`}
+  //       color="primary"
+  //       variant="contained"
+  //       size="small"
+  //     />
+  //   ),
+  // },
   {
     field: 'editButton',
     headerName: '',
@@ -229,7 +229,6 @@ const columns = [
 ];
 
 const handleButtonClick = (id) => {
-  // Handle button click, e.g., navigate to another page
   console.log(`Button clicked for row with ID: ${id}`);
 };
 
@@ -352,9 +351,9 @@ const SlideDetail = () => {
                       columns={columns}
                       getRowId={getRowId}
                       initialState={{
-                      pagination: {
-                          paginationModel: { page: 0, pageSize: 5 },
-                      },
+                        pagination: {
+                            paginationModel: { page: 0, pageSize: 5 },
+                        },
                       }}
                       components={{
                         Toolbar: () => (
@@ -374,8 +373,6 @@ const SlideDetail = () => {
                 </div>
             </div>
     </div>
-    
-    
   )
 }
 

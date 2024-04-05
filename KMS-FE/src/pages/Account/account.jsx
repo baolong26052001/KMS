@@ -40,16 +40,35 @@ const columns = [
       />
     ),
   },
+  {
+    field: 'editButton',
+    headerName: '',
+    width: 80,
+    disableColumnMenu: true,
+    sortable: false,
+    filterable: false,
+    renderCell: (params) => (
+      <CustomButton
+        rowId={params.row.id}
+        label="Edit"
+        onClick={handleButtonClick}
+        destination={`/editAccount/${params.row.memberId}`}
+        color="warning"
+        variant="contained"
+        size="small"
+      />
+    ),
+  },
   { field: 'id', headerName: 'Account ID', minWidth: 100, flex: 1,},
   { field: 'memberId', headerName: 'Member ID', minWidth: 100, flex: 1,},
   { field: 'memberName', headerName: 'Member', minWidth: 300, flex: 1,},
-  { field: 'contractId', headerName: 'Contract ID', minWidth: 100, flex: 1,},
+  { field: 'contractId', headerName: 'Contract ID', minWidth: 150, flex: 1,},
   { field: 'phoneNumber', headerName: 'Phone Number', minWidth: 150,  
     flex: 1,
     sortable: false,
     disableColumnMenu: true,
   },
-  { field: 'email', headerName: 'Email', minWidth: 150,  
+  { field: 'email', headerName: 'Email', minWidth: 250,  
     flex: 1,
     sortable: false,
     disableColumnMenu: true,

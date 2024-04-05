@@ -33,6 +33,7 @@ const AddUser = () => {
   });
 
   const [userGroups, setUserGroups] = useState([]);
+  const [formSubmitted, setFormSubmitted] = useState(false);
 
   useEffect(() => {
     const fetchUserGroups = async () => {
@@ -60,6 +61,11 @@ const AddUser = () => {
   };
 
   const handleSave = async () => {
+    setFormSubmitted(true);
+    if (!isValidEmail(newUser.email) || newUser.password.length < 4 || !newUser.username || !newUser.userGroupId) {
+      return;
+    }
+    
     try {
       // Assuming your API URL is correct
       const response = await fetch(`${API_URL}api/User/AddUser`, {
@@ -88,6 +94,12 @@ const AddUser = () => {
   const handleCancel = () => {
     navigate(`/users`);
   };
+  const isValidEmail = (email) => {
+    // Regular expression for email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
 
   return (
     <div className="content">
@@ -115,6 +127,8 @@ const AddUser = () => {
                 variant="outlined"
                 value={newUser.username}
                 onChange={(e) => handleInputChange('username', e.target.value)}
+                error={!newUser.username && formSubmitted}
+                helperText={formSubmitted && !newUser.username ? 'This field cannot be empty' : ''}
               />
               <TextField
                 id="fullname"
@@ -122,6 +136,8 @@ const AddUser = () => {
                 variant="outlined"
                 value={newUser.fullname}
                 onChange={(e) => handleInputChange('fullname', e.target.value)}
+                error={!newUser.fullname && formSubmitted}
+                helperText={formSubmitted && !newUser.fullname ? 'This field cannot be empty' : ''}
               />
               <TextField
                 id="email"
@@ -129,7 +145,10 @@ const AddUser = () => {
                 variant="outlined"
                 value={newUser.email}
                 onChange={(e) => handleInputChange('email', e.target.value)}
+                error={!isValidEmail(newUser.email) && formSubmitted} // Show error only if form submitted
+                helperText={formSubmitted && !isValidEmail(newUser.email) ? 'Invalid email format' : ''}
               />
+
               <TextField
                 id="password"
                 label="Password"
@@ -137,6 +156,8 @@ const AddUser = () => {
                 type="password"
                 value={newUser.password}
                 onChange={(e) => handleInputChange('password', e.target.value)}
+                error={!newUser.password && formSubmitted}
+                helperText={formSubmitted && !newUser.password ? 'Password must at least 4 characters' : ''}
               />
               <TextField
                 id="userGroupId"
@@ -145,6 +166,8 @@ const AddUser = () => {
                 select
                 value={newUser.userGroupId}
                 onChange={(e) => handleInputChange('userGroupId', e.target.value)}
+                error={!newUser.userGroupId && formSubmitted}
+                helperText={formSubmitted && !newUser.userGroupId ? 'User group cannot be empty' : ''}
               >
                 {userGroups.map((group) => (
                   <MenuItem key={group.id} value={group.id}>

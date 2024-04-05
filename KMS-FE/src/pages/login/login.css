@@ -9,9 +9,6 @@
 #components-form-demo-normal-login .login-form-button {
     width: 100%;
 }
-.css-bytlsb-MuiGrid2-root {
-    
-}
 
 :where(.css-dev-only-do-not-override-xu9wm8).ant-btn-primary {
     background-color: #655BD3;
@@ -44,7 +41,7 @@
   }
   
   .Login-field {
-    width: 300px; /* Adjust the width according to your design */
+    width: 400px;
     padding: 20px;
     background-color: white;
     border: 1px solid #ccc;
@@ -57,11 +54,14 @@
     flex-direction: column;
   }
   
-  /* Add more styling as needed for form controls */
   FormControl {
     margin-bottom: 16px;
   }
   
   Button {
     margin-top: 16px;
+  }
+
+  .login {
+    background-image: url('../../images/login-background.jpg');
   }

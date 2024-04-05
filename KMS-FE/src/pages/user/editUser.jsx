@@ -34,6 +34,8 @@ const EditUser = () => {
   });
 
   const [userGroups, setUserGroups] = useState([]);
+  const [isEmailValid, setIsEmailValid] = useState(true); 
+  const [isPasswordValid, setIsPasswordValid] = useState(true);
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -115,6 +117,22 @@ const EditUser = () => {
     navigate(`/users`);
   };
 
+  const isValidEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const handleEmailChange = (value) => {
+    const isValid = isValidEmail(value); 
+    setIsEmailValid(isValid); 
+    handleInputChange('email', value); 
+  };
+  const handlePasswordChange = (value) => {
+    const isValid = value.length > 3; 
+    setIsPasswordValid(isValid);
+    handleInputChange('password', value);
+  };
+
   return (
     <div className="content">
       <div className="admin-dashboard-text-div pt-5">
@@ -155,7 +173,9 @@ const EditUser = () => {
                 label="Email"
                 variant="outlined"
                 value={editedUser.email}
-                onChange={(e) => handleInputChange('email', e.target.value)}
+                onChange={(e) => handleEmailChange(e.target.value)}
+                error={!isEmailValid}
+                helperText={!isEmailValid ? 'Please enter a valid email address' : ''}
               />
               <TextField
                 id="password"
@@ -163,7 +183,9 @@ const EditUser = () => {
                 variant="outlined"
                 type="password"
                 value={editedUser.password}
-                onChange={(e) => handleInputChange('password', e.target.value)}
+                onChange={(e) => handlePasswordChange(e.target.value)}
+                error={!isPasswordValid}
+                helperText={!isPasswordValid ? 'Password must be at least 4 characters' : ''}
               />
               <TextField
                 id="userGroupId"
@@ -191,7 +213,12 @@ const EditUser = () => {
                 <MenuItem value={false}>Disable</MenuItem>
             </TextField>
               <Box sx={{ display: 'flex', gap: '8px' }}>
-                <Button variant="contained" fullWidth onClick={handleSave}>
+                <Button
+                  variant="contained"
+                  fullWidth
+                  onClick={handleSave}
+                  disabled={!isEmailValid || !isPasswordValid} 
+                >
                   Save
                 </Button>
                 <Button variant="contained" fullWidth onClick={handleCancel} style={{ backgroundColor: '#848485', color: '#fff' }}>

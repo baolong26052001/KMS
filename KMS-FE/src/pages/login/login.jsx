@@ -8,10 +8,12 @@ import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 import { API_URL } from '../../components/config/apiUrl';
 import '../login/login.css';
 
-const Login = ({onLogin }) => {
+const Login = ({ onLogin }) => {
   const navigate = useNavigate();
   const [values, setValues] = useState({
     username: '',
@@ -19,6 +21,10 @@ const Login = ({onLogin }) => {
     showPassword: false,
     loading: false,
   });
+  const [errorMessage, setErrorMessage] = useState('');
+  const handleCloseSnackbar = () => {
+    setErrorMessage('');
+  };
 
   const handleChange = (prop) => (event) => {
     setValues({ ...values, [prop]: event.target.value });
@@ -28,10 +34,30 @@ const Login = ({onLogin }) => {
     setValues({ ...values, showPassword: !values.showPassword });
   };
 
-  const onFinish = async () => {
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      onFinish();
+    }
+  };
 
+  const onFinish = async () => {
     try {
-      setValues({ ...values, loading: true }); 
+      setValues({ ...values, loading: true });
+
+      // Check if the password field is empty
+       if (!values.username.trim() && !values.password.trim()) {
+        setErrorMessage('Username and password cannot be empty');
+        return;
+      }
+      else if (!values.password.trim()) {
+        setErrorMessage('Password cannot be empty');
+        return;
+      }
+      else if (!values.username.trim()) {
+        setErrorMessage('Username cannot be empty');
+        return;
+      }
+      
 
       const response = await fetch(`${API_URL}api/User/login`, {
         method: 'POST',
@@ -44,31 +70,32 @@ const Login = ({onLogin }) => {
         }),
       });
 
-      // The response is in JSON format
       const data = await response.json();
-      console.log(data);
       if (response.ok) {
-        //document.cookie = `token=${data.Token}; path=/`;
         document.cookie = `role=${data.Role}; path=/`;
         document.cookie = `groupId=${data.GroupId}; path=/`;
         localStorage.setItem('userName', data.Username)
+        localStorage.setItem('role', data.Role)
         document.cookie = `userId=${data.UserId}; path=/`;
         onLogin();
-        navigate('/dashboard'); 
+        navigate('/dashboard');
       } else {
         console.error('Login failed:', data.message);
+        setErrorMessage('Username or password is wrong');
       }
     } catch (error) {
       console.error('Error during login:', error);
+      setErrorMessage('An error occurred during login');
     } finally {
       setValues({ ...values, loading: false });
     }
   };
 
+
   return (
     <div className='login'>
       <div className='Login-field'>
-        <h3>Login</h3>
+        <h2>Login</h2>
         <div className="Login-Form">
           <FormControl fullWidth variant="outlined" margin="normal">
             <InputLabel htmlFor="outlined-username">Username</InputLabel>
@@ -77,6 +104,7 @@ const Login = ({onLogin }) => {
               value={values.username}
               onChange={handleChange('username')}
               label="Username"
+              onKeyDown={handleKeyDown}
             />
           </FormControl>
 
@@ -99,6 +127,7 @@ const Login = ({onLogin }) => {
                 </InputAdornment>
               }
               label="Password"
+              onKeyDown={handleKeyDown}
             />
           </FormControl>
 
@@ -106,12 +135,23 @@ const Login = ({onLogin }) => {
             variant="contained"
             color="primary"
             onClick={onFinish}
-            disabled={values.loading} // Disable the button during loading
+            disabled={values.loading} 
+            style={{ marginTop: '10px' }}
           >
             {values.loading ? 'Signing In...' : 'Sign In'}
           </Button>
         </div>
       </div>
+
+      <Snackbar
+        open={errorMessage !== ''}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert onClose={handleCloseSnackbar} variant="filled" severity="error">
+          {errorMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

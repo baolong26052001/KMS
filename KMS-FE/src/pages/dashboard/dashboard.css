@@ -1,6 +1,6 @@
 body {
     background-color: #ECF7FE;
-    
+    /* background-color: #F2F2F2; */
 }
 tr:nth-child(even) {
     background-color: #ffffff !important;
@@ -33,7 +33,7 @@ h5 {
     background-color: white;
     height: auto;
     border-radius: 10px;
-    margin-top: 40px;
+    margin-top: 20px;
     margin-bottom: 30px;
     margin-right: 20px;
     z-index: 0;
@@ -188,7 +188,6 @@ tr:nth-child(even) {
 
 .MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation1.css-fvvjsc-MuiPaper-root {
     max-width: initial;
-    box-shadow: 2px 3px 2px 0px #ac9c9c;
     border-radius: 10px;
 }
 

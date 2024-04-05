@@ -47,6 +47,7 @@ import RouteAddSlideDetail from './pages/slideDetail/addSlide';
 
 import RouteAccount from './pages/Account/account';
 import RouteViewAccount from './pages/Account/viewAccount';
+import RouteEditAccount from './pages/Account/editAccount';
 
 import RouteLoanTransaction from './pages/LoanTransaction/loanTransaction';
 import RouteSavingTransaction from './pages/savingTransaction/savingTransaction';
@@ -149,19 +150,96 @@ const App = () => {
   const [permissionData, setPermissionData] = useState([]);
   const editPermission = true;
   const addPermission = true;
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setShowHeaderbar(isAuthenticated);
     fetchPermissionInfo(groupId)
       .then(data => {
         setPermissionData(data);
+        setLoading(false);
       })
       .catch(error => {
         console.error('Error fetching permission info:', error);
+        setLoading(false);
       });
   
-  }, [isAuthenticated, groupId]);
+    let lastUserActionTime = Date.now();
+    let inactivityTimeout;
   
+    const resetInactivityTimeout = () => {
+      clearTimeout(inactivityTimeout);
+      const elapsedTime = Date.now() - lastUserActionTime;
+      const remainingTime = 3600 * 1000 - elapsedTime;
+      if (remainingTime > 0) {
+        inactivityTimeout = setTimeout(() => {
+          alert('Login session expired');
+          if (isAuthenticated) {
+            logout();
+            localStorage.clear();
+          }
+        }, remainingTime);
+      } else {
+        if (isAuthenticated) {
+          logout();
+          localStorage.clear();
+        }
+      }
+    };
+  
+    const userActionListener = () => {
+      lastUserActionTime = Date.now();
+      resetInactivityTimeout();
+    };
+  
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        userActionListener();
+      }
+    };
+  
+    const unloadHandler = () => {
+      localStorage.setItem('tabClosedTime', Date.now());
+    };
+  
+    const checkTabClosedTime = () => {
+      const tabClosedTime = localStorage.getItem('tabClosedTime');
+      if (tabClosedTime) {
+        const elapsedTime = Date.now() - parseInt(tabClosedTime);
+        if (elapsedTime > 3600000 && isAuthenticated) {
+          logout();
+          localStorage.clear();
+        }
+      }
+    };
+  
+    document.addEventListener('mousemove', userActionListener);
+    document.addEventListener('keypress', userActionListener);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('unload', unloadHandler);
+  
+    checkTabClosedTime();
+  
+    resetInactivityTimeout();
+  
+    return () => {
+      clearTimeout(inactivityTimeout);
+      document.removeEventListener('mousemove', userActionListener);
+      document.removeEventListener('keypress', userActionListener);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('unload', unloadHandler);
+    };
+  
+  }, [isAuthenticated, groupId, logout]);
+
+  if (loading) {
+    return (
+      <div>
+        <div className="skeleton"></div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <Router>
@@ -315,6 +393,10 @@ const App = () => {
                         <Route 
                           path="/viewAccount/:id" 
                           element={hasPermission(permissionData, "/account") ? <RouteViewAccount /> : <NoPermission/>} 
+                        />
+                        <Route 
+                          path="/editAccount/:id" 
+                          element={hasPermission(permissionData, "/account", editPermission) ? <RouteEditAccount /> : <NoPermission />} 
                         />
 
                         {/* Routes for Loan */}

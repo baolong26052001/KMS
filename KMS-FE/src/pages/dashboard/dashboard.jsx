@@ -9,7 +9,7 @@ import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import ButtonBase from '@mui/material/ButtonBase';
 import Stack from '@mui/material/Stack';
-import { DataGrid, GridToolbarExport } from '@mui/x-data-grid';
+import { DataGrid } from '@mui/x-data-grid';
 import { API_URL } from '../../components/config/apiUrl';
 
 const statusImages = {
@@ -117,7 +117,6 @@ const Dashboard = () => {
     TotalTransaction: 0
   });
 
-  // Function to fetch total numbers from the API
   const fetchTotalNumbers = async () => {
     try {
       const response = await fetch(`${API_URL}api/Dashboard/ShowTotalNumbers`);
@@ -132,7 +131,6 @@ const Dashboard = () => {
     }
   };
 
-  // Fetch total numbers on component mount
   useEffect(() => {
     fetchTotalNumbers();
   }, []);
@@ -156,8 +154,6 @@ const Dashboard = () => {
         async function fetchData() {
           try {
             let apiUrl = `${API_URL}api/Kiosk/ShowKiosk`;
-      
-            // If searchTerm is not empty, use the search API endpoint
             if (searchTerm) {
               apiUrl = `${API_URL}api/Kiosk/SearchKioskSetup?searchQuery=${encodeURIComponent(searchTerm)}`;
             }
@@ -170,7 +166,6 @@ const Dashboard = () => {
       
             const responseData = await response.json();
       
-            // Check if responseData is an array before calling map
             if (Array.isArray(responseData)) {
               const updatedRows = responseData.map((row) =>
                 createData(
@@ -179,7 +174,7 @@ const Dashboard = () => {
                 )
               );
       
-              setRows(updatedRows); // Update the component state with the combined data
+              setRows(updatedRows);
             } else {
               console.error('Invalid data structure:', responseData);
             }
@@ -196,8 +191,7 @@ const Dashboard = () => {
     
     <div class="content"> 
 
-        <div class="admin-dashboard-text-div"> 
-            <p>Admin/Dashboard</p>
+        <div class="admin-dashboard-text-div">
             <h1 class="h1-dashboard">Dashboard</h1>
         </div>
 
@@ -222,12 +216,8 @@ const Dashboard = () => {
                             </Typography>
                             <Typography variant="body2" gutterBottom>
                                 <Stack direction="row" spacing={2}> 
-                        <div className='kiosk-num'>{totalNumbers.TotalKiosk}</div>
-                                    <div className='percent' style={{color: '#12E95B'}}>(+18%)</div>
+                                    <div className='kiosk-num' style={{color: '#1976d2'}}>{totalNumbers.TotalKiosk}</div>
                                 </Stack>
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                                Last Week Analytics
                             </Typography>
                             </Grid>
                         </Grid>
@@ -258,12 +248,8 @@ const Dashboard = () => {
                             </Typography>
                             <Typography variant="body2" gutterBottom>
                                 <Stack direction="row" spacing={2}> 
-                        <div className='kiosk-num'>{totalNumbers.TotalKioskOnline}</div>
-                                    <div className='percent' style={{color: '#E92323'}}>(-1%)</div>
+                                    <div className='kiosk-num' style={{color: '#12E95B'}}>{totalNumbers.TotalKioskOnline}</div>
                                 </Stack>
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                                Last Week Analytics
                             </Typography>
                             </Grid>
                         </Grid>
@@ -294,12 +280,8 @@ const Dashboard = () => {
                             </Typography>
                             <Typography variant="body2" gutterBottom>
                                 <Stack direction="row" spacing={2}> 
-                        <div className='kiosk-num'>{totalNumbers.TotalKioskOffline}</div>
-                                    <div className='percent' style={{color: '#12E95B'}}>(+1%)</div>
+                                    <div className='kiosk-num' style={{color: '#E92323'}}>{totalNumbers.TotalKioskOffline}</div>
                                 </Stack>
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                                Last Week Analytics
                             </Typography>
                             </Grid>
                         </Grid>
@@ -330,12 +312,8 @@ const Dashboard = () => {
                             </Typography>
                             <Typography variant="body2" gutterBottom>
                                 <Stack direction="row" spacing={2}> 
-                        <div className='kiosk-num'>{totalNumbers.TotalTransaction}</div>
-                                    <div className='percent' style={{color: '#12E95B'}}>(+29%)</div>
+                                    <div className='kiosk-num' style={{color: '#655BD3'}}>{totalNumbers.TotalTransaction}</div>
                                 </Stack>
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                                Last Week Analytics
                             </Typography>
                             </Grid>
                         </Grid>
@@ -371,16 +349,32 @@ const Dashboard = () => {
                 </div>
 
                 <div className='Table' style={{ height: 400, width: '100%'}}>
-                    <DataGrid
-                        rows={rows}
-                        columns={columns}
-                        initialState={{
-                        pagination: {
-                            paginationModel: { page: 0, pageSize: 5 },
-                        },
-                        }}
-                        pageSizeOptions={[5, 10, 25, 50]}
-                    />
+          <DataGrid
+            rows={rows}
+            columns={columns}
+            
+            initialState={{
+              pagination: {
+                paginationModel: { page: localStorage.getItem('dashboardPage') ? parseInt(localStorage.getItem('dashboardPage')) : 0, pageSize: 5 },
+              },
+            }}
+            components={{
+              Toolbar: () => (
+                <div style={{ position: 'absolute', bottom: 8, alignItems: 'center', marginLeft: '16px' }}>
+                  
+                  <div style={{ marginLeft: 'auto' }} />
+                </div>
+              ),
+            }}
+            pageSizeOptions={[5, 10, 25, 50]}
+            
+            
+            onStateChange={(state) => {
+              const currentPage = state.pagination.paginationModel.page;
+              localStorage.setItem('dashboardPage', currentPage);
+              console.log('Current Page:', currentPage + 1);
+            }}
+          />
                 </div>
                 
             
