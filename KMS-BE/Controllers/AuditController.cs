@@ -41,8 +41,8 @@ namespace KMS.Controllers
                 //    return Unauthorized();
                 //}
 
-                string query = "select au.id, au.kioskId, au.userId,au.action,au.script,au.field, au.tableName, au.ipAddress, au.macAddress, au.dateCreated, au.isActive " +
-                "\r\nfrom TAudit au";
+                string query = "select au.dateCreated, au.id, au.kioskId, au.userId,au.action,au.script,au.field, au.tableName, au.ipAddress, au.macAddress, au.isActive " +
+                "\r\nfrom TAudit au ORDER BY au.dateCreated DESC";
                 DataTable table = _exQuery.ExecuteRawQuery(query);
                 return new JsonResult(table);
             }
@@ -89,8 +89,8 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = "SELECT id, kioskId, userId, action, script, field, tableName, ipAddress, macAddress, dateCreated, isActive " +
-                           "FROM TAudit";
+                string query = "SELECT dateCreated, id, kioskId, userId, action, script, field, tableName, ipAddress, macAddress, isActive " +
+                           "FROM TAudit ORDER BY dateCreated DESC";
 
                 List<SqlParameter> parameters = new List<SqlParameter>();
 
@@ -197,17 +197,19 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = "SELECT id, kioskId, userId, action, script, field, tableName, ipAddress, macAddress, dateCreated, isActive " +
-                           "FROM TAudit " +
-                           "WHERE id LIKE @searchQuery OR " +
-                           "kioskId LIKE @searchQuery OR " +
-                           "userId LIKE @searchQuery OR " +
-                           "action LIKE @searchQuery OR " +
-                           "script LIKE @searchQuery OR " +
-                           "field LIKE @searchQuery OR " +
-                           "tableName LIKE @searchQuery OR " +
-                           "ipAddress LIKE @searchQuery OR " +
-                           "macAddress LIKE @searchQuery";
+                string query = @"SELECT dateCreated, id, kioskId, userId, action, script, field, tableName, ipAddress, macAddress, isActive 
+                            FROM TAudit 
+                            WHERE 
+                                id LIKE @searchQuery OR 
+                                kioskId LIKE @searchQuery OR 
+                                userId LIKE @searchQuery OR 
+                                action LIKE @searchQuery OR 
+                                script LIKE @searchQuery OR 
+                                field LIKE @searchQuery OR 
+                                tableName LIKE @searchQuery OR 
+                                ipAddress LIKE @searchQuery OR 
+                                macAddress LIKE @searchQuery
+                            ORDER BY dateCreated DESC";
 
                 SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
                 DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });

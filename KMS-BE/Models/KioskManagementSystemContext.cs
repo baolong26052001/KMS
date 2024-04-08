@@ -550,18 +550,13 @@ namespace KMS.Models
             {
                 entity.ToTable("LoanTransaction");
 
-                entity.HasKey(e => e.LoanId); // Assuming LoanId is the primary key
-
-                entity.Property(e => e.LoanId)
-                    .HasColumnName("LoanId"); // Assuming the column name in the database is LoanId
-
+                
                 
 
                 entity.Property(e => e.MemberId)
                     .HasColumnName("MemberId");
 
-                entity.Property(e => e.ContractId)
-                    .HasColumnName("ContractId");
+                
 
                 entity.Property(e => e.LoanTerm)
                     .HasColumnName("LoanTerm");
@@ -569,11 +564,7 @@ namespace KMS.Models
                 entity.Property(e => e.Debt)
                     .HasColumnName("Debt");
 
-                entity.Property(e => e.TotalDebtMustPay)
-                    .HasColumnName("TotalDebtMustPay");
-
-                entity.Property(e => e.LoanRate)
-                    .HasColumnName("LoanRate");
+                
 
                 entity.Property(e => e.TransactionDate)
                     .HasColumnName("TransactionDate")
@@ -739,24 +730,19 @@ namespace KMS.Models
             {
                 entity.ToTable("SavingTransaction");
 
-                entity.HasKey(e => e.SavingId); // Assuming SavingId is the primary key
-
-                entity.Property(e => e.SavingId)
-                    .HasColumnName("SavingId"); // Assuming the column name in the database is SavingId
+                
 
                 
 
                 entity.Property(e => e.MemberId)
                     .HasColumnName("MemberId");
 
-                entity.Property(e => e.ContractId)
-                    .HasColumnName("ContractId");
+                
 
                 entity.Property(e => e.TopUp)
                     .HasColumnName("TopUp");
 
-                entity.Property(e => e.Balance)
-                    .HasColumnName("Balance");
+                
 
                 entity.Property(e => e.SavingRate)
                     .HasColumnName("SavingRate");

@@ -47,7 +47,7 @@ namespace KMS.Controllers
         }
 
         [HttpGet]
-        [Route("ShowLoanTransaction/{id}")] // use for VIEW in KMS
+        [Route("ShowLoanTransaction/{id}")] 
         public JsonResult GetLoanTransactionById(int id)
         {
             ResponseDto response = new ResponseDto();
@@ -150,15 +150,41 @@ namespace KMS.Controllers
             try
             {
                 Random random = new Random();
-                int contractId = random.Next(10000000, 99999999);
+                int contractId;
+                double loanRate = 0;
+
+                do
+                {
+                    contractId = random.Next(10000000, 99999999);
+                } while (CheckIfContractIdExists(contractId));
+
+                if (loanTransaction.LoanTerm == 1)
+                {
+                    loanRate = 0.07;
+                }
+                else if (loanTransaction.LoanTerm == 2 || loanTransaction.LoanTerm == 3)
+                {
+                    loanRate = 0.08;
+                }
+                else if (loanTransaction.LoanTerm == 6)
+                {
+                    loanRate = 0.1;
+                }
+
+                string getMaxLoanIdQuery = "SELECT ISNULL(MAX(loanId), 0) FROM LoanTransaction";
+                int maxLoanId;
+
+                maxLoanId = _exQuery.ExecuteScalar<int>(getMaxLoanIdQuery, null);
+
+                int newLoanId = maxLoanId + 1;
 
                 string query = @"
                 
                 DECLARE @DueDate AS DATE
                 SET @DueDate = DATEADD(MONTH, @LoanTerm, GETDATE())
                 
-                INSERT INTO LoanTransaction (transactionId, memberId, contractId, loanTerm, debt, totalDebtMustPay, loanRate, transactionDate, dueDate, status)
-                VALUES (@TransactionId, @MemberId, @ContractId, @LoanTerm, @Debt, @TotalDebtMustPay, @LoanRate, GETDATE(), @DueDate, 0)
+                INSERT INTO LoanTransaction (memberId, contractId, loanId, loanTerm, debt, totalDebtMustPay, loanRate, transactionDate, dueDate, status)
+                VALUES (@MemberId, @ContractId, @LoanId, @LoanTerm, @Debt, @TotalDebtMustPay, @LoanRate, GETDATE(), @DueDate, @Status)
                 
 
                 ";
@@ -168,18 +194,23 @@ namespace KMS.Controllers
                     
                     new SqlParameter("@MemberId", loanTransaction.MemberId),
                     new SqlParameter("@ContractId", contractId),
+                    new SqlParameter("@LoanId", newLoanId),
                     new SqlParameter("@LoanTerm", loanTransaction.LoanTerm),
                     new SqlParameter("@Debt", loanTransaction.Debt),
                     new SqlParameter("@TotalDebtMustPay", loanTransaction.Debt + (int)((double)loanTransaction.Debt * loanTransaction.LoanRate)),
-                    //new SqlParameter("@DebtPayPerMonth", (loanTransaction.Debt + loanTransaction.Debt * loanTransaction.LoanRate) / loanTransaction.LoanTerm),
                     new SqlParameter("@LoanRate", loanTransaction.LoanRate),
-                    
+                    new SqlParameter("@Status", loanTransaction.Status)
                 };
 
 
                 _exQuery.ExecuteRawQuery(query, parameters);
 
-                return new JsonResult("Loan Transaction saved successfully");
+                return new JsonResult(new
+                {
+                    Code = 200,
+                    Message = "Save loan transaction successfully",
+                    contractId = contractId
+                });
             }
             catch (Exception ex)
             {
@@ -219,10 +250,7 @@ namespace KMS.Controllers
                             ORDER BY transactionDate DESC
 
 
-                            DECLARE @MemberId INT
-                            SELECT TOP 1 @MemberId = memberId
-                            FROM LoanTransaction
-                            WHERE loanId = @LoanId
+                            
 
 
                             -- If there are existing transactions, calculate @DebtRemaining based on the latest debtRemaining
@@ -232,8 +260,8 @@ namespace KMS.Controllers
                                 SET @DebtRemaining = @TotalDebtMustPay - @Payback
 
                             -- Insert into Payback
-                            INSERT INTO Payback (memberId, loanId, payback, indebt, transactionDate)
-                            VALUES (@MemberId, @LoanId, @Payback, @DebtRemaining, GETDATE())
+                            INSERT INTO Payback (contractId, memberId, loanId, payback, indebt, transactionDate)
+                            VALUES (@ContractId, @MemberId, @LoanId, @Payback, @DebtRemaining, GETDATE())
 
 
                             
@@ -248,6 +276,7 @@ namespace KMS.Controllers
 
                 SqlParameter[] parameters =
                 {
+                    new SqlParameter("@ContractId", payback.ContractId),
                     new SqlParameter("@MemberId", payback.MemberId),
                     new SqlParameter("@LoanId", payback.LoanId),
                     new SqlParameter("@Payback", payback.Payback),

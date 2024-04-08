@@ -46,7 +46,7 @@ namespace KMS.Controllers
         }
 
         [HttpGet]
-        [Route("ShowSavingTransaction/{id}")] // use for VIEW in KMS
+        [Route("ShowSavingTransaction/{id}")] 
         public JsonResult GetSavingTransactionById(int id)
         {
             ResponseDto response = new ResponseDto();
@@ -186,7 +186,7 @@ namespace KMS.Controllers
                 maxSavingId = _exQuery.ExecuteScalar<int>(getMaxSavingIdQuery, null);
                 
                 int newSavingId = maxSavingId + 1;
-                savingTransaction.Balance = savingTransaction.TopUp;
+                int balance = (int)savingTransaction.TopUp;
 
                 string query = @"INSERT INTO SavingTransaction (memberId, savingId, balance, contractId, savingTerm, topUp, savingRate, transactionDate, dueDate, status)
                 VALUES (@MemberId, @SavingId, @Balance, @ContractId, @SavingTerm, @TopUp, @SavingRate, GETDATE(), CAST(DATEADD(month, @SavingTerm, GETDATE()) AS DATE), @Status)";
@@ -195,7 +195,7 @@ namespace KMS.Controllers
                 {
                     new SqlParameter("@MemberId", savingTransaction.MemberId),
                     new SqlParameter("@SavingId", newSavingId),
-                    new SqlParameter("@Balance", savingTransaction.Balance),
+                    new SqlParameter("@Balance", balance),
                     new SqlParameter("@ContractId", contractId),
                     new SqlParameter("@SavingTerm", savingTransaction.SavingTerm),
                     new SqlParameter("@TopUp", savingTransaction.TopUp),
@@ -210,6 +210,48 @@ namespace KMS.Controllers
                     Code = 200,
                     Message = "Save saving transaction successfully",
                     contractId = contractId
+                });
+
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+
+        }
+
+        [HttpPost]
+        [Route("SaveWithdraw")]
+        public JsonResult SaveWithdraw([FromBody] WithDraw withDraw)
+        {
+            ResponseDto response = new ResponseDto();
+            try
+            {
+
+
+                string query = @"INSERT INTO Withdraw (contractId, memberId, savingId, withdraw, balance, transactionDate)
+                VALUES (@ContractId, @MemberId, @SavingId, @Withdraw, 0, GETDATE())";
+
+                SqlParameter[] parameters =
+                {
+                    new SqlParameter("@ContractId", withDraw.ContractId),
+                    new SqlParameter("@MemberId", withDraw.MemberId),
+                    new SqlParameter("@SavingId", withDraw.SavingId),
+                    new SqlParameter("@Withdraw", withDraw.Withdraw),
+                    
+                };
+
+                _exQuery.ExecuteRawQuery(query, parameters);
+
+                return new JsonResult(new
+                {
+                    Code = 200,
+                    Message = "Save withdraw successfully",
+                    
                 });
 
             }
