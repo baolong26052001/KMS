@@ -34,7 +34,8 @@ namespace KMS.Controllers
                "LEFT JOIN TKiosk k ON tl.kioskId = k.id " +
                "LEFT JOIN LMember m ON tl.memberId = m.id " +
                "LEFT JOIN LAccount a ON tl.accountId = a.id " +
-               "LEFT JOIN TStation st ON tl.stationId = st.id";
+               "LEFT JOIN TStation st ON tl.stationId = st.id " +
+               "ORDER BY tl.transactionDate DESC";
 
                 DataTable table = _exQuery.ExecuteRawQuery(query);
                 return new JsonResult(table);
@@ -87,7 +88,8 @@ namespace KMS.Controllers
             {
                 string query = "SELECT tl.id, tl.transactionDate, tl.kioskId, k.kioskName, tl.memberId, m.fullName, tl.transactionId, st.stationName, tl.transactionType, tl.status " +
                 "FROM LTransactionLog tl, TKiosk k, LMember m, LAccount a, TStation st " +
-                "WHERE tl.kioskId = k.id AND tl.memberId = m.id AND tl.accountId = a.id AND tl.stationId = st.id ";
+                "WHERE tl.kioskId = k.id AND tl.memberId = m.id AND tl.accountId = a.id AND tl.stationId = st.id " +
+                "ORDER BY tl.transactionDate DESC";
 
                 List<SqlParameter> parameters = new List<SqlParameter>();
 
@@ -149,7 +151,8 @@ namespace KMS.Controllers
                 "tl.transactionId LIKE @searchQuery OR " +
                 "st.stationName LIKE @searchQuery OR " +
                 "tl.transactionType LIKE @searchQuery OR " +
-                "tl.status LIKE @searchQuery)";
+                "tl.status LIKE @searchQuery) " +
+                "ORDER BY tl.transactionDate DESC";
 
                 SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
                 DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
