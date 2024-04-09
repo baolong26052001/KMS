@@ -4,6 +4,7 @@ using KMS.Tools;
 using System.Data;
 using Microsoft.Data.SqlClient;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using System.Diagnostics.Contracts;
 
 namespace KMS.Controllers
 {
@@ -158,25 +159,16 @@ namespace KMS.Controllers
                     contractId = random.Next(10000000, 99999999);
                 } while (CheckIfContractIdExists(contractId));
 
-                string queryA = @"
-                                DECLARE @InsertedId INT;
-                                INSERT INTO LTransactionLog (memberId, transactionId, transactionDate, transactionType) 
-                                VALUES (@MemberId, NULL, GETDATE(), 'Saving');
-                                SET @InsertedId = SCOPE_IDENTITY();
-                                UPDATE LTransactionLog SET transactionId = @InsertedId WHERE id = @InsertedId;
-                            ";
+                string queryA = @"INSERT INTO LTransactionLog (memberId, transactionId, transactionDate, transactionType, status) 
+                                  VALUES (@MemberId, @ContractId, GETDATE(), 'Saving', 3)";
 
                 SqlParameter[] parametersA =
                 {
                     new SqlParameter("@MemberId", savingTransaction.MemberId),
+                    new SqlParameter("@ContractId", contractId),
                 };
 
                 _exQuery.ExecuteRawQuery(queryA, parametersA);
-
-                string queryB = @"SELECT MAX(id) FROM LTransactionLog; ";
-                SqlParameter[] parametersB = { };
-
-                int insertedId = _exQuery.ExecuteScalar<int>(queryB, parametersB);
 
                 //
 
@@ -209,7 +201,8 @@ namespace KMS.Controllers
                 {
                     Code = 200,
                     Message = "Save saving transaction successfully",
-                    contractId = contractId
+                    contractId = contractId,
+                    savingId = newSavingId
                 });
 
             }
@@ -231,7 +224,16 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
+                string queryA = @"INSERT INTO LTransactionLog (memberId, transactionId, transactionDate, transactionType, status) 
+                                  VALUES (@MemberId, @ContractId, GETDATE(), 'Withdraw', 3)";
 
+                SqlParameter[] parametersA =
+                {
+                    new SqlParameter("@MemberId", withDraw.MemberId),
+                    new SqlParameter("@ContractId", withDraw.ContractId),
+                };
+
+                _exQuery.ExecuteRawQuery(queryA, parametersA);
 
                 string query = @"INSERT INTO Withdraw (contractId, memberId, savingId, withdraw, balance, transactionDate)
                 VALUES (@ContractId, @MemberId, @SavingId, @Withdraw, 0, GETDATE())";
@@ -242,7 +244,6 @@ namespace KMS.Controllers
                     new SqlParameter("@MemberId", withDraw.MemberId),
                     new SqlParameter("@SavingId", withDraw.SavingId),
                     new SqlParameter("@Withdraw", withDraw.Withdraw),
-                    
                 };
 
                 _exQuery.ExecuteRawQuery(query, parameters);
@@ -251,7 +252,6 @@ namespace KMS.Controllers
                 {
                     Code = 200,
                     Message = "Save withdraw successfully",
-                    
                 });
 
             }

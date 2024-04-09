@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Text;
 using KMS.Tools;
+using System.Diagnostics.Contracts;
 
 namespace KMS.Controllers
 {
@@ -151,25 +152,24 @@ namespace KMS.Controllers
             {
                 Random random = new Random();
                 int contractId;
-                double loanRate = 0;
-
+                
                 do
                 {
                     contractId = random.Next(10000000, 99999999);
                 } while (CheckIfContractIdExists(contractId));
 
-                if (loanTransaction.LoanTerm == 1)
+                string queryA = @"INSERT INTO LTransactionLog (memberId, transactionId, transactionDate, transactionType, status) 
+                                  VALUES (@MemberId, @ContractId, GETDATE(), 'Loan', 3)";
+
+                SqlParameter[] parametersA =
                 {
-                    loanRate = 0.07;
-                }
-                else if (loanTransaction.LoanTerm == 2 || loanTransaction.LoanTerm == 3)
-                {
-                    loanRate = 0.08;
-                }
-                else if (loanTransaction.LoanTerm == 6)
-                {
-                    loanRate = 0.1;
-                }
+                    new SqlParameter("@MemberId", loanTransaction.MemberId),
+                    new SqlParameter("@ContractId", contractId),
+                };
+
+                _exQuery.ExecuteRawQuery(queryA, parametersA);
+
+                //
 
                 string getMaxLoanIdQuery = "SELECT ISNULL(MAX(loanId), 0) FROM LoanTransaction";
                 int maxLoanId;
@@ -191,7 +191,6 @@ namespace KMS.Controllers
 
                 SqlParameter[] parameters =
                 {
-                    
                     new SqlParameter("@MemberId", loanTransaction.MemberId),
                     new SqlParameter("@ContractId", contractId),
                     new SqlParameter("@LoanId", newLoanId),
@@ -209,7 +208,8 @@ namespace KMS.Controllers
                 {
                     Code = 200,
                     Message = "Save loan transaction successfully",
-                    contractId = contractId
+                    contractId = contractId,
+                    loanId = newLoanId
                 });
             }
             catch (Exception ex)
@@ -230,6 +230,17 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
+                string queryA = @"INSERT INTO LTransactionLog (memberId, transactionId, transactionDate, transactionType, status) 
+                                  VALUES (@MemberId, @ContractId, GETDATE(), 'Payback', 3)";
+
+                SqlParameter[] parametersA =
+                {
+                    new SqlParameter("@MemberId", payback.MemberId),
+                    new SqlParameter("@ContractId", payback.ContractId),
+                };
+
+                _exQuery.ExecuteRawQuery(queryA, parametersA);
+
                 string query = @"
                             DECLARE @TotalDebtMustPay DECIMAL(18, 2)
 
@@ -249,10 +260,6 @@ namespace KMS.Controllers
                             WHERE loanId = @LoanId
                             ORDER BY transactionDate DESC
 
-
-                            
-
-
                             -- If there are existing transactions, calculate @DebtRemaining based on the latest debtRemaining
                             IF (@LatestDebtRemaining IS NOT NULL)
                                 SET @DebtRemaining = @LatestDebtRemaining - @Payback
@@ -263,16 +270,10 @@ namespace KMS.Controllers
                             INSERT INTO Payback (contractId, memberId, loanId, payback, indebt, transactionDate)
                             VALUES (@ContractId, @MemberId, @LoanId, @Payback, @DebtRemaining, GETDATE())
 
-
-                            
-
                             IF (@DebtRemaining <= 0)
                             UPDATE LoanTransaction 
                             SET status = 1 -- Assuming 'status' is a bit field
-                            WHERE loanId = @LoanId
-
-
-                            ";
+                            WHERE loanId = @LoanId";
 
                 SqlParameter[] parameters =
                 {
@@ -280,13 +281,15 @@ namespace KMS.Controllers
                     new SqlParameter("@MemberId", payback.MemberId),
                     new SqlParameter("@LoanId", payback.LoanId),
                     new SqlParameter("@Payback", payback.Payback),
-                    
-                    
                 };
 
                 _exQuery.ExecuteRawQuery(query, parameters);
 
-                return new JsonResult("Payback data saved successfully");
+                return new JsonResult(new
+                {
+                    Code = 200,
+                    Message = "Save payback successfully",
+                });
             }
             catch (Exception ex)
             {

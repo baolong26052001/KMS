@@ -71,7 +71,7 @@ const columns = [
   minWidth: 200, 
   flex: 1,
 },
-{ field: 'transactionId', headerName: 'Transaction ID', minWidth: 150, flex: 1,},
+{ field: 'transactionId', headerName: 'Contract ID', minWidth: 150, flex: 1,},
 { field: 'id', headerName: 'Transaction Logs ID', minWidth: 200, flex: 1,},
 { field: 'kioskId', headerName: 'Kiosk', minWidth: 100, flex: 1,},
 { field: 'memberId', headerName: 'Member', minWidth: 100, flex: 1,},
