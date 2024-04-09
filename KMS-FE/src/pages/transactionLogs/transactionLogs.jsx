@@ -18,7 +18,7 @@ const handleButtonClick = (id) => {
 const statusTrx = {
   1: "Cancel",
   2: "Pending",
-  3: "Commited"
+  3: "Committed"
 };
 
 function createData(transactionDate, transactionId, id, kioskId, memberId, stationName, transactionType, kioskRemainingMoney, status) {

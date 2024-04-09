@@ -16,8 +16,8 @@ const handleButtonClick = (id) => {
   console.log(`Button clicked for row with ID: ${id}`);
 };
 
-function createData(id, memberId, accountId, savingTerm, balance, annualRate, status, dueDate, dateCreated) {
-  return {id, memberId, accountId, savingTerm, balance, annualRate, status, dueDate, dateCreated};
+function createData(id, memberId, contractId, savingId, topUp, balance, savingRate, savingTerm, transactionDate, dueDate, status) {
+  return {id, memberId, contractId, savingId, topUp, balance, savingRate, savingTerm, transactionDate, dueDate, status};
 }
 
 const columns = [
@@ -40,10 +40,25 @@ const columns = [
       />
     ),
   },
-  { field: 'id', headerName: 'Saving ID', minWidth: 100, flex: 1,},
+  {
+    field: 'transactionDate',
+    headerName: 'Transaction Date',
+    sortable: false,
+    minWidth: 200,
+    flex: 1
+  },
+  { field: 'id', headerName: 'ID', minWidth: 100, flex: 1,},
   { field: 'memberId', headerName: 'Member ID', minWidth: 100, flex: 1,},
-  { field: 'accountId', headerName: 'Account ID', minWidth: 100, flex: 1,},
-  { field: 'savingTerm', headerName: 'Saving Term', minWidth: 150,  
+  { field: 'contractId', headerName: 'Contract ID', minWidth: 100, flex: 1,},
+  { field: 'savingId', headerName: 'Saving ID', minWidth: 150,  
+    flex: 1,
+    sortable: false,
+    disableColumnMenu: true,
+  },
+  {
+    field: 'topUp',
+    headerName: 'Top Up',
+    minWidth: 100,
     flex: 1,
     sortable: false,
     disableColumnMenu: true,
@@ -51,40 +66,40 @@ const columns = [
   {
     field: 'balance',
     headerName: 'Balance',
-    minWidth: 100,
-    flex: 1,
-    sortable: false,
-    disableColumnMenu: true,
-  },
-  {
-    field: 'annualRate',
-    headerName: 'Annual Rate',
     minWidth: 120,
     flex: 1,
     sortable: false,
     disableColumnMenu: true,
   },
   {
-    field: 'status',
-    headerName: 'Is Active',
+    field: 'savingRate',
+    headerName: 'Saving Rate',
     minWidth: 100,
     flex: 1,
     sortable: false,
     disableColumnMenu: true,
   },
   {
-    field: 'dueDate',
-    headerName: 'Due Created',
+    field: 'savingTerm',
+    headerName: 'Saving Term',
     sortable: false,
     minWidth: 180,
     flex: 1 
   },
+  
   {
-    field: 'dateCreated',
-    headerName: 'Date Created',
+    field: 'dueDate',
+    headerName: 'Due Date',
+    sortable: false,
+    minWidth: 200,
+    flex: 1
+  },
+  {
+    field: 'status',
+    headerName: 'Status',
     sortable: false,
     minWidth: 180,
-    flex: 1 
+    flex: 1
   },
 ];
 
@@ -155,7 +170,7 @@ const SavingTransaction = () => {
           }
         
           const updatedRows = filteredRows.map(row =>
-            createData(row.id, row.memberId, row.accountId, row.savingTerm, row.balance, row.annualRate, row.status, row.dueDate, row.dateCreated)
+            createData(row.id, row.memberId, row.contractId, row.savingId, row.topUp, row.balance, row.savingRate, row.savingTerm, row.transactionDate, row.dueDate, row.status)
           );
         
           setRows(updatedRows); 

@@ -15,8 +15,8 @@ const handleButtonClick = (id) => {
   console.log(`Button clicked for row with ID: ${id}`);
 };
 
-function createData(id, memberId, accountId, loanTerm, debt, balance, transactionType, interestRate, isActive, loanDate) {
-  return {id, memberId, accountId, loanTerm, debt, balance, transactionType, interestRate, isActive, loanDate};
+function createData(id, memberId, contractId, loanId, loanTerm, debt, totalDebtMustPay, loanRate, transactionDate, dueDate, status) {
+  return {id, memberId, contractId, loanId, loanTerm, debt, totalDebtMustPay, loanRate, transactionDate, dueDate, status};
 }
 
 const columns = [
@@ -39,10 +39,26 @@ const columns = [
       />
     ),
   },
-  { field: 'id', headerName: 'Loan ID', minWidth: 100, flex: 1,},
+  {
+    field: 'transactionDate',
+    headerName: 'Transaction Date',
+    minWidth: 200,
+    flex: 1,
+    sortable: false,
+    disableColumnMenu: true,
+  },
+  { field: 'id', headerName: 'ID', minWidth: 100, flex: 1,},
   { field: 'memberId', headerName: 'Member ID', minWidth: 100, flex: 1,},
-  { field: 'accountId', headerName: 'Account ID', minWidth: 100, flex: 1,},
-  { field: 'loanTerm', headerName: 'Loan Term', minWidth: 150,  
+  { field: 'contractId', headerName: 'Contract ID', minWidth: 100, flex: 1,},
+  { field: 'loanId', headerName: 'Loan ID', minWidth: 150,  
+    flex: 1,
+    sortable: false,
+    disableColumnMenu: true,
+  },
+  {
+    field: 'loanTerm',
+    headerName: 'Loan Term',
+    minWidth: 100,
     flex: 1,
     sortable: false,
     disableColumnMenu: true,
@@ -56,43 +72,35 @@ const columns = [
     disableColumnMenu: true,
   },
   {
-    field: 'balance',
-    headerName: 'Balance',
-    minWidth: 100,
+    field: 'totalDebtMustPay',
+    headerName: 'Total Debt Must Pay',
+    minWidth: 180,
     flex: 1,
     sortable: false,
     disableColumnMenu: true,
   },
   {
-    field: 'transactionType',
-    headerName: 'Transaction Type',
-    minWidth: 150,
-    flex: 1,
-    sortable: false,
-    disableColumnMenu: true,
-  },
-  {
-    field: 'interestRate',
-    headerName: 'Interest Rate',
+    field: 'loanRate',
+    headerName: 'Loan Rate',
     minWidth: 120,
     flex: 1,
     sortable: false,
     disableColumnMenu: true,
   },
+  
   {
-    field: 'isActive',
-    headerName: 'Is Active',
-    minWidth: 100,
-    flex: 1,
-    sortable: false,
-    disableColumnMenu: true,
-  },
-  {
-    field: 'loanDate',
-    headerName: 'Loan Date',
+    field: 'dueDate',
+    headerName: 'Due Date',
     sortable: false,
     minWidth: 200,
     flex: 1 
+  },
+  {
+    field: 'status',
+    headerName: 'Status',
+    sortable: false,
+    minWidth: 200,
+    flex: 1
   },
 ];
 
@@ -167,7 +175,7 @@ const LoanTransaction = () => {
           }
         
           const updatedRows = filteredRows.map(row =>
-            createData(row.id, row.memberId, row.accountId, row.loanTerm, row.debt, row.balance, row.transactionType, row.interestRate, row.isActive, row.loanDate)
+            createData(row.id, row.memberId, row.contractId, row.loanId, row.loanTerm, row.debt, row.totalDebtMustPay, row.loanRate, row.transactionDate, row.dueDate, row.status)
           );
         
           setRows(updatedRows); 

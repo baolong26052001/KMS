@@ -276,20 +276,17 @@ namespace KMS.Controllers
                 } while (CheckIfContractIdExists(contractId));
 
                 string queryA = @"
-                                DECLARE @InsertedId INT;
-                                INSERT INTO LTransactionLog (memberId, transactionId, transactionDate, transactionType) 
-                                VALUES (@MemberId, NULL, GETDATE(), 'Insurance');
-                                SET @InsertedId = SCOPE_IDENTITY();
-                                UPDATE LTransactionLog SET transactionId = @InsertedId WHERE id = @InsertedId;
-                            ";
+                                INSERT INTO LTransactionLog (memberId, transactionId, transactionDate, transactionType, status) 
+                                VALUES (@MemberId, @ContractId, GETDATE(), 'Insurance', 3)";
 
                 SqlParameter[] parametersA =
                 {
                     new SqlParameter("@MemberId", insuranceTransaction.MemberId),
+                    new SqlParameter("@ContractId", contractId),
                 };
                 _exQuery.ExecuteRawQuery(queryA, parametersA);
 
-                string queryB = @"SELECT MAX(id) FROM LTransactionLog; ";
+                string queryB = @"SELECT MAX(id) FROM LTransactionLog";
                 SqlParameter[] parametersB = { };
 
                 int insertedId = _exQuery.ExecuteScalar<int>(queryB, parametersB);
@@ -303,7 +300,6 @@ namespace KMS.Controllers
 
                 SqlParameter[] parameters =
                 {
-                    
                     new SqlParameter("@MemberId", insuranceTransaction.MemberId),
                     new SqlParameter("@ContractId", contractId),
                     new SqlParameter("@PackageDetailId", insuranceTransaction.PackageDetailId),
