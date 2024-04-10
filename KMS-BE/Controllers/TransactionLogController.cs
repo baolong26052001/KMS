@@ -86,10 +86,12 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = "SELECT tl.id, tl.transactionDate, tl.kioskId, k.kioskName, tl.memberId, m.fullName, tl.transactionId, st.stationName, tl.transactionType, tl.status " +
-                "FROM LTransactionLog tl, TKiosk k, LMember m, LAccount a, TStation st " +
-                "WHERE tl.kioskId = k.id AND tl.memberId = m.id AND tl.accountId = a.id AND tl.stationId = st.id " +
-                "ORDER BY tl.transactionDate DESC";
+                string query = "SELECT tl.id, tl.transactionDate, tl.kioskId, k.kioskName, tl.memberId, m.fullName, tl.transactionId, st.stationName, tl.transactionType, tl.kioskRemainingMoney, tl.status " +
+               "FROM LTransactionLog tl " +
+               "LEFT JOIN TKiosk k ON tl.kioskId = k.id " +
+               "LEFT JOIN LMember m ON tl.memberId = m.id " +
+               "LEFT JOIN LAccount a ON tl.accountId = a.id " +
+               "LEFT JOIN TStation st ON tl.stationId = st.id ";
 
                 List<SqlParameter> parameters = new List<SqlParameter>();
 
@@ -105,17 +107,14 @@ namespace KMS.Controllers
                 //    parameters.Add(new SqlParameter("@stationName", "%" + stationName + "%"));
                 //}
 
-                if (startDate.HasValue)
+                if (startDate.HasValue && endDate.HasValue)
                 {
-                    startDate = startDate.Value.Date.AddHours(0).AddMinutes(0).AddSeconds(0);
-                    query += " AND " + " tl.transactionDate >= @startDate ";
-                    parameters.Add(new SqlParameter("@startDate", startDate.Value));
-                }
 
-                if (endDate.HasValue)
-                {
+                    startDate = startDate.Value.Date.AddHours(0).AddMinutes(0).AddSeconds(0);
                     endDate = endDate.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
-                    query += " AND " + " tl.transactionDate <= @endDate ";
+
+                    query += (parameters.Count == 0 ? " WHERE " : " AND ") + "tl.transactionDate >= @startDate AND tl.transactionDate <= @endDate";
+                    parameters.Add(new SqlParameter("@startDate", startDate.Value));
                     parameters.Add(new SqlParameter("@endDate", endDate.Value));
                 }
 

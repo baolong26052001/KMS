@@ -32,7 +32,7 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = "select * from LoanTransaction";
+                string query = "select * from LoanTransaction order by id desc";
                 DataTable table = _exQuery.ExecuteRawQuery(query);
                 return new JsonResult(table);
             }
@@ -359,7 +359,7 @@ namespace KMS.Controllers
                     startDate = startDate.Value.Date.AddHours(0).AddMinutes(0).AddSeconds(0);
                     endDate = endDate.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
 
-                    query += (parameters.Count == 0 ? " WHERE " : " AND ") + "loanDate >= @startDate AND loanDate <= @endDate";
+                    query += (parameters.Count == 0 ? " WHERE " : " AND ") + "transactionDate >= @startDate AND transactionDate <= @endDate";
                     parameters.Add(new SqlParameter("@startDate", startDate.Value));
                     parameters.Add(new SqlParameter("@endDate", endDate.Value));
                 }

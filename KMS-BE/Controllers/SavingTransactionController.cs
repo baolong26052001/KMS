@@ -310,7 +310,7 @@ namespace KMS.Controllers
 
                 if (isActive.HasValue)
                 {
-                    query += (parameters.Count == 0 ? " WHERE " : " AND ") + "isActive = @isActive";
+                    query += (parameters.Count == 0 ? " WHERE " : " AND ") + "status = @isActive";
                     parameters.Add(new SqlParameter("@isActive", isActive.Value));
                 }
 
@@ -320,7 +320,7 @@ namespace KMS.Controllers
                     startDate = startDate.Value.Date.AddHours(0).AddMinutes(0).AddSeconds(0);
                     endDate = endDate.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
 
-                    query += (parameters.Count == 0 ? " WHERE " : " AND ") + "dateCreated >= @startDate AND dateCreated <= @endDate";
+                    query += (parameters.Count == 0 ? " WHERE " : " AND ") + "transactionDate >= @startDate AND transactionDate <= @endDate";
                     parameters.Add(new SqlParameter("@startDate", startDate.Value));
                     parameters.Add(new SqlParameter("@endDate", endDate.Value));
                 }

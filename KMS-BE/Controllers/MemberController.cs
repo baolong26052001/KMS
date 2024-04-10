@@ -213,6 +213,7 @@ namespace KMS.Controllers
         [Route("GetMemberInformationFromScanner2")]
         public async Task<JsonResult> AddMember2(IFormFile file, IFormFile imageIdCardFile)
         {
+            int trung = 0;
             try
             {
                 using (StreamReader reader = new StreamReader(file.OpenReadStream()))
@@ -232,11 +233,12 @@ namespace KMS.Controllers
                         if (existingIdenNumbers.Count > 0)
                         {
                             // cardInfo.id already exists in the database
-                            return new JsonResult(new ResponseDto
-                            {
-                                Code = 400,
-                                Message = "IdenNumber already exists in the database"
-                            });
+                            //return new JsonResult(new ResponseDto
+                            //{
+                            //    Code = 400,
+                            //    Message = "IdenNumber already exists in the database"
+                            //});
+                            trung = 1;
                         }
 
                         Lmember member = new Lmember
@@ -288,36 +290,76 @@ namespace KMS.Controllers
 
                         int highestId = await _dbcontext.Lmembers.MaxAsync(m => m.Id);
 
-                        using (var client = new HttpClient())
+                        if (trung == 0)
                         {
-                            MultipartFormDataContent content = new MultipartFormDataContent
+                            using (var client = new HttpClient())
                             {
-                                { new StreamContent(imageIdCardFile.OpenReadStream()), "img_file", imageIdCardFile.FileName },
-                                { new StringContent(highestId.ToString()), "person_id" },
-                                { new StringContent(member.IdenNumber), "image_id" }
-                            };
 
-                            var response = await client.PostAsync(_remoteApiUrl, content);
+                                MultipartFormDataContent content = new MultipartFormDataContent
+                                {
+                                    { new StreamContent(imageIdCardFile.OpenReadStream()), "img_file", imageIdCardFile.FileName },
+                                    { new StringContent(highestId.ToString()), "person_id" },
+                                    { new StringContent(member.IdenNumber), "image_id" }
+                                };
 
-                            if (response.IsSuccessStatusCode)
-                            {
-                                return new JsonResult(new ResponseDtoResult
+                                var response = await client.PostAsync(_remoteApiUrl, content);
+
+                                if (response.IsSuccessStatusCode)
                                 {
-                                    Code = 200,
-                                    Message = "Member added successfully",
-                                    PersonId = highestId.ToString(),
-                                    ImageId = member.IdenNumber,
-                                });
-                            }
-                            else
-                            {
-                                return new JsonResult(new ResponseDto
+                                    return new JsonResult(new ResponseDtoResult
+                                    {
+                                        Code = 200,
+                                        Message = "Member added successfully",
+                                        PersonId = highestId.ToString(),
+                                        ImageId = member.IdenNumber,
+                                    });
+                                }
+                                else
                                 {
-                                    Code = (int)response.StatusCode,
-                                    Message = "Failed to add member. Remote API request failed."
-                                });
+                                    return new JsonResult(new ResponseDto
+                                    {
+                                        Code = (int)response.StatusCode,
+                                        Message = "Failed to add."
+                                    });
+                                }
                             }
                         }
+                        else if (trung == 1)
+                        {
+                            using (var client = new HttpClient())
+                            {
+
+                                MultipartFormDataContent content = new MultipartFormDataContent
+                                {
+                                    { new StreamContent(imageIdCardFile.OpenReadStream()), "img_file", imageIdCardFile.FileName },
+                                    { new StringContent(highestId.ToString()), "person_id" },
+                                    { new StringContent(member.IdenNumber + GenerateRandomNumber()), "image_id" }
+                                };
+
+                                var response = await client.PostAsync(_remoteApiUrl, content);
+
+                                if (response.IsSuccessStatusCode)
+                                {
+                                    return new JsonResult(new ResponseDtoResult
+                                    {
+                                        Code = 200,
+                                        Message = "Member added successfully",
+                                        PersonId = highestId.ToString(),
+                                        ImageId = member.IdenNumber + GenerateRandomNumber(),
+                                    });
+                                }
+                                else
+                                {
+                                    return new JsonResult(new ResponseDto
+                                    {
+                                        Code = (int)response.StatusCode,
+                                        Message = "Failed to add."
+                                    });
+                                }
+                            }
+                        }
+
+                        
                     }
 
                     return new JsonResult(new ResponseDto
@@ -343,6 +385,12 @@ namespace KMS.Controllers
             public string Message { get; set; } = "Add member successfully";
             public string PersonId { get; set; }
             public string ImageId { get; set; }
+        }
+
+        private string GenerateRandomNumber()
+        {
+            Random random = new Random();
+            return random.Next(10, 99).ToString();
         }
 
         private List<string> IdenNumbersExist(string idenNumber)
