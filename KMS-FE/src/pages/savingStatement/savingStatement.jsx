@@ -16,8 +16,8 @@ const handleButtonClick = (id) => {
 
 
 
-function createData(id, memberId, accountId, savingTerm, balance, annualRate, status, dueDate, dateCreated) {
-  return {id, memberId, accountId, savingTerm, balance, annualRate, status, dueDate, dateCreated};
+function createData(transactionDate, memberId, fullName, contractId, savingId, savingTerm, topUp, withdraw, id) {
+  return { transactionDate, memberId, fullName, contractId, savingId, savingTerm, topUp, withdraw, id };
 }
 
 const columns = [
@@ -40,52 +40,15 @@ const columns = [
       />
     ),
   },
-  { field: 'id', headerName: 'Saving ID', minWidth: 100, flex: 1,},
+  { field: 'transactionDate', headerName: 'Transaction Date', minWidth: 200, flex: 1,},
   { field: 'memberId', headerName: 'Member ID', minWidth: 100, flex: 1,},
-  { field: 'accountId', headerName: 'Account ID', minWidth: 100, flex: 1,},
-  { field: 'savingTerm', headerName: 'Saving Term', minWidth: 150,  
-    flex: 1,
-    sortable: false,
-    disableColumnMenu: true,
-  },
-  {
-    field: 'balance',
-    headerName: 'Balance',
-    minWidth: 100,
-    flex: 1,
-    sortable: false,
-    disableColumnMenu: true,
-  },
-  {
-    field: 'annualRate',
-    headerName: 'Annual Rate',
-    minWidth: 120,
-    flex: 1,
-    sortable: false,
-    disableColumnMenu: true,
-  },
-  {
-    field: 'status',
-    headerName: 'Is Active',
-    minWidth: 100,
-    flex: 1,
-    sortable: false,
-    disableColumnMenu: true,
-  },
-  {
-    field: 'dueDate',
-    headerName: 'Due Created',
-    sortable: false,
-    minWidth: 180,
-    flex: 1 
-  },
-  {
-    field: 'dateCreated',
-    headerName: 'Date Created',
-    sortable: false,
-    minWidth: 180,
-    flex: 1 
-  },
+  { field: 'fullName', headerName: 'Full Name', minWidth: 200, flex: 1,},
+  { field: 'contractId', headerName: 'Contract ID', minWidth: 100, flex: 1, },
+  { field: 'savingId', headerName: 'Saving ID', minWidth: 100, flex: 1, },
+  { field: 'savingTerm', headerName: 'Saving Term', minWidth: 100, flex: 1, },
+  { field: 'topUp', headerName: 'Top Up', minWidth: 100, flex: 1, },
+  { field: 'withdraw', headerName: 'Withdraw', minWidth: 100, flex: 1, },
+  { field: 'id', headerName: 'ID', minWidth: 100, flex: 1, },
 ];
 
 const SavingStatement = () => {
@@ -155,7 +118,7 @@ const SavingStatement = () => {
           }
         
           const updatedRows = filteredRows.map(row =>
-            createData(row.id, row.memberId, row.accountId, row.savingTerm, row.balance, row.annualRate, row.status, row.dueDate, row.dateCreated)
+            createData(row.transactionDate, row.memberId, row.fullName, row.contractId, row.savingId, row.savingTerm, row.topUp, row.withdraw, row.id)
           );
         
           setRows(updatedRows); 

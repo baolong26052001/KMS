@@ -15,8 +15,8 @@ const handleButtonClick = (id) => {
   console.log(`Button clicked for row with ID: ${id}`);
 };
 
-function createData(id, memberId, accountId, loanTerm, balance, status, interestRate, loanDate, dueDate) {
-  return {id, memberId, accountId, loanTerm, balance, status, interestRate, loanDate, dueDate};
+function createData(transactionDate, id, memberId, fullName, contractId, loanId, loanTerm, debt, totalDebtMustPay, payback) {
+  return { transactionDate, id, memberId, fullName, contractId, loanId, loanTerm, debt, totalDebtMustPay, payback };
 }
 
 const columns = [
@@ -39,54 +39,37 @@ const columns = [
       />
     ),
   },
-  { field: 'id', headerName: 'Loan ID', minWidth: 100, flex: 1,},
+  { field: 'transactionDate', headerName: 'Transaction Date', minWidth: 200, flex: 1, },
+  { field: 'id', headerName: 'ID', minWidth: 100, flex: 1, },
+  
   { field: 'memberId', headerName: 'Member ID', minWidth: 100, flex: 1,},
-  { field: 'accountId', headerName: 'Account ID', minWidth: 100, flex: 1,},
+  { field: 'fullName', headerName: 'Full Name', minWidth: 200, flex: 1, },
+  { field: 'contractId', headerName: 'Contract ID', minWidth: 100, flex: 1, },
+  { field: 'loanId', headerName: 'Loan ID', minWidth: 100, flex: 1, },
   { field: 'loanTerm', headerName: 'Loan Term', minWidth: 150,  
     flex: 1,
     sortable: false,
     disableColumnMenu: true,
   },
+  { field: 'debt', headerName: 'Debt', minWidth: 100, flex: 1, },
   {
-    field: 'balance',
-    headerName: 'Balance',
+    field: 'totalDebtMustPay',
+    headerName: 'Total Debt',
     minWidth: 100,
     flex: 1,
     sortable: false,
     disableColumnMenu: true,
   },
   {
-    field: 'status',
-    headerName: 'Status',
+    field: 'payback',
+    headerName: 'Pay Back',
     minWidth: 100,
     flex: 1,
     sortable: false,
     disableColumnMenu: true,
   },
-  {
-    field: 'interestRate',
-    headerName: 'Interest Rate',
-    minWidth: 120,
-    flex: 1,
-    sortable: false,
-    disableColumnMenu: true,
-  },
-  {
-    field: 'loanDate',
-    headerName: 'Loan Date',
-    minWidth: 180,
-    flex: 1,
-    sortable: false,
-    disableColumnMenu: true,
-  },
-  {
-    field: 'dueDate',
-    headerName: 'Due Date',
-    sortable: false,
-    disableColumnMenu: true,
-    minWidth: 180,
-    flex: 1 
-  },
+  
+  
 ];
 
 const rows = [];
@@ -160,7 +143,7 @@ const Loanstatement = () => {
           }
         
           const updatedRows = filteredRows.map(row =>
-            createData(row.id, row.memberId, row.accountId, row.loanTerm, row.balance, row.status, row.interestRate, row.dateLoan, row.dueDate)
+            createData(row.transactionDate, row.id, row.memberId, row.fullName, row.contractId, row.loanId, row.loanTerm, row.debt, row.totalDebtMustPay, row.payback)
           );
         
           setRows(updatedRows); 

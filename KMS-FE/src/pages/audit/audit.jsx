@@ -36,6 +36,13 @@ const columns = [
       />
     ),
   },
+  {
+    field: 'dateCreated',
+    headerName: 'Date Created',
+    sortable: false,
+    minWidth: 200,
+    flex: 1
+  },
   { field: 'id', headerName: 'Audit ID', minWidth: 100, flex: 1,},
   { field: 'kioskId', headerName: 'Kiosk ID', minWidth: 100, flex: 1,},
   { field: 'userId', headerName: 'User ID', minWidth: 100, flex: 1,},
@@ -93,13 +100,7 @@ const columns = [
     sortable: false,
     disableColumnMenu: true,
   },
-  {
-    field: 'dateCreated',
-    headerName: 'Date Created',
-    sortable: false,
-    minWidth: 200,
-    flex: 1 
-  },
+  
 ];
 const rows = [];
 

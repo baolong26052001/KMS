@@ -145,10 +145,10 @@ const LoanTransaction = () => {
         if (startDate || endDate) {
           apiUrl = `${API_URL}api/LoanTransaction/FilterLoanTransaction?startDate=${encodeURIComponent(dayjs(startDate).format('YYYY/MM/DD'))}&endDate=${encodeURIComponent(dayjs(endDate).format('YYYY/MM/DD'))}`;
           if (searchTerm) {
-            searchApi = `${API_URL}api/LoanTransaction/ShowLoanTransaction?searchQuery=${encodeURIComponent(searchTerm)}`;
+            searchApi = `${API_URL}api/LoanTransaction/SearchLoanTransaction?searchQuery=${encodeURIComponent(searchTerm)}`;
           }
         } else if (searchTerm) {
-          apiUrl = `${API_URL}api/LoanTransaction/ShowLoanTransaction?searchQuery=${encodeURIComponent(searchTerm)}`;
+          apiUrl = `${API_URL}api/LoanTransaction/SearchLoanTransaction?searchQuery=${encodeURIComponent(searchTerm)}`;
         }
   
         const [apiResponse, searchApiResponse] = await Promise.all([
