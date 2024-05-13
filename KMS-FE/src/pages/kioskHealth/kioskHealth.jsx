@@ -19,25 +19,7 @@ function createData(id, transactionDate, station, upTime, downTime, lastUpdate) 
 }
 
 const columns = [
-  {
-    field: 'viewButton',
-    headerName: '',
-    width: 80,
-    disableColumnMenu: true,
-    sortable: false, // Disable sorting for this column
-    filterable: false, // Disable filtering for this column
-    renderCell: (params) => (
-      <CustomButton
-        rowId={params.row.id}
-        label="View"
-        onClick={handleButtonClick}
-        //destination={`/viewStation/${params.row.id}`}
-        color="primary"
-        variant="contained"
-        size="small"
-      />
-    ),
-  },
+  
   {
     field: 'detailButton',
     headerName: '',

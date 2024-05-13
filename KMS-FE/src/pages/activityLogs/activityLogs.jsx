@@ -15,8 +15,8 @@ const handleButtonClick = (id) => {
 };
 
 
-function createData(id, kioskId, hardware, hardwareStatus, station, status, dateCreated) {
-  return {id, kioskId, hardware, hardwareStatus, station, status, dateCreated};
+function createData(id, kioskId, hardware, hardwareStatus, description, station, status, dateModified) {
+  return {id, kioskId, hardware, hardwareStatus, description, station, status, dateModified};
 }
 
 const columns = [
@@ -46,6 +46,37 @@ const columns = [
     flex: 1,
     sortable: false,
     disableColumnMenu: true,
+    renderCell: (params) => {
+      let color;
+      switch (params.value) {
+        case 'Online':
+          color = 'green';
+          break;
+        case 'Offline':
+          color = 'red';
+          break;
+        case 'No Paper':
+          color = 'yellow';
+          break;
+        case 'Paper Low':
+          color = 'blue';
+          break;
+        default:
+          color = 'inherit';
+          break;
+      }
+      return (
+        <span style={{ color: color }}>
+          {params.value}
+        </span>
+      );
+    },
+  },
+  {
+    field: 'description', headerName: 'Description', minWidth: 120,
+    flex: 1,
+    sortable: false,
+    disableColumnMenu: true,
   },
   {
     field: 'station',
@@ -64,8 +95,8 @@ const columns = [
     disableColumnMenu: true,
   },
   {
-    field: 'dateCreated',
-    headerName: 'Date Created',
+    field: 'dateModified',
+    headerName: 'Date Modified',
     sortable: false,
     minWidth: 200,
     flex: 1 
@@ -139,7 +170,7 @@ const ActivityLog = () => {
           }
         
           const updatedRows = filteredRows.map(row =>
-            createData(row.id, row.kioskId, row.hardwareName, row.status, row.stationId, row.isActive, row.dateCreated)
+            createData(row.id, row.kioskId, row.hardwareName, row.status, row.description, row.stationId, row.isActive, row.dateModified)
           );
         
           setRows(updatedRows); 

@@ -64,7 +64,7 @@ const items = [
   getItem('Logs', 'sub4', <ProfileOutlined />, [
     getItem('Transaction Logs', 'transactionlogs', <ReceiptLongIcon />),
     getItem('Activity Logs', 'activitylogs', <CopyOutlined />),
-    getItem('Notification Logs', 'notificationlogs', <BellOutlined />),
+    // getItem('Notification Logs', 'notificationlogs', <BellOutlined />),
     getItem('Audit', 'audit', <CreditCardOutlined />),
   ]),
   getItem('Report', 'sub5', <FileTextOutlined />, [

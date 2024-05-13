@@ -56,7 +56,7 @@ import RouteSavingStatement from './pages/savingStatement/savingStatement';
 
 import RouteTransactionLogs from './pages/transactionLogs/transactionLogs';
 import RouteActivityLogs from './pages/activityLogs/activityLogs';
-import RouteNotificationLogs from './pages/notificationLogs/notificationLogs';
+// import RouteNotificationLogs from './pages/notificationLogs/notificationLogs';
 import RouteAudit from './pages/audit/audit';
 import RouteKioskHealth from './pages/kioskHealth/kioskHealth';
 
@@ -542,7 +542,7 @@ const App = () => {
                           element={hasPermission(permissionData, "/insuranceAgeRange", editPermission) ? <RouteEditInsuranceAgeRange /> : <NoPermission/>} 
                         />
 
-                        {/* Routes for Logs */}
+                          {/* Routes for Logs */}
                         <Route 
                           path="/transactionlogs" 
                           element={hasPermission(permissionData, "/transactionlogs") ? <RouteTransactionLogs /> : <NoPermission/>} 
@@ -551,10 +551,12 @@ const App = () => {
                           path="/activitylogs" 
                           element={hasPermission(permissionData, "/activitylogs") ? <RouteActivityLogs /> : <NoPermission/>} 
                         />
+                        {/*
                         <Route 
                           path="/notificationlogs" 
                           element={hasPermission(permissionData, "/notificationlogs") ? <RouteNotificationLogs /> : <NoPermission/>} 
                         />
+                        */}
                         <Route 
                           path="/audit" 
                           element={hasPermission(permissionData, "/audit") ? <RouteAudit /> : <NoPermission/>} 
