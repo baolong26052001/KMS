@@ -230,6 +230,26 @@ const columns = [
     ),
   },
   {
+    field: 'scannerStatus',
+    headerName: 'Scanner Status',
+    sortable: false,
+    disableColumnMenu: true,
+    width: 60,
+    flex: 1,
+    renderHeader: () => (
+      <ScanHover />
+    ),
+    renderCell: (params) => (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <img
+          src={params.row.scannerStatus}
+          alt={`Image for ${params.row.scannerStatus}`}
+          style={{ height: '15px', width: '15px' }}
+        />
+      </div>
+    ),
+  },
+  {
     field: 'cashDepositStatus',
     headerName: 'Cash Deposit Status',
     sortable: false,
@@ -249,26 +269,7 @@ const columns = [
       </div>
     ),
   },
-  {
-    field: 'scannerStatus',
-    headerName: 'Scanner Status',
-    sortable: false,
-    disableColumnMenu: true,
-    width: 60,
-    flex: 1,
-    renderHeader: () => (
-      <ScanHover/>
-    ),
-    renderCell: (params) => (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <img
-          src={params.row.scannerStatus}
-          alt={`Image for ${params.row.scannerStatus}`}
-          style={{ height: '15px', width: '15px' }}
-        />
-      </div>
-    ),
-  },
+  
   {
     field: 'printerStatus',
     headerName: 'Printer Status',

@@ -43,9 +43,8 @@ const columns = [
   { field: 'id', headerName: 'Acitvity ID', minWidth: 100, flex: 1,},
   { field: 'kioskId', headerName: 'Kiosk ID', minWidth: 100, flex: 1,},
   { field: 'hardware', headerName: 'Hardware Name', minWidth: 150, flex: 1,},
-  { field: 'hardwareStatus', headerName: 'Hardware Status', minWidth: 120,  
+  { field: 'hardwareStatus', headerName: 'Hardware Status', minWidth: 200,  
     flex: 1,
-    sortable: false,
     disableColumnMenu: true,
     renderCell: (params) => {
       let color;
@@ -74,7 +73,7 @@ const columns = [
     },
   },
   {
-    field: 'description', headerName: 'Description', minWidth: 120,
+    field: 'description', headerName: 'Description', minWidth: 250,
     flex: 1,
     sortable: false,
     disableColumnMenu: true,

@@ -154,6 +154,7 @@ const Permission = ({ routes }) => {
             canAdd: row.canAdd,
             canUpdate: row.canUpdate,
             canDelete: row.canDelete,
+            userId: getCookie('userId'),
           }),
         });
 
@@ -240,3 +241,14 @@ const Permission = ({ routes }) => {
 };
 
 export default Permission;
+
+function getCookie(name) {
+  const cookies = document.cookie.split(';');
+  for (let i = 0; i < cookies.length; i++) {
+    const cookie = cookies[i].trim();
+    if (cookie.startsWith(name + '=')) {
+      return cookie.substring(name.length + 1);
+    }
+  }
+  return null;
+}
