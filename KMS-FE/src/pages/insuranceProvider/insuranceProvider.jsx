@@ -11,7 +11,7 @@ import Alert from '@mui/material/Alert';
 import { API_URL } from '../../components/config/apiUrl';
 // import Delete Hook
 import useDeleteHook from '../../components/deleteHook/deleteHook';
-
+import DateFormatter from '../../components/DateFormat/dateFormat';
 import CustomButton from '../../components/CustomButton/customButton';
 
 const CustomToolbar = ({ onButtonClick, selectedRows }) => {
@@ -94,6 +94,7 @@ const columns = [
     sortable: false,
     minWidth: 200,
     flex: 1,
+    renderCell: (params) => <DateFormatter date={params.value} />,
   },
   {
     field: 'dateModified',
@@ -101,6 +102,7 @@ const columns = [
     sortable: false,
     minWidth: 200,
     flex: 1,
+    renderCell: (params) => <DateFormatter date={params.value} />,
   },
 ];
 

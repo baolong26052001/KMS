@@ -15,7 +15,7 @@ import Alert from '@mui/material/Alert';
 import { API_URL } from '../../components/config/apiUrl';
 // import Delete Hook
 import useDeleteHook from '../../components/deleteHook/deleteHook';
-
+import DateFormatter from '../../components/DateFormat/dateFormat';
 import CustomButton from '../../components/CustomButton/customButton';
 
 const CustomToolbar = ({ onButtonClick, selectedRows }) => {
@@ -116,13 +116,17 @@ const columns = [
   },
   { field: 'id', headerName: 'Group ID', minWidth: 100, flex: 1, },
   { field: 'groupName', headerName: 'Group Name', minWidth: 200, flex: 1, },
-  { field: 'dateModified', headerName: 'Date Modified', minWidth: 200, flex: 1,},
+  { field: 'dateModified', 
+    headerName: 'Date Modified', 
+    minWidth: 200, flex: 1, 
+    renderCell: (params) => <DateFormatter date={params.value} />,},
   {
     field: 'dateCreated',
     headerName: 'Date Created',
     sortable: false,
     minWidth: 200,
     flex: 1,
+    renderCell: (params) => <DateFormatter date={params.value} />,
   },
   {
     field: 'isActive',

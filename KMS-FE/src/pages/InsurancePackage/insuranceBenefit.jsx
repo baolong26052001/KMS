@@ -16,6 +16,7 @@ import { API_URL } from '../../components/config/apiUrl';
 // import Delete Hook
 import useDeleteHook from '../../components/deleteHook/deleteHook';
 import CustomButton from '../../components/CustomButton/customButton';
+import DateFormatter from '../../components/DateFormat/dateFormat';
 // Enable the customParseFormat plugin
 dayjs.extend(customParseFormat);
 dayjs.locale('en'); // Set the locale to English
@@ -154,6 +155,7 @@ const columns = [
     headerName: 'Date Modified',
     minWidth: 200,
     flex: 1,
+    renderCell: (params) => <DateFormatter date={params.value} />,
   },
   {
     field: 'dateCreated',
@@ -161,6 +163,7 @@ const columns = [
     sortable: false,
     minWidth: 200,
     flex: 1,
+    renderCell: (params) => <DateFormatter date={params.value} />,
   },
 ];
 

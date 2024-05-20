@@ -11,7 +11,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
-
+import DateFormatter from '../../components/DateFormat/dateFormat';
 // import Delete Hook
 import useDeleteHook from '../../components/deleteHook/deleteHook';
 import { API_URL } from '../../components/config/apiUrl';
@@ -218,6 +218,7 @@ const columns = [
     sortable: false,
     minWidth: 250,
     flex: 1,
+    renderCell: (params) => <DateFormatter date={params.value} />,
   },
   {
     field: 'dateCreated',
@@ -225,6 +226,7 @@ const columns = [
     sortable: false,
     minWidth: 250,
     flex: 1,
+    renderCell: (params) => <DateFormatter date={params.value} />,
   },
 ];
 

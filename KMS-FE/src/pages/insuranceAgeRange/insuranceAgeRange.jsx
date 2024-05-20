@@ -12,7 +12,7 @@ import CustomButton from '../../components/CustomButton/customButton';
 // import Delete Hook
 import useDeleteHook from '../../components/deleteHook/deleteHook';
 import { API_URL } from '../../components/config/apiUrl';
-
+import DateFormatter from '../../components/DateFormat/dateFormat';
 const CustomToolbar = ({ onButtonClick, selectedRows }) => {
   const navigate = useNavigate();
   const { handleDelete, handleClose, open, alertMessage, severity } = useDeleteHook('AgeRange/DeleteAgeRange'); 
@@ -92,6 +92,7 @@ const columns = [
     sortable: false,
     minWidth: 200,
     flex: 1,
+    renderCell: (params) => <DateFormatter date={params.value} />,
   },
   {
     field: 'dateModified',
@@ -99,6 +100,7 @@ const columns = [
     sortable: false,
     minWidth: 200,
     flex: 1,
+    renderCell: (params) => <DateFormatter date={params.value} />,
   },
 ];
 

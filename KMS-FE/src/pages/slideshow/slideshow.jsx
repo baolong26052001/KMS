@@ -14,7 +14,7 @@ import Alert from '@mui/material/Alert';
 import { API_URL } from '../../components/config/apiUrl';
 // import Delete Hook
 import useDeleteHook from '../../components/deleteHook/deleteHook';
-
+import DateFormatter from '../../components/DateFormat/dateFormat';
 import CustomButton from '../../components/CustomButton/customButton';
 
 // Enable the customParseFormat plugin
@@ -139,6 +139,7 @@ const columns = [
     headerName: 'Start Date',
     minWidth: 250,
     flex: 1,
+    renderCell: (params) => <DateFormatter date={params.value} />,
   },
   {
     field: 'endDate',
@@ -146,6 +147,7 @@ const columns = [
     sortable: false,
     minWidth: 250,
     flex: 1,
+    renderCell: (params) => <DateFormatter date={params.value} />,
   },
   {
     field: 'isActive',

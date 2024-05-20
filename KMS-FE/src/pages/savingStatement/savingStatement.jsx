@@ -6,6 +6,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import DateFilter from '../../components/dateFilter/DateFilter';
 import CustomButton from '../../components/CustomButton/customButton';
 import { API_URL } from '../../components/config/apiUrl';
+import DateFormatter from '../../components/DateFormat/dateFormat';
 // Enable the customParseFormat plugin
 dayjs.extend(customParseFormat);
 dayjs.locale('en'); // Set the locale to English
@@ -40,7 +41,12 @@ const columns = [
       />
     ),
   },
-  { field: 'transactionDate', headerName: 'Transaction Date', minWidth: 200, flex: 1,},
+  { field: 'transactionDate', 
+    headerName: 'Transaction Date', 
+    minWidth: 200, 
+    flex: 1,
+    renderCell: (params) => <DateFormatter date={params.value} />,
+  },
   { field: 'memberId', headerName: 'Member ID', minWidth: 100, flex: 1,},
   { field: 'fullName', headerName: 'Full Name', minWidth: 200, flex: 1,},
   { field: 'contractId', headerName: 'Contract ID', minWidth: 100, flex: 1, },

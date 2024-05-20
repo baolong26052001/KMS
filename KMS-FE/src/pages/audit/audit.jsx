@@ -5,7 +5,7 @@ import 'dayjs/locale/en'; // Import the English locale
 import { DataGrid, GridToolbarExport } from '@mui/x-data-grid';
 import { Button, Box } from '@mui/material';
 import DateFilter from '../../components/dateFilter/DateFilter';
-import {useNavigate} from 'react-router-dom';
+import DateFormatter from '../../components/DateFormat/dateFormat';
 import CustomButton from '../../components/CustomButton/customButton';
 import { API_URL } from '../../components/config/apiUrl';
 // Enable the customParseFormat plugin
@@ -41,7 +41,8 @@ const columns = [
     headerName: 'Date Created',
     sortable: false,
     minWidth: 200,
-    flex: 1
+    flex: 1,
+    renderCell: (params) => <DateFormatter date={params.value} />,
   },
   { field: 'id', headerName: 'Audit ID', minWidth: 100, flex: 1,},
   { field: 'kioskId', headerName: 'Kiosk ID', minWidth: 100, flex: 1,},

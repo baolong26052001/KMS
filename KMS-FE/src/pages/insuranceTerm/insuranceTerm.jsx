@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { DataGrid, GridToolbarExport } from '@mui/x-data-grid';
 import { Button } from '@mui/material';
 import {useNavigate} from 'react-router-dom';
-
+import DateFormatter from '../../components/DateFormat/dateFormat';
 //import MUI Library
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -94,6 +94,7 @@ const columns = [
     sortable: false,
     minWidth: 200,
     flex: 1,
+    renderCell: (params) => <DateFormatter date={params.value} />,
   },
   {
     field: 'dateModified',
@@ -101,6 +102,7 @@ const columns = [
     sortable: false,
     minWidth: 200,
     flex: 1,
+    renderCell: (params) => <DateFormatter date={params.value} />,
   },
 ];
 

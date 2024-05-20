@@ -7,7 +7,7 @@ import { Button, Box } from '@mui/material';
 import DateFilter from '../../components/dateFilter/DateFilter';
 
 import {useNavigate} from 'react-router-dom';
-
+import DateFormatter from '../../components/DateFormat/dateFormat';
 //import MUI Library
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -139,6 +139,7 @@ const columns = [
     headerName: 'Date Modified',
     minWidth: 200,
     flex: 1,
+    renderCell: (params) => <DateFormatter date={params.value} />,
   },
   {
     field: 'dateCreated',
@@ -146,6 +147,7 @@ const columns = [
     sortable: false,
     minWidth: 200,
     flex: 1,
+    renderCell: (params) => <DateFormatter date={params.value} />,
   },
   { field: 'isActive', headerName: 'Is Active', minWidth: 100, flex: 1,},
 ];
