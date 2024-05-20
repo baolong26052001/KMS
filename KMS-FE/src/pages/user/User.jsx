@@ -15,6 +15,8 @@ import useDeleteHook from '../../components/deleteHook/deleteHook';
 
 import CustomButton from '../../components/CustomButton/customButton';
 import { API_URL } from '../../components/config/apiUrl';
+import DateFormat from '../../components/DateFormat/dateFormat';
+
 const CustomToolbar = ({ onButtonClick, selectedRows }) => {
   const navigate = useNavigate();
   const { handleDelete, handleClose, open, alertMessage, severity  } = useDeleteHook('User/DeleteUsers'); 
@@ -63,8 +65,31 @@ const CustomToolbar = ({ onButtonClick, selectedRows }) => {
 };
 
 function createData(id, userName, email, userGroup, isActive, lastLogin, totalDaysDormant) {
-  return {id, userName, email, userGroup, isActive, lastLogin, totalDaysDormant };
-};
+  // if (lastLogin) {
+  //   const options = {
+  //     day: '2-digit',
+  //     month: '2-digit',
+  //     year: 'numeric',
+  //     hour: '2-digit',
+  //     minute: '2-digit',
+  //     second: '2-digit',
+  //     hour12: true,
+  //   };
+  //   const formatter = new Intl.DateTimeFormat('en-GB', options);
+  //   lastLogin = formatter.format(new Date(lastLogin)); // Assuming 'lastLogin' is a string
+  // }
+  console.log(<DateFormat dateString={lastLogin} />);
+  return {
+    id,
+    userName,
+    email,
+    userGroup,
+    isActive,
+    lastLogin: <DateFormat dateString={lastLogin} />, // Using DateFormat component for formatting
+    totalDaysDormant,
+  };
+}
+
 
 const columns = [ 
   {

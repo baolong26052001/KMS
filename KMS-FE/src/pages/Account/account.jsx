@@ -62,7 +62,7 @@ const columns = [
   { field: 'id', headerName: 'Account ID', minWidth: 100, flex: 1,},
   { field: 'memberId', headerName: 'Member ID', minWidth: 100, flex: 1,},
   { field: 'memberName', headerName: 'Member', minWidth: 300, flex: 1,},
-  { field: 'contractId', headerName: 'Contract ID', minWidth: 150, flex: 1,},
+  
   { field: 'phoneNumber', headerName: 'Phone Number', minWidth: 150,  
     flex: 1,
     sortable: false,
