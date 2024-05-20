@@ -31,7 +31,7 @@ namespace KMS.Controllers
             _configuration = configuration;
             _exQuery = exQuery;
 
-            localFolderPath = "../KMS_BE/bin/Debug/net6.0/images/";
+            localFolderPath = "D:/serverkms5/images/";
         }
 
         [HttpGet]
@@ -66,6 +66,40 @@ namespace KMS.Controllers
             }
             return new JsonResult(response);
             
+        }
+
+        [HttpGet]
+        [Route("ShowSlideDetailForKioskApp/{id}")]
+        public JsonResult ShowSlideDetailForKioskApp(int id) // show by header id
+        {
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = "select sd.id, sd.description, sd.typeContent, sd.sequence, sd.contentUrl, sd.slideHeaderId, sd.isActive, sd.dateModified, sd.dateCreated " +
+                "from TSlideDetail sd " +
+                "WHERE sd.slideHeaderId = @Id ORDER BY sd.sequence ASC";
+
+                SqlParameter parameter = new SqlParameter("@Id", id);
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+
+                if (table.Rows.Count > 0)
+                {
+                    return new JsonResult(table);
+                }
+                else
+                {
+                    return new JsonResult("SlideDetail not found");
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+
         }
 
         [HttpGet]
@@ -138,8 +172,8 @@ namespace KMS.Controllers
                     string base64String = Convert.ToBase64String(imageByte);
                     slideDetail.ImageBase64 = base64String;
 
-                    //var uniqueFileName = Guid.NewGuid().ToString() + "_" + slideDetail.File.FileName;
-                    var uniqueFileName = slideDetail.File.FileName;
+                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + slideDetail.File.FileName;
+                    //var uniqueFileName = slideDetail.File.FileName;
                     var filePath = Path.Combine(localFolderPath, uniqueFileName);
 
                     if (!Directory.Exists(localFolderPath))
@@ -181,8 +215,8 @@ namespace KMS.Controllers
                 };
                 SqlParameter[] parameters2 =
                 {
-                    new SqlParameter("@IpAddress", ipv4?.ToString()),
-                    new SqlParameter("@Ipv6", ipv6?.ToString()),
+                    new SqlParameter("@IpAddress", (object)ipv4?.ToString() ?? DBNull.Value),
+                    new SqlParameter("@Ipv6", (object)ipv6?.ToString() ?? DBNull.Value),
                     new SqlParameter("@UserId", (object)slideDetail.UserId ?? DBNull.Value),
                 };
 
@@ -237,8 +271,8 @@ namespace KMS.Controllers
                     string base64String = Convert.ToBase64String(imageByte);
                     slideDetail.ImageBase64 = base64String;
 
-                    //var uniqueFileName = Guid.NewGuid().ToString() + "_" + slideDetail.File.FileName;
-                    var uniqueFileName = slideDetail.File.FileName;
+                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + slideDetail.File.FileName;
+                    //var uniqueFileName = slideDetail.File.FileName;
                     var filePath = Path.Combine(localFolderPath, uniqueFileName);
 
                     
@@ -276,8 +310,8 @@ namespace KMS.Controllers
                     };
                     SqlParameter[] parameters2 =
                     {
-                        new SqlParameter("@IpAddress", ipv4?.ToString()),
-                        new SqlParameter("@Ipv6", ipv6?.ToString()),
+                        new SqlParameter("@IpAddress", (object)ipv4?.ToString() ?? DBNull.Value),
+                        new SqlParameter("@Ipv6", (object)ipv6?.ToString() ?? DBNull.Value),
                         new SqlParameter("@UserId", (object)slideDetail.UserId ?? DBNull.Value),
                     };
 
@@ -307,8 +341,8 @@ namespace KMS.Controllers
                     };
                     SqlParameter[] parameters2 =
                     {
-                        new SqlParameter("@IpAddress", ipv4?.ToString()),
-                        new SqlParameter("@Ipv6", ipv6?.ToString()),
+                        new SqlParameter("@IpAddress", (object)ipv4?.ToString() ?? DBNull.Value),
+                        new SqlParameter("@Ipv6", (object)ipv6?.ToString() ?? DBNull.Value),
                         new SqlParameter("@UserId", (object)slideDetail.UserId ?? DBNull.Value),
                     };
 

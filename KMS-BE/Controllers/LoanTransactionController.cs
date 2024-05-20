@@ -48,15 +48,15 @@ namespace KMS.Controllers
         }
 
         [HttpGet]
-        [Route("ShowLoanTransaction/{id}")] 
-        public JsonResult GetLoanTransactionById(int id)
+        [Route("ShowLoanTransaction/{loanId}")] 
+        public JsonResult GetLoanTransactionById(int loanId)
         {
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = "select * from LoanTransaction where loanId=@id";
+                string query = "select * from LoanTransaction where loanId=@loanId";
 
-                SqlParameter parameter = new SqlParameter("@id", id);
+                SqlParameter parameter = new SqlParameter("@loanId", loanId);
                 DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
                 if (table.Rows.Count > 0)
@@ -80,15 +80,15 @@ namespace KMS.Controllers
         }
 
         [HttpGet]
-        [Route("ShowLoanTransactionByMemberId/{id}")]
-        public JsonResult ShowLoanTransactionByMemberId(int id)
+        [Route("ShowLoanTransactionByMemberId/{memberId}")]
+        public JsonResult ShowLoanTransactionByMemberId(int memberId)
         {
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = "select * from LoanTransaction where memberId=@id";
+                string query = "select * from LoanTransaction where memberId=@memberId";
 
-                SqlParameter parameter = new SqlParameter("@id", id);
+                SqlParameter parameter = new SqlParameter("@memberId", memberId);
                 DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
                 if (table.Rows.Count > 0)
@@ -112,15 +112,52 @@ namespace KMS.Controllers
         }
 
         [HttpGet]
-        [Route("ShowPaybackByLoanId/{id}")]
-        public JsonResult ShowPaybackByLoanId(int id)
+        [Route("ShowLoanTransactionByMemberIdAndStatus/{memberId}/{status}")]
+        public JsonResult ShowLoanTransactionByMemberIdAndStatus(int memberId, int status)
         {
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = @"select * from Payback p where p.loanId = @id";
+                string query = "select * from LoanTransaction where memberId=@memberId and status=@status";
 
-                SqlParameter parameter = new SqlParameter("@id", id);
+                SqlParameter[] parameters =
+                {
+                    new SqlParameter("@memberId", memberId),
+                    new SqlParameter("@status", status),
+                };
+
+                DataTable table = _exQuery.ExecuteRawQuery(query, parameters);
+
+                if (table.Rows.Count > 0)
+                {
+                    return new JsonResult(table);
+                }
+                else
+                {
+                    return new JsonResult("Loan transaction not found");
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+
+        }
+
+        [HttpGet]
+        [Route("ShowPaybackByLoanId/{loanId}")]
+        public JsonResult ShowPaybackByLoanId(int loanId)
+        {
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = @"select * from Payback p where p.loanId = @loanId";
+
+                SqlParameter parameter = new SqlParameter("@loanId", loanId);
                 DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
                 if (table.Rows.Count > 0)
@@ -272,7 +309,7 @@ namespace KMS.Controllers
 
                             IF (@DebtRemaining <= 0)
                             UPDATE LoanTransaction 
-                            SET status = 1 -- Assuming 'status' is a bit field
+                            SET status = 0 -- Assuming 'status' is a bit field
                             WHERE loanId = @LoanId";
 
                 SqlParameter[] parameters =
@@ -315,7 +352,7 @@ namespace KMS.Controllers
                            "contractId LIKE @searchQuery OR " +
                            "loanTerm LIKE @searchQuery OR " +
                            "debt LIKE @searchQuery OR " +
-                           "debtPayPerMonth LIKE @searchQuery OR " +
+                           "loanId LIKE @searchQuery OR " +
                            "loanRate LIKE @searchQuery OR " +
                            "totalDebtMustPay LIKE @searchQuery";
 

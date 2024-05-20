@@ -3,6 +3,7 @@ using KMS.Models;
 using KMS.Tools;
 using System.Data;
 using Microsoft.Data.SqlClient;
+using Twilio.Http;
 
 namespace KMS.Controllers
 {
@@ -23,12 +24,43 @@ namespace KMS.Controllers
 
         [HttpGet]
         [Route("ShowLoanStatement")]
-        public JsonResult GetLoanStatement()
+        public JsonResult ShowLoanStatement()
         {
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = "select * from LoanStatement";
+                string query = @"
+                SELECT *,
+                       ROW_NUMBER() OVER (ORDER BY transactionDate) AS id
+                FROM (
+                    SELECT a.transactionDate,
+                           a.memberId,
+                           b.fullName,
+                           a.contractId,
+                           a.loanId,
+                           a.loanTerm,
+                           a.debt,
+                           a.totalDebtMustPay,
+                           0 AS payback 
+                    FROM LoanTransaction a
+                    LEFT JOIN LMember b ON b.id = a.memberId 
+                    UNION ALL
+                    SELECT a.transactionDate,
+                           a.memberId,
+                           b.fullName,
+                           a.contractId,
+                           a.loanId,
+                           c.loanTerm,
+                           0 AS debt,
+                           c.totalDebtMustPay,
+                           a.payback 
+                    FROM Payback a
+                    LEFT JOIN LMember b ON b.id = a.memberId
+                    LEFT JOIN LoanTransaction c ON c.loanId = a.loanId
+                ) AS combined_data 
+                ORDER BY transactionDate";
+
+
                 DataTable table = _exQuery.ExecuteRawQuery(query);
                 return new JsonResult(table);
             }
@@ -45,16 +77,19 @@ namespace KMS.Controllers
         }
 
         [HttpGet]
-        [Route("ShowLoanStatement/{id}")]
-        public JsonResult GetLoanStatementById(int id)
+        [Route("ShowLoanStatementByMemberId/{memberId}")]
+        public JsonResult ShowLoanStatementByMemberId(int memberId)
         {
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = "SELECT * " +
-                           "FROM LoanStatement " +
-                           "WHERE id = @Id";
-                SqlParameter parameter = new SqlParameter("@Id", id);
+                string query = @"SELECT *, ROW_NUMBER() OVER (ORDER BY transactionDate) AS id FROM (SELECT a.transactionDate,a.memberId,b.fullName,a.contractId,a.loanId,a.loanTerm,a.debt,a.totalDebtMustPay,0 AS payback 
+                FROM LoanTransaction a LEFT JOIN LMember b ON b.id = a.memberId 
+                WHERE a.memberId = @memberId UNION ALL SELECT a.transactionDate,a.memberId,b.fullName,a.contractId,a.loanId,c.loanTerm,0 AS debt,c.totalDebtMustPay,a.payback 
+                FROM Payback a LEFT JOIN LMember b ON b.id = a.memberId LEFT JOIN LoanTransaction c ON c.loanId = a.loanId 
+                WHERE a.memberId = @memberId) AS combined_data ORDER BY transactionDate";
+
+                SqlParameter parameter = new SqlParameter("@memberId", memberId);
                 DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
 
                 if (table.Rows.Count > 0)
@@ -85,13 +120,11 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = "SELECT * " +
-                           "FROM LoanStatement " +
-                           "WHERE accountId LIKE @searchQuery OR " +
-                           "debt LIKE @searchQuery OR " +
-                           "paid LIKE @searchQuery OR " +
-                           "description LIKE @searchQuery OR " +
-                           "status LIKE @searchQuery";
+                string query = @"SELECT *, ROW_NUMBER() OVER (ORDER BY transactionDate) AS id FROM (SELECT a.transactionDate,a.memberId,b.fullName,a.contractId,a.loanId,a.loanTerm,a.debt,a.totalDebtMustPay,0 AS payback 
+                FROM LoanTransaction a LEFT JOIN LMember b ON b.id = a.memberId 
+                WHERE a.memberId LIKE @searchQuery UNION ALL SELECT a.transactionDate,a.memberId,b.fullName,a.contractId,a.loanId,c.loanTerm,0 AS debt,c.totalDebtMustPay,a.payback 
+                FROM Payback a LEFT JOIN LMember b ON b.id = a.memberId LEFT JOIN LoanTransaction c ON c.loanId = a.loanId 
+                WHERE a.memberId LIKE @searchQuery) AS combined_data ORDER BY transactionDate";
 
                 SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");
                 DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
@@ -111,31 +144,35 @@ namespace KMS.Controllers
 
         [HttpGet]
         [Route("FilterLoanStatement")]
-        public JsonResult FilterLoanStatement([FromQuery] bool? isActive = null, [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
+        public IActionResult FilterLoanStatement([FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
         {
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = "SELECT * " +
-                           "FROM LoanStatement ";
+                string query = @"SELECT *, ROW_NUMBER() OVER (ORDER BY transactionDate) AS id FROM (
+                            SELECT a.transactionDate, a.memberId, b.fullName, a.contractId, a.loanId, a.loanTerm, a.debt, a.totalDebtMustPay,0 AS payback 
+                            FROM LoanTransaction a 
+                            LEFT JOIN LMember b ON b.id = a.memberId 
+                             
+                            UNION ALL 
+                            SELECT a.transactionDate, a.memberId, b.fullName, a.contractId, a.loanId, c.loanTerm, 0 AS debt, c.totalDebtMustPay,a.payback 
+                            FROM Payback a 
+                            LEFT JOIN LMember b ON b.id = a.memberId 
+                            LEFT JOIN LoanTransaction c ON c.loanId = a.loanId 
+                            
+                        ) AS combined_data";
 
                 List<SqlParameter> parameters = new List<SqlParameter>();
 
-                if (isActive.HasValue)
-                {
-                    query += (parameters.Count == 0 ? " WHERE " : " AND ") + "status = @isActive";
-                    parameters.Add(new SqlParameter("@isActive", isActive.Value));
-                }
-
                 if (startDate.HasValue && endDate.HasValue)
                 {
-
                     startDate = startDate.Value.Date.AddHours(0).AddMinutes(0).AddSeconds(0);
                     endDate = endDate.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
 
-                    query += (parameters.Count == 0 ? " WHERE " : " AND ") + "transactionDate >= @startDate AND transactionDate <= @endDate";
-                    parameters.Add(new SqlParameter("@startDate", startDate.Value));
-                    parameters.Add(new SqlParameter("@endDate", endDate.Value));
+                    query += " WHERE transactionDate >= @startDate AND transactionDate <= @endDate ORDER BY transactionDate";
+                    
+                    parameters.Add(new SqlParameter("@startDate", startDate));
+                    parameters.Add(new SqlParameter("@endDate", endDate));
                 }
 
                 DataTable table = _exQuery.ExecuteRawQuery(query, parameters.ToArray());
@@ -150,8 +187,8 @@ namespace KMS.Controllers
                 response.Data = null;
             }
             return new JsonResult(response);
-            
         }
+
 
     }
 }

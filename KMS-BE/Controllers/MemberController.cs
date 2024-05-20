@@ -16,6 +16,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Diagnostics.Metrics;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
+using Twilio.Rest.Api.V2010.Account.Usage.Record;
 
 namespace KMS.Controllers
 {
@@ -54,7 +55,7 @@ namespace KMS.Controllers
                 response.Data = null;
             }
             return new JsonResult(response);
-            
+
         }
 
         [HttpGet]
@@ -86,7 +87,7 @@ namespace KMS.Controllers
                 response.Data = null;
             }
             return new JsonResult(response);
-            
+
         }
 
         [HttpPut]
@@ -119,11 +120,11 @@ namespace KMS.Controllers
                 };
 
                 _exQuery.ExecuteRawQuery(updateQuery, updateParameters);
-                _exQuery.ExecuteRawQuery(insertQuery, insertParameters);
+                //_exQuery.ExecuteRawQuery(insertQuery, insertParameters);
 
                 response.Code = 200;
                 response.Message = "Member updated successfully";
-                
+
             }
             catch (Exception ex)
             {
@@ -213,7 +214,7 @@ namespace KMS.Controllers
         [Route("GetMemberInformationFromScanner2")]
         public async Task<JsonResult> AddMember2(IFormFile file, IFormFile imageIdCardFile)
         {
-            int trung = 0;
+
             try
             {
                 using (StreamReader reader = new StreamReader(file.OpenReadStream()))
@@ -233,42 +234,46 @@ namespace KMS.Controllers
                         if (existingIdenNumbers.Count > 0)
                         {
                             // cardInfo.id already exists in the database
-                            //return new JsonResult(new ResponseDto
-                            //{
-                            //    Code = 400,
-                            //    Message = "IdenNumber already exists in the database"
-                            //});
-                            trung = 1;
+                            return new JsonResult(new ResponseDto
+                            {
+                                Code = 400,
+                                Message = "IdenNumber already exists in the database"
+                            });
+
                         }
-
-                        Lmember member = new Lmember
+                        else
                         {
-                            FirstName = cardInfo.name?.Split(' ')[0],
-                            LastName = cardInfo.name?.Split(' ')[spaceCount],
-                            FullName = cardInfo.name,
-                            Gender = cardInfo.gender,
-                            Birthday = DateTime.ParseExact(cardInfo.birthday, "dd/MM/yyyy", CultureInfo.CurrentCulture),
-                            IdenNumber = cardInfo.id,
-                            Ward = cardInfo.address_split.ward,
-                            District = cardInfo.address_split.district,
-                            City = cardInfo.address_split.province,
-                            ImageIdCard = imageIdCardFile?.FileName,
-                            Address1 = $"{cardInfo.address_split?.village}, {cardInfo.address_split?.ward}, {cardInfo.address_split?.district}, {cardInfo.address_split?.province}".TrimEnd(',', ' '),
-                            Address2 = $"{cardInfo.domicile_split?.village}, {cardInfo.domicile_split?.ward}, {cardInfo.domicile_split?.district}, {cardInfo.domicile_split?.province}".TrimEnd(',', ' '),
-                            // ... Map other properties as needed
-                            IsActive = false, // Assuming default value for IsActive
-                        };
 
-                        
 
-                        // Now, insert the member into the database using your existing code
-                        string query = "INSERT INTO LMember (imageIdCard, gender, firstName, lastName, fullName, birthday, idenNumber, ward, district, city, address1, address2, " +
-                                       "isActive, dateCreated, dateModified) " +
-                                       "VALUES (@ImageIdCard, @Gender, @FirstName, @LastName, @FullName, @Birthday, @IdenNumber, @Ward, @District, @City, @Address1, @Address2, " +
-                                       "@IsActive, GETDATE(), GETDATE())";
 
-                        SqlParameter[] parameters =
-                        {
+                            Lmember member = new Lmember
+                            {
+                                FirstName = cardInfo.name?.Split(' ')[0],
+                                LastName = cardInfo.name?.Split(' ')[spaceCount],
+                                FullName = cardInfo.name,
+                                Gender = cardInfo.gender,
+                                Birthday = DateTime.ParseExact(cardInfo.birthday, "dd/MM/yyyy", CultureInfo.CurrentCulture),
+                                IdenNumber = cardInfo.id,
+                                Ward = cardInfo.address_split.ward,
+                                District = cardInfo.address_split.district,
+                                City = cardInfo.address_split.province,
+                                ImageIdCard = imageIdCardFile?.FileName,
+                                Address1 = $"{cardInfo.address_split?.village}, {cardInfo.address_split?.ward}, {cardInfo.address_split?.district}, {cardInfo.address_split?.province}".TrimEnd(',', ' '),
+                                Address2 = $"{cardInfo.domicile_split?.village}, {cardInfo.domicile_split?.ward}, {cardInfo.domicile_split?.district}, {cardInfo.domicile_split?.province}".TrimEnd(',', ' '),
+                                // ... Map other properties as needed
+                                IsActive = false, // Assuming default value for IsActive
+                            };
+
+
+
+                            // Now, insert the member into the database using your existing code
+                            string query = "INSERT INTO LMember (imageIdCard, gender, firstName, lastName, fullName, birthday, idenNumber, ward, district, city, address1, address2, " +
+                                           "isActive, dateCreated, dateModified) " +
+                                           "VALUES (@ImageIdCard, @Gender, @FirstName, @LastName, @FullName, @Birthday, @IdenNumber, @Ward, @District, @City, @Address1, @Address2, " +
+                                           "@IsActive, GETDATE(), GETDATE())";
+
+                            SqlParameter[] parameters =
+                            {
                             new SqlParameter("@ImageIdCard", member.ImageIdCard),
                             new SqlParameter("@Gender", member.Gender),
                             new SqlParameter("@FirstName", member.FirstName),
@@ -286,87 +291,112 @@ namespace KMS.Controllers
                             new SqlParameter("@IsActive", member.IsActive)
                         };
 
-                        _exQuery.ExecuteRawQuery(query, parameters);
+                            _exQuery.ExecuteRawQuery(query, parameters);
 
-                        int highestId = await _dbcontext.Lmembers.MaxAsync(m => m.Id);
+                            int highestId = await _dbcontext.Lmembers.MaxAsync(m => m.Id);
 
-                        if (trung == 0)
-                        {
+                            string queryNew = $"INSERT INTO LAccount (memberId) VALUES ({highestId})";
+                            _exQuery.ExecuteRawQuery(queryNew);
+
+
                             using (var client = new HttpClient())
                             {
 
                                 MultipartFormDataContent content = new MultipartFormDataContent
-                                {
-                                    { new StreamContent(imageIdCardFile.OpenReadStream()), "img_file", imageIdCardFile.FileName },
-                                    { new StringContent(highestId.ToString()), "person_id" },
-                                    { new StringContent(member.IdenNumber), "image_id" }
-                                };
+                            {
+                                { new StreamContent(imageIdCardFile.OpenReadStream()), "img_file", imageIdCardFile.FileName },
+                                { new StringContent(highestId.ToString()), "person_id" },
+                                { new StringContent(member.IdenNumber), "image_id" }
+                            };
 
                                 var response = await client.PostAsync(_remoteApiUrl, content);
 
                                 if (response.IsSuccessStatusCode)
                                 {
-                                    return new JsonResult(new ResponseDtoResult
+                                    return new JsonResult(new
                                     {
                                         Code = 200,
                                         Message = "Member added successfully",
                                         PersonId = highestId.ToString(),
                                         ImageId = member.IdenNumber,
+                                        FullName = member.FullName,
+                                        Birthday = member.Birthday,
+                                        Gender = member.Gender,
+                                        Address1 = member.Address1,
+                                        IdenNumber = member.IdenNumber,
+                                        Ward = member.Ward,
+                                        District = member.District,
+                                        City = member.City,
+                                        FirstName = member.FirstName,
+                                        LastName = member.LastName,
+                                        Phone = member.Phone,
+                                        Email = member.Email,
+                                        TaxCode = member.TaxCode,
                                     });
                                 }
                                 else
                                 {
-                                    return new JsonResult(new ResponseDto
+                                    using (var client2 = new HttpClient())
                                     {
-                                        Code = (int)response.StatusCode,
-                                        Message = "Failed to add."
-                                    });
+
+                                        MultipartFormDataContent content2 = new MultipartFormDataContent
+                                    {
+                                        { new StreamContent(imageIdCardFile.OpenReadStream()), "img_file", imageIdCardFile.FileName },
+                                        { new StringContent(highestId.ToString()), "person_id" },
+                                        { new StringContent(member.IdenNumber + GenerateRandomNumber()), "image_id" }
+                                    };
+
+                                        var response2 = await client.PostAsync(_remoteApiUrl, content2);
+
+                                        if (response2.IsSuccessStatusCode)
+                                        {
+                                            return new JsonResult(new
+                                            {
+                                                Code = 200,
+                                                Message = "Member added successfully",
+                                                PersonId = highestId.ToString(),
+                                                ImageId = member.IdenNumber + GenerateRandomNumber(),
+                                                FullName = member.FullName,
+                                                Birthday = member.Birthday,
+                                                Gender = member.Gender,
+                                                Address1 = member.Address1,
+                                                IdenNumber = member.IdenNumber,
+                                                Ward = member.Ward,
+                                                District = member.District,
+                                                City = member.City,
+                                                FirstName = member.FirstName,
+                                                LastName = member.LastName,
+                                                Phone = member.Phone,
+                                                Email = member.Email,
+                                                TaxCode = member.TaxCode,
+                                            });
+                                        }
+                                        else
+                                        {
+                                            return new JsonResult(new ResponseDto
+                                            {
+                                                Code = (int)response2.StatusCode,
+                                                Message = "Failed to add."
+                                            });
+                                        }
+                                    }
                                 }
                             }
-                        }
-                        else if (trung == 1)
-                        {
-                            using (var client = new HttpClient())
-                            {
 
-                                MultipartFormDataContent content = new MultipartFormDataContent
-                                {
-                                    { new StreamContent(imageIdCardFile.OpenReadStream()), "img_file", imageIdCardFile.FileName },
-                                    { new StringContent(highestId.ToString()), "person_id" },
-                                    { new StringContent(member.IdenNumber + GenerateRandomNumber()), "image_id" }
-                                };
-
-                                var response = await client.PostAsync(_remoteApiUrl, content);
-
-                                if (response.IsSuccessStatusCode)
-                                {
-                                    return new JsonResult(new ResponseDtoResult
-                                    {
-                                        Code = 200,
-                                        Message = "Member added successfully",
-                                        PersonId = highestId.ToString(),
-                                        ImageId = member.IdenNumber + GenerateRandomNumber(),
-                                    });
-                                }
-                                else
-                                {
-                                    return new JsonResult(new ResponseDto
-                                    {
-                                        Code = (int)response.StatusCode,
-                                        Message = "Failed to add."
-                                    });
-                                }
-                            }
                         }
 
-                        
+
                     }
 
-                    return new JsonResult(new ResponseDto
+                    else
                     {
-                        Code = 400,
-                        Message = "Invalid JSON data"
-                    });
+                        return new JsonResult(new ResponseDto
+                        {
+                            Code = 400,
+                            Message = "Invalid JSON data"
+                        });
+                    }
+
                 }
             }
             catch (Exception ex)
@@ -440,7 +470,7 @@ namespace KMS.Controllers
                     queryBuilder.Append("FullName = @FullName, ");
                     parameters.Add(new SqlParameter("@FullName", member.FullName));
                 }
-                
+
                 if (member.Phone != null && member.Phone != "string")
                 {
                     queryBuilder.Append("Phone = @Phone, ");
@@ -531,7 +561,7 @@ namespace KMS.Controllers
                     queryBuilder.Append("CreditLimit = @CreditLimit, ");
                     parameters.Add(new SqlParameter("@CreditLimit", member.CreditLimit));
                 }
-                
+
                 if (member.DebtStatus != null && member.DebtStatus != "string")
                 {
                     queryBuilder.Append("DebtStatus = @DebtStatus, ");
@@ -540,9 +570,9 @@ namespace KMS.Controllers
                 if (member.DateModified != null || member.DateModified == null)
                 {
                     queryBuilder.Append("DateModified = GETDATE(), ");
-                    
+
                 }
-                
+
                 if (member.IsActive != null)
                 {
                     queryBuilder.Append("IsActive = @IsActive, ");
@@ -636,7 +666,7 @@ namespace KMS.Controllers
                 response.Data = null;
             }
             return new JsonResult(response);
-            
+
         }
 
     }

@@ -42,8 +42,15 @@ namespace KMS.Controllers
                 //    return Unauthorized();
                 //}
 
-                string query = "select ac.id, ac.kioskId, ac.hardwareName, ac.status, ac.stationId, ac.dateModified, ac.dateCreated, ac.isActive" +
-                "\r\nfrom TActivityLog ac";
+                string query = @"select a.id,a.kioskId,a.hardwareName,CASE 
+                        WHEN a.status = 0 THEN 'Offline' 
+                        WHEN a.status = 1 THEN 'Online' 
+		                WHEN a.status = 2 THEN 'No Paper' 
+		                WHEN a.status = 3 THEN 'Paper Low' 
+                    END AS status,
+                b.stationName as stationId,a.dateModified,a.dateCreated,a.isActive,a.description 
+                from TActivityLog a left join TStation b on b.id = a.stationId";
+
                 DataTable table = _exQuery.ExecuteRawQuery(query);
                 return new JsonResult(table);
             }

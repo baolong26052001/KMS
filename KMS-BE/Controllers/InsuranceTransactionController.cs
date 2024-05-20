@@ -42,6 +42,7 @@ namespace KMS.Controllers
                             LEFT JOIN InsuranceProvider inspvd on inspvd.id = iph.insuranceProviderId
                             LEFT JOIN InsuranceType it on it.id = iph.insuranceTypeId
                             LEFT JOIN Term t ON t.id = iph.termId
+                            where m.fullName is not null
                             ORDER BY itr.transactionDate DESC
                             UPDATE InsuranceTransaction
                             SET status = CASE WHEN expireDate <= GETDATE() THEN 0 ELSE 1 END";
@@ -390,7 +391,7 @@ namespace KMS.Controllers
             {
                 string query = @"SELECT 
 	                        itr.transactionDate, itr.id, itr.memberId, m.fullName, itr.contractId, ipd.id AS packageId,
-	                        iph.packageName, it.typeName, inspvd.provider, ipd.ageRangeId, ar.startAge, ar.endAge,
+	                        iph.packageName, it.typeName, t.content, inspvd.provider, ipd.ageRangeId, ar.startAge, ar.endAge,
 	                        N'Từ ' + CONVERT(VARCHAR(10), ar.startAge) + N' đến ' + CONVERT(VARCHAR(10), ar.endAge) + N' tuổi' AS description,
 	                        itr.annualPay, itr.paymentMethod, ipd.fee, itr.registrationDate, itr.expireDate, itr.status
                             FROM InsuranceTransaction itr
@@ -399,12 +400,14 @@ namespace KMS.Controllers
                             LEFT JOIN AgeRange ar ON ar.id = ipd.ageRangeId
                             LEFT JOIN InsurancePackageHeader iph on iph.id = ipd.packageHeaderId
                             LEFT JOIN InsuranceProvider inspvd on inspvd.id = iph.insuranceProviderId
-	                        LEFT JOIN InsuranceType it on it.id = iph.insuranceTypeId " +
+	                        LEFT JOIN InsuranceType it on it.id = iph.insuranceTypeId 
+                            LEFT JOIN Term t ON t.id = iph.termId " +
                             "where m.fullName LIKE @searchQuery " +
                             "or iph.packageName LIKE @searchQuery " +
                             "or itr.id LIKE @searchQuery " +
                             "or itr.memberId LIKE @searchQuery " +
                             "or itr.contractId LIKE @searchQuery " +
+                            "or t.content LIKE @searchQuery " +
                             "or it.typeName LIKE @searchQuery " +
                             "or inspvd.provider LIKE @searchQuery " +
                             "or itr.annualPay LIKE @searchQuery " +
@@ -436,7 +439,7 @@ namespace KMS.Controllers
             try
             {
                 string query = @"SELECT itr.transactionDate, itr.id, itr.memberId, m.fullName, itr.contractId, 
-                        ipd.id AS packageId, iph.packageName, it.typeName, inspvd.provider, ipd.ageRangeId, 
+                        ipd.id AS packageId, iph.packageName, it.typeName, t.content, inspvd.provider, ipd.ageRangeId, 
                         ar.startAge, ar.endAge, 
                         N'Từ ' + CONVERT(VARCHAR(10), ar.startAge) + N' đến ' + CONVERT(VARCHAR(10), ar.endAge) + N' tuổi' AS description, 
                         itr.annualPay, itr.paymentMethod, ipd.fee, itr.registrationDate, itr.expireDate, itr.status 
@@ -446,6 +449,7 @@ namespace KMS.Controllers
                         LEFT JOIN AgeRange ar ON ar.id = ipd.ageRangeId
                         LEFT JOIN InsurancePackageHeader iph on iph.id = ipd.packageHeaderId
                         LEFT JOIN InsuranceProvider inspvd on inspvd.id = iph.insuranceProviderId
+                        LEFT JOIN Term t ON t.id = iph.termId
                         LEFT JOIN InsuranceType it on it.id = iph.insuranceTypeId ";
 
                 List<SqlParameter> parameters = new List<SqlParameter>();

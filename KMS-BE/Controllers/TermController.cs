@@ -115,8 +115,8 @@ namespace KMS.Controllers
                 };
                 SqlParameter[] parameters2 =
                 {
-                    new SqlParameter("@IpAddress", ipv4?.ToString()),
-                    new SqlParameter("@Ipv6", ipv6?.ToString()),
+                    new SqlParameter("@IpAddress", (object)ipv4?.ToString() ?? DBNull.Value),
+                    new SqlParameter("@Ipv6", (object)ipv6?.ToString() ?? DBNull.Value),
                     new SqlParameter("@UserId", (object)term.UserId ?? DBNull.Value),
                 };
 
@@ -175,8 +175,8 @@ namespace KMS.Controllers
                 };
                 SqlParameter[] parameters2 =
                 {
-                    new SqlParameter("@IpAddress", ipv4?.ToString()),
-                    new SqlParameter("@Ipv6", ipv6?.ToString()),
+                    new SqlParameter("@IpAddress", (object)ipv4?.ToString() ?? DBNull.Value),
+                    new SqlParameter("@Ipv6", (object)ipv6?.ToString() ?? DBNull.Value),
                     new SqlParameter("@UserId", (object)term.UserId ?? DBNull.Value),
                 };
 

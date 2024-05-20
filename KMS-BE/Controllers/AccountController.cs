@@ -37,7 +37,7 @@ namespace KMS.Controllers
             {
                 string query = "select a.id, a.memberId, m.fullname, a.contractId, m.phone, m.email, m.idenNumber, m.taxCode, a.balance, m.bankName, m.department, m.companyName, m.address1, m.isActive, m.dateCreated " +
                 "from LAccount a, LMember m " +
-                "where a.memberId = m.id";
+                "where a.memberId = m.id order by m.id desc";
 
                 DataTable table = _exQuery.ExecuteRawQuery(query);
                 return new JsonResult(table);
@@ -89,37 +89,7 @@ namespace KMS.Controllers
             return new JsonResult(response);
         }
 
-        [HttpPut]
-        [Route("UpdateBalance/{id}")]
-        public JsonResult UpdateBalance(int id, int money)
-        {
-            ResponseDto response = new ResponseDto();
-            try
-            {
-                string query = "UPDATE LAccount " +
-                           "SET balance = balance + @Money " +
-                           "WHERE id = @Id";
-
-                SqlParameter[] parameters =
-                {
-                    new SqlParameter("@Id", id),
-                    new SqlParameter("@Money", money),
-
-                };
-
-                _exQuery.ExecuteRawQuery(query, parameters);
-
-                return new JsonResult("Balance updated successfully.");
-            }
-            catch (Exception ex)
-            {
-                response.Code = -1;
-                response.Message = ex.Message;
-                response.Exception = ex.ToString();
-                response.Data = null;
-            }
-            return new JsonResult(response);
-        }
+        
 
         [HttpGet]
         [Route("FilterAccount")]
@@ -165,59 +135,7 @@ namespace KMS.Controllers
 
 
 
-        //[HttpPost]
-        //[Route("AddAccount")]
-        //public JsonResult AddAccount([FromBody] Laccount account)
-        //{
-        //    string query = "INSERT INTO LAccount (contractId, memberId, accountName, accountType, balance, rate, dateDue, status, dateModified, dateCreated, isActive) " +
-        //                   "VALUES (@ContractId, @MemberId, @AccountName, @AccountType, @Balance, @Rate, @DateDue, @Status, GETDATE(), GETDATE(), @IsActive)";
-
-        //    SqlParameter[] parameters =
-        //    {
-        //        new SqlParameter("@ContractId", account.ContractId),
-        //        new SqlParameter("@MemberId", account.MemberId),
-        //        new SqlParameter("@AccountName", account.AccountName),
-        //        new SqlParameter("@AccountType", account.AccountType),
-        //        new SqlParameter("@Balance", account.Balance),
-        //        new SqlParameter("@Rate", account.Rate),
-        //        new SqlParameter("@DateDue", account.DateDue),
-        //        new SqlParameter("@Status", account.Status),
-        //        new SqlParameter("@IsActive", account.IsActive)
-        //    };
-
-        //    _exQuery.ExecuteRawQuery(query, parameters);
-
-        //    return new JsonResult("Account added successfully");
-        //}
-
-        //[HttpPut]
-        //[Route("UpdateAccount/{id}")]
-        //public JsonResult UpdateAccount(int id,[FromBody] Laccount updatedAccount)
-        //{
-        //    string query = "UPDATE LAccount " +
-        //                   "SET contractId = @ContractId, memberId = @MemberId, accountName = @AccountName, accountType = @AccountType, " +
-        //                   "balance = @Balance, rate = @Rate, dateDue = @DateDue, status = @Status, dateModified = GETDATE(), " +
-        //                   "dateCreated = GETDATE(), isActive = @IsActive " +
-        //                   "WHERE id = @Id";
-
-        //    SqlParameter[] parameters =
-        //    {
-        //        new SqlParameter("@Id", id),
-        //        new SqlParameter("@ContractId", updatedAccount.ContractId),
-        //        new SqlParameter("@MemberId", updatedAccount.MemberId),
-        //        new SqlParameter("@AccountName", updatedAccount.AccountName),
-        //        new SqlParameter("@AccountType", updatedAccount.AccountType),
-        //        new SqlParameter("@Balance", updatedAccount.Balance),
-        //        new SqlParameter("@Rate", updatedAccount.Rate),
-        //        new SqlParameter("@DateDue", updatedAccount.DateDue),
-        //        new SqlParameter("@Status", updatedAccount.Status),
-        //        new SqlParameter("@IsActive", updatedAccount.IsActive)
-        //    };
-
-        //    _exQuery.ExecuteRawQuery(query, parameters);
-
-        //    return new JsonResult("Account updated successfully");
-        //}
+        
 
         
 

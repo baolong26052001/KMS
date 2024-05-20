@@ -34,7 +34,7 @@ namespace KMS.Controllers
                "LEFT JOIN TKiosk k ON tl.kioskId = k.id " +
                "LEFT JOIN LMember m ON tl.memberId = m.id " +
                "LEFT JOIN LAccount a ON tl.accountId = a.id " +
-               "LEFT JOIN TStation st ON tl.stationId = st.id " +
+               "LEFT JOIN TStation st ON tl.stationId = st.id where m.fullName is not null " +
                "ORDER BY tl.transactionDate DESC";
 
                 DataTable table = _exQuery.ExecuteRawQuery(query);
@@ -140,17 +140,20 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = "SELECT tl.id, tl.transactionDate, tl.kioskId, k.kioskName, tl.memberId, m.fullName, tl.transactionId, st.stationName, tl.transactionType, tl.status " +
-                "FROM LTransactionLog tl, TKiosk k, LMember m, LAccount a, TStation st " +
-                "WHERE tl.kioskId = k.id AND tl.memberId = m.id AND tl.accountId = a.id AND tl.stationId = st.id AND " +
-                "(tl.kioskId LIKE @searchQuery OR " +
+                string query = "SELECT tl.id, tl.transactionDate, tl.kioskId, k.kioskName, tl.memberId, m.fullName, tl.transactionId, st.stationName, tl.transactionType, tl.kioskRemainingMoney, tl.status " +
+               "FROM LTransactionLog tl " +
+               "LEFT JOIN TKiosk k ON tl.kioskId = k.id " +
+               "LEFT JOIN LMember m ON tl.memberId = m.id " +
+               "LEFT JOIN LAccount a ON tl.accountId = a.id " +
+               "LEFT JOIN TStation st ON tl.stationId = st.id " +
+                "WHERE tl.kioskId LIKE @searchQuery OR " +
                 "tl.memberId LIKE @searchQuery OR " +
                 "k.kioskName LIKE @searchQuery OR " +
                 "m.fullName LIKE @searchQuery OR " +
                 "tl.transactionId LIKE @searchQuery OR " +
                 "st.stationName LIKE @searchQuery OR " +
                 "tl.transactionType LIKE @searchQuery OR " +
-                "tl.status LIKE @searchQuery) " +
+                "tl.status LIKE @searchQuery " +
                 "ORDER BY tl.transactionDate DESC";
 
                 SqlParameter parameter = new SqlParameter("@searchQuery", "%" + searchQuery + "%");

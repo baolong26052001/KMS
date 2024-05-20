@@ -14,4 +14,8 @@ namespace KMS.Models
         public DateTime? DateCreated { get; set; }
         public bool? IsActive { get; set; }
     }
+    public partial class TactivityLogModel
+    {
+        public string Description { get; set; }
+    }
 }

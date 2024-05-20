@@ -35,7 +35,8 @@ namespace KMS.Controllers
                 string query = "SELECT k.id, k.kioskName, k.location, st.stationName, ss.description as packageName, k.kioskStatus, k.cameraStatus, k.cashDepositStatus, k.scannerStatus, k.printerStatus " +
                            "FROM TKiosk k " +
                            "LEFT JOIN TStation st ON k.stationCode = st.id " +
-                           "LEFT JOIN TSlideHeader ss ON ss.id = k.slidePackage";
+                           "LEFT JOIN TSlideHeader ss ON ss.id = k.slidePackage ";
+                           
 
 
                 DataTable table = _exQuery.ExecuteRawQuery(query);
@@ -223,8 +224,21 @@ namespace KMS.Controllers
                     }
                 }
 
-                string query = "INSERT INTO TKiosk (kioskName, location, stationCode, slidePackage, webServices) " +
-                           "VALUES (@kioskName, @location, @stationCode, @slidePackage, @webServices)";
+                string query = "DECLARE @kioskId INT " +
+                           "INSERT INTO TKiosk (kioskName, location, stationCode, slidePackage, webServices, dateCreated) " +
+                           "VALUES (@kioskName, @location, @stationCode, @slidePackage, @webServices, GETDATE()) " +
+                           "SET @kioskId = SCOPE_IDENTITY(); " +
+                           "update TKiosk set kioskStatus = 1 where kioskStatus is null " +
+                           "update TKiosk set printerStatus = 0 where printerStatus is null " +
+                           "update TKiosk set cameraStatus = 0 where cameraStatus is null " +
+                           "update TKiosk set scannerStatus = 0 where scannerStatus is null " +
+                           "update TKiosk set cashDepositStatus = 0 where cashDepositStatus is null " +
+                           "insert into TActivityLog (kioskId, hardwareName, status, stationId, dateModified, dateCreated, isActive) VALUES (@kioskId,'Camera','0',1,GETDATE(),GETDATE(),1) " +
+                           "insert into TActivityLog (kioskId, hardwareName, status, stationId, dateModified, dateCreated, isActive) VALUES (@kioskId,'Cash Deposit','0',1,GETDATE(),GETDATE(),1) " +
+                           "insert into TActivityLog (kioskId, hardwareName, status, stationId, dateModified, dateCreated, isActive) VALUES (@kioskId,'Printer','0',1,GETDATE(),GETDATE(),1) " +
+                           "insert into TActivityLog (kioskId, hardwareName, status, stationId, dateModified, dateCreated, isActive) VALUES (@kioskId,'Scanner','0',1,GETDATE(),GETDATE(),1) " +
+                           "insert into TActivityLog (kioskId, hardwareName, status, stationId, dateModified, dateCreated, isActive) VALUES (@kioskId,'Kiosk','0',1,GETDATE(),GETDATE(),1) ";
+                
                 string query2 = "INSERT INTO TAudit (userId, ipAddress, macAddress, action, tableName, dateModified, dateCreated, isActive) " +
                            "VALUES (@UserId, @IpAddress, @Ipv6, 'Add', 'TKiosk', GETDATE(), GETDATE(), 1)";
 
@@ -240,8 +254,8 @@ namespace KMS.Controllers
 
                 SqlParameter[] parameters2 =
                 {
-                    new SqlParameter("@IpAddress", ipv4?.ToString()),
-                    new SqlParameter("@Ipv6", ipv6?.ToString()),
+                    new SqlParameter("@IpAddress", (object)ipv4?.ToString() ?? DBNull.Value),
+                    new SqlParameter("@Ipv6", (object)ipv6?.ToString() ?? DBNull.Value),
                     new SqlParameter("@UserId", (object)kiosk.UserId ?? DBNull.Value),
                 };
 
@@ -261,8 +275,63 @@ namespace KMS.Controllers
         }
 
         [HttpPut]
-        [Route("UpdatePrinterStatus/{id}")]
-        public JsonResult UpdatePrinterStatus(int id, [FromBody] TkioskModel kiosk)
+        [Route("UpdateKioskStatus/{kioskId}/{status}")]
+        public JsonResult UpdateKioskStatus(int kioskId, int status, [FromBody] TactivityLogModel tactivityLog)
+        {
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault() ?? HttpContext.Connection.RemoteIpAddress.ToString();
+                string host = Dns.GetHostName();
+                IPHostEntry ip = Dns.GetHostEntry(host);
+                IPAddress ipv4 = null;
+                IPAddress ipv6 = null;
+
+                foreach (var address in ip.AddressList)
+                {
+                    if (address.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        ipv4 = address;
+                    }
+                    else if (address.AddressFamily == AddressFamily.InterNetworkV6)
+                    {
+                        ipv6 = address;
+                    }
+                }
+
+                string query = @"UPDATE TKiosk 
+                                SET kioskStatus = @kioskStatus, dateModified = GETDATE() 
+                                WHERE id = @kioskId 
+                                UPDATE TActivityLog SET status = @kioskStatus, description = @description where kioskId = @kioskId and hardwareName = 'Kiosk'";
+
+
+                SqlParameter[] parameters =
+                {
+                    new SqlParameter("@kioskId", kioskId),
+                    new SqlParameter("@kioskStatus", status),
+                    new SqlParameter("@description", (object)tactivityLog.Description ?? DBNull.Value),
+                };
+
+
+                _exQuery.ExecuteRawQuery(query, parameters);
+
+
+                return new JsonResult("Kiosk status updated successfully");
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+
+        }
+
+        [HttpPut]
+        [Route("UpdatePrinterStatus/{kioskId}/{status}")]
+        public JsonResult UpdatePrinterStatus(int kioskId, int status, [FromBody] TactivityLogModel tactivityLog)
         {
             ResponseDto response = new ResponseDto();
             try
@@ -287,14 +356,15 @@ namespace KMS.Controllers
 
                 string query = @"UPDATE TKiosk 
                                 SET printerStatus = @printerStatus 
-                                WHERE id = @id";
+                                WHERE id = @kioskId 
+                                UPDATE TActivityLog SET status = @printerStatus, description = @description where kioskId = @kioskId and hardwareName = 'Printer'";
                 
 
                 SqlParameter[] parameters =
                 {
-                    new SqlParameter("@id", id),
-                    new SqlParameter("@printerStatus", kiosk.PrinterStatus),
-                    
+                    new SqlParameter("@kioskId", kioskId),
+                    new SqlParameter("@printerStatus", status),
+                    new SqlParameter("@description", (object)tactivityLog.Description ?? DBNull.Value),
                 };
                 
 
@@ -302,6 +372,171 @@ namespace KMS.Controllers
                 
 
                 return new JsonResult("Kiosk printer status updated successfully");
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+
+        }
+
+        [HttpPut]
+        [Route("UpdateCameraStatus/{kioskId}/{status}")]
+        public JsonResult UpdateCameraStatus(int kioskId, int status, [FromBody] TactivityLogModel tactivityLog)
+        {
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault() ?? HttpContext.Connection.RemoteIpAddress.ToString();
+                string host = Dns.GetHostName();
+                IPHostEntry ip = Dns.GetHostEntry(host);
+                IPAddress ipv4 = null;
+                IPAddress ipv6 = null;
+
+                foreach (var address in ip.AddressList)
+                {
+                    if (address.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        ipv4 = address;
+                    }
+                    else if (address.AddressFamily == AddressFamily.InterNetworkV6)
+                    {
+                        ipv6 = address;
+                    }
+                }
+
+                string query = @"UPDATE TKiosk 
+                                SET cameraStatus = @cameraStatus 
+                                WHERE id = @kioskId 
+                                UPDATE TActivityLog SET status = @cameraStatus, description = @description where kioskId = @kioskId and hardwareName = 'Camera'";
+
+
+                SqlParameter[] parameters =
+                {
+                    new SqlParameter("@kioskId", kioskId),
+                    new SqlParameter("@cameraStatus", status),
+                    new SqlParameter("@description", (object)tactivityLog.Description ?? DBNull.Value),
+                };
+
+
+                _exQuery.ExecuteRawQuery(query, parameters);
+
+
+                return new JsonResult("Kiosk camera status updated successfully");
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+
+        }
+
+        [HttpPut]
+        [Route("UpdateScannerStatus/{kioskId}/{status}")]
+        public JsonResult UpdateScannerStatus(int kioskId, int status, [FromBody] TactivityLogModel tactivityLog)
+        {
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault() ?? HttpContext.Connection.RemoteIpAddress.ToString();
+                string host = Dns.GetHostName();
+                IPHostEntry ip = Dns.GetHostEntry(host);
+                IPAddress ipv4 = null;
+                IPAddress ipv6 = null;
+
+                foreach (var address in ip.AddressList)
+                {
+                    if (address.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        ipv4 = address;
+                    }
+                    else if (address.AddressFamily == AddressFamily.InterNetworkV6)
+                    {
+                        ipv6 = address;
+                    }
+                }
+
+                string query = @"UPDATE TKiosk 
+                                SET scannerStatus = @scannerStatus 
+                                WHERE id = @kioskId 
+                                UPDATE TActivityLog SET status = @scannerStatus, description = @description where kioskId = @kioskId and hardwareName = 'Scanner'";
+
+
+                SqlParameter[] parameters =
+                {
+                    new SqlParameter("@kioskId", kioskId),
+                    new SqlParameter("@scannerStatus", status),
+                    new SqlParameter("@description", (object)tactivityLog.Description ?? DBNull.Value),
+                };
+
+
+                _exQuery.ExecuteRawQuery(query, parameters);
+
+
+                return new JsonResult("Kiosk scanner status updated successfully");
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+
+        }
+
+        [HttpPut]
+        [Route("UpdateCashDepositStatus/{kioskId}/{status}")]
+        public JsonResult UpdateCashDepositStatus(int kioskId, int status, [FromBody] TactivityLogModel tactivityLog)
+        {
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault() ?? HttpContext.Connection.RemoteIpAddress.ToString();
+                string host = Dns.GetHostName();
+                IPHostEntry ip = Dns.GetHostEntry(host);
+                IPAddress ipv4 = null;
+                IPAddress ipv6 = null;
+
+                foreach (var address in ip.AddressList)
+                {
+                    if (address.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        ipv4 = address;
+                    }
+                    else if (address.AddressFamily == AddressFamily.InterNetworkV6)
+                    {
+                        ipv6 = address;
+                    }
+                }
+
+                string query = @"UPDATE TKiosk 
+                                SET cashDepositStatus = @cashDepositStatus 
+                                WHERE id = @kioskId 
+                                UPDATE TActivityLog SET status = @cashDepositStatus, description = @description where kioskId = @kioskId and hardwareName = 'Cash Deposit'";
+
+
+                SqlParameter[] parameters =
+                {
+                    new SqlParameter("@kioskId", kioskId),
+                    new SqlParameter("@cashDepositStatus", status),
+                    new SqlParameter("@description", (object)tactivityLog.Description ?? DBNull.Value),
+                };
+
+
+                _exQuery.ExecuteRawQuery(query, parameters);
+
+
+                return new JsonResult("Kiosk cash deposit status updated successfully");
             }
             catch (Exception ex)
             {
@@ -356,8 +591,8 @@ namespace KMS.Controllers
                 };
                 SqlParameter[] parameters2 =
                 {
-                    new SqlParameter("@IpAddress", ipv4?.ToString()),
-                    new SqlParameter("@Ipv6", ipv6?.ToString()),
+                    new SqlParameter("@IpAddress", (object)ipv4?.ToString() ?? DBNull.Value),
+                    new SqlParameter("@Ipv6", (object)ipv6?.ToString() ?? DBNull.Value),
                     new SqlParameter("@UserId", (object)kiosk.UserId ?? DBNull.Value),
                 };
 
@@ -377,13 +612,10 @@ namespace KMS.Controllers
             
         }
 
-
-
         [HttpDelete]
         [Route("DeleteKiosk")]
         public JsonResult DeleteKiosk([FromBody] List<int> kioskIds)
         {
-
             var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault() ?? HttpContext.Connection.RemoteIpAddress.ToString();
             string host = Dns.GetHostName();
             IPHostEntry ip = Dns.GetHostEntry(host);
@@ -402,36 +634,44 @@ namespace KMS.Controllers
                 }
             }
 
-
             if (kioskIds == null || kioskIds.Count == 0)
             {
                 return new JsonResult("No kiosk IDs provided for deletion");
             }
 
-            StringBuilder deleteQuery = new StringBuilder("DELETE FROM TKiosk WHERE id IN (");
-            string query2 = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Delete', 'TKiosk', GETDATE(), GETDATE(), 1)";
-
-            List<SqlParameter> parameters = new List<SqlParameter>();
-            SqlParameter[] parameters2 = { };
+            // Build the DELETE query for TKiosk
+            StringBuilder deleteQueryKiosk = new StringBuilder("DELETE FROM TKiosk WHERE id IN (");
+            List<SqlParameter> parametersKiosk = new List<SqlParameter>();
             for (int i = 0; i < kioskIds.Count; i++)
             {
                 string parameterName = "@KioskId" + i;
-                deleteQuery.Append(parameterName);
+                deleteQueryKiosk.Append(parameterName);
 
                 if (i < kioskIds.Count - 1)
                 {
-                    deleteQuery.Append(", ");
+                    deleteQueryKiosk.Append(", ");
                 }
 
-                parameters.Add(new SqlParameter(parameterName, kioskIds[i]));
+                parametersKiosk.Add(new SqlParameter(parameterName, kioskIds[i]));
             }
+            deleteQueryKiosk.Append(");");
 
-            deleteQuery.Append(");");
+            // Execute the DELETE query for TKiosk
+            _exQuery.ExecuteRawQuery(deleteQueryKiosk.ToString(), parametersKiosk.ToArray());
 
-            _exQuery.ExecuteRawQuery(deleteQuery.ToString(), parameters.ToArray());
+            // Build the DELETE query for TActivityLog
+            string deleteQueryActivity = "DELETE FROM TActivityLog WHERE kioskId IN (" + string.Join(",", kioskIds) + ");";
+
+            // Execute the DELETE query for TActivityLog
+            _exQuery.ExecuteRawQuery(deleteQueryActivity);
+
+            // Insert audit log for the deletion
+            string auditQuery = "INSERT INTO TAudit (action, tableName, dateModified, dateCreated, isActive) VALUES ('Delete', 'TKiosk', GETDATE(), GETDATE(), 1)";
+            _exQuery.ExecuteRawQuery(auditQuery);
 
             return new JsonResult("Kiosk deleted successfully");
         }
+
 
         [HttpGet]
         [Route("SearchKioskSetup")]
@@ -503,8 +743,7 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = "select k.dateCreated,  k.stationCode,  k.id,  DATEDIFF(MINUTE, k.onlineTime, GETDATE()) AS durationUptime,  DATEDIFF(MINUTE, k.offlineTime, GETDATE()) AS durationDowntime, k.dateModified as lastUpdated " +
-                "from TKiosk k";
+                string query = "select id,stationCode,upTime/60 as durationUptime,downTime/60 as durationDowntime,dateModified as lastUpdated from TKiosk";
                 DataTable table = _exQuery.ExecuteRawQuery(query);
                 return new JsonResult(table);
             }
@@ -597,9 +836,7 @@ namespace KMS.Controllers
             ResponseDto response = new ResponseDto();
             try
             {
-                string query = "select k.dateCreated,  k.stationCode,  k.id,  DATEDIFF(MINUTE, k.onlineTime, GETDATE()) AS durationUptime,  DATEDIFF(MINUTE, k.offlineTime, GETDATE()) AS durationDowntime, k.dateModified as lastUpdated " +
-                           "FROM TKiosk k " +
-                           "WHERE k.id = @id";
+                string query = "select id,upTime/60 as durationUptime,downTime/60 as durationDowntime from TKiosk where id=@id";
 
                 SqlParameter parameter = new SqlParameter("@id", id);
                 DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });

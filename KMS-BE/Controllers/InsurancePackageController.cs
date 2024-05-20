@@ -48,7 +48,11 @@ namespace KMS.Controllers
                 }
                 else
                 {
-                    return new JsonResult("Benefit not found");
+                    return new JsonResult(new
+                    {
+                        Code = 404,
+                        Message = "Benefit not found"
+                    });
                 }
             }
             catch (Exception ex)
@@ -82,7 +86,11 @@ namespace KMS.Controllers
                 }
                 else
                 {
-                    return new JsonResult("Benefit Detail not found");
+                    return new JsonResult(new
+                    {
+                        Code = 404,
+                        Message = "Benefit not found"
+                    });
                 }
             }
             catch (Exception ex)
@@ -120,7 +128,11 @@ namespace KMS.Controllers
                 }
                 else
                 {
-                    return new JsonResult("Insurance Package Detail not found");
+                    return new JsonResult(new
+                    {
+                        Code = 404,
+                        Message = "Not found"
+                    });
                 }
             }
             catch (Exception ex)
@@ -153,7 +165,11 @@ namespace KMS.Controllers
                 }
                 else
                 {
-                    return new JsonResult("Benefit Detail not found");
+                    return new JsonResult(new
+                    {
+                        Code = 404,
+                        Message = "Benefit not found"
+                    });
                 }
             }
             catch (Exception ex)
@@ -167,7 +183,86 @@ namespace KMS.Controllers
             
         }
 
-      
+        [HttpGet]
+        [Route("ShowBenefitForKioskApp/{packageId}")]
+        public JsonResult ShowBenefitForKioskApp(int packageId)
+        {
+            ResponseDto response = new ResponseDto();
+            try
+            {
+                string query = @"
+            select 
+                a.id as idHeader,
+                a.content as contentHeader,
+                a.coverage as coverageHeader,
+                a.description as descriptionHeader,
+                a.packageId,
+                b.id as idDetail,
+                b.content as contentDetail,
+                b.coverage as coverageDetail,
+                b.benefitId
+            from Benefit a
+            left join BenefitDetail b on b.benefitId = a.id
+            where a.packageId = @packageId";
+
+                SqlParameter parameter = new SqlParameter("@packageId", packageId);
+                DataTable table = _exQuery.ExecuteRawQuery(query, new[] { parameter });
+
+                if (table.Rows.Count > 0)
+                {
+                    var result = new List<object>();
+                    var headers = new Dictionary<int, dynamic>();
+
+                    foreach (DataRow row in table.Rows)
+                    {
+                        int idHeader = Convert.ToInt32(row["idHeader"]);
+                        if (!headers.ContainsKey(idHeader))
+                        {
+                            headers[idHeader] = new
+                            {
+                                idHeader = idHeader,
+                                contentHeader = row["contentHeader"].ToString(),
+                                coverageHeader = row["coverageHeader"].ToString(),
+                                descriptionHeader = row["descriptionHeader"].ToString(),
+                                packageId = Convert.ToInt32(row["packageId"]),
+                                details = new List<object>()
+                            };
+                        }
+
+                        if (row["idDetail"] != DBNull.Value)
+                        {
+                            headers[idHeader].details.Add(new
+                            {
+                                idDetail = Convert.ToInt32(row["idDetail"]),
+                                contentDetail = row["contentDetail"].ToString(),
+                                coverageDetail = row["coverageDetail"].ToString(),
+                                benefitId = Convert.ToInt32(row["benefitId"])
+                            });
+                        }
+                    }
+
+                    result.AddRange(headers.Values);
+                    return new JsonResult(result);
+                }
+                else
+                {
+                    return new JsonResult(new
+                    {
+                        Code = 404,
+                        Message = "Benefit not found"
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Code = -1;
+                response.Message = ex.Message;
+                response.Exception = ex.ToString();
+                response.Data = null;
+            }
+            return new JsonResult(response);
+        }
+
 
         [HttpPost]
         [Route("AddBenefit")]
@@ -210,8 +305,8 @@ namespace KMS.Controllers
                 };
                 SqlParameter[] parameters2 = 
                 {
-                    new SqlParameter("@IpAddress", ipv4?.ToString()),
-                    new SqlParameter("@Ipv6", ipv6?.ToString()),
+                    new SqlParameter("@IpAddress", (object)ipv4?.ToString() ?? DBNull.Value),
+                    new SqlParameter("@Ipv6", (object)ipv6?.ToString() ?? DBNull.Value),
                     new SqlParameter("@UserId", (object)benefit.UserId ?? DBNull.Value),
                 };
 
@@ -270,8 +365,8 @@ namespace KMS.Controllers
                 };
                 SqlParameter[] parameters2 =
                 {
-                    new SqlParameter("@IpAddress", ipv4?.ToString()),
-                    new SqlParameter("@Ipv6", ipv6?.ToString()),
+                    new SqlParameter("@IpAddress", (object)ipv4?.ToString() ?? DBNull.Value),
+                    new SqlParameter("@Ipv6", (object)ipv6?.ToString() ?? DBNull.Value),
                     new SqlParameter("@UserId", (object)benefitDetail.UserId ?? DBNull.Value),
                 };
 
@@ -362,8 +457,8 @@ namespace KMS.Controllers
                 };
                 SqlParameter[] parameters2 =
                 {
-                    new SqlParameter("@IpAddress", ipv4?.ToString()),
-                    new SqlParameter("@Ipv6", ipv6?.ToString()),
+                    new SqlParameter("@IpAddress", (object)ipv4?.ToString() ?? DBNull.Value),
+                    new SqlParameter("@Ipv6", (object)ipv6?.ToString() ?? DBNull.Value),
                     new SqlParameter("@UserId", (object)benefit.UserId ?? DBNull.Value),
                 };
 
@@ -423,8 +518,8 @@ namespace KMS.Controllers
                 };
                 SqlParameter[] parameters2 =
                 {
-                    new SqlParameter("@IpAddress", ipv4?.ToString()),
-                    new SqlParameter("@Ipv6", ipv6?.ToString()),
+                    new SqlParameter("@IpAddress", (object)ipv4?.ToString() ?? DBNull.Value),
+                    new SqlParameter("@Ipv6", (object)ipv6?.ToString() ?? DBNull.Value),
                     new SqlParameter("@UserId", (object)benefitDetail.UserId ?? DBNull.Value),
                 };
 
