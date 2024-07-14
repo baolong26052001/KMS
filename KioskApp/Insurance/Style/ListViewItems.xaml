@@ -1,0 +1,257 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+
+    <!--PackageType Ex:An Binh Yen Vui, An Gia-->
+    <DataTemplate x:Key="listViewItemTypeTemplate">
+        <Border CornerRadius="20" Width="457" Height="153" Background="#0EAB00"  BorderThickness="10" >
+            <Button Background="Transparent" 
+                Command="{Binding DataContext.PackageCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" 
+                CommandParameter="{Binding id}"
+                Style="{StaticResource RoundedButtonStyle}">
+                <StackPanel Orientation="Horizontal">
+                    <Image Width="80" Height="80" Source="/Images/insurance/health_insurance.png"/>
+                    <TextBlock VerticalAlignment="Center" FontSize="40" FontFamily="Exo" Foreground="#FFFFFF" FontWeight="Bold" Text="{Binding typeName}" Margin="10 0 0 0"/>
+                </StackPanel>
+            </Button>
+        </Border>
+    </DataTemplate>
+
+
+    <!--PackageProvider Ex: BaoViet, FWD-->
+    <DataTemplate x:Key="listViewItemProviderTemplate">
+        <Button Width="457" Height="153" 
+            Command="{Binding DataContext.ProviderCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" 
+            CommandParameter="{Binding id}"
+            Background="#0EAB00"
+            Style="{StaticResource RoundedButtonStyle}">
+            <Grid Width="457" Height="153" VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Image Grid.Column="0" HorizontalAlignment="Center" Width="150" Height="150" Source="{Binding ProviderImageBitmap}"/>
+                <TextBlock Grid.Column="1" FontSize="46" FontFamily="Exo" Foreground="White" FontWeight="Bold" 
+                       Text="{Binding provider}" VerticalAlignment="Center" TextAlignment="Left" HorizontalAlignment="Left" />
+            </Grid>
+        </Button>
+    </DataTemplate>
+
+
+    
+    <!--Package Term & Content Example: Term A, Term B-->
+    <DataTemplate x:Key="listViewItemTermTemplate">
+        <Border CornerRadius="20" Width="457" Height="153" Background="#0EAB00"  BorderThickness="10" >
+            <Button Background="Transparent" 
+                Command="{Binding DataContext.TermCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" 
+                CommandParameter="{Binding id}"
+                Style="{StaticResource RoundedButtonStyle}">
+                <StackPanel Orientation="Horizontal">
+                    <!--<Image Width="93" Height="89.32" Source="/Images/insurance/accident_insurance.png"/>-->
+                    <TextBlock VerticalAlignment="Center" FontSize="40" FontFamily="Exo" Foreground="White" FontWeight="Bold" Text="{Binding content}" Margin="10 0 0 0"/>
+                </StackPanel>
+            </Button>
+        </Border>
+    </DataTemplate>
+
+
+    <!--Package: Package Name, price of An Binh Yen Vui & An Gia Hanh Phuc -->
+    <DataTemplate x:Key="listViewItemPackageTemplate">
+        <Border CornerRadius="10" Width="367" Height="80" Background="White" BorderThickness="5" BorderBrush="Transparent">
+            <Button Background="Transparent"
+                Command="{Binding DataContext.PackageCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                CommandParameter="{Binding headerId}">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="buttonBorder" CornerRadius="10" Background="White">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsFocused" Value="True">
+                                            <Setter TargetName="buttonBorder" Property="Background" Value="#0EAB00"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+                <Grid Width="300">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="0" FontSize="24" FontFamily="Exo" FontWeight="Bold" 
+                           Text="{Binding packageName}">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="Black"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsFocused, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Value="True">
+                                        <Setter Property="Foreground" Value="White"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1" FontSize="24" FontFamily="Exo" FontWeight="Normal" 
+                           Text="{Binding fee, StringFormat={}{0:#,0.##}}" xml:lang="vi-VN">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="Black"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsFocused, RelativeSource={RelativeSource AncestorType={x:Type Button}}}" Value="True">
+                                        <Setter Property="Foreground" Value="White"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Grid>
+            </Button>
+        </Border>
+    </DataTemplate>
+
+    <!-- Package & Benefit Details: Benefits & Coverage -->
+    <DataTemplate x:Key="listViewItemPackageDetailTemplate">
+        <StackPanel>
+            <!-- Package Details -->
+            <StackPanel>
+                <Grid>
+                    <StackPanel HorizontalAlignment="Left">
+                        <TextBlock TextWrapping="Wrap" Text="{Binding contentHeader}" Width="380" Foreground="Black" FontWeight="Bold" FontSize="14" />
+                        <TextBlock TextWrapping="Wrap" Text="{Binding descriptionHeader}" Width="380" Foreground="Black" FontWeight="Normal" FontSize="12" />
+                    </StackPanel>
+                    <TextBlock TextWrapping="Wrap" HorizontalAlignment="Right" TextAlignment="Right" Text="{Binding coverageHeader}" Foreground="Black" FontWeight="Bold" FontSize="16" />
+                </Grid>
+                <!-- Benefit Details -->
+                <ListView BorderBrush="Transparent" BorderThickness="0" ItemsSource="{Binding details}" HorizontalContentAlignment="Stretch">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <DockPanel>
+                                <TextBlock TextWrapping="Wrap" Text="{Binding coverageDetail}" Foreground="Black" FontWeight="Normal" FontSize="14">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsCoverageNumeric}" Value="False">
+                                                    <Setter Property="DockPanel.Dock" Value="Bottom"/>
+                                                    <Setter Property="Width" Value="380"/>
+                                                    <Setter Property="HorizontalAlignment" Value="Left"/>
+                                                    <Setter Property="TextAlignment" Value="Left"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsCoverageNumeric}" Value="True">
+                                                    <Setter Property="DockPanel.Dock" Value="Right"/>
+                                                    <Setter Property="TextAlignment" Value="Right"/>
+                                                    <Setter Property="HorizontalAlignment" Value="Right"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                                <TextBlock TextWrapping="Wrap" Width="380" HorizontalAlignment="Left" Text="{Binding contentDetail}" Foreground="Black" FontWeight="Bold" FontSize="14" />
+                            </DockPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackPanel>
+            <Rectangle Fill="#000000" Height="1" Margin="0 5 0 0" Width="540" />
+        </StackPanel>
+    </DataTemplate>
+
+    <!--Loan Payback-->
+    <!--Loan Package: Loan Name, Amount money to payback -->
+    <DataTemplate x:Key="listViewItemLoanPaybackTemplate">
+        <Border CornerRadius="10" Width="367" Height="60" Background="Black" BorderThickness="5" BorderBrush="Transparent">
+            <Button Background="Transparent"
+         Command="{Binding DataContext.PackageCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+         CommandParameter="{Binding loanId}">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="buttonBorder" CornerRadius="10" Background="White">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsFocused" Value="True">
+                                            <Setter TargetName="buttonBorder" Property="Background" Value="#0EAB00"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+
+                <Grid Width="300">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="0" FontSize="24" FontFamily="Exo" Foreground="Black" FontWeight="Bold" 
+                               Text="{Binding LoanPackageName}"/>
+                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1" FontSize="24" FontFamily="Exo" Foreground="Black" FontWeight="Normal"
+                               Text="{Binding debt, StringFormat={}{0:#,0.##}}" xml:lang="vi-VN" />
+                </Grid>
+            </Button>
+        </Border>
+
+    </DataTemplate>
+
+    <!--Loan Payback Details -->
+        <DataTemplate x:Key="listViewItemLoanDetailsTemplate">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <!--Column 1-->
+                        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"  FontSize="25.28px" Foreground="Black" FontFamily="Exo"  FontWeight="Bold" 
+                          Text="Details: " Margin="10 0 0 0"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"  FontSize="20px" Foreground="Black" FontFamily="Exo"  FontWeight="Bold" 
+                          Text="Period: " Margin="15 0 0 0"/>
+                        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center"  FontSize="20px" Foreground="Black" FontFamily="Exo"  FontWeight="Bold" 
+                          Text="Principal amount: " Margin="15 0 0 0"/>
+                        <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center"  FontSize="20px" Foreground="Black" FontFamily="Exo"  FontWeight="Bold" 
+                          Text="Interest rate: " Margin="15 0 0 0"/>
+                        <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center"  FontSize="20px" Foreground="Black" FontFamily="Exo"  FontWeight="Bold" 
+                          Text="Registration date: " Margin="15 0 0 0"/>
+                        <TextBlock Grid.Row="5" Grid.Column="0" VerticalAlignment="Center"  FontSize="20px" Foreground="Black" FontFamily="Exo"  FontWeight="Bold" 
+                          Text="End date: " Margin="15 0 0 0"/>
+                        <TextBlock Grid.Row="6" Grid.Column="0" VerticalAlignment="Center"  FontSize="20px" Foreground="Black" FontFamily="Exo"  FontWeight="Bold" 
+                          Text="Total debt: " Margin="15 0 0 0"/>
+
+                        <!--Column 2-->
+                        <TextBlock Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" FontSize="20px" Foreground="Black" FontFamily="Exo"  FontWeight="Bold" 
+                          Text="{Binding loanTerm}" Margin="30 0 0 0"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" FontSize="20px" Foreground="Black" FontFamily="Exo"  FontWeight="Bold" 
+                          Text="{Binding debt, StringFormat={}{0:#,0.##}}" xml:lang="vi-VN" Margin="30 0 0 0"/>
+                        <TextBlock Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" FontSize="20px" Foreground="Black" FontFamily="Exo"  FontWeight="Bold" 
+                          Text="{Binding loanRate}" Margin="30 0 0 0"/>
+                        <TextBlock Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" FontSize="20px" Foreground="Black" FontFamily="Exo"  FontWeight="Bold" 
+                          Text="{Binding transactionDate}" Margin="30 0 0 0"/>
+                        <TextBlock Grid.Row="5" Grid.Column="1" VerticalAlignment="Center" FontSize="20px" Foreground="Black" FontFamily="Exo"  FontWeight="Bold" 
+                          Text="{Binding dueDate}" Margin="30 0 0 0"/>
+                        <TextBlock Grid.Row="6" Grid.Column="1" VerticalAlignment="Center" FontSize="20px" Foreground="Black" FontFamily="Exo"  FontWeight="Bold" 
+                          Text="{Binding totalDebtMustPay, StringFormat={}{0:#,0.##}}" xml:lang="vi-VN"  Margin="30 0 0 0"/>
+                    </Grid>
+
+        </DataTemplate>
+
+
+
+</ResourceDictionary>

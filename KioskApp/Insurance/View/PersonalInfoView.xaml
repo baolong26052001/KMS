@@ -1,0 +1,258 @@
+﻿<UserControl x:Class="Insurance.View.PersonalInfoView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Insurance.View"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             mc:Ignorable="d" 
+             d:DesignHeight="768" d:DesignWidth="1024">
+    <UserControl.Background>
+        <ImageBrush ImageSource="/Images/bg.jpg"></ImageBrush>
+    </UserControl.Background>
+    <UserControl.FontFamily>
+        Exo
+    </UserControl.FontFamily>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition Height="650"></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="420"></ColumnDefinition>
+                <ColumnDefinition ></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Border Grid.Column="0" BorderBrush="#8B8989" BorderThickness="0 0 1 0" Margin="0 25 0 40" />
+            <Grid Grid.Column="0">
+                <StackPanel>
+                    <TextBlock Foreground="White" Text="Xác thực thông tin" FontSize="25.28" Margin="23 40"></TextBlock>
+                    <Button Width="360" Height="153" Margin="0 40 0 50" Background="{Binding InforButtonBackground}" BorderBrush="Transparent" Command="{Binding InformationClickCommand}">
+
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border
+                Background="{TemplateBinding Background}"
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}"
+                CornerRadius="10">
+
+                                    <ContentPresenter
+                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                </Border>
+                            </ControlTemplate>
+                        </Button.Template>
+
+
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Image Source="{Binding InforButtonImage}" Height="70" />
+                            <TextBlock Text="Thông tin cá nhân" 
+                   VerticalAlignment="Center" 
+                   FontSize="25.28" 
+                   Foreground="{Binding InforButtonTextColor}" 
+                   FontWeight="Bold" 
+                   Margin="45 0 0 0" />
+                        </StackPanel>
+                    </Button>
+                    <Button Width="360" Height="153" Margin="0 50" Background="{Binding ContactButtonBackground}" BorderBrush="Transparent" Command="{Binding ContactButtonClickCommand}">
+
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border 
+                Background="{TemplateBinding Background}" 
+                BorderBrush="{TemplateBinding BorderBrush}" 
+                BorderThickness="{TemplateBinding BorderThickness}" 
+                CornerRadius="10">
+
+                                    <ContentPresenter 
+                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                </Border>
+                            </ControlTemplate>
+                        </Button.Template>
+
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Image Source="{Binding ContactButtonImage}" Height="70" />
+                            <TextBlock Text="Thông tin liên lạc" 
+                   VerticalAlignment="Center" 
+                   FontSize="25.28" 
+                   Foreground="{Binding ContactButtonTextColor}" 
+                   FontWeight="Bold" 
+                   Margin="45 0 0 0" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
+            <Grid Grid.Column="1">
+                <StackPanel VerticalAlignment="Center" x:Name="Information_view" Visibility="{Binding InformationviewVisibility}">
+                    <Border BorderBrush="Transparent" CornerRadius="10" Height="550" Width="580" Background="White">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition Height="120"></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Border Grid.Row="0" BorderBrush="Black" BorderThickness="0 0 0 1" />
+                            <Border Grid.Row="1" BorderBrush="Black" BorderThickness="0 0 0 1" />
+                            <Border Grid.Row="2" BorderBrush="Black" BorderThickness="0 0 0 1" />
+                            <Border Grid.Row="3" BorderBrush="Black" BorderThickness="0 0 0 1" />
+                            <Border Grid.Row="4" BorderBrush="Black" BorderThickness="0 0 0 1" />
+
+                            <Grid Grid.Row="0">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20 0 0 0">
+                                    <TextBlock FontSize="25.28" Text="Họ tên: "></TextBlock>
+                                    <TextBlock FontSize="25.28" Text="{Binding FullName,UpdateSourceTrigger = PropertyChanged, Mode=OneWay}"></TextBlock>
+
+                                </StackPanel>
+
+                            </Grid>
+                            <Grid Grid.Row="1">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20 0 0 0">
+                                    <TextBlock FontSize="25.28" Text="Ngày sinh: "></TextBlock>
+                                    <TextBlock FontSize="25.28" Text="{Binding Birthday,UpdateSourceTrigger = PropertyChanged, Mode=OneWay}"></TextBlock>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0 0 20 0" Visibility="Visible">
+                                    <TextBlock FontSize="25.28" Text="Giới tính : "></TextBlock>
+                                    <TextBlock FontSize="25.28" Text="{Binding Gender}"></TextBlock>
+                                </StackPanel>
+                            </Grid>
+                            <Grid Grid.Row="5">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20 25 0 0">
+                                    <TextBlock FontSize="25.28" Text="Địa chỉ: "></TextBlock>
+                                    <TextBlock TextWrapping="Wrap" Width="450" FontSize="25.28" Text="{Binding Address,UpdateSourceTrigger = PropertyChanged, Mode=OneWay}"></TextBlock>
+                                </StackPanel>
+                            </Grid>
+                            <Grid Grid.Row="4">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20 0 0 0">
+                                    <TextBlock FontSize="25.28" Text="CCCD: "></TextBlock>
+                                    <TextBlock FontSize="25.28" Text="{Binding IDNum,UpdateSourceTrigger = PropertyChanged, Mode=OneWay}"></TextBlock>
+                                </StackPanel>
+                            </Grid>
+                            <Grid Grid.Row="3">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20 0 0 0">
+                                    <TextBlock FontSize="25.28" Text="Quận: "></TextBlock>
+                                    <TextBlock FontSize="25.28" Text="{Binding Ward,UpdateSourceTrigger = PropertyChanged, Mode=OneWay}"></TextBlock>
+                                </StackPanel>
+                            </Grid>
+                            <Grid Grid.Row="2">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20 0 0 0">
+                                    <TextBlock FontSize="25.28" Text="Thành phố: "></TextBlock>
+                                    <TextBlock FontSize="25.28" Text="{Binding City,UpdateSourceTrigger = PropertyChanged, Mode=OneWay}"></TextBlock>
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                    <Grid Margin="0 40 0 0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Button Height="58" Width="173" Grid.Column="0" FontSize="25.28" FontWeight="Bold" Foreground="White" Background="#0EAB00" HorizontalAlignment="Left" Margin="10 0 0 0" BorderBrush="Transparent" Visibility="Collapsed">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="10"></Setter>
+                                </Style>
+                            </Button.Resources>
+                            Quay lại
+                        </Button>
+
+                        <Button Height="58" Width="173" Grid.Column="1" FontSize="25.28" FontWeight="Bold" Foreground="White" Background="#0EAB00" HorizontalAlignment="Right" Margin="0 0 10 0" BorderBrush="Transparent" Command="{Binding ContactButtonClickCommand}">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="10"></Setter>
+                                </Style>
+                            </Button.Resources>
+                            Tiếp tục
+                        </Button>
+                    </Grid>
+
+                </StackPanel>
+            </Grid>
+            <Grid Grid.Column="1">
+                <StackPanel x:Name="Contact_View" Visibility="{Binding ContactViewVisibility}" VerticalAlignment="Center">
+                    <TextBlock Text="Email" FontSize="25.28" Margin="30 10" Foreground="White" />
+                    <!--<TextBox x:Name="Email" Background="Transparent" BorderBrush="#0EAB00" Height="94" Margin="30 10" VerticalContentAlignment="Center" Foreground="White" FontSize="25.28" Padding="20 0 0 0" >
+                        <TextBox.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="10"></Setter>
+                            </Style>
+                        </TextBox.Resources>
+                    </TextBox>-->
+                    <TextBox x:Name="Email" Background="Transparent" Margin="30 10" BorderBrush="#0EAB00" Height="94" VerticalContentAlignment="Center" Foreground="White" FontSize="25.28" Padding="20 0 0 0"
+                             Text="{Binding TBEmail, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                             ToolTip="1">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseEnter">
+                                <i:InvokeCommandAction Command="{Binding TextboxCommand}" CommandParameter="{Binding ElementName=Email}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                        <TextBox.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="10"></Setter>
+                            </Style>
+                        </TextBox.Resources>
+                    </TextBox>
+
+                    <TextBlock Text="Số điện thoại" FontSize="25.28" Margin="30 50 30 10" Foreground="White" />
+                    <!--<TextBox x:Name="Phone_num" Background="Transparent" BorderBrush="#0EAB00" Height="94" Margin="30 10" VerticalContentAlignment="Center" Foreground="White" FontSize="25.28" Padding="20 0 0 0" >
+                        <TextBox.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="10"></Setter>
+                            </Style>
+                        </TextBox.Resources>
+                    </TextBox>-->
+                    <TextBox x:Name="Phone_num" Background="Transparent" BorderBrush="#0EAB00" Height="94" Margin="30 10" VerticalContentAlignment="Center" Foreground="White" FontSize="25.28" Padding="20 0 0 0"
+                        Text="{Binding TBPhone, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                             ToolTip="2">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseEnter">
+                                <i:InvokeCommandAction Command="{Binding TextboxCommand}" CommandParameter="{Binding ElementName=Phone_num}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                        <TextBox.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="10"></Setter>
+                            </Style>
+                        </TextBox.Resources>
+                    </TextBox>
+
+
+
+                </StackPanel>
+                <!--Click="UploadFieldsButtonClick"-->
+
+                <Button Visibility="{Binding ContactViewVisibility}" Height="58" Width="173" Grid.Column="1" FontSize="25.28" FontWeight="Bold" Foreground="White" Background="#0EAB00" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0 0 10 1" BorderBrush="Transparent" 
+          Command="{Binding NextCommand}">
+                    <!-- Other Button properties -->
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="10"></Setter>
+                        </Style>
+                    </Button.Resources>
+                    Tiếp tục
+                </Button>
+            </Grid>
+            <Button Height="58" Width="173" Grid.Column="0" FontSize="25.28" FontWeight="Bold" Foreground="White" Background="#0EAB00" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="10 0 0 1" BorderBrush="Transparent" 
+ Command="{Binding BackCommand}" Visibility="{Binding VisibilityBackButton}">
+                <!-- Other Button properties -->
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="10"></Setter>
+                    </Style>
+                </Button.Resources>
+                Quay lại
+            </Button>
+        </Grid>
+        <Grid Grid.Row="2">
+        </Grid>
+
+
+    </Grid>
+</UserControl>

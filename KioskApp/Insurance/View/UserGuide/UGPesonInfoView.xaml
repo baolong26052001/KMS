@@ -1,0 +1,33 @@
+﻿<UserControl x:Class="Insurance.View.UGPesonInfoView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Insurance.View"
+             mc:Ignorable="d" 
+                         d:DesignHeight="768" d:DesignWidth="1024">
+    <UserControl.Background>
+        <SolidColorBrush Color="Transparent"/>
+    </UserControl.Background>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="650"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="80"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0" Margin="15 0">
+                <Image Source="/Images/UserGuide/PersonInfo.png"></Image>
+            </Grid>
+            <Grid Grid.Row="1">
+                <Button Command="{Binding BackCommand}"  VerticalAlignment="Center" HorizontalAlignment="Left" Content="Trở lại" Margin="15 0 15 0" Background="LimeGreen" Foreground="White" Style="{StaticResource bigButton}"/>
+                <Button Command="{Binding NextCommand}"  VerticalAlignment="Center" HorizontalAlignment="Right" Content="Tiếp tục" Margin="15 0 15 0" Background="LimeGreen" Foreground="White" Style="{StaticResource bigButton}"/>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>
+

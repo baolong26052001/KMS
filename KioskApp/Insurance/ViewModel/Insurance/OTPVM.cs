@@ -1,7 +1,10 @@
 ﻿using Insurance.Command;
+using Insurance.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
+using System.Net;
 using System.Printing;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +14,7 @@ using System.Windows.Threading;
 
 namespace Insurance.ViewModel
 {
-    class OTPVM:ViewModelBase
+    class OTPVM : ViewModelBase
     {
         public ICommand EnterCommand { get; set; }
         public ICommand BackCommand { get; set; }
@@ -22,61 +25,6 @@ namespace Insurance.ViewModel
         public ICommand ResendOTPCommand { get; set; }
 
         private DispatcherTimer timer;
-        private int timeRemaining;
-
-        public OTPVM()
-        {
-            EnterCommand = new RelayCommand((parameter) =>
-            {
-                MainWindowVM.Instance.CurrentView = new BeneficiaryAddVM();
-                MainWindowVM.Instance.setDefaultLayout();
-                MainWindowVM.Instance.setVisibilityHeader();
-            }, CanEnterCommandExecute);
-
-
-            BackCommand = new RelayCommand((parameter) =>
-            {
-                MainWindowVM.Instance.BackScreen();
-                MainWindowVM.Instance.setDefaultLayout();
-            });
-
-            CancelCommand = new RelayCommand((parameter) =>
-            {
-                MainWindowVM.Instance.CurrentView = new InsuranceHomeVM();
-                MainWindowVM.Instance.setDefaultLayout();
-            });
-
-            MainWindowVM.Instance.setBlankLayout();
-
-            NumberCommand = new RelayCommand((parameter) =>
-            {
-                AddToDisplay(parameter.ToString());
-            });
-
-            DeleteCommand = new RelayCommand((parameter) =>
-            {
-                DeleteFromDisplay();
-            });
-
-            ClearCommand = new RelayCommand((parameter) =>
-            {
-                ClearFromDisplay();
-            });
-
-            ResendOTPCommand = new RelayCommand((parameter) =>
-            {
-                //Logic OTP later
-
-                //Run timer
-                InitializeTimer();
-            },CanResendOTPCommandExecute);
-        
-            //Run timer
-         InitializeTimer();
-
-        }
-
-
 
         private int _timeRemaining;
         public int TimeRemaining
@@ -92,32 +40,33 @@ namespace Insurance.ViewModel
             }
         }
 
-        private void InitializeTimer()
+        private int otpStatus;
+        public int OtpStatus
         {
-            // Initialize timer with a tick interval of 1 second
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(1);
-            timer.Tick += Timer_Tick;
-
-            // Set the initial time remaining
-            TimeRemaining = 10; // or any initial value you prefer
-            timer.Start();
-        }
-
-        private void Timer_Tick(object sender, EventArgs e)
-        {
-            // Update the time remaining and stop the timer when it reaches 0
-            TimeRemaining--;
-            if (TimeRemaining == 0)
+            get { return otpStatus; }
+            set
             {
-                timer.Stop();
-                // Add Logic later: Enable resend OTP
-                //MessageBox.Show("OTP Expired");
+                if (otpStatus != value)
+                {
+                    otpStatus = value;
+                    OnPropertyChanged(nameof(OtpStatus));
+                }
             }
         }
 
-
-
+        private int buttonStatus;
+        public int ButtonStatus
+        {
+            get { return buttonStatus; }
+            set
+            {
+                if (buttonStatus != value)
+                {
+                    buttonStatus = value;
+                    OnPropertyChanged(nameof(ButtonStatus));
+                }
+            }
+        }
 
         private string _displayText1;
         public string DisplayText1
@@ -172,6 +121,104 @@ namespace Insurance.ViewModel
             }
         }
 
+        public OTPVM()
+        {
+            SendOTP_Email();
+            ButtonStatus = 1;
+            //OtpStatus = 0;
+
+            EnterCommand = new RelayCommand<object>((p) => { if (string.IsNullOrEmpty(DisplayText4)) return false; else return true; }, (p) =>
+            {
+                CompareOTP();
+            });
+
+
+            BackCommand = new RelayCommand<object>((p) => { return true; }, (p) =>
+            {
+                MainWindowVM.Instance.BackScreen();
+                MainWindowVM.Instance.setDefaultLayout();
+            });
+
+            CancelCommand = new RelayCommand<object>((p) => { return true; }, (p) =>
+            {
+                MainWindowVM.Instance.CurrentView = HomeVM.Instance;
+                MainWindowVM.Instance.setDefaultLayout();
+            });
+
+            MainWindowVM.Instance.setBlankLayout();
+
+            NumberCommand = new RelayCommand<object>((p) => { return true; }, (p) =>
+            {
+                AddToDisplay(p.ToString());
+            });
+
+            DeleteCommand = new RelayCommand<object>((p) => { return true; }, (p) =>
+            {
+                DeleteFromDisplay();
+            });
+
+            ClearCommand = new RelayCommand<object>((p) => { return true; }, (p) =>
+            {
+                ClearFromDisplay();
+            });
+
+            ResendOTPCommand = new RelayCommand<object>((p) => { return true; }, (p) =>
+            {
+                if (ButtonStatus == 1 || TimeRemaining == 0)
+                {
+                    timer.Stop();
+                    InitializeTimer();
+                    SendOTP_Email();
+                    ButtonStatus = -1;
+                    OtpStatus = 0;
+                }
+            });
+
+            //Run timer
+            InitializeTimer();
+
+        }
+
+
+
+        private void InitializeTimer()
+        {
+            // Initialize timer with a tick interval of 1 second
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(1);
+            timer.Tick += Timer_Tick;
+
+            // Set the initial time remaining
+            TimeRemaining = 59; // or any initial value you prefer
+            timer.Start();
+        }
+
+        private int elapsedSeconds = 0;
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            // Update the time remaining and stop the timer when it reaches 0
+            TimeRemaining--;
+            elapsedSeconds++;
+            if (TimeRemaining == 0)
+            {
+                timer.Stop();
+                ButtonStatus = -1;
+            }
+
+            // If 5 seconds have passed, set OTPStatus to 0
+            if (elapsedSeconds >= 5)
+            {
+                OtpStatus = 0;
+                elapsedSeconds = 0;
+            }
+        }
+
+
+
+
+
+
         private void AddToDisplay(string value)
         {
             if (DisplayText1 == null)
@@ -220,15 +267,69 @@ namespace Insurance.ViewModel
             DisplayText4 = null;
         }
 
-        private bool CanEnterCommandExecute(object parameter)
+        public static String to;
+        public string randomCode;
+
+        private async Task SendOTP_Email()
         {
-            // Return false if the DisplayTextbox4 is Empty
-            return !string.IsNullOrEmpty(DisplayText4);
+            await Task.Run(() =>
+            {
+                String from, pass, messageBody;
+                Random rand = new Random();
+                int randomNumber = rand.Next(10000);
+                randomCode = randomNumber.ToString("D4");
+                MailMessage message = new MailMessage();
+                to = UserModel.Instance.Email;
+                from = "davidle2804@gmail.com";
+                pass = "hvsj ywws lpwd acmz";
+                messageBody = "Your OTP is: " + randomCode;
+                message.To.Add(to);
+                message.From = new MailAddress(from);
+                message.Body = messageBody;
+                message.Subject = "ALM OTP Code";
+                SmtpClient smtp = new SmtpClient("smtp.gmail.com");
+                smtp.EnableSsl = true;
+                smtp.Port = 587;
+                smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+                smtp.Credentials = new NetworkCredential(from, pass);
+
+                try
+                {
+                    smtp.Send(message);
+                    //MessageBox.Show("Check your Email");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            });
         }
 
-        private bool CanResendOTPCommandExecute(object parameter)
+        private int CompareOTP()
         {
-            return TimeRemaining == 0;
+            //int status;
+
+            string enteredOTP = $"{DisplayText1}{DisplayText2}{DisplayText3}{DisplayText4}";
+            if (TimeRemaining > 0)
+            {
+                if (enteredOTP == randomCode)
+                {
+                    //MessageBox.Show("OTP is correct");
+                    MainWindowVM.Instance.CurrentView = new BeneficiaryAddVM();
+                    MainWindowVM.Instance.setDefaultLayout();
+                    MainWindowVM.Instance.setVisibilityHeader();
+                    MainWindowVM.Instance.VisibilityBtnHead = Visibility.Collapsed;
+                    OtpStatus = 1;
+                }
+                else
+                {
+                    //MessageBox.Show("OTP is Incorrect");
+                    OtpStatus = -1;
+                }
+            }
+
+
+            return OtpStatus;
         }
 
 

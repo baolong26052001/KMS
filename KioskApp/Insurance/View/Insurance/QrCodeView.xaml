@@ -16,15 +16,6 @@
             <RowDefinition Height="650"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <!--Header-->
-        <!--Logo-->
-        <Grid Grid.Row="0">
-            <TextBlock FontFamily="Bowlby One" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="40" Foreground="#0EAB00" Margin="15 0 0 0"> 
-ALM
-            </TextBlock>
-            <!---Cancel Button-->
-            <Button Command="{Binding CancelCommand}" Margin="0 0 15 0" Style="{StaticResource cancelButton}" Content="Cancel" VerticalAlignment="Center" HorizontalAlignment="Right"></Button>
-        </Grid>
 
         <Grid Grid.Row="1" Margin="15 0 0 0">
             <!--Define Row-->
@@ -42,15 +33,16 @@ ALM
                 </Grid.Background>
                 <!--QR Code-->
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <TextBlock FontSize="40px" Width="565" Height="100" Foreground="#000000" FontFamily="Exo2"  FontWeight="Bold" TextWrapping="Wrap" TextAlignment="Center" >Please scan the below QR Code for payment</TextBlock>
+                    <TextBlock FontSize="40px" Width="565" Height="100" Foreground="#000000" FontFamily="Exo2"  FontWeight="Bold" TextWrapping="Wrap" TextAlignment="Center" >Vui lòng quét mã QR để thanh toán </TextBlock>
                     <Image Width="278" Height="278" Source="/Images/QrCode.png" Margin="0 20 0 0"/>
                 </StackPanel>
             </Grid>
 
             <Grid Grid.Row="1">
-                <Button Command="{Binding BackCommand}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Content="Back" Style="{StaticResource bigButton}"/>
+                <Button Command="{Binding NextCommand}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="Tiếp tục" Margin="0 0 0 0" Background="LimeGreen" Foreground="White" Style="{StaticResource bigButton}"/>
+                <Button Command="{Binding BackCommand}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Content="Quay lại" Style="{StaticResource bigButton}"/>
             </Grid>
+           
         </Grid>
-
     </Grid>
 </UserControl>

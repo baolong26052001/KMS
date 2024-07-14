@@ -4,97 +4,207 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Insurance.View"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
              d:DesignHeight="768" d:DesignWidth="1024">
     <UserControl.Background>
         <ImageBrush ImageSource="/Images/bg.jpg"/>
     </UserControl.Background>
     <Grid>
-        <!--Define Row-->
-        <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition Height="650"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-        <!--Define Column-->
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="9*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="9*"/>
+        <Grid>
+            <!--Define Row-->
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="650"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <!--Define Column-->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="9*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="9*"/>
 
-        </Grid.ColumnDefinitions>
+            </Grid.ColumnDefinitions>
 
-        <!---Description-->
-        <Grid Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10 0 0 0">
-            <TextBlock FontSize="25px" Foreground="#FFFFFF" FontFamily="Exo" FontWeight="Bold">Insurance beneficiary information</TextBlock>
-        </Grid>
-
-        <!---Info Column 1-->
-        <StackPanel Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Left" VerticalAlignment="Center"  Margin="20 10 0 0" Width="460">
-            <!--Full Name-->
-            <TextBlock FontSize="30px" Foreground="#FFFFFF" FontFamily="Exo">Full name*</TextBlock>
-            <TextBox HorizontalAlignment="Left" Style="{StaticResource textBox}"/>
-            <Grid Height="100">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="2*"/>
-                </Grid.ColumnDefinitions>
-                <!--Date of birth-->
-                <StackPanel Grid.Column="0">
-                    <TextBlock FontSize="30px" Foreground="#FFFFFF" FontFamily="Exo">Date of birth*</TextBlock>
-                    <!--<TextBox Width="180" HorizontalAlignment="Left" Style="{StaticResource textBox}"/>-->
-                    <DatePicker Background="Transparent" Foreground="Black" BorderBrush="#0EAB00" BorderThickness="1" FontSize="14"/>
-                </StackPanel>
-                <!--Gender-->
-                <StackPanel Grid.Column="2">
-                    <TextBlock FontSize="30px" Foreground="#FFFFFF" FontFamily="Exo">Gender*</TextBlock>
-                    <Border CornerRadius="3" BorderThickness="2" BorderBrush="#0EAB00" Background="Transparent">
-                        <ComboBox  Padding="2" SelectedIndex="0">
-                            <ComboBoxItem Content="Male"/>
-                            <ComboBoxItem Content="Female"/>
-                            <ComboBoxItem Content="Others"/>
-                        </ComboBox>
-                    </Border>
-                </StackPanel>
-
+            <!---Description-->
+            <Grid Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10 0 0 0">
+                <TextBlock FontSize="25px" Foreground="#FFFFFF" FontFamily="Exo" FontWeight="Bold">Thông tin người mua</TextBlock>
             </Grid>
-            <!---Address-->
-            <TextBlock FontSize="30px" Foreground="#FFFFFF" FontFamily="Exo">Address*</TextBlock>
-            <TextBox HorizontalAlignment="Left" Style="{StaticResource textBox}"/>
-            <!---Occupation-->
-            <TextBlock FontSize="30px" Foreground="#FFFFFF" FontFamily="Exo">Occupation*</TextBlock>
-            <TextBox HorizontalAlignment="Left" Style="{StaticResource textBox}"/>
-        </StackPanel>
 
-        <!---Line to seperate Column 1 & 2-->
-        <Grid Grid.Row="1" Grid.Column="1">
-            <Line  X1="30"  X2="30" Y1="14" Y2="600"  Stroke="#8B8989" StrokeThickness="4"/>
-        </Grid>
+            <!---Info Column 1-->
+            <StackPanel Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Left" VerticalAlignment="Center"  Margin="20 0 0 0" Width="460">
+                <!--Full Name-->
+                <TextBlock FontSize="30px" Foreground="#FFFFFF" FontFamily="Exo">Họ và tên*</TextBlock>
+                <TextBox IsEnabled="False" HorizontalAlignment="Left" Style="{StaticResource textBox}"
+                     Text="{Binding FullName}" Margin="0,0,0,10"/>
+                <Grid Margin="0,10,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
 
-        <!--Info Column 2-->
-        <StackPanel Grid.Row="1" Grid.Column="2"  HorizontalAlignment="Left" VerticalAlignment="Center"   Margin="10 10 0 0" Width="460">
-            <!---ID Number-->
-            <TextBlock FontSize="30px" Foreground="#FFFFFF" FontFamily="Exo">ID number*</TextBlock>
-            <TextBox HorizontalAlignment="Left" Style="{StaticResource textBox}"/>
-            <!--Tax Number-->
-            <TextBlock FontSize="30px" Foreground="#FFFFFF" FontFamily="Exo">Tax number(optional)*</TextBlock>
-            <TextBox HorizontalAlignment="Left" Style="{StaticResource textBox}"/>
-            <!---Email-->
-            <TextBlock FontSize="30px" Foreground="#FFFFFF" FontFamily="Exo">Email*</TextBlock>
-            <TextBox HorizontalAlignment="Left" Style="{StaticResource textBox}"/>
-            <!---Phone number-->
-            <TextBlock FontSize="30px" Foreground="#FFFFFF" FontFamily="Exo">Phone number*</TextBlock>
-            <TextBox HorizontalAlignment="Left" Style="{StaticResource textBox}"/>
-        </StackPanel>
-        <!---Next Button-->
-        <Grid Grid.Row="1" Grid.Column="2" Margin="0 0 15 0">
-            <Button Command="{Binding NextCommand}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="Next" Margin="0 0 0 0" Background="LimeGreen" Foreground="White" Style="{StaticResource bigButton}"/>
-        </Grid>
-        <!---Back Button-->
-        <Grid Grid.Row="1" Grid.Column="0" Margin="15 0 0 0">
-            <Button Command="{Binding BackCommand}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Content="Back"  Margin="0 80 0 0" Background="LimeGreen" Foreground="White" Style="{StaticResource bigButton}"/>
-        </Grid>
+                    <!--Date of birth-->
+                    <StackPanel Grid.Column="0">
+                        <TextBlock FontSize="30px" Foreground="#FFFFFF" FontFamily="Exo">
+              Ngày sinh*
+                        </TextBlock>
 
+                        <DatePicker Style="{DynamicResource DatePickerStyle}"
+                                CalendarStyle="{DynamicResource DatePickerCalendarStyle}"
+                                Tag="{Binding DOB}"
+                                IsEnabled="{Binding IsEnabled}"/>
+
+                    </StackPanel>
+
+                    <!--Gender-->
+                    <StackPanel Grid.Column="2">
+                        <TextBlock FontSize="30px" Foreground="#FFFFFF" FontFamily="Exo">Giới tính*</TextBlock>
+                        <!--<ComboBox Style="{StaticResource ComboBoxStyle1}"
+                              Tag="{Binding Gender}"
+                              IsEnabled="False"
+                              >
+                        <ComboBoxItem Content="Nam"/>
+                        <ComboBoxItem Content="Nữ"/>
+                        -->
+                        <!--<ComboBoxItem Content="Others"/>-->
+                        <!--
+                    </ComboBox>-->
+                        <ComboBox Style="{StaticResource {x:Type ComboBox}}"
+                              Tag="{Binding Gender}"
+                              IsEnabled="False"
+                              >
+                            <ComboBoxItem Content="Nam"/>
+                            <ComboBoxItem Content="Nữ"/>
+                        </ComboBox>
+                    </StackPanel>
+
+                </Grid>
+
+                <!---Address-->
+                <TextBlock FontSize="30px" Foreground="#FFFFFF" FontFamily="Exo" Margin="0,10,0,0">Địa chỉ*</TextBlock>
+                <TextBox IsEnabled="False" HorizontalAlignment="Left" Style="{StaticResource textBox}"
+           Text="{Binding Address}" TextWrapping="Wrap" Margin="0,0,0,10"/>
+                <!--<TextBlock Text="{Binding Address}" Height="200" TextWrapping="Wrap"/>-->
+
+                <!---Occupation-->
+                <!--<TextBlock FontSize="30px" Foreground="#FFFFFF" FontFamily="Exo">Nghề nghiệp*</TextBlock>
+            <TextBox HorizontalAlignment="Left" Style="{StaticResource textBox}"
+                     Text="{Binding Occupation}"/>-->
+                <!--<TextBlock FontSize="30px" Foreground="#FFFFFF" FontFamily="Exo">Nghề nghiệp*</TextBlock>
+            <TextBox x:Name="tbOccupation" Style="{StaticResource textBox}" 
+                     Text="{Binding Occupation, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                     ToolTip="3">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseEnter">
+                        <i:InvokeCommandAction Command="{Binding TextboxCommand}" CommandParameter="{Binding ElementName=tbOccupation}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </TextBox>-->
+
+                <!---Occupation-->
+                <TextBlock FontSize="30px" Foreground="#FFFFFF" FontFamily="Exo" Margin="0,10,0,0">Nghề nghiệp*</TextBlock>
+                <ComboBox Style="{StaticResource {x:Type ComboBox}}"                     
+                          Tag="Nhấn vào để chọn"
+                          SelectedValue="{Binding Occupation}" 
+                          SelectedValuePath="Content" Margin="0,0,0,40"
+                          >
+                    <ComboBoxItem Content="Công nhân"/>
+                    <ComboBoxItem Content="Nhân viên văn phòng"/>
+                    <ComboBoxItem Content="Giáo viên"/>
+                    <ComboBoxItem Content="Khác"/>
+                </ComboBox>
+            </StackPanel>
+
+            <!---Line to seperate Column 1 & 2-->
+            <Grid Grid.Row="1" Grid.Column="1">
+                <Line  X1="30"  X2="30" Y1="14" Y2="600"  Stroke="#8B8989" StrokeThickness="4"/>
+            </Grid>
+
+            <!--Info Column 2-->
+            <StackPanel Grid.Row="1" Grid.Column="2"  HorizontalAlignment="Left" VerticalAlignment="Center"   Margin="10 0 0 0" Width="460">
+                <!---ID Number-->
+                <TextBlock FontSize="30px" Foreground="#FFFFFF" FontFamily="Exo">Số CCCD*</TextBlock>
+                <TextBox IsEnabled="False" HorizontalAlignment="Left" Style="{StaticResource textBox}"
+                     Text="{Binding IDNum}" Margin="0,0,0,10"/>
+                <!--Tax Number-->
+
+                <TextBlock FontSize="30px" Foreground="#FFFFFF" FontFamily="Exo" Padding="0,8,0,0">Mã số thuế(nếu có)*</TextBlock>
+                <TextBox x:Name="tbTax" Style="{StaticResource textBox}" 
+         Text="{Binding Tax, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+         ToolTip="5" Margin="0,0,0,9">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseEnter">
+                            <i:InvokeCommandAction Command="{Binding TextboxCommand}" CommandParameter="{Binding ElementName=tbTax}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </TextBox>
+
+                <!---Email-->
+                <!--<TextBlock FontSize="30px" Foreground="#FFFFFF" FontFamily="Exo">Email*</TextBlock>
+            <TextBox x:Name="tbEmail" Style="{StaticResource textBox}" 
+        Text="{Binding Email, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+        ToolTip="6">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseEnter">
+                        <i:InvokeCommandAction Command="{Binding TextboxCommand}" CommandParameter="{Binding ElementName=tbEmail}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </TextBox>-->
+                <TextBlock FontSize="30px" Foreground="#FFFFFF" FontFamily="Exo" Padding="0,10,0,0">Email*</TextBlock>
+                <TextBox IsEnabled="False" HorizontalAlignment="Left" Style="{StaticResource textBox}"
+            Text="{Binding Email}" Margin="0,0,0,10"/>
+
+                <!---Phone number-->
+                <!--<TextBlock FontSize="30px" Foreground="#FFFFFF" FontFamily="Exo">Số điện thoại*</TextBlock>
+            <TextBox x:Name="tbPhone" Style="{StaticResource textBox}" 
+           Text="{Binding PhoneNum, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+           ToolTip="7">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseEnter">
+                        <i:InvokeCommandAction Command="{Binding TextboxCommand}" CommandParameter="{Binding ElementName=tbPhone}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </TextBox>-->
+                <TextBlock FontSize="30px" Foreground="#FFFFFF" FontFamily="Exo" Margin="0,10,0,0">Số điện thoại*</TextBlock>
+                <TextBox IsEnabled="False" HorizontalAlignment="Left" Style="{StaticResource textBox}"
+            Text="{Binding PhoneNum}" Margin="0,0,0,40"/>
+
+            </StackPanel>
+            <!---Next Button-->
+            <Grid Grid.Row="1" Grid.Column="2" Margin="0 0 15 0">
+                <Button Command="{Binding NextCommand}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="Tiếp tục" Margin="0 0 0 0" Background="LimeGreen" Foreground="White" Style="{StaticResource bigButton}"/>
+            </Grid>
+            <!---Back Button-->
+            <Grid Grid.Row="1" Grid.Column="0" Margin="15 0 0 0">
+                <Button Command="{Binding BackCommand}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Content="Quay lại"  Margin="0 80 0 0" Background="LimeGreen" Foreground="White" Style="{StaticResource bigButton}"/>
+            </Grid>
+
+        </Grid>
+        <!--<Popup x:Name="autoLogoutPopup" IsOpen="{Binding _EmptyPopupVisible}" Placement="Center" StaysOpen="True" Height="288" Width="515" AllowsTransparency="True">
+            <Border Background="#34393B" BorderBrush="#0EAB00" BorderThickness="1" CornerRadius="20" >
+                <Grid HorizontalAlignment="Center">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0" VerticalAlignment="Center">
+                        <TextBlock FontSize="35" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                            TextAlignment="Center" TextWrapping="Wrap" Foreground="White" 
+                            Text="Vui lòng điền đầy đủ thông tin" Margin="0 20 0 0"/>
+                    </StackPanel>
+                    <Button Grid.Row="1" Command="{Binding ButtonPopupCommand}" Background="#0EAB00" BorderBrush="#0EAB00" Height="80" >
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="20"></Setter>
+                                <Setter Property="BorderThickness" Value="2"></Setter>
+                            </Style>
+                        </Button.Resources>
+                        <TextBlock FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center" 
+             Foreground="White" Text="Tiếp tục"/>
+                    </Button>
+                </Grid>
+            </Border>
+        </Popup>-->
     </Grid>
 </UserControl>

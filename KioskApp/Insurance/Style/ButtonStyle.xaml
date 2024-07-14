@@ -2,15 +2,15 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Style x:Key="cancelButton" TargetType="Button">
-        <Setter Property="Width" Value="137"></Setter>
-        <Setter Property="Height" Value="39"></Setter>
+        <Setter Property="Width" Value="150"></Setter>
+        <Setter Property="Height" Value="50"></Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
                     <Border CornerRadius="10" Background="Black">
                         <StackPanel Orientation="Horizontal">
-                            <Image Source="/images/cancel.png" Height="200" Width="20" Margin="20,0,0,0" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="1" FontSize="20" FontWeight="Bold" Foreground="#ffffff" 
+                            <Image Source="/images/cancel.png" Height="250" Width="20" Margin="20,0,0,0" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" FontSize="24" FontWeight="Bold" Foreground="#ffffff" 
                                    FontFamily="Exo 2" Text="{TemplateBinding Content}" VerticalAlignment="Center" Margin="08,0,0,0"/>
                         </StackPanel>
                     </Border>
@@ -33,6 +33,34 @@
         </Setter>
     </Style>
 
+    <Style x:Key="customButton" TargetType="Button">
+        <Setter Property="Width" Value="173"></Setter>
+        <Setter Property="Height" Value="80"></Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border CornerRadius="10" Background="#0EAB00">
+                        <TextBlock   FontSize="46" FontWeight="Bold" Foreground="White" FontFamily="Exo" Text="{TemplateBinding Content}" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="disableButton" TargetType="Button">
+        <Setter Property="Width" Value="173"></Setter>
+        <Setter Property="Height" Value="80"></Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border CornerRadius="10" Background="#FFFFFF">
+                        <TextBlock   FontSize="46" FontWeight="Bold" Foreground="#FF5B5A5A" FontFamily="Exo" Text="{TemplateBinding Content}" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="dashedButton" TargetType="Button">
         <Setter Property="Width" Value="{Binding Width}"/>
         <Setter Property="Height" Value="{Binding Height}"/>
@@ -49,7 +77,62 @@
         </Setter>
     </Style>
 
+    <Style x:Key="CustomCheckBoxStyle" TargetType="CheckBox">
+        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="FontFamily" Value="Exo"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Margin" Value="5"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CheckBox">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Column="0" Background="White" Width="40" Height="40" BorderThickness="4" BorderBrush="#0EAB00">
+                            <Path x:Name="CheckIcon" Data="M10,20 L15,25 L25,10" Margin="0 0 0 0" Stroke="Black" StrokeThickness="4" Visibility="Collapsed"/>
+                        </Border>
+                        <ContentPresenter Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="CheckIcon" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="#0ADB00"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
+    <Style x:Key="RoundedButtonStyle" TargetType="Button">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border CornerRadius="20" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="bigButtonUserguide" TargetType="Button">
+        <Setter Property="Width" Value="173"></Setter>
+        <Setter Property="Height" Value="58"></Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border CornerRadius="10" Background="#0EAB00">
+                        <TextBlock   FontSize="20" FontWeight="Bold" Foreground="White" FontFamily="Exo" Text="{TemplateBinding Content}" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
 
 </ResourceDictionary>

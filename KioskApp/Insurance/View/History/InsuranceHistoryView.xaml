@@ -1,0 +1,191 @@
+﻿<UserControl x:Class="Insurance.View.InsuranceHistoryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="768" d:DesignWidth="1024">
+    <UserControl.Background>
+        <ImageBrush ImageSource="/Images/bg.jpg"/>
+    </UserControl.Background>
+    
+    <UserControl.FontFamily>
+        Exo
+    </UserControl.FontFamily>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="650"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="425"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Left side with packages -->
+        <Grid Grid.Row="1" Margin="15,0,15,0" Height="650" VerticalAlignment="Top">
+
+            <TextBlock Foreground="#FFFFFF" FontFamily="Exo"  FontWeight="Bold" FontSize="26" >Lịch sử giao dịch</TextBlock>
+            <Grid HorizontalAlignment="Left" Height="535" Margin="30,60,0,0" VerticalAlignment="Top" Width="342">
+                <Button x:Name="Insurance" Style="{StaticResource customButton}" Content="Bảo hiểm" HorizontalAlignment="Center" Height="150" VerticalAlignment="Center" Width="342" Background="#FF0EAB00" Foreground="White" FontWeight="Bold" FontSize="36" Panel.ZIndex="-4" Margin="0,-421,0,0"/>
+                <Button x:Name="Loan" Style="{StaticResource disableButton}" Content="Vay tiền" HorizontalAlignment="Center" Height="150" VerticalAlignment="Center" Width="342" Background="White" Foreground="#FF5B5A5A" FontWeight="Bold" FontSize="36" Margin="0,-33,0,0"/>
+                <Button x:Name="Saving" Style="{StaticResource disableButton}" Content="Gửi tiết kiệm" HorizontalAlignment="Center" Height="150" VerticalAlignment="Center" Width="342" Background="White" Foreground="#FF5B5A5A" FontWeight="Bold" FontSize="36" Margin="0,351,0,0"/>
+            </Grid>
+
+        </Grid>
+        <Grid Grid.Row="1" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="220*"/>
+                <RowDefinition Height="361*"/>
+                <RowDefinition Height="69*"/>
+            </Grid.RowDefinitions>
+            <Line  X1="30"  X2="30" Y1="14" Y2="600"  Stroke="#8B8989" StrokeThickness="4" Margin="-46,10,596,0" Grid.RowSpan="2"/>
+        </Grid>
+
+        <Grid Grid.Row="1" Grid.Column="1" Margin="0,10,0,0">
+
+            <Border Background="#0EAB00" CornerRadius="10" Margin="0,22,10,60">
+                <StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.3*"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Grid Grid.Column="0">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding PackName}" Margin="29,10,0,0" FontSize="38" FontWeight="Bold" Foreground="White"/>
+                                    <Border CornerRadius="5" Background="White" Margin="15,0,0,15" Width="82" Height="18" VerticalAlignment="Bottom" BorderBrush="Transparent">
+                                        <Border.Effect>
+                                            <DropShadowEffect ShadowDepth="1" Opacity="0.25" BlurRadius="4"  Direction="40" />
+                                        </Border.Effect>
+                                        <StackPanel>
+                                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0 2 0 0" FontWeight="Bold" Foreground="#0EAB00" Visibility="{Binding ActiveVisibility }">Còn hiệu lực</TextBlock>
+                                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0 2 0 0" FontWeight="Bold" Foreground="Red" Visibility="{Binding ExprieVisibility}">Hết hạn</TextBlock>
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+                                <TextBlock Text="{Binding ContractId, StringFormat='Mã Hợp Đồng: {0}'}" Margin="29,0,5,0" FontWeight="Bold" Foreground="White" FontSize="20"/>
+                                <TextBlock Text="{Binding Transdate, StringFormat='Ngày Giao Dịch: {0}'}" Margin="29,0,5,0" FontWeight="Bold" Foreground="White" FontSize="20"/>
+                            </StackPanel>
+                        </Grid>
+                        <Grid Grid.Column="1">
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="Giá gói:" HorizontalAlignment="Right"  Margin="5,0,35,5" FontSize="35" FontWeight="Bold" Foreground="White" />
+                                <TextBlock Text="{Binding AnnualPay, StringFormat=' {0} VND'}" HorizontalAlignment="Right"  Margin="5,0,35,-16" FontStyle="Italic" FontSize="30" Foreground="White"/>
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+                    <Border Background="white" CornerRadius="10" Padding="15" Margin="20 5 20 20" Height="422">
+                        <StackPanel>
+                            <Grid Margin="10 2 0 10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="1.15*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" FontSize="18" FontWeight="Bold" Text="Họ và tên: " Foreground="Black"   />
+                                <TextBlock Grid.Column="1" FontSize="18" Text="{Binding FullName}" Foreground="Black"  HorizontalAlignment="Left"  />
+                            </Grid>
+
+
+                            <Grid Margin="10 2 0 10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="1.15*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" FontSize="18" FontWeight="Bold" Text="CCCD: " Foreground="Black"   />
+                                <TextBlock Grid.Column="1" FontSize="18" Text="{Binding IdenNumber}" Foreground="Black"  HorizontalAlignment="Left"  />
+                            </Grid>
+
+                            <Grid Margin="10 2 0 10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition  />
+                                    <ColumnDefinition Width="1.15*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" FontSize="18" FontWeight="Bold" Text="Số điện thoại: " Foreground="Black"   />
+                                <TextBlock Grid.Column="1" FontSize="18" Text="{Binding PhoneNum}" Foreground="Black"  HorizontalAlignment="Left"  />
+                            </Grid>
+
+                            <Grid Margin="10 2 0 10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition  />
+                                    <ColumnDefinition Width="1.15*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" FontSize="18" FontWeight="Bold" Text="Người thụ hưởng: " Foreground="Black"   />
+                                <TextBlock Grid.Column="1" FontSize="18" Text="{Binding BeneficiaryName}" Foreground="Black"  HorizontalAlignment="Left"  />
+                            </Grid>
+
+                            <Grid Margin="10 2 0 10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition  />
+                                    <ColumnDefinition Width="1.15*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" FontSize="18" FontWeight="Bold" Text="Loại bảo hiểm: " Foreground="Black"   />
+                                <TextBlock Grid.Column="1" FontSize="18" Text="{Binding TypeName}" Foreground="Black"  HorizontalAlignment="Left"  />
+                            </Grid>
+
+                            <Grid Margin="10 2 0 10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition  />
+                                    <ColumnDefinition Width="1.15*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" FontSize="18" FontWeight="Bold" Text="Điều khoản bảo hiểm: " Foreground="Black"  />
+                                <TextBlock Grid.Column="1" FontSize="18" Text="{Binding TermName}" Foreground="Black"  HorizontalAlignment="Left"  />
+                            </Grid>
+
+                            <Grid Margin="10 2 0 10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition  />
+                                    <ColumnDefinition Width="1.15*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" FontSize="18" FontWeight="Bold" Text="Phương thức thanh toán: " Foreground="Black"   />
+                                <TextBlock Grid.Column="1" FontSize="18" Text="{Binding PaymentMethod}" Foreground="Black"  HorizontalAlignment="Left" />
+                            </Grid>
+
+                            <Grid Margin="10 2 0 10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition  />
+                                    <ColumnDefinition Width="1.15*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" FontSize="18" FontWeight="Bold" Text="Tên kiosk: " Foreground="Black"   />
+                                <TextBlock Grid.Column="1" FontSize="18" Text="Kiosk 01" Foreground="Black"  HorizontalAlignment="Left"  />
+                            </Grid>
+
+                            <Grid Margin="10 2 0 10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="1.15*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" FontSize="18" FontWeight="Bold" Text="Khu vực: " Foreground="Black" />
+                                <TextBlock Grid.Column="1" FontSize="18" Text="Saigon" Foreground="Black"  HorizontalAlignment="Left" />
+                            </Grid>
+
+                            <Grid Margin="10 2 0 10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition  />
+                                    <ColumnDefinition Width="1.15*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" FontSize="18" FontWeight="Bold" Text="Ngày đăng kí: " Foreground="Black"   />
+                                <TextBlock Grid.Column="1" FontSize="18" Text="{Binding ResDate}" Foreground="Black"  HorizontalAlignment="Left" />
+                            </Grid>
+
+                            <Grid Margin="10 2 0 10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition  />
+                                    <ColumnDefinition Width="1.15*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" FontSize="18" FontWeight="Bold" Text="Ngày hết hạn: " Foreground="Black"/>
+                                <TextBlock Grid.Column="1" FontSize="18" Text="{Binding ExpDate}" Foreground="Black"  HorizontalAlignment="Left" />
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Border>
+        </Grid>
+        <Grid Grid.Row="1" Grid.Column="0" Margin="44,0,0,0">
+            <Button Command="{Binding BackCommand}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Content="Quay lại" Background="LimeGreen" Foreground="White" Style="{StaticResource bigButton}" Height="48"/>
+        </Grid>
+    </Grid>
+</UserControl>

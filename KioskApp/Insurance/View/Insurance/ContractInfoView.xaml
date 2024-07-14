@@ -16,57 +16,164 @@
             <RowDefinition Height="650"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-      
-        
+
+
         <Grid Grid.Row="1">
-            <TextBlock  Margin="15,0,0,0" FontSize="25.28px" Foreground="#FFFFFF" FontFamily="Exo"  FontWeight="Bold" Grid.ColumnSpan="2">Insurance</TextBlock>
+            <!--<TextBlock  Margin="15,0,0,0" FontSize="25.28px" Foreground="#FFFFFF" FontFamily="Exo"  FontWeight="Bold" Grid.ColumnSpan="2">Insurance</TextBlock>-->
+            <Border Width="900" Height="570" Background="#0EAB00" VerticalAlignment="Top" CornerRadius="10"  >
 
-            <Border VerticalAlignment="Center" Height="514" Width="931" Background="White" Margin="0 0 0 50" CornerRadius="10" Padding="5">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <!-- For the header -->
-                        <RowDefinition Height="*"/>
-                        <!-- For the scrollable text content -->
-                        <RowDefinition Height="Auto"/>
-                        <!-- For the buttons at the bottom -->
-                    </Grid.RowDefinitions>
+                <Border VerticalAlignment="Center" Height="500" Width="820" Background="White" CornerRadius="10" Padding="5">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
 
-                    <!-- Header with a colored background -->
-                    <TextBlock FontFamily="Exo" Text="Please read our Insurance policy below please" Foreground="Black" FontWeight="Bold" FontSize="38" Padding="10" HorizontalAlignment="Center"/>
+                        <TextBlock FontFamily="Exo" Text="Vui lòng đọc kĩ các cam kết dưới đây" Foreground="Black" FontWeight="Bold" FontSize="38" Padding="10" HorizontalAlignment="Center"/>
 
-                    <!-- Scrollable content area -->
-                    <ScrollViewer Grid.Row="1" Padding="10" VerticalScrollBarVisibility="Auto">
-                        <TextBlock  Width="663"  TextWrapping="Wrap" Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum vehicula ornare purus a vehicula. Sed condimentum orci sed arcu sollicitudin posuere. Integer lobortis eget metus nec euismod. Aliquam rhoncus vulputate blandit. In faucibus ipsum libero, vel accumsan lorem mollis euismod. Nulla vel porta purus. Integer iaculis dictum pharetra. Praesent porttitor magna gravida mauris ullamcorper venenatis. Donec suscipit eros euismod, dapibus nunc et, viverra augue. Duis sed tortor dui.
+                        <ScrollViewer Visibility="{Binding VisibilityInsurancePolicy}" 
+                                  PanningMode="Both" Grid.Row="1"
+                                  Padding="10" VerticalScrollBarVisibility="Hidden" Width="700">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
 
-Ut orci risus, maximus a rhoncus x`at, egestas eu sem. 
-                                    
-                                    Vestibulum eleifend enim eu odio consectetur pharetra ut convallis nisi. In faucibus sapien sed facilisis varius. Integer eu scelerisque magna, ullamcorper interdum justo. Nam nec elit ultrices arcu elementum lacinia ac nec nisl. 
-                                    
-                                    
-                                    Integer lacus mauris, porta at elit ut, finibus fermentum ex. Proin et placerat urna. Vivamus quis fringilla nibh. Quisque scelerisque nibh nec mollis scelerisque. Pellentesque tincidunt rhoncus odio, nec aliquet nibh imperdiet at. Maecenas nec urna mattis, viverra libero eget, ullamcorper lacus. Sed diam justo, convallis in justo ac, facilisis tempus dolor. Integer id vulputate nunc. Sed congue tempor vestibulum.
+                                <Border Grid.Row="0" CornerRadius="10" 
+                                    Background="#FFFFFF" BorderThickness="5" 
+                                    BorderBrush="Transparent" HorizontalAlignment="Center">
+                                    <RichTextBox FontFamily="Exo" FontSize="20" IsReadOnly="True" 
+                                             BorderBrush="Transparent" BorderThickness="2"
+                                             VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden" IsEnabled="False">
+                                        <FlowDocument>
+                                            <Paragraph TextAlignment="Justify">
+                                                <Run Text="1. Tôi/chúng tôi cam đoan rằng hiện tại tôi/chúng tôi hoàn toàn khỏe mạnh; không bị bệnh thần kinh, tâm thần, phong; không trong thời gian điều trị bệnh tật, thương tật; không bị thương tật/tàn tật vĩnh viễn từ 50% trở lên."/>
+                                                <LineBreak/>
+                                                <Run Text="2. Tôi/chúng tôi xác nhận rằng các thông tin nêu trên là đầy đủ và xác thực theo sự hiểu biết cao nhất của tôi/chúng tôi và sẽ thông báo ngay cho Bảo Việt về bất kỳ sự thay đổi nào có liên quan. Tôi/chúng tôi xác nhận đã được tư vấn viên tư vấn và đã hiểu các nội dung tại GYCBH, và đồng ý rằng GYCBH này cùng với việc đóng đầy đủ phí bảo hiểm sẽ làm cơ sở cho Hợp đồng bảo hiểm giữa tôi/chúng tôi và Bảo Việt và chấp nhận các điều kiện bảo hiểm quy định tại Hợp đồng bảo hiểm."/>
+                                                <LineBreak/>
+                                                <Run Text="3. Tôi/chúng tôi đồng ý rằng, trường hợp tôi/chúng tôi không thực hiện trách nhiệm khai báo trung thực và đầy đủ mọi thông tin, Bảo Việt có toàn quyền giảm trách nhiệm toàn bộ hoặc một phần (mức chi trả tối đa đến 70% số tiền bồi thường phát sinh thuộc phạm vi bảo hiểm theo đánh giá của Bảo Việt đối với từng trường hợp cụ thể) đối với khiếu nại bồi thường của Hợp đồng này. Nếu việc không khai báo nhằm mục đích trục lợi bảo hiểm, Bảo Việt có quyền hủy/vô hiệu hóa Hợp đồng bảo hiểm ngay từ ngày bắt đầu có hiệu lực. Bảo Việt hoặc người đại diện của Bảo Việt được quyền thay mặt Người được bảo hiểm tiếp cận với bên thứ ba bao gồm nhưng không giới hạn ở các nhân viên y tế, bác sỹ để thu thập các thông tin cần thiết trong việc đánh giá tình trạng sức khỏe của người được bảo hiểm."/>
+                                            </Paragraph>
+                                        </FlowDocument>
+                                    </RichTextBox>
+                                </Border>
+                                <CheckBox Grid.Row="1" Content="Tôi đồng ý" 
+                                      Style="{StaticResource CustomCheckBoxStyle}" 
+                                      IsChecked="{Binding IsChecked, Mode=TwoWay}"
+                                      Command="{Binding CheckBoxCommand}"
+                                      VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10"/>
+                            </Grid>
+                        </ScrollViewer>
 
-Cras consectetur luctus turpis in efficitur. 
-                                   
-                                    Proin sed dui velit. Aliquam erat volutpat. Duis eu tempor elit, nec dapibus felis. Etiam congue est justo, vitae molestie massa cursus eu. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Aliquam vitae mauris facilisis, fermentum diam ac, auctor lectus. Nullam ac dui a tellus laoreet dapibus. Praesent eleifend iaculis quam rutrum volutpat. Nullam a elementum justo, a placerat dui. Etiam id scelerisque nisi. Nunc accumsan orci vel imperdiet finibus. Proin ac sodales est, sit amet elementum felis. Suspendisse eget tempus enim, ultrices volutpat dolor.
+                        <ScrollViewer Visibility="{Binding VisibilityLoanPolicy}" 
+                       PanningMode="Both" Grid.Row="1"
+                       Padding="10" VerticalScrollBarVisibility="Hidden" Width="700">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <Border Grid.Row="0" CornerRadius="10" 
+                         Background="#FFFFFF" BorderThickness="5" 
+                         BorderBrush="Transparent" HorizontalAlignment="Center">
+                                    <RichTextBox FontFamily="Exo" FontSize="20" IsReadOnly="True" 
+                                  BorderBrush="Transparent" BorderThickness="2"
+                                  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden" IsEnabled="False">
+                                        <FlowDocument>
+                                            <Paragraph TextAlignment="Justify">
+                                                <Run Text="Loan ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."/>
+                                                <LineBreak/>
+                                                <Run Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."/>
+                                                <LineBreak/>
+                                                <Run Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."/>
+                                            </Paragraph>
+                                        </FlowDocument>
+                                    </RichTextBox>
+                                </Border>
+                                <CheckBox Grid.Row="1" Content="Tôi đồng ý" 
+                           Style="{StaticResource CustomCheckBoxStyle}" 
+                           IsChecked="{Binding IsChecked, Mode=TwoWay}"
+                           Command="{Binding CheckBoxCommand}"
+                           VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10"/>
+                            </Grid>
+                        </ScrollViewer>
+
+                        <ScrollViewer Visibility="{Binding VisibilitySavingPolicy}" 
+                       PanningMode="Both" Grid.Row="1"
+                       Padding="10" VerticalScrollBarVisibility="Hidden" Width="700">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <Border Grid.Row="0" CornerRadius="10" 
+                         Background="#FFFFFF" BorderThickness="5" 
+                         BorderBrush="Transparent" HorizontalAlignment="Center">
+                                    <RichTextBox FontFamily="Exo" FontSize="20" IsReadOnly="True" 
+                                  BorderBrush="Transparent" BorderThickness="2"
+                                  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden" IsEnabled="False">
+                                        <FlowDocument>
+                                            <Paragraph TextAlignment="Justify">
+                                                <Run Text="Saving Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."/>
+                                                <LineBreak/>
+                                                <Run Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."/>
+                                                <LineBreak/>
+                                                <Run Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."/>
+                                            </Paragraph>
+                                        </FlowDocument>
+                                    </RichTextBox>
+                                </Border>
+                                <CheckBox Grid.Row="1" Content="Tôi đồng ý" 
+                           Style="{StaticResource CustomCheckBoxStyle}" 
+                           IsChecked="{Binding IsChecked, Mode=TwoWay}"
+                           Command="{Binding CheckBoxCommand}"
+                           VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10"/>
+                            </Grid>
+                        </ScrollViewer>
 
 
-Fusce rutrum vel leo vitae elementum. Quisque eu luctus elit. Fusce varius, nunc ultricies suscipit vehicula, mi eros tristique orci, eu blandit nulla lectus vel ligula. Sed lobortis purus vel dignissim mattis. Fusce laoreet est maximus nisi lobortis, cursus fringilla elit aliquam. Proin turpis sapien, tincidunt sed gravida sed, pellentesque non ipsum. Etiam non euismod metus.
+                    </Grid>
+                </Border>
 
-Vivamus mattis, ex id vehicula iaculis, libero ex pulvinar tortor, eu gravida sapien ante eu enim. Quisque nisi erat, scelerisque vel nulla in, ultrices fermentum odio. Proin in mauris ut sem commodo ultrices. Vivamus vitae magna eleifend, pellentesque enim eget, pharetra arcu. Nullam et rutrum lorem. Quisque placerat quis eros ut pulvinar. Fusce malesuada nunc in ipsum imperdiet dictum. Proin quis lacus in leo sagittis finibus eget quis tellus. Nam et tortor massa. Nam feugiat consectetur lectus ac molestie. Vestibulum ac tempor eros. Morbi id elit lobortis, vestibulum tellus ac, faucibus justo. Nulla at dui id risus commodo porta non at massa. Donec erat dolor, vulputate ac tellus non, pharetra egestas tortor. Ut placerat accumsan interdum. 
-                               x Praesent varius lacus non molestie eleifend." Foreground="Black" FontSize="15"/>
-                    </ScrollViewer>
-
-
-                </Grid>
             </Border>
 
+
             <!-- Buttons at the bottom -->
-            <Button Command="{Binding BackCommand}" VerticalAlignment="Bottom" Margin="15 0 0 0" HorizontalAlignment="Left" Content="Back" Style="{StaticResource bigButton}"/>
-            <Button Command="{Binding AgreeCommand}" VerticalAlignment="Bottom" Margin="0 0 15 0" HorizontalAlignment="Right" Content="Agree" Style="{StaticResource bigButton}"/>
+            <Button Command="{Binding BackCommand}" VerticalAlignment="Bottom" Margin="15 0 0 0" HorizontalAlignment="Left" Content="Quay lại" Style="{StaticResource bigButton}"/>
+            <Button Command="{Binding AgreeCommand}" VerticalAlignment="Bottom" Margin="0 0 15 0" 
+                    HorizontalAlignment="Right" Visibility="{Binding NextVisibility}"
+                    Content="Tiếp tục" Style="{StaticResource bigButton}"/>
 
         </Grid>
 
+        <Popup x:Name="autoLogoutPopup" IsOpen="{Binding _IsCheckedPopupVisible}" Placement="Center" StaysOpen="True" Height="288" Width="515" AllowsTransparency="True">
+            <Border Background="#34393B" BorderBrush="#0EAB00" BorderThickness="1" CornerRadius="20" >
+                <Grid HorizontalAlignment="Center">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel VerticalAlignment="Center" Grid.Row="0">
+                        <TextBlock FontSize="35" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                     TextAlignment="Center" TextWrapping="Wrap" Foreground="White" 
+                     Text="Vui lòng tích vào ô đồng ý" Margin="0 20 0 0"/>
+                    </StackPanel>
+                    <Button Grid.Row="1" Command="{Binding ButtonPopupCommand}" Background="#0EAB00" BorderBrush="#0EAB00" Height="80" >
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="20"></Setter>
+                                <Setter Property="BorderThickness" Value="2"></Setter>
+                            </Style>
+                        </Button.Resources>
+                        <TextBlock FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center" 
+      Foreground="White" Text="Tiếp tục"/>
+                    </Button>
+                </Grid>
+            </Border>
+        </Popup>
 
     </Grid>
 </UserControl>

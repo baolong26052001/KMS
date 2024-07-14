@@ -1,9 +1,11 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:vm="clr-namespace:Insurance.ViewModel"
-                    xmlns:v="clr-namespace:Insurance.View" 
+                    xmlns:v="clr-namespace:Insurance.View"
+		            xmlns:vk="clr-namespace:Insurance.VirtualKeyboard"
+                    xmlns:vkvm="clr-namespace:Insurance.VirtualKeyboard"  
                     xmlns:insurance="clr-namespace:Insurance">
-
+    
     <DataTemplate DataType="{x:Type vm:MainWindowVM}">
         <insurance:MainWindow/>
     </DataTemplate>
@@ -11,25 +13,55 @@
     <DataTemplate DataType="{x:Type vm:WelcomeVM}">
         <v:WelcomeView/>
     </DataTemplate>
-    
+
     <DataTemplate DataType="{x:Type vm:VerifyIDVM}">
         <v:VerifyIDView/>
+    </DataTemplate>
+
+    <!--<DataTemplate DataType="{x:Type vm:VerifyIDBackVM}">
+        <v:VerifyIDBack/>
+    </DataTemplate>-->
+
+    <DataTemplate DataType="{x:Type vm:VerifyFaceIDVM}">
+        <v:VerifyFaceIDView/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:VerifyIDBackVM}">
+        <v:VerifyIDBack></v:VerifyIDBack>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:RegisterSuccessVM}">
+        <v:RegisterSuccessView/>
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type vm:HomeVM}">
         <v:HomeView/>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type vm:InsuranceHomeVM}">
-        <v:InsuranceHomeView/>
+    <!--<DataTemplate DataType="{x:Type vm:PersonalInfoVM.Instance}">
+        <v:PersonalInfoView/>
+    </DataTemplate>-->
+    <DataTemplate DataType="{x:Type vm:PersonalInfoVM}">
+        <v:PersonalInfoView></v:PersonalInfoView>
     </DataTemplate>
-	
-    <DataTemplate DataType="{x:Type vm:HealthPackageVM}">
-        <v:HealthPackageView/>
+    <DataTemplate DataType="{x:Type vm:InsuranceProviderVM}">
+        <v:InsuranceProviderView/>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type vm:AccidentPackageVM}">
-        <v:AccidentPackageView/>
+    <DataTemplate DataType="{x:Type vm:BaoVietVM}">
+        <v:BaoVietHomeView/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:AnBinhYenVuiVM}">
+        <v:AnBinhYenVuiView/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:AnGiaVM}">
+        <v:AnGiaView/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:AnGiaPackVM}">
+        <v:AnGiaPackView/>
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type vm:BuyerInformationVM}">
@@ -79,11 +111,83 @@
     <DataTemplate DataType="{x:Type vm:VirtualNumpadVM}">
         <v:VirtualNumpadView/>
     </DataTemplate>
-   
-    <DataTemplate DataType="{x:Type vm:VirtualKeyboardVM}">
+
+    <!--<DataTemplate DataType="{x:Type vm:VerifyFaceID_SU_VM}">
+        <v:VerifyFaceID_SU_View/>
+    </DataTemplate>-->
+    
+    <!--<DataTemplate DataType="{x:Type vm:VirtualKeyboardVM}">
         <v:VirtualKeyboardView/>
+    </DataTemplate>-->
+
+    <DataTemplate DataType="{x:Type vkvm:VirtualKeyboardVM}">
+        <vk:VirtualKeyboardView/>
     </DataTemplate>
 
+    <DataTemplate DataType="{x:Type vm:PopUpVM}">
+        <v:PopUpWindow/>
+    </DataTemplate>
 
+    <!---Loan-->
+    <DataTemplate DataType="{x:Type vm:SelectLoanVM}">
+        <v:SelectLoanView/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:EnterLoanAmountVM}">
+        <v:EnterLoanAmountView/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:LoanTermVM}">
+        <v:LoanTermView/>
+    </DataTemplate>
+    
+    
+    <!---Pay Loan-->
+    <DataTemplate DataType="{x:Type vm:PayHomeVM}">
+        <v:PayHomeView/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:LoanPaymentVM}">
+        <v:LoanPaymentView/>
+    </DataTemplate>
+
+    <!---History-->
+    <DataTemplate DataType="{x:Type vm:InsuranceTransactionVM}">
+        <v:InsuranceTransactionView/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:InsuranceHistoryVM}">
+        <v:InsuranceHistoryView/>
+    </DataTemplate>
+    <!--Withdraw-->
+    <DataTemplate DataType="{x:Type vm:ListWithdrawVM}">
+        <v:ListWithdrawView/>
+    </DataTemplate>
+    
+    <!--UserGuide-->
+    <DataTemplate DataType="{x:Type vm:FaceRecogStatusLoginVM}">
+        <v:FaceRecogStatusLoginView/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type vm:UGFaceRecog_SUStatusVM}">
+        <v:UGFaceRecog_SUStatusView/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type vm:UGFaceRecog_SUVM}">
+        <v:UGFaceRecog_SUView/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type vm:UGPesonInfoVM}">
+        <v:UGPesonInfoView/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type vm:UGSuccessSUVM}">
+        <v:UGSuccessSUView/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type vm:UGVerifyIDVM}">
+        <v:UGVerifyIDView/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type vm:UserGuideVM}">
+        <v:UserGuideView/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type vm:UserGuildeFaceRecogVM}">
+        <v:UserGuildeFaceRecogView/>
+    </DataTemplate>
 
 </ResourceDictionary>

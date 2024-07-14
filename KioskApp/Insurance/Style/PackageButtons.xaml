@@ -2,13 +2,9 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Style x:Key="PackageButton" TargetType="Button">
-        <!--<Setter Property="Background" Value="#0EAB00"/>
-            <Setter Property="Foreground" Value="White"/>-->
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="HorizontalAlignment" Value="Left"/>
         <Setter Property="Margin" Value="0 14 0 0"/>
-        <!--<Setter Property="Padding" Value="10"/>-->
-        <!--<Setter Property="FontSize" Value="18"/>-->
         <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="Width" Value="367"/>
         <Setter Property="Height" Value="75"/>
@@ -16,9 +12,15 @@
 
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border CornerRadius="10" Background="White">
-                        <TextBlock FontSize="24"  Foreground="black" FontWeight="Bold" FontFamily="Exo" Text="{TemplateBinding Content}" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
+                    <Border x:Name="buttonBorder" CornerRadius="10" Background="White">
+                        <TextBlock x:Name="buttonText" FontSize="24"  Foreground="black" FontWeight="Bold" FontFamily="Exo" Text="{TemplateBinding Content}" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
                     </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsFocused" Value="True">
+                            <Setter TargetName="buttonBorder" Property="Background" Value="#0EAB00"/>
+                            <Setter TargetName="buttonText" Property="Foreground" Value="White"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

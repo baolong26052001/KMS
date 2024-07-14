@@ -18,7 +18,7 @@
 
         <Grid Grid.Row="1">
             <StackPanel>
-                <TextBlock Text="Select your bank account:" Foreground="White" FontWeight="Bold" FontSize="24" VerticalAlignment="Center" FontFamily="Exo" Padding="0" Margin="15 0 0 0"/>
+                <TextBlock Text="Chọn tài khoản ngân hàng:" Foreground="White" FontWeight="Bold" FontSize="24" VerticalAlignment="Center" FontFamily="Exo" Padding="0" Margin="15 0 0 0"/>
                 <Border Margin="0 26 0 0" Background="#A1CCAD" Width="957px" Height="146" VerticalAlignment="Top" CornerRadius="10">
                     <Grid Margin="52 0 0 0">
                         <Grid.ColumnDefinitions>
@@ -37,8 +37,8 @@
                 <Rectangle Margin="0 47 0 50" Fill="#FFFFFF" Width="957" Height="1" >
                 </Rectangle>
             </StackPanel>
-            <Button Command="{Binding AgreeCommand}" Content="Agree to pay"  Style="{StaticResource bigButton}" Width="956" Height="85" />
-            <Button Command="{Binding BackCommand}" Content="Back" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="15 0 0 0" Style="{StaticResource bigButton}"></Button>
+            <Button Command="{Binding AgreeCommand}" Content="Đồng ý thanh toán"  Style="{StaticResource bigButton}" Width="956" Height="85" />
+            <Button Command="{Binding BackCommand}" Content="Quay lại" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="15 0 0 0" Style="{StaticResource bigButton}"></Button>
         </Grid>
 
     </Grid>

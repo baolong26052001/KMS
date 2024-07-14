@@ -29,9 +29,9 @@
 
             <!---Column 1-->
             <Grid VerticalAlignment="Top" Margin="0 20 0 0" Grid.Column="0" Height="540" Width="463">
-                <TextBlock Margin="45 0 0 0" Foreground="#FFFFFF" FontFamily="Exo" FontSize="20" FontWeight="Bold" VerticalAlignment="Top" HorizontalAlignment="Left" >Denominations</TextBlock>
+                <TextBlock Margin="45 0 0 0" Foreground="#FFFFFF" FontFamily="Exo" FontSize="32" FontWeight="Bold" VerticalAlignment="Top" HorizontalAlignment="Left" >Mệnh giá</TextBlock>
 
-                <TextBlock Margin="0 0 75 0" Foreground="#FFFFFF" FontFamily="Exo" FontSize="20" FontWeight="Bold" VerticalAlignment="Top" HorizontalAlignment="Right">Quantity</TextBlock>
+                <TextBlock Margin="0 0 75 0" Foreground="#FFFFFF" FontFamily="Exo" FontSize="32" FontWeight="Bold" VerticalAlignment="Top" HorizontalAlignment="Right">Số lượng</TextBlock>
 
                 <Border Background="Transparent" CornerRadius="10 10 10 10" BorderBrush="#0EAB00"  Height="447" BorderThickness="2">
                     <Grid>
@@ -45,7 +45,7 @@
                             <StackPanel  Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="/Images/CashDeposit/50k.png" Width="142" Height="64" Margin="37 0 0 0"/>
                                 <Rectangle  HorizontalAlignment="Right" VerticalAlignment="Stretch" Fill="#0EAB00" Width="3" Margin=" 50 0 100 0" />
-                                <TextBox IsReadOnly="True" Text="{Binding BankNote1}"  FontSize="20" FontWeight="Bold" FontFamily="Exo"  VerticalAlignment="Center"  Foreground="#FFFFFF"  BorderBrush="Transparent" BorderThickness="2"  Background="Transparent"/>
+                                <TextBox IsReadOnly="True" Text="{Binding BankNote1}"  FontSize="25" FontWeight="Bold" FontFamily="Exo"  VerticalAlignment="Center"  Foreground="#FFFFFF"  BorderBrush="Transparent" BorderThickness="2"  Background="Transparent"/>
                             </StackPanel>
                         </Border>
 
@@ -53,7 +53,7 @@
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="/Images/CashDeposit/100k.png" Width="142" Height="64" Margin="37 0 0 0"/>
                                 <Rectangle  HorizontalAlignment="Right" VerticalAlignment="Stretch" Fill="#0EAB00" Width="3" Margin=" 50 0 100 0" />
-                                <TextBox IsReadOnly="True" Text="{Binding BankNote2}"  FontSize="20" FontWeight="Bold" FontFamily="Exo"  VerticalAlignment="Center"  Foreground="#FFFFFF"  BorderBrush="Transparent" BorderThickness="2"  Background="Transparent"/>
+                                <TextBox IsReadOnly="True" Text="{Binding BankNote2}"  FontSize="25" FontWeight="Bold" FontFamily="Exo"  VerticalAlignment="Center"  Foreground="#FFFFFF"  BorderBrush="Transparent" BorderThickness="2"  Background="Transparent"/>
                             </StackPanel>
                         </Border>
 
@@ -61,30 +61,43 @@
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="/Images/CashDeposit/200k.png" Width="142" Height="64" Margin="37 0 0 0"/>
                                 <Rectangle  HorizontalAlignment="Right" VerticalAlignment="Stretch" Fill="#0EAB00" Width="3" Margin=" 50 0 100 0" />
-                                <TextBox IsReadOnly="True" Text="{Binding BankNote3}"   FontSize="20" FontWeight="Bold" FontFamily="Exo"  VerticalAlignment="Center"  Foreground="#FFFFFF"  BorderBrush="Transparent" BorderThickness="2"  Background="Transparent"/>
+                                <TextBox IsReadOnly="True" Text="{Binding BankNote3}"   FontSize="25" FontWeight="Bold" FontFamily="Exo"  VerticalAlignment="Center"  Foreground="#FFFFFF"  BorderBrush="Transparent" BorderThickness="2"  Background="Transparent"/>
                             </StackPanel>
                         </Border>
                         <Border CornerRadius="0 0 7.2 7.2" Grid.Row="3" BorderBrush="#0EAB00" BorderThickness="2" Background="Transparent">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="/Images/CashDeposit/500k.png" Width="142" Height="64" Margin="37 0 0 0"/>
                                 <Rectangle  HorizontalAlignment="Right" VerticalAlignment="Stretch" Fill="#0EAB00" Width="3" Margin=" 50 0 100 0" />
-                                <TextBox IsReadOnly="True" Text="{Binding BankNote4}"  FontSize="20" FontWeight="Bold" FontFamily="Exo"  VerticalAlignment="Center"  Foreground="#FFFFFF"  BorderBrush="Transparent" BorderThickness="2"  Background="Transparent"/>
+                                <TextBox IsReadOnly="True" Text="{Binding BankNote4}"  FontSize="25" FontWeight="Bold" FontFamily="Exo"  VerticalAlignment="Center"  Foreground="#FFFFFF"  BorderBrush="Transparent" BorderThickness="2"  Background="Transparent"/>
                             </StackPanel>
                         </Border>
                     </Grid>
 
                 </Border>
-                <StackPanel VerticalAlignment="Bottom" Orientation="Horizontal">
-                    <TextBlock Foreground="#FFFFFF" FontFamily="Exo" FontSize="32" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left" TextWrapping="WrapWithOverflow">Total:</TextBlock>
-                    <TextBox IsReadOnly="True" Text="{Binding TotalDepositedMoney}"  FontSize="32" FontWeight="Bold" FontFamily="Exo"  VerticalAlignment="Center" Foreground="#FFFFFF" BorderBrush="Transparent" Background="Transparent"/>
-                    <TextBlock Text="VND" FontFamily="EXO" FontSize="32" FontWeight="Bold"  Foreground="#FFFFFF" VerticalAlignment="Center"/>
-                </StackPanel>
+                <Grid VerticalAlignment="Bottom">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#FFFFFF" FontFamily="Exo" FontSize="32" FontWeight="Bold" >
+                        Tổng tiền: </TextBlock>
+                    <TextBox Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" IsReadOnly="True" 
+                             Text="{Binding _TotalDepositedMoney}"  FontSize="32" FontWeight="Bold" FontFamily="Exo" Foreground="#FFFFFF" BorderBrush="Transparent" Background="Transparent"/>
+
+                    <!--<StackPanel VerticalAlignment="Bottom" Orientation="Horizontal" Margin="50 0 0 0">
+                        <TextBox IsReadOnly="True" Text="{Binding _TotalDepositedMoney}"  FontSize="32" FontWeight="Bold" FontFamily="Exo"  VerticalAlignment="Center" Foreground="#FFFFFF" BorderBrush="Transparent" Background="Transparent"/>
+                        <TextBlock Text="VND" FontFamily="EXO" FontSize="32" FontWeight="Bold"  Foreground="#FFFFFF" VerticalAlignment="Center"/>
+                    </StackPanel>-->
+                </Grid>
+                
             </Grid>
-            <Button Margin="15 0 0 0" Command="{Binding BackCommand}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Content="Back" Style="{StaticResource bigButton}"/>
+            <Button Margin="15 0 0 0" Command="{Binding BackCommand}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Content="Quay lại" Style="{StaticResource bigButton}"/>
 
             <!---Column 2-->
             <Grid  Grid.Column="1">
-
+                <Grid>
+                    <TextBlock Text="{Binding PackageInfo}" TextAlignment="Center"  Foreground="#FFFFFF" FontFamily="Exo" FontSize="32" FontWeight="Bold" TextWrapping="WrapWithOverflow"/>
+                </Grid>
 
                 <Grid Margin="0 60 0 0" VerticalAlignment="Top" Height="301" Width="441">
                     <!---Define Column-->
@@ -95,9 +108,9 @@
 
                     <StackPanel VerticalAlignment="Center" Grid.Column="0">
                         <TextBlock TextAlignment="Center"  Foreground="#FFFFFF" FontFamily="Exo" FontSize="32" FontWeight="Bold" TextWrapping="WrapWithOverflow">
-Insert money</TextBlock>
-                        <TextBlock TextAlignment="Center" Margin="0 27 0 0" Foreground="#FFFFFF" FontFamily="Exo" FontSize="14" FontWeight="Bold" TextWrapping="WrapWithOverflow">
-to start Deposit</TextBlock>
+Cho tiền vào khe</TextBlock>
+                        <TextBlock TextAlignment="Center" Margin="0 27 0 0" Foreground="#FFFFFF" FontFamily="Exo" FontSize="27" FontWeight="Bold" TextWrapping="WrapWithOverflow">
+để thanh toán</TextBlock>
                     </StackPanel>
 
                     <Grid Grid.Column="1">
@@ -109,9 +122,9 @@ to start Deposit</TextBlock>
                 </Grid>
 
                 <TextBlock Margin="0 0 0 150" VerticalAlignment="Bottom" TextAlignment="Center"  Foreground="#FFFFFF" FontFamily="Exo" FontSize="24" FontWeight="Bold" Width="305" Height="80" TextWrapping="WrapWithOverflow">
-Only accept denominations of 50,000 VND or more</TextBlock>
+Chỉ nhận mệnh giá từ 50.000</TextBlock>
                 <!---Confirm Button-->
-                <Button Command="{Binding ConfirmCommand}" VerticalAlignment="Bottom"  HorizontalAlignment="Right" Content="Confirm" Margin="10" Background="LimeGreen" Foreground="White" Style="{StaticResource bigButton}"/>
+                <Button Command="{Binding ConfirmCommand}" Visibility="{Binding VisibilityBtnConfirm}" VerticalAlignment="Bottom"  HorizontalAlignment="Right" Content="Tiếp tục" Margin="10" Background="LimeGreen" Foreground="White" Style="{StaticResource bigButton}"/>
             </Grid>
 
         </Grid>

@@ -8,4 +8,6 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = Insurance
-build_property.ProjectDir = C:\Users\hung\Desktop\Loan-Kiosk-dev-kioskApp-Insurance\Loan-Kiosk-dev-kioskApp-Insurance\KioskApp\Insurance\
+build_property.ProjectDir = E:\Loan-Kiosk-App\KioskApp\Insurance\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 

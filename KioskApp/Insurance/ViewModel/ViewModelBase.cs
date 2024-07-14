@@ -7,9 +7,6 @@ namespace Insurance.ViewModel
     public class ViewModelBase : INotifyPropertyChanged, IDisposable
     {
 
-
-
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         public void Dispose()
@@ -17,7 +14,7 @@ namespace Insurance.ViewModel
 
         }
 
-        public void OnPropertyChanged([CallerMemberName] string propName = null)
+        public virtual void OnPropertyChanged([CallerMemberName] string propName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
         }

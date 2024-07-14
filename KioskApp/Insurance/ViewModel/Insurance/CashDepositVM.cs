@@ -1,13 +1,19 @@
 ﻿using Insurance.Command;
+using Insurance.Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO.Ports;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+
+using System.IO;
+using System.Reflection;
+using Insurance.Utility;
 
 namespace Insurance.ViewModel
 {
@@ -16,7 +22,6 @@ namespace Insurance.ViewModel
 
         //Navigating
         public ICommand ConfirmCommand { get; set; }
-        public ICommand CancelCommand { get; set; }
         public ICommand BackCommand { get; set; }
 
 
@@ -37,8 +42,8 @@ namespace Insurance.ViewModel
 
 
         // Properties for data binding
-        private int _totalDepositedMoney;
-        public int TotalDepositedMoney
+        private string _totalDepositedMoney;
+        public string _TotalDepositedMoney
         {
             get { return _totalDepositedMoney; }
             set
@@ -46,7 +51,7 @@ namespace Insurance.ViewModel
                 if (_totalDepositedMoney != value)
                 {
                     _totalDepositedMoney = value;
-                    OnPropertyChanged(nameof(TotalDepositedMoney));
+                    OnPropertyChanged(nameof(_TotalDepositedMoney));
                 }
             }
         }
@@ -107,20 +112,78 @@ namespace Insurance.ViewModel
             }
         }
 
+        private string packageInfo;
+        public string PackageInfo
+        {
+            get { return packageInfo; }
+            set
+            {
+                if (packageInfo != value)
+                {
+                    packageInfo = value;
+                    OnPropertyChanged(nameof(PackageInfo));
+                }
+            }
+        }
+
+        private Visibility visibilityBtnConfirm = Visibility.Collapsed;
+        public Visibility VisibilityBtnConfirm
+        {
+            get { return visibilityBtnConfirm; }
+            set
+            {
+                visibilityBtnConfirm = value;
+                OnPropertyChanged(nameof(VisibilityBtnConfirm));
+            }
+        }
+        public int PackageFee;
+        public int totalDepositedMoney;
+
+
         public CashDepositVM()
         {
             Initialize();
-            
-            ConfirmCommand = new RelayCommand((parameter) =>
+
+            if (HomeVM.Instance.ButtonCommandID == 2)
             {
-                MainWindowVM.Instance.CurrentView = new BeneficiaryAddVM();
+                PackageFee = UserModel.Instance.DebtAmount;
+                var _LoanPayback = string.Format(CultureInfo.GetCultureInfo("vi-VN"), "{0:#,0.##}", PackageFee);
+                packageInfo = "Số tiền cần trả: " + _LoanPayback;
+            }
+
+            else if (HomeVM.Instance.ButtonCommandID == 4)
+            {
+                PackageFee = UserModel.Instance.SavingLoanAmount;
+                var _SavingAmount = string.Format(CultureInfo.GetCultureInfo("vi-VN"), "{0:#,0.##}", PackageFee);
+                packageInfo = "Số tiền gửi tiết kiệm: " + _SavingAmount;
+            }
+
+            else if (HomeVM.Instance.ButtonCommandID == 6)
+            {
+                PackageFee = UserModel.Instance.InsurancePackageName.fee;
+                var _Fee = string.Format(CultureInfo.GetCultureInfo("vi-VN"), "{0:#,0.##}", PackageFee);
+                packageInfo = UserModel.Instance.InsurancePackageName.packageName + " : " + _Fee;
+            }
+
+
+            ConfirmCommand = new RelayCommand<object>((p) => { return true; }, (p) =>
+            {
+                //VisibilityBtnConfirm = Visibility.Visible;
+                if (HomeVM.Instance.ButtonCommandID == 4)
+                {
+                    MainWindowVM.Instance.CurrentView = new InsuranceSuccessVM();
+                }
+                else if (HomeVM.Instance.ButtonCommandID == 6)
+                {
+                    MainWindowVM.Instance.CurrentView = new BeneficiaryAddVM();
+                }
+                APIHelper.Instance.Log($"Insurance Payment Success, MemberID: {UserModel.Instance.UserID}, Member Name: {UserModel.Instance.FullName}, Member ID card number: {UserModel.Instance.IDCard}, Package {packageInfo}");
+                serialPort.Close();
             });
-            CancelCommand = new RelayCommand((parameter) =>
+
+            BackCommand = new RelayCommand<object>((p) => { if (totalDepositedMoney > 0) return false; else return true; }, (parameter) =>
             {
-                MainWindowVM.Instance.CurrentView = new InsuranceHomeVM();
-            });
-            BackCommand = new RelayCommand((parameter) =>
-            {
+                serialPort.Close();
                 MainWindowVM.Instance.BackScreen();
             });
         }
@@ -139,18 +202,32 @@ namespace Insurance.ViewModel
 
         private void InitializeSerialPort()
         {
-            serialPort = new SerialPort("COM5", 9600)
+            try
             {
-                Parity = Parity.Even,
-                DataBits = 8,
-                StopBits = StopBits.One
-            };
-            if (!serialPort.IsOpen)
-            {
-                serialPort.Open();
-            }
-        }
+                serialPort = new SerialPort(KioskModel.Instance.CashDepositPort, 9600)
+                {
+                    Parity = Parity.Even,
+                    DataBits = 8,
+                    StopBits = StopBits.One
+                };
 
+                if (!serialPort.IsOpen)
+                {
+                    serialPort.Open();
+                    PowerUP(serialPort);
+                    KioskModel.Instance.CashDepositStatus = 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle the exception
+                KioskModel.Instance.CashDepositStatus = 0;
+                //MessageBox.Show($"An error occurred while initializing the serial port: {ex.Message}");
+                APIHelper.Instance.Log($"Error occurred while initializing the serial port: {ex.Message}");
+            }
+
+            APIHelper.Instance.UpdateCashDepositStatus(KioskModel.Instance.KioskID, KioskModel.Instance.CashDepositStatus);
+        }
 
         private void ReadDataContinuously()
         {
@@ -166,7 +243,7 @@ namespace Insurance.ViewModel
             catch (Exception ex)
             {
                 // Handle exceptions (e.g., port closed)
-                MessageBox.Show("Error: " + ex.Message);
+                //MessageBox.Show("Error: " + ex.Message);
             }
         }
 
@@ -175,9 +252,6 @@ namespace Insurance.ViewModel
         {
             // Your existing logic for updating UI
             SerialPort sp = serialPort;
-
-            // Update your TextBoxes based on received data
-            //tbxStatus.Text=("Received data: 0x" + receivedData.ToString("X2"));
 
             int data = receivedData;
             switch (data)
@@ -247,8 +321,14 @@ namespace Insurance.ViewModel
                     }
                     break;
 
+
+                case 0x62: // Enable status
+                    MessageBox.Show("Enable status");
+                    break;
+
                 case 0x94: // Inhibit status
-                    Console.WriteLine("Inhibit status");
+                    //PowerUP(serialPort);
+                    MessageBox.Show("Inhibit status");
                     break;
 
                 default:
@@ -261,13 +341,28 @@ namespace Insurance.ViewModel
         {
             byte[] bill_Accept = { 0x02 };
             sp.Write(bill_Accept, 0, bill_Accept.Length);
-            int totalDepositedMoney = billValues.Sum();
+            totalDepositedMoney = billValues.Sum();
 
             BankNote1 = bankNote1;
             BankNote2 = bankNote2;
             BankNote3 = bankNote3;
             BankNote4 = bankNote4;
-            TotalDepositedMoney = totalDepositedMoney;
+
+            var _Total = string.Format(CultureInfo.GetCultureInfo("vi-VN"), "{0:#,0.##}", totalDepositedMoney);
+
+            _TotalDepositedMoney = _Total;
+
+
+            if (totalDepositedMoney == PackageFee)
+            {
+                VisibilityBtnConfirm = Visibility.Visible;
+                MainWindowVM.Instance.VisibilityBtnHead = Visibility.Collapsed;// Tat nut huy bo
+            }
+            else
+            {
+                VisibilityBtnConfirm = Visibility.Collapsed;
+                MainWindowVM.Instance.VisibilityBtnHead = Visibility.Visible;// Mo nut huy bo
+            }
         }
 
         private void RejectBill(SerialPort sp)
@@ -303,7 +398,14 @@ namespace Insurance.ViewModel
             }
         }
 
+        public static void PowerUP(SerialPort sp)
+        {
+            byte[] bill_Reset = { 0x30 };
+            sp.Write(bill_Reset, 0, bill_Reset.Length);
 
+            byte[] bill_ON = { 0x02 };
+            sp.Write(bill_ON, 0, bill_ON.Length);
+        }
 
     }
 }

@@ -11,23 +11,21 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Insurance.View
+namespace Insurance.VirtualKeyboard
 {
     /// <summary>
     /// Interaction logic for VirtualKeyboardView.xaml
     /// </summary>
-    public partial class VirtualKeyboardView : UserControl
+    public partial class VirtualKeyboardView : Window
     {
         public VirtualKeyboardView()
         {
             InitializeComponent();
-            DataContext = (VirtualKeyboardVM)MainWindowVM.Instance.CurrentView;
+            this.DataContext = new VirtualKeyboardVM();
         }
 
-
- 
+        
     }
 }

@@ -21,33 +21,54 @@
 
             <Grid Grid.Row="1">
                 <!---Description-->
-                <TextBlock  Margin="15 0 0 0" FontSize="25.28px" Foreground="#FFFFFF" FontFamily="Exo"  FontWeight="Bold">Insurance</TextBlock>
-                <TextBlock Margin="15 50 0 0" FontSize="25.28px" Foreground="#FFFFFF" FontFamily="Exo"  FontWeight="Bold" >Beneficiary</TextBlock>
+                <TextBlock  Margin="15 0 0 0" FontSize="25.28px" Foreground="#FFFFFF" FontFamily="Exo"  FontWeight="Bold">Bảo hiểm</TextBlock>
+                <TextBlock Margin="15 50 0 0" FontSize="25.28px" Foreground="#FFFFFF" FontFamily="Exo"  FontWeight="Bold" >Thông tin người thụ hưởng</TextBlock>
 
 
-                <StackPanel VerticalAlignment="Center" Margin="15 0 15 0">
+                <Grid Height="100" VerticalAlignment="Center" Margin="15 0 15 0">
+                        <Button Visibility="{Binding VisibilityEditButton}"  Command="{Binding EditBeneficiaryCommand}" 
+                                Background="#A1CCAD"
+                                HorizontalContentAlignment="Left">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="20"></Setter>
+                                </Style>
+                            </Button.Resources>
+                            <Grid VerticalAlignment="Center" Margin="20,0,0,0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                            <StackPanel Grid.Row="0" Margin="15 0 0 0" Orientation="Horizontal">
+                                    <TextBlock VerticalAlignment="Center" Text="{Binding Beneficiary_Name}" 
+                                           Foreground="White" FontWeight="Bold" 
+                                           FontSize="35" Margin="0 0 30 0"/>
+                                    <Image VerticalAlignment="Center" Width="24" Height="24" 
+                                       Source="/Images/Edit.png"/>
+                                </StackPanel>
 
-                    <Border Margin="0 0 0 44" Height="100" Grid.Row="1" Background="#A1CCAD" CornerRadius="10">
-                        <StackPanel  Margin="37,10,0,0">
-                            <TextBlock Text="Tran Van B  " Foreground="White" FontWeight="Bold" FontSize="30" />
-                            <TextBlock Text="2415654888" Foreground="White" FontSize="24"/>
-                        </StackPanel>
-                    </Border>
-                    
+                            <TextBlock Grid.Row="1" Margin="15 0 0 0" Text="{Binding Beneficiary_ID}" 
+                                           Foreground="White" FontSize="24"/>
+                            </Grid>
+                        </Button>
+
                     <!---Dashed button-->
-                    
-  <Button Command="{Binding AddBeneficiaryCommand}" Height="100" Style="{StaticResource dashedButton }" Foreground="#0EAB00" FontWeight="Bold">
-      <DockPanel>
-          <Image Source="/Images/plus.png" Width="67" Height="67"/>
-          <TextBlock VerticalAlignment="Center" Margin="26 0 0 0" FontSize="30">Add beneficiary</TextBlock>
-      </DockPanel>
-  </Button>
+
+                        <Button Visibility="{Binding VisibilityDashButton}" Command="{Binding AddBeneficiaryCommand}"
+                            Style="{StaticResource dashedButton }" Foreground="#0EAB00" FontWeight="Bold">
+                            <DockPanel>
+                                <Image Source="/Images/plus.png" Width="67" Height="67"/>
+                                <TextBlock VerticalAlignment="Center" Margin="26 0 0 0" FontSize="30">Thêm thông tin người thụ hưởng</TextBlock>
+                            </DockPanel>
+                        </Button>
+
+                </Grid>
 
 
-                </StackPanel>
-
-
-                <Button Command="{Binding DoneCommand}"  VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="Done" Style="{StaticResource bigButton}" Margin="0 0 15 0"/>
+                <Button Command="{Binding DoneCommand}" Visibility="{Binding VisibilityDoneButton}"
+                        VerticalAlignment="Bottom" HorizontalAlignment="Right" 
+                        Content="Tiếp tục" Style="{StaticResource bigButton}" 
+                        Margin="0 0 15 0"/>
             </Grid>
 
 

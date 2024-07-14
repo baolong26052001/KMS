@@ -1,0 +1,93 @@
+﻿<UserControl x:Class="Insurance.View.VerifyFaceIDView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
+             xmlns:local="clr-namespace:Insurance.View" xmlns:viewmodel="clr-namespace:Insurance.ViewModel" d:DataContext="{d:DesignInstance Type=viewmodel:VerifyFaceIDVM}"
+             mc:Ignorable="d" 
+             x:Name="verifyFaceControl"
+             d:DesignHeight="768" d:DesignWidth="1024">
+    <UserControl.Background>
+        <SolidColorBrush Color="Transparent"/>
+    </UserControl.Background>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition Height="650"></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+                <RowDefinition Height="520"></RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <TextBlock Foreground="#FFFFFF" FontFamily="Exo" FontSize="25.28" HorizontalAlignment="Center" FontWeight="Bold"  VerticalAlignment="Center" >
+            Vui lòng đưa mặt khuôn mặt của bạn vào khu vực chụp hình
+                </TextBlock>
+            </Grid>
+            <Grid Grid.Row="1" Margin="5">
+                <!--<Image Source="\Images\FacidImg.png">
+
+                </Image>-->
+                <TextBlock x:Name="apiResultTextBlock_View" HorizontalAlignment="Left" VerticalAlignment="Top" Text="{Binding ApiResultText}" Margin="10" Foreground="White" FontSize="16" Visibility="Collapsed"/>
+                <Border x:Name="cameraArea_View" BorderBrush="{Binding CameraArea.BorderBrush}" BorderThickness="5" CornerRadius="250" Width="510" Height="510">
+                    <Image x:Name="ImageControl_View" Source="{Binding ImageControl.Source}" Stretch="Fill">
+                        <Image.Clip>
+                            <EllipseGeometry Center="250,250" RadiusX="250" RadiusY="250"/>
+                        </Image.Clip>
+                    </Image>
+                </Border>
+                <TextBlock x:Name="apiResultTextBlock_1_View" Text="{Binding ApiResultTextBlock_1}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10" Foreground="White" FontSize="16" Visibility="Collapsed"/>
+            </Grid>
+            <Grid Grid.Row="2">
+                <!-- Result area -->
+                <!-- Success UI --> 
+                <TextBlock x:Name="successTextBlock_View" Visibility="{Binding SuccessVisibility}" HorizontalAlignment="Center" VerticalAlignment="Top" Text="Thành công" Foreground="#0EAB00" FontSize="25.28" FontFamily="Exo" FontWeight="Bold"/>
+                <!-- Failure UI -->
+                <TextBlock x:Name="failureTextBlock_View" Visibility="{Binding FailureVisibility}" HorizontalAlignment="Center" VerticalAlignment="Top" Text="Không nhận diện được" Foreground="Red" FontSize="25.28" FontFamily="Exo" FontWeight="Bold" />
+                <TextBlock x:Name="existAccTextBlock_View" Visibility="{Binding ExistAccVisibility}" HorizontalAlignment="Center" VerticalAlignment="Top" Text="Tài khoản đã tồn tại" Foreground="Orange" FontSize="25.28" FontFamily="Exo" FontWeight="Bold" />
+                <Button BorderBrush="Transparent" Width="429" Height="33" VerticalAlignment="Bottom" Content="Thử lại" Command="{Binding TryAgainCommand}" Foreground="White" FontSize="23.28" FontFamily="Exo" FontWeight="Bold" Background="#0EAB00" Visibility="{Binding TryAgainVisibility}">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="5"></Setter>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+                <Button BorderBrush="Transparent" Width="429" Height="33" VerticalAlignment="Bottom" Content="Trở về trang chủ" Command="{Binding BackToWelcomeCommand}" Foreground="White" FontFamily="Exo" FontWeight="Bold" Background="#0EAB00" Visibility="{Binding BackToWelcomeVisibility}" FontSize="20">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="5"></Setter>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+                <!--<Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Button BorderBrush="Transparent" Grid.Column="0" Width="429" Height="33" VerticalAlignment="Bottom" Content="Try Again" Command="{Binding TryAgainCommand}" Foreground="White" FontFamily="Exo" FontWeight="Bold" Background="#0EAB00" Visibility="{Binding FailureVisibility}">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="5"></Setter>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+
+                    <Button BorderBrush="Transparent" Grid.Column="1" Width="429" Height="33" VerticalAlignment="Bottom" Content="Sign Up" Command="{Binding SignUpCommand}" Foreground="White" FontFamily="Exo" FontWeight="Bold" Background="#0EAB00" Visibility="{Binding FailureVisibility}">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="5"></Setter>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                </Grid>-->
+            </Grid>
+
+        </Grid>
+    </Grid>
+</UserControl>

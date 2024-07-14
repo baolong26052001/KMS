@@ -20,8 +20,7 @@
 
         <!---Description-->
         <Grid Grid.Row="1" Margin="15 0 15 0">
-            <TextBlock FontSize="25.28px" Foreground="#FFFFFF" FontFamily="Exo"  FontWeight="Bold" >Accident Insurance</TextBlock>
-            <TextBlock Margin="0 50 0 0" FontSize="25.28px" Foreground="#FFFFFF" FontFamily="Exo"  FontWeight="Bold" >Select the payment method</TextBlock>
+            <TextBlock Margin="0 50 0 0" FontSize="25.28px" Foreground="#FFFFFF" FontFamily="Exo"  FontWeight="Bold" >Chọn phương thúc thanh toán</TextBlock>
 
             <!--Payment Method Column 1-->
             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Left"  Margin="0 10 0 0">
@@ -33,8 +32,8 @@
                         </Style>
                     </Button.Resources>
                     <StackPanel  VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <Image Width="100" Height="100" Source="/Images/CashLogo.png"/>
-                        <TextBlock FontSize="35" FontFamily="Exo" Foreground="#000000" FontWeight="Bold" Text="Cash in" />
+                        <Image Width="100" Height="100" Source="/Images/CashDepLogo.png"/>
+                        <TextBlock FontSize="35" FontFamily="Exo" Foreground="#000000" FontWeight="Bold" Text="Tiền mặt" />
                     </StackPanel>
                 </Button>
 
@@ -67,8 +66,8 @@
                         </Style>
                     </Button.Resources>
                     <StackPanel  VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <Image Width="100" Height="100" Source="/Images/wallet/bank.png"/>
-                        <TextBlock FontSize="35" FontFamily="Exo" Foreground="#000000" FontWeight="Bold" Text="Bank Account" />
+                        <Image Width="100" Height="100" Source="/Images/bank.png"/>
+                        <TextBlock FontSize="35" FontFamily="Exo" Foreground="#000000" FontWeight="Bold" Text="Ngân hàng" />
                     </StackPanel>
                 </Button>
 
@@ -90,7 +89,7 @@
                 </Grid> 
             </StackPanel>
 
-            <Button Command="{Binding BackCommand}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Content="Back" Background="LimeGreen" Foreground="White" Style="{StaticResource bigButton}"/>
+            <Button Command="{Binding BackCommand}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Content="Quay lại" Background="#0ADB00" Foreground="White" Style="{StaticResource bigButton}"/>
         </Grid>
       
     </Grid>

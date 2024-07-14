@@ -1,0 +1,175 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+
+    <Style x:Key="tbox_TextPlaceholder" TargetType="{x:Type TextBox}">
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="FontFamily" Value="Roboto"/>
+        <Setter Property="Height" Value="80"/>
+        <Setter Property="Width" Value="143"/>
+        <Setter Property="Background" Value="{Binding Background}"/>
+        <Setter Property="Foreground" Value="Beige"/>
+        <!--<Setter Property="Padding" Value="5 4.5 5 4"/>-->
+        <Setter Property="Grid.Column" Value="1"/>
+        <Setter Property="Cursor" Value="IBeam"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TextBox}">
+                    <Border x:Name="TxtBorder"
+                         BorderBrush="#0EAB00"
+                         BorderThickness="2,2,6,2"
+                         CornerRadius="5"
+                         SnapsToDevicePixels="True">
+                        <Grid Margin="{TemplateBinding Padding}">
+                            <ScrollViewer x:Name="PART_ContentHost"
+                                       Focusable="False"
+                                       Grid.Column="0"
+                                       Margin="0"
+                                       HorizontalScrollBarVisibility="Hidden"
+                                       VerticalScrollBarVisibility="Hidden"/>
+                            <Label x:Name="Watermark"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Left"
+                                Foreground="White"
+                                Visibility="Collapsed"
+                                Padding="0 0 0 0"
+                                Content="{TemplateBinding Tag}"
+                                Grid.Column="1"/>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--<ImageBrush x:Key="ib_CalendarPas" ImageSource="/Images/ic_CalendarPas.png"/>-->
+
+    <Style x:Key="bt_CalendarStyle" TargetType="{x:Type Button}">
+        <Setter Property="Height" Value="30"/>
+        <Setter Property="Width" Value="30"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border x:Name="border"
+                        BorderThickness="0">
+                        <Border.Background>
+                            <ImageBrush ImageSource="/Images/Calendar.png" />
+                        </Border.Background>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+    <Style x:Key="DatePickerCalendarStyle" TargetType="{x:Type Calendar}">
+        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="BorderBrush" Value="#0EAB00"/>
+        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Calendar}">
+                    <Grid x:Name="PART_Root"
+                             HorizontalAlignment="Left">
+                        <Viewbox Height="460" Width="465">
+                            <CalendarItem x:Name="PART_CalendarItem"
+                                   Background="{TemplateBinding Background}"
+                                   BorderBrush="{TemplateBinding BorderBrush}"
+                                   BorderThickness="{TemplateBinding BorderThickness}"
+                                   Style="{TemplateBinding CalendarItemStyle}"
+                                   Margin="0 0 0 0"/>
+                        </Viewbox>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="DatePickerStyle" TargetType="{x:Type DatePicker}">
+        <Setter Property="Margin" Value="0 0 0 0"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type DatePicker}">
+                    <Grid>
+                        <Border x:Name="Border"
+                         Grid.ColumnSpan="2"
+                         Height="80"
+                         Width="180"
+                         BorderThickness="4"
+                         BorderBrush="#0EAB00"
+                         CornerRadius="5"
+                         Background="Transparent">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="35"/>
+                                </Grid.ColumnDefinitions>
+                                <DatePickerTextBox x:Name="PART_TextBox"
+                                            Style="{StaticResource tbox_TextPlaceholder}"
+                                            BorderThickness="0"
+                                            Grid.Column="0"
+                                            FontFamily="Roboto"
+                                            FontSize="25"
+                                            Foreground="White"
+                                            VerticalAlignment="Center"
+                                            HorizontalContentAlignment="Center"
+                                            TextAlignment="Center"
+                                            VerticalContentAlignment="Center"
+                                            HorizontalAlignment="Center"
+                                            Padding="0 0 0 0"
+                                            Text="{Binding DOB}" />
+                                <Button x:Name="PART_Button"
+                                 Style="{StaticResource bt_CalendarStyle}"
+                                 Grid.Column="1"/>
+                                <Popup x:Name="PART_Popup"
+                                AllowsTransparency="True"
+                                Placement="Bottom"
+                                PlacementTarget="{Binding ElementName=PART_TextBox}"
+                                StaysOpen="False"
+                                HorizontalOffset="-5"
+                                VerticalOffset="-20"
+                                       />
+                                <Label x:Name="Watermark"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Left"
+                                Foreground="White"
+                                Visibility="Collapsed"
+                                Padding="11 0 20 0"
+                                Content="{TemplateBinding Tag}"
+                                FontFamily="Roboto"
+                                FontSize="25"/>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <!-- Trigger to disable DatePicker when EmptyPopupVisible is true -->
+                        <DataTrigger Binding="{Binding Path=_EmptyPopupVisible}" Value="True">
+                            <Setter Property="IsEnabled" Value="False"/>
+                        </DataTrigger>
+                        <!-- Data triggers for changing foreground color -->
+                        <DataTrigger Binding="{Binding Path=IsEnabled, ElementName=PART_TextBox}" Value="False">
+                            <Setter TargetName="PART_TextBox" Property="Foreground" Value="#A0A0A0"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Path=IsEnabled, ElementName=PART_TextBox}" Value="True">
+                            <Setter TargetName="PART_TextBox" Property="Foreground" Value="White"/>
+                        </DataTrigger>
+                        
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+
+
+
+</ResourceDictionary>

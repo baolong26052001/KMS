@@ -12,48 +12,53 @@
     <Grid >
         <!--Define Row-->
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="5*"/>
+            <!--<RowDefinition Height="*"/>-->
+            <RowDefinition Height="6*"/>
             <RowDefinition Height="5*"/>
         </Grid.RowDefinitions>
 
         <!--OTP Row 1-->
-        <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+        <StackPanel Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center">
             <!--Description-->
-            <TextBlock FontSize="48px" TextAlignment="Center" Foreground="#FFFFFF" FontFamily="Exo"  FontWeight="Bold" >Please Enter your OTP below</TextBlock>
-
+            <TextBlock FontSize="40px" TextAlignment="Center" Foreground="#FFFFFF" FontFamily="Exo"  FontWeight="Bold" >Vui lòng nhập mã OTP</TextBlock>
+            <TextBlock FontSize="25px" TextAlignment="Center" Foreground="#FFFFFF" FontFamily="Exo"  FontWeight="Bold" >Mã OTP đã được gửi đến email</TextBlock>
             <!--OTP Digit-->
-            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
+            <StackPanel  Grid.Row="0" Margin="0 30 0 0"
+                         Orientation="Horizontal" HorizontalAlignment="Center">
                 <!--DIGIT 1-->
                 <!--<TextBox x:Name="tboxInput" Style="{StaticResource OtpTextBox}" TextChanged="tboxInput_TextChanged" />-->
                 <Border CornerRadius="20" BorderBrush="#0EAB00" BorderThickness="2" Margin="0 0 20 0">
-                    <TextBox Text="{Binding DisplayText1}" TextAlignment="Center" VerticalContentAlignment="Center" FontSize="120"  BorderBrush="Transparent"  Background="Transparent" Foreground="#0EAB00" Padding="2" Width="129.5"></TextBox>
+                    <TextBox Text="{Binding DisplayText1}" TextAlignment="Center" VerticalContentAlignment="Center" FontSize="120"  BorderBrush="Transparent"  Background="Transparent" Foreground="#0EAB00" Padding="2" Width="120"></TextBox>
                 </Border>
 
                 <!--DIGIT 2-->
                 <Border CornerRadius="20" BorderBrush="#0EAB00" BorderThickness="2" Margin="0 0 20 0">
-                    <TextBox Text="{Binding DisplayText2}" TextAlignment="Center" VerticalContentAlignment="Center" FontSize="120"  BorderBrush="Transparent"  Background="Transparent" Foreground="#0EAB00" Padding="2" Width="129.5"></TextBox>
+                    <TextBox Text="{Binding DisplayText2}" TextAlignment="Center" VerticalContentAlignment="Center" FontSize="120"  BorderBrush="Transparent"  Background="Transparent" Foreground="#0EAB00" Padding="2" Width="120"></TextBox>
                 </Border>
 
                 <!--DIGIT 3-->
                 <Border CornerRadius="20" BorderBrush="#0EAB00" BorderThickness="2" Margin="0 0 20 0">
-                    <TextBox Text="{Binding DisplayText3}" TextAlignment="Center" VerticalContentAlignment="Center" FontSize="120"  BorderBrush="Transparent"  Background="Transparent" Foreground="#0EAB00" Padding="2" Width="129.5"></TextBox>
+                    <TextBox Text="{Binding DisplayText3}" TextAlignment="Center" VerticalContentAlignment="Center" FontSize="120"  BorderBrush="Transparent"  Background="Transparent" Foreground="#0EAB00" Padding="2" Width="120"></TextBox>
                 </Border>
 
                 <!--DIGIT 4-->
                 <Border CornerRadius="20" BorderBrush="#0EAB00" BorderThickness="2">
-                    <TextBox Text="{Binding DisplayText4}" TextAlignment="Center" VerticalContentAlignment="Center" FontSize="120"  BorderBrush="Transparent"  Background="Transparent" Foreground="#0EAB00" Padding="2" Width="129.5"></TextBox>
+                    <TextBox Text="{Binding DisplayText4}" TextAlignment="Center" VerticalContentAlignment="Center" FontSize="120"  BorderBrush="Transparent"  Background="Transparent" Foreground="#0EAB00" Padding="2" Width="120"></TextBox>
                 </Border>
             </StackPanel>
             <!--Notification-->
             <StackPanel Margin="0 20 0 0">
-                <TextBlock FontSize="25px" Width="700" TextAlignment="Center" Foreground="#FFFFFF" FontFamily="Exo">
-    Your OTP will expire after <Run Text="{Binding TimeRemaining}" FontWeight="Bold"/> seconds
+                <!--<TextBlock FontSize="25px" Width="700" TextAlignment="Center" Foreground="#FFFFFF" FontFamily="Exo">
+    Mã OTP của bạn sẽ hết hiệu lực sau <Run Text="{Binding TimeRemaining}" FontWeight="Bold"/> giây
+                </TextBlock>-->
+                <TextBlock Style="{StaticResource OtpTextBlockStyle}">
+            
                 </TextBlock>
-
-                <Button Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Center" Command="{Binding ResendOTPCommand}">
+                
+                <Button Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Center" 
+                        Command="{Binding ResendOTPCommand}">
                     <TextBlock FontSize="25" Foreground="#0EAB00" FontFamily="Exo">
-        <Underline>Resend OTP to your phone</Underline>
+                        <Underline>Gửi lại mã OTP</Underline>
                     </TextBlock>
                 </Button>
             </StackPanel>
@@ -61,7 +66,7 @@
 
 
         <!---Keyboard-->
-        <Grid Grid.Row="2" Panel.ZIndex="0">
+        <Grid Grid.Row="1" Panel.ZIndex="0">
             <!--Define Row-->
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
@@ -79,7 +84,7 @@
             
             <Grid Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right">
                 <!--Back-->
-                <Button Command="{Binding BackCommand}" Width="102" Height="49"  Background="#D9D9D9" BorderBrush="Transparent">
+                <Button Command="{Binding BackCommand}" Width="120" Height="59"  Background="#D9D9D9" BorderBrush="Transparent">
                     <Button.Resources>
                         <Style TargetType="Border">
                             <Setter Property="CornerRadius" Value="20"></Setter>
@@ -87,13 +92,13 @@
                     </Button.Resources>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                         <TextBlock FontSize="20" Foreground="#0EAB00" FontFamily="Exo" FontWeight="Bold">
-                            Back</TextBlock>
+                            Quay lại</TextBlock>
                     </StackPanel>
                 </Button>
             </Grid>
             <!--Enter-->
             <Grid Grid.Row="0" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left">
-                <Button Command="{Binding EnterCommand}" Width="102" Height="49"  Background="#D9D9D9" BorderBrush="Transparent">
+                <Button Command="{Binding EnterCommand}" Width="120" Height="59"  Background="#D9D9D9" BorderBrush="Transparent">
                     <Button.Resources>
                         <Style TargetType="Border">
                             <Setter Property="CornerRadius" Value="20"></Setter>
@@ -101,28 +106,28 @@
                     </Button.Resources>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                         <TextBlock FontSize="20" Foreground="#0EAB00" FontFamily="Exo" FontWeight="Bold">
-                            Enter</TextBlock>
+                            Tiếp tục</TextBlock>
                     </StackPanel>
                 </Button>
             </Grid>
 
             <!---Numpad-->
-            <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <Button Style="{StaticResource Numpad}" Content="1" Command="{Binding NumberCommand}" CommandParameter="1"/>
                 <Button Style="{StaticResource Numpad}" Content="2" Command="{Binding NumberCommand}" CommandParameter="2"/>
                 <Button Style="{StaticResource Numpad}" Content="3" Command="{Binding NumberCommand}" CommandParameter="3"/>
             </StackPanel>
-            <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <Button Style="{StaticResource Numpad}" Content="4" Command="{Binding NumberCommand}" CommandParameter="4"/>
                 <Button Style="{StaticResource Numpad}" Content="5" Command="{Binding NumberCommand}" CommandParameter="5"/>
                 <Button Style="{StaticResource Numpad}" Content="6" Command="{Binding NumberCommand}" CommandParameter="6"/>
             </StackPanel>
-            <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <Button Style="{StaticResource Numpad}" Content="7" Command="{Binding NumberCommand}" CommandParameter="7"/>
                 <Button Style="{StaticResource Numpad}" Content="8" Command="{Binding NumberCommand}" CommandParameter="8"/>
                 <Button Style="{StaticResource Numpad}" Content="9" Command="{Binding NumberCommand}" CommandParameter="9"/>
             </StackPanel>
-            <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <Button Style="{StaticResource Numpad}" Content="C" Command="{Binding ClearCommand}" Background="Black"/>
                 <Button Style="{StaticResource Numpad}" Content="0" Command="{Binding NumberCommand}" CommandParameter="0"/>
                 <Button Style="{StaticResource NumpadDelete}" Command="{Binding DeleteCommand}" Background="Black"  BorderBrush="Transparent"/>

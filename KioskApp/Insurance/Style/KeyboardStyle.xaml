@@ -6,7 +6,6 @@
     <Style TargetType="Button" x:Key="Numpad">
         <Setter Property="Width" Value="100"/>
         <Setter Property="Height" Value="60"/>
-        <Setter Property="Margin" Value="10, 3, 10, 3"/>
         <Setter Property="Background" Value="Gray"/>
         <Setter Property="BorderBrush" Value="Black"/>
         <Setter Property="BorderThickness" Value="2"/>
@@ -36,7 +35,6 @@
     <Style TargetType="Button" x:Key="NumpadDelete">
         <Setter Property="Width" Value="100"/>
         <Setter Property="Height" Value="60"/>
-        <Setter Property="Margin" Value="10, 3, 10, 3"/>
         <Setter Property="Background" Value="Gray"/>
         <Setter Property="BorderBrush" Value="Black"/>
         <Setter Property="BorderThickness" Value="2"/>
@@ -64,8 +62,8 @@
     </Style>
 
     <Style TargetType="Button" x:Key="qwerty">
-        <Setter Property="Width" Value="70"/>
-        <Setter Property="Height" Value="70"/>
+        <Setter Property="Width" Value="auto"/>
+        <Setter Property="Height" Value="auto"/>
         <Setter Property="Margin" Value="2, 3, 2, 3"/>
         <Setter Property="Background" Value="Gray"/>
         <Setter Property="BorderBrush" Value="Black"/>
@@ -75,7 +73,7 @@
                 <ControlTemplate TargetType="Button">
                     <Border x:Name="buttonBorder" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="10">
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"> 
-                            <TextBlock Text="{Binding Content, RelativeSource={RelativeSource TemplatedParent}}" TextAlignment="Center" VerticalAlignment="Center" FontSize="25" Foreground="White"/>
+                            <TextBlock Text="{Binding Content, RelativeSource={RelativeSource TemplatedParent}}" TextAlignment="Center" VerticalAlignment="Center" FontSize="30" Foreground="White"/>
                         </StackPanel>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -95,9 +93,44 @@
         </Setter>
     </Style>
 
+    <Style TargetType="Button" x:Key="backSpace">
+        <Setter Property="Width" Value="auto"/>
+        <Setter Property="Height" Value="auto"/>
+        <Setter Property="Margin" Value="2, 3, 2, 3"/>
+        <Setter Property="Background" Value="Gray"/>
+        <Setter Property="BorderBrush" Value="Black"/>
+        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="buttonBorder" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="10">
+                        <StackPanel  VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <!-- Replace the TextBlock with an Image -->
+                            <!--<TextBlock Text="{Binding Content, RelativeSource={RelativeSource TemplatedParent}}" VerticalAlignment="Center" FontSize="30" Foreground="White"/>-->
+                            <Image Source="/Images/backSpace.png" Width="55" Height="55" />
+                        </StackPanel>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <EventTrigger RoutedEvent="Button.Click">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <ColorAnimation
+                                    Storyboard.TargetName="buttonBorder"
+                                    Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                    To="White" Duration="0:0:0.025" AutoReverse="True"/>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
     <Style TargetType="Button" x:Key="Shift">
-        <Setter Property="Width" Value="70"/>
-        <Setter Property="Height" Value="70"/>
+        <Setter Property="Width" Value="auto"/>
+        <Setter Property="Height" Value="auto"/>
         <Setter Property="Margin" Value="2, 3, 2, 3"/>
         <Setter Property="Background" Value="Gray"/>
         <Setter Property="BorderBrush" Value="Black"/>
@@ -111,9 +144,6 @@
                         </StackPanel>
                     </Border>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="buttonBorder" Property="Background" Value="White"/>
-                        </Trigger>
                         <DataTrigger Binding="{Binding IsShifted}" Value="True">
                             <Setter TargetName="buttonBorder" Property="Background" Value="White"/>
                         </DataTrigger>

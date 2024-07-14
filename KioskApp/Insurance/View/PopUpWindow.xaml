@@ -1,0 +1,45 @@
+﻿<Window x:Class="Insurance.View.PopUpWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Insurance.View"
+        mc:Ignorable="d"
+        WindowState="Normal"
+        WindowStyle="None"
+        Title="PopUpWindow" Height="300" Width="520">
+    <Window.Background>
+        <SolidColorBrush Color="Transparent"/>
+    </Window.Background>
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome GlassFrameThickness="0" ResizeBorderThickness="0" CornerRadius="40" CaptionHeight="0"/>
+    </WindowChrome.WindowChrome>
+
+    <Border Background="#3b3e45" BorderBrush="#0EAB00" BorderThickness="1" CornerRadius="20" >
+            <Grid HorizontalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0">
+                    <TextBlock FontSize="40" HorizontalAlignment="Center" VerticalAlignment="Top" 
+                               Foreground="White" Text="Thông báo" Margin="0 20 0 0"/>
+                    <TextBlock FontSize="35" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                               Foreground="White" TextWrapping="Wrap"
+                               Text="{Binding PopupTextBox}" Margin="0 20 0 0"/>
+                </StackPanel>
+                <Button Grid.Row="1" Command="{Binding ButtonPopupCommand}" Background="#0EAB00" BorderBrush="#0EAB00" Height="80" >
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="20"></Setter>
+                            <Setter Property="BorderThickness" Value="2"></Setter>
+                        </Style>
+                    </Button.Resources>
+                    <TextBlock FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                     Foreground="White" Text="Tiếp tục"/>
+                </Button>
+            </Grid>
+        </Border>
+            
+</Window>

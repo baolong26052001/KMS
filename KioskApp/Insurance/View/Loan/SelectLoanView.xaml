@@ -1,0 +1,104 @@
+﻿<UserControl x:Class="Insurance.View.SelectLoanView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Insurance.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="768" d:DesignWidth="1024">
+    <UserControl.Background>
+        <ImageBrush ImageSource="/Images/bg.jpg"/>
+    </UserControl.Background>
+
+    <Grid>
+        <!--Define Row-->
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="650"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="150"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <!---Description-->
+            <Grid Grid.Row="0">
+
+                <StackPanel Visibility="{Binding LoanVisibility}">
+                    <TextBlock  Margin="15 0 0 0" FontSize="25.28px" 
+                                Foreground="#FFFFFF" FontFamily="Exo"  
+                                FontWeight="Bold">Vay</TextBlock>
+                    <TextBlock TextAlignment="Center" FontSize="55" 
+                               Foreground="#FFFFFF" FontFamily="Exo"
+                               FontWeight="Bold">
+                        Vui lòng chọn số tiền cần vay
+                    </TextBlock>
+                    <TextBlock TextAlignment="Center" FontSize="32" 
+                               Foreground="#FFFFFF" FontFamily="Exo"
+                               FontWeight="Regular"
+                    Text="Số tiền vay khả dụng: "/>
+                </StackPanel>
+                <StackPanel Visibility="{Binding SavingVisibility}">
+                    <TextBlock  Margin="15 0 0 0" FontSize="25.28px" 
+                                Foreground="#FFFFFF" FontFamily="Exo"  
+                                FontWeight="Bold">Tiết kiệm</TextBlock>
+                    <TextBlock TextAlignment="Center" FontSize="55" 
+                               Foreground="#FFFFFF" FontFamily="Exo"
+                               FontWeight="Bold">
+                        Vui lòng chọn số tiền tiết kiệm
+                    </TextBlock>
+                    <!--<TextBlock TextAlignment="Center" FontSize="32" 
+                               Foreground="#FFFFFF" FontFamily="Exo"
+                               FontWeight="Regular"
+                               Text="Số tiền vay khả dụng: "/>-->
+                </StackPanel>
+            </Grid>
+       
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Center"  Margin="0 40 0 0">
+                    <Button Style="{StaticResource PackageButtonSelected}"
+                            Content="100.000 VND"
+                            Command="{Binding ButtonCommand}" CommandParameter="100000"/>
+
+                    <Button Margin="0 50 0 0" Style="{StaticResource PackageButtonSelected}"
+                            Content="2.000.000 VND"
+                            Command="{Binding ButtonCommand}" CommandParameter="2000000"/>
+
+                    <Button Margin="0 50 0 0" Style="{StaticResource PackageButtonSelected}"
+                            Content="3.000.000 VND"
+                            Command="{Binding ButtonCommand}" CommandParameter="3000000"/>
+
+                </StackPanel>
+
+                <!--Payment Method Column 2-->
+                <StackPanel Grid.Row="1" Grid.Column="1"  VerticalAlignment="Top" HorizontalAlignment="Center"  Margin="0 40 0 0">
+                    <Button Style="{StaticResource PackageButtonSelected}"
+                            Content="4.000.000 VND"
+                            Command="{Binding ButtonCommand}" CommandParameter="4000000"/>
+
+                    <Button Margin="0 50 0 0" Style="{StaticResource PackageButtonSelected}"
+                            Content="5.000.000 VND"
+                            Command="{Binding ButtonCommand}" CommandParameter="5000000"/>
+
+                    <Button Command="{Binding OthersCommand}" Margin="0 50 0 0" Style="{StaticResource PackageButtonSelected}"
+                            Content="Others"/>
+                </StackPanel>
+
+                <Button Command="{Binding BackCommand}" Visibility="{Binding VisibilityDoneButton}"
+                            VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="15 0 15 0"
+                            Content="Quay lại" Style="{StaticResource bigButton}" 
+                            />
+            </Grid>
+        </Grid>
+
+    </Grid>
+</UserControl>
+    
+    

@@ -24,18 +24,30 @@
             <!---IDCard-->
             <StackPanel Grid.Row="0">
                 <TextBlock Foreground="#FFFFFF" FontFamily="Exo" FontSize="32" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="WrapWithOverflow" MaxWidth="582" TextAlignment="Center">
-Sign Up</TextBlock>
-                <Border Background="Transparent" BorderBrush="#0EAB00" Width="582" Height="273" Margin="0 20 0 0" BorderThickness="2">
+Đăng Ký</TextBlock>
+                <Border Background="Transparent" BorderBrush="#0EAB00" Width="425" Height="275" Margin="0 20 0 0" BorderThickness="2">
+                    <Image Source="{Binding _IMG_FR}"></Image>
+                    <!--<Image Source="..\Images\IDCardModel.png" Width="347" Height="233"></Image>-->
                 </Border>
+            <!---Success noti-->
+                <StackPanel Name="SuccessNoti" HorizontalAlignment="Center" Orientation="Horizontal" Visibility="Hidden">
+                    <TextBlock Foreground="#FFFFFF" FontFamily="Exo" FontSize="27" FontWeight="Bold" Margin="0 15">
+Success
+                    </TextBlock>
+                    <Image Source="\Images\SuccessIcon.png" Height="32" HorizontalAlignment="Right" Margin="10" VerticalAlignment="Center"></Image>
+
+                </StackPanel>
+               
+                
             </StackPanel>
+            
             <Grid Grid.Row="1">
                 <TextBlock Foreground="#FFFFFF" FontFamily="Exo" FontSize="32" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="WrapWithOverflow" MaxWidth="582" TextAlignment="Center">
-                      Please put your frontside  ID card on the scanner
+                      Vui lòng đưa mặt trước của CCCD vào máy quét
                 </TextBlock>
-                <Button Command="{Binding NextCommand}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="Next" Margin="0 0 15 0" Background="LimeGreen" Foreground="White" Style="{StaticResource bigButton}"/>
+                <Button Command="{Binding NextCommand}"  VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="Tiếp tục" Margin="0 0 15 0" Background="LimeGreen" Foreground="White" Style="{StaticResource bigButton}" Visibility="{Binding VisibilityNextbtn}"/>
                 <!---Back Button-->
-                <Button Command="{Binding BackCommand}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Content="Again"  Margin="15 0 0 0" Background="LimeGreen" Foreground="White" Style="{StaticResource bigButton}"/>
-                <TextBlock></TextBlock>
+                <!--<Button Command="{Binding BackCommand}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Content="Again"  Margin="15 0 0 0" Background="LimeGreen" Foreground="White" Style="{StaticResource bigButton}"/>-->
             </Grid>
         </Grid>
     </Grid>

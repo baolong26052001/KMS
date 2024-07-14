@@ -8,7 +8,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ViewModel\Saving\**" />
+    <Compile Remove="View\Saving\**" />
+    <EmbeddedResource Remove="ViewModel\Saving\**" />
+    <EmbeddedResource Remove="View\Saving\**" />
+    <None Remove="ViewModel\Saving\**" />
+    <None Remove="View\Saving\**" />
+    <Page Remove="ViewModel\Saving\**" />
+    <Page Remove="View\Saving\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Images\accident_insurance.png" />
+    <None Remove="Images\backSpace.png" />
+    <None Remove="Images\bank.png" />
     <None Remove="Images\bank\ACB.png" />
     <None Remove="Images\bank\DongA.png" />
     <None Remove="Images\bank\Exim.png" />
@@ -19,7 +32,9 @@
     <None Remove="Images\bank\vietin.png" />
     <None Remove="Images\bank\VP.png" />
     <None Remove="Images\bg.jpg" />
+    <None Remove="Images\Calendar.png" />
     <None Remove="Images\cancel.png" />
+    <None Remove="Images\CashDepLogo.png" />
     <None Remove="Images\CashDeposit\100k.png" />
     <None Remove="Images\CashDeposit\200k.png" />
     <None Remove="Images\CashDeposit\500k.png" />
@@ -27,16 +42,25 @@
     <None Remove="Images\CashDeposit\50k.png" />
     <None Remove="Images\CashDeposit\MoneyInput.png" />
     <None Remove="Images\CashLogo.png" />
+    <None Remove="Images\Contact_Green.png" />
+    <None Remove="Images\Contact_White.png" />
     <None Remove="Images\Delete.png" />
+    <None Remove="Images\Edit.png" />
     <None Remove="Images\FacidImg.png" />
     <None Remove="Images\health_insurance.png" />
     <None Remove="Images\home\History_Img.png" />
     <None Remove="Images\home\Insurance_Img.png" />
+    <None Remove="Images\home\Loading.png" />
     <None Remove="Images\home\Loan_Img.png" />
     <None Remove="Images\home\Pay_Img.png" />
     <None Remove="Images\home\Saving_Img.png" />
     <None Remove="Images\home\Withdraw_Img.png" />
     <None Remove="Images\IDCardModel.png" />
+    <None Remove="Images\IDCardModel_Back.png" />
+    <None Remove="Images\Info_Green.png" />
+    <None Remove="Images\Info_White.png" />
+    <None Remove="Images\insurance\BaoViet.png" />
+    <None Remove="Images\insurance\FWD.png" />
     <None Remove="Images\insurance\health_insurance.png" />
     <None Remove="Images\Left_arrow.png" />
     <None Remove="Images\MomoLogo.png" />
@@ -48,6 +72,7 @@
     <None Remove="Images\Right_arrow.png" />
     <None Remove="Images\SearchIcon.png" />
     <None Remove="Images\shift.png" />
+    <None Remove="Images\Success.png" />
     <None Remove="Images\SuccessIcon.png" />
     <None Remove="Images\VNPayLogo.png" />
     <None Remove="Images\wallet\Bank.png" />
@@ -58,13 +83,24 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Images\backSpace.png" />
+    <Resource Include="Images\bank.png" />
+    <Resource Include="Images\CashDepLogo.png" />
     <Resource Include="Images\CashDeposit\100k.png" />
     <Resource Include="Images\CashDeposit\200k.png" />
     <Resource Include="Images\CashDeposit\500k.png" />
     <Resource Include="Images\CashDeposit\500kVertical.png" />
     <Resource Include="Images\CashDeposit\50k.png" />
     <Resource Include="Images\CashDeposit\MoneyInput.png" />
+    <Resource Include="Images\Contact_Green.png" />
+    <Resource Include="Images\Contact_White.png" />
     <Resource Include="Images\Delete.png" />
+    <Resource Include="Images\Calendar.png" />
+    <Resource Include="Images\Edit.png" />
+    <Resource Include="Images\home\Loading.png" />
+    <Resource Include="Images\IDCardModel_Back.png" />
+    <Resource Include="Images\Info_Green.png" />
+    <Resource Include="Images\Info_White.png" />
     <Resource Include="Images\insurance\accident_insurance.png" />
     <Resource Include="Images\bank\ACB.png" />
     <Resource Include="Images\bank\DongA.png" />
@@ -85,10 +121,13 @@
     <Resource Include="Images\home\Saving_Img.png" />
     <Resource Include="Images\home\Withdraw_Img.png" />
     <Resource Include="Images\IDCardModel.png" />
+    <Resource Include="Images\insurance\BaoViet.png" />
+    <Resource Include="Images\insurance\FWD.png" />
     <Resource Include="Images\insurance\health_insurance.png" />
     <Resource Include="Images\Left_arrow.png" />
     <Resource Include="Images\plus.png" />
     <Resource Include="Images\shift.png" />
+    <Resource Include="Images\Success.png" />
     <Resource Include="Images\wallet\Bank.png" />
     <Resource Include="Images\wallet\MomoLogo.png" />
     <Resource Include="Images\wallet\PayMeLogo.png" />
@@ -102,15 +141,24 @@
   </ItemGroup>
 
   <ItemGroup>
+
     <Folder Include="Model\" />
-    <Folder Include="ViewModel\Loan\" />
-    <Folder Include="ViewModel\Saving\" />
-    <Folder Include="View\Loan\" />
-    <Folder Include="View\Saving\" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.0" />
+    <PackageReference Include="DirectShowLib" Version="1.0.0" />
+    <PackageReference Include="Emgu.CV" Version="4.8.1.5350" />
+    <PackageReference Include="Emgu.CV.Bitmap" Version="4.8.1.5350" />
+    <PackageReference Include="Emgu.CV.runtime.windows" Version="4.8.1.5350" />
+    <PackageReference Include="Emgu.CV.UI" Version="4.8.1.5350" />
+    <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9" />
+    <PackageReference Include="ini-parser" Version="2.5.2" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.77" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="RestSharp" Version="110.2.0" />
+
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
+
     <PackageReference Include="System.IO.Ports" Version="8.0.0" />
   </ItemGroup>
 

@@ -1,0 +1,88 @@
+﻿<UserControl x:Class="Insurance.View.PayHomeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Insurance.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="768" d:DesignWidth="1024">
+
+    <UserControl.Background>
+        <ImageBrush ImageSource="/Images/bg.jpg"/>
+    </UserControl.Background>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="650"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="425"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Left side with packages -->
+        <Grid Grid.Row="1" Margin="15 0 15 0">
+            <TextBlock FontSize="25.28px" Foreground="#FFFFFF" FontFamily="Exo"  FontWeight="Bold" >
+                Thanh toán khoản vay
+            </TextBlock>
+            <TextBlock Margin="0 70 0 0" FontSize="18px" Foreground="#FFFFFF" FontFamily="Exo"  FontWeight="Bold" >
+                Các khoản vay</TextBlock>
+            <StackPanel VerticalAlignment="Center"  Grid.Column="0" Grid.RowSpan="2">
+
+
+                <!-- Packages List -->
+                <ListView x:Name="lstViewPackage"  BorderThickness="0"
+                          ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                          Background="Transparent" ItemsSource="{Binding LoanInfo}" ItemTemplate="{StaticResource listViewItemLoanPaybackTemplate}">
+
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListViewItem}">
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                        <ContentPresenter />
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                </ListView>
+            </StackPanel>
+
+            <!-- Bottom Buttons -->
+            <Button Command="{Binding BackCommand}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Content="Quay lại" Style="{StaticResource bigButton}"/>
+        </Grid>
+
+        <Grid Grid.Row="1" Grid.Column="1">
+            <Border Background="#0EAB00" CornerRadius="10" Width="600" Height="490">
+
+                <Border Background="White" CornerRadius="10"  Width="560" Height="450">
+                    <ListView x:Name="lstViewPackageDetails"  BorderThickness="2"
+                          ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                          Background="Transparent" ItemsSource="{Binding LoanDetails}" ItemTemplate="{StaticResource listViewItemLoanDetailsTemplate}">
+
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="{x:Type ListViewItem}">
+                                <Setter Property="Background" Value="Transparent" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                            <ContentPresenter />
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+
+                    </ListView>
+                </Border>
+            </Border>
+            <!-- Bottom Buttons -->
+            <Button VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,592,15,0" Command="{Binding NextCommand}" Content="Tiếp tục"  Background="LimeGreen" Foreground="White" Style="{StaticResource bigButton}"/>
+        </Grid>
+
+    </Grid>
+</UserControl>

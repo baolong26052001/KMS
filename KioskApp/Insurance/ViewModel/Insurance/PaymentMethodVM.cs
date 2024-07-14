@@ -1,4 +1,5 @@
 ﻿using Insurance.Command;
+using Insurance.Model;
 using System.Windows.Input;
 
 namespace Insurance.ViewModel
@@ -10,7 +11,6 @@ namespace Insurance.ViewModel
         public ICommand BankCommand { get; set; }   
         public ICommand MomoCommand { get; set; }
         public ICommand PayMeCommand { get; set; }
-        public ICommand CancelCommand { get; set; }
         public ICommand BackCommand { get; set; }
 
 
@@ -18,30 +18,30 @@ namespace Insurance.ViewModel
 
         public PaymentMethodVM() 
         {
-            CashDepositCommand = new RelayCommand((parameter) =>
+            CashDepositCommand = new RelayCommand<object>((p) => { return true; },(p) =>
             {
                 MainWindowVM.Instance.CurrentView =  new CashDepositVM();
+                UserModel.Instance.PaymentMethod = "Tiền Mặt";
             });
 
-            BankCommand = new RelayCommand((parameter) =>
+            BankCommand = new RelayCommand<object>((p)=> { return true; },(p) =>
             {
                 MainWindowVM.Instance.CurrentView = new SelectBankAccountVM();
+                UserModel.Instance.PaymentMethod = "Tài khoản ngân hàng";
             });
 
-            MomoCommand = new RelayCommand((parameter) =>
+            MomoCommand = new RelayCommand<object>((p)=> { return true; }, (p) =>
             {
                 MainWindowVM.Instance.CurrentView = new QrCodeVM();
+                UserModel.Instance.PaymentMethod = "Momo";
             });
 
-            PayMeCommand = new RelayCommand((parameter) =>
+            PayMeCommand = new RelayCommand<object>((p) => { return true; }, (p) =>
             {
                 MainWindowVM.Instance.CurrentView = new QrCodeVM();
+                UserModel.Instance.PaymentMethod = "PayMe";
             });
-            CancelCommand = new RelayCommand((parameter) =>
-            {
-                MainWindowVM.Instance.CurrentView = new InsuranceHomeVM();
-            });
-            BackCommand = new RelayCommand((parameter) =>
+            BackCommand = new RelayCommand<object>((p)=> { return true; }, (p) =>
             {
                 MainWindowVM.Instance.BackScreen();
             });

@@ -3,15 +3,37 @@
 
     <Style x:Key="textBox" TargetType="TextBox">
         <Setter Property="Width" Value="460"/>
-        <Setter Property="Height" Value="65"/>
+        <Setter Property="Height" Value="80"/>
+        <Setter Property="FontSize" Value="23"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">
-                    <TextBox BorderBrush="#0EAB00" BorderThickness="2" Background="Transparent" Padding="2"/>
+                    <Border CornerRadius="5" BorderBrush="#0EAB00" BorderThickness="4" >
+                        <TextBox Text="{TemplateBinding Text}" 
+                                 VerticalContentAlignment="Center"
+                                 BorderBrush="Transparent" 
+                                 BorderThickness="2"
+                                 Background="Transparent"
+                                 Foreground="White" Padding="2"
+                                 TextWrapping="{TemplateBinding TextWrapping}"/>
+                    </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style x:Key="textBlock" TargetType="TextBlock">
+        <Setter Property="Width" Value="460"/>
+        <Setter Property="Height" Value="70"/>
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Padding" Value="5 5 5 5"/>
+    </Style>
+
+
+
 
     <Style x:Key="OtpTextBox" TargetType="TextBox">
         <Setter Property="Width" Value="140"/>
@@ -24,6 +46,34 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style x:Key="OtpTextBlockStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="25"/>
+        <Setter Property="Width" Value="700"/>
+        <Setter Property="TextAlignment" Value="Center"/>
+        <Setter Property="Foreground" Value="#FFFFFF"/>
+        <Setter Property="FontFamily" Value="Exo"/>
+        <Setter Property="Text">
+            <Setter.Value>
+                <MultiBinding StringFormat="{}{0} {1} giây">
+                    <Binding Source="Mã OTP của bạn sẽ hết hiệu lực sau"/>
+                    <Binding Path="TimeRemaining"/>
+                </MultiBinding>
+            </Setter.Value>
+        </Setter>
+
+
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding TimeRemaining}" Value="0">
+                <Setter Property="Foreground" Value="Red"/>
+                <Setter Property="Text" Value="Mã OTP hết hạn!"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding OtpStatus}" Value="-1">
+                <Setter Property="Foreground" Value="Red"/>
+                <Setter Property="Text" Value="Mã OTP sai!"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    
 </ResourceDictionary>
 
-<!--<Border BorderBrush="#0EAB00" BorderThickness="2.0" CornerRadius="15" Width="145" Height="170" Margin="0 0 20 0">-->

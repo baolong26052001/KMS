@@ -26,23 +26,23 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
             <Grid Grid.Row="0" HorizontalAlignment="Center">
-                <TextBlock FontSize="55px" Foreground="#0EAB00" FontFamily="Exo2" FontWeight="Bold" TextWrapping="Wrap" Width="800" TextAlignment="Center" Grid.ColumnSpan="2" Margin="0,23,0,24">Your accident insurance policy is being processed and will be reviewed shortly</TextBlock>
+                <TextBlock FontSize="55px" Foreground="#0EAB00" FontFamily="Exo2" FontWeight="Bold" TextWrapping="Wrap" Width="800" TextAlignment="Center" Grid.ColumnSpan="2" Margin="0,23,0,24">
+                   Giao dịch thành công</TextBlock>
             </Grid>
             <Grid Grid.Row="1" HorizontalAlignment="Center">
-                <TextBlock FontSize="32px" Foreground="#FFFFFF" FontFamily="Exo2" TextWrapping="Wrap" Width="675" TextAlignment="Center">You will receive an SMS notification once your application has been approved</TextBlock>
+                <TextBlock Visibility="{Binding InsuranceVisibility}" FontSize="32px" Foreground="#FFFFFF" FontFamily="Exo2" TextWrapping="Wrap" Width="675" TextAlignment="Center">
+                    Gói bảo hiểm bạn mua đã được xác nhận.
+Bạn sẽ nhận được thông báo qua SMS và Email.</TextBlock>
+                <TextBlock Visibility="{Binding SavingVisibility}" FontSize="32px" Foreground="#FFFFFF" FontFamily="Exo2" TextWrapping="Wrap" Width="675" TextAlignment="Center">
+                    Gói tiết kiệm của bạn đã được xác nhận.
+Bạn sẽ nhận được thông báo qua SMS và Email.</TextBlock>
             </Grid>
             <Grid Grid.Row="2">
-                <TextBlock FontSize="32px" Foreground="#FFFFFF" FontFamily="Exo2" TextWrapping="Wrap" Width="675" TextAlignment="Center">Thank you for using our service</TextBlock>
-                <Button Margin="0 0 15 0" Command="{Binding DoneCommand}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="Done" Style="{StaticResource bigButton}"/>
+                <TextBlock FontSize="32px" Foreground="#FFFFFF" FontFamily="Exo2" TextWrapping="Wrap" Width="675" TextAlignment="Center">
+                   Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi</TextBlock>
+                <Button Margin="0 0 15 0" Command="{Binding DoneCommand}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="Tiếp tục" Style="{StaticResource bigButton}"/>
             </Grid>
-   
-        </Grid>
 
-        <!---Footer-->
-        <Grid Grid.Row="2">
-            <TextBlock Foreground="#FFFFFF" FontFamily="Exo" FontSize="20" VerticalAlignment="Center" Margin="15 0 0 0">
-        10:47, October 20 2023
-            </TextBlock>
         </Grid>
     </Grid>
 </UserControl>
